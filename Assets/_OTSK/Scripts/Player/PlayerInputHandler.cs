@@ -28,6 +28,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnDodgeRollInput;
     public event Action OnInteractInput;
     public event Action OnPauseInput; // For Pause Menu
+    public event Action OnToggleCursorModeInput;
 
     // --- Internal References ---
     private PlayerInputActions _inputActions;
@@ -55,13 +56,15 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnEnable()
     {
         _inputActions.Enable(); // Enable all input action maps (e.g., "Player" map)
+        OnToggleCursorModeInput += HandleToggleCursor;
     }
 
     private void OnDisable()
     {
         //_inputActions.Disable(); // Disable all input action maps
         // The OnDisable logic remains the same.
-       
+        OnToggleCursorModeInput -= HandleToggleCursor;
+
     }
 
     private void SetupInputCallbacks()
@@ -90,6 +93,8 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
         _inputActions.Player.Look.canceled += ctx => OnLookInput?.Invoke(Vector2.zero);
 
+        _inputActions.Player.ToggleCursorMode.performed += ctx => OnToggleCursorModeInput?.Invoke();
+
         // --- Other Actions (Uncomment and implement when ready) ---
         // _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
         // _inputActions.Player.SecondaryAttack.performed += ctx => OnSecondaryAttackInput?.Invoke();
@@ -98,4 +103,13 @@ public class PlayerInputHandler : MonoBehaviour
         // _inputActions.Player.Interact.performed += ctx => OnInteractInput?.Invoke();
         // _inputActions.Player.Pause.performed += ctx => OnPauseInput?.Invoke(); // For menu
     }
+
+    private void HandleToggleCursor()
+    {
+        if (CursorManager.Instance != null)
+        {
+            CursorManager.Instance.ToggleCursorMode();
+        }
+    }
+
 }

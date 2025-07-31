@@ -9,8 +9,10 @@ public class SceneLoader : MonoBehaviour
     public static SceneLoader Instance { get; private set; }
 
     // Events that other scripts can subscribe to
-    public event Action<string> OnSceneLoaded;
+    public event Action<SceneDataSO> OnSceneLoaded;
     public event Action<string> OnSceneUnloaded;
+
+    private SceneDataSO _currentSceneData; // To hold the data of the scene being loaded.
 
     // --- Singleton Initialization ---
     private void Awake()
@@ -31,16 +33,16 @@ public class SceneLoader : MonoBehaviour
     }
 
     // --- Scene Loading Method ---
-    public void LoadSceneAsync(string sceneName, string spawnPointTag = "")
+    public void LoadSceneAsync(SceneDataSO sceneData, string spawnPointTag = "")
     {
-        if (string.IsNullOrEmpty(sceneName))
+        if (sceneData == null)
         {
-            Debug.LogError("SceneLoader: Cannot load an empty scene name!");
+            Debug.LogError("SceneLoader: Cannot load a null SceneDataSO!");
             return;
         }
-
-        Debug.Log($"SceneLoader: Attempting to load scene: {sceneName} with spawn tag: {spawnPointTag}");
-        StartCoroutine(LoadSceneCoroutine(sceneName, spawnPointTag));
+        _currentSceneData = sceneData; // Store the data
+        Debug.Log($"SceneLoader: Attempting to load scene: {sceneData} with spawn tag: {spawnPointTag}");
+        StartCoroutine(LoadSceneCoroutine(sceneData.sceneName, spawnPointTag));
     }
 
     private IEnumerator LoadSceneCoroutine(string sceneName, string spawnPointTag)
@@ -81,7 +83,7 @@ public class SceneLoader : MonoBehaviour
         Debug.Log($"SceneLoader: Scene '{sceneName}' loaded and activated.");
 
         // Invoke events AFTER scene is fully loaded and activated
-        OnSceneLoaded?.Invoke(sceneName);
+        OnSceneLoaded?.Invoke(_currentSceneData);
 
         // Store spawnPointTag temporarily if needed, e.g., in GameManager, or pass directly
         // For now, it's passed but not used by SceneLoader itself.

@@ -4,7 +4,7 @@ using UnityEngine.UI; // Required for Button component
 public class SceneTransitionButton : MonoBehaviour
 {
     public Button button; // Assign this in Inspector
-    public string targetSceneName; // Set this in Inspector
+    public SceneDataSO targetSceneData;
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class SceneTransitionButton : MonoBehaviour
     {
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.LoadSceneAsync(targetSceneName);
+            SceneLoader.Instance.LoadSceneAsync(targetSceneData);
         }
         else
         {
