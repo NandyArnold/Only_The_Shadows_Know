@@ -18,7 +18,18 @@ public class DaggerSO : WeaponSO
 
     public override void SecondaryAttack(PlayerCombat combatController)
     {
-        // Later, this will check if the player is undetected for a finisher.
-        Debug.Log($"Dagger: Attempting finisher for {finisherDamage} damage.");
+        bool canPerformFinisher = false;
+
+        if (canPerformFinisher)
+        {
+            Debug.Log($"Dagger: Performing FINISHER for {finisherDamage} damage.");
+            // Finisher logic will go here
+        }
+        else
+        {
+            // This is your new idea: perform a different slash using the primary attack's damage.
+            Debug.Log($"Dagger: Performing alternate heavy slash for {slashDamage} damage.");
+            // The actual damage dealing logic will go here later.
+        }
     }
 }

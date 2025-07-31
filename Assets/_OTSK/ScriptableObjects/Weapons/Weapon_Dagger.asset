@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9681518fffec1045b5f0ab37346ac1a, type: 3}
   m_Name: Weapon_Dagger
   m_EditorClassIdentifier: 
-  weaponName: 
+  weaponName: Dagger
   weaponDescription: 
-  slashDamage: 10
+  slashDamage: 20
   finisherDamage: 100

@@ -30,6 +30,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnPauseInput; // For Pause Menu
     public event Action OnToggleCursorModeInput;
 
+   
+
     // --- Internal References ---
     private PlayerInputActions _inputActions;
     private PlayerMovement _playerMovement; // Direct reference for now, will use events later too
@@ -96,8 +98,8 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.ToggleCursorMode.performed += ctx => OnToggleCursorModeInput?.Invoke();
 
         // --- Other Actions (Uncomment and implement when ready) ---
-        // _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
-        // _inputActions.Player.SecondaryAttack.performed += ctx => OnSecondaryAttackInput?.Invoke();
+        _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
+        _inputActions.Player.SecondaryAttack.performed += ctx => OnSecondaryAttackInput?.Invoke();
         // _inputActions.Player.Skill1.performed += ctx => OnSkill1Input?.Invoke();
         // _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
         // _inputActions.Player.Interact.performed += ctx => OnInteractInput?.Invoke();
