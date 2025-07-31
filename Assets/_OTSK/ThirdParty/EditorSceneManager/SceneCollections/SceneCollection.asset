@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 496ebfc3b80d08b4d83e8b6c84a74e6f, type: 3}
   m_Name: SceneCollection
   m_EditorClassIdentifier: 
-  scenes: []
+  scenes:
+  - sceneName: TestScene
+    scenePath: Assets/_OTSK/Scenes/TestScene.unity
+    savedColor: {r: 0, g: 0, b: 0, a: 0}
+    isHeader: 0

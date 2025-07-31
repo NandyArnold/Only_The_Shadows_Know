@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 496ebfc3b80d08b4d83e8b6c84a74e6f, type: 3}
+  m_Name: OTSK_SceneCollection
+  m_EditorClassIdentifier: 
+  scenes:
+  - sceneName: InitScenes
+    scenePath: 
+    savedColor: {r: 0, g: 1, b: 0.023544073, a: 1}
+    isHeader: 1
+  - sceneName: BootstrapScene
+    scenePath: Assets/_OTSK/Scenes/BootstrapScene.unity
+    savedColor: {r: 0, g: 0, b: 0, a: 0}
+    isHeader: 0
+  - sceneName: LoadingScreen
+    scenePath: Assets/_OTSK/Scenes/LoadingScreen.unity
+    savedColor: {r: 0, g: 0, b: 0, a: 0}
+    isHeader: 0
+  - sceneName: MainMenu
+    scenePath: Assets/_OTSK/Scenes/MainMenu.unity
+    savedColor: {r: 0, g: 0, b: 0, a: 0}
+    isHeader: 0
+  - sceneName: GameScenes
+    scenePath: 
+    savedColor: {r: 0.72598267, g: 0, b: 1, a: 1}
+    isHeader: 1
+  - sceneName: TutorialScene
+    scenePath: Assets/_OTSK/Scenes/TutorialScene.unity
+    savedColor: {r: 1, g: 0.87847763, b: 0, a: 1}
+    isHeader: 0
+  - sceneName: Mission01Scene
+    scenePath: Assets/_OTSK/Scenes/Mission01Scene.unity
+    savedColor: {r: 1, g: 0, b: 0, a: 1}
+    isHeader: 0
