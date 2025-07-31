@@ -1,0 +1,417 @@
+@startuml OnlyTheShadowsKnow_UML_SRP_ClassOnly_Expanded
+
+' Set skinparam to make connections cleaner and more readable
+skinparam handwritten false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam roundCorner 5
+skinparam stereotypeCBackgroundColor White
+skinparam class {
+    BorderColor #6A0573
+    BackgroundColor #F7D9EE
+    ArrowColor #6A0573
+}
+skinparam package {
+    BorderColor #1A4D2E
+    BackgroundColor #D9F7DB
+    ArrowColor #1A4D2E
+}
+skinparam interface {
+    BorderColor #2D3A5D
+    BackgroundColor #D9E4F7
+    ArrowColor #2D3A5D
+}
+
+' Define stereotypes for clarity
+stereotype "ScriptableObject" as SO
+stereotype "Manager" as Mgr
+stereotype "Component" as Comp
+
+' -- Core Game Managers --
+package "Core Game Managers" {
+    class GameManager <<Mgr>> {
+        + LoadGame(saveName: string)
+        + SaveGame(saveName: string)
+        + LoadSystems()
+    }
+
+    class AudioManager <<Mgr>> {
+        + PlaySFX(SFXName: string)
+        + StopSFX(SFXName: string)
+        + PlayMusic(MusicName: string)
+        + SetVolume(channel: string, volume: float)
+    }
+
+    class SaveLoadManager <<Mgr>> {
+        + SaveGame(data: GameStateData)
+        + LoadGame(saveName: string): GameStateData
+    }
+
+    class SceneLoader <<Mgr>> {
+        + LoadSceneAsync(sceneName: string)
+        + ShowLoadingScreen(splashArt, tips, music)
+    }
+
+    class TeleportManager <<Mgr>> {
+        teleportPosition: Vector3
+        + SetTeleportPosition(Vector3)
+        + TeleportPlayer()
+        + CancelTeleport()
+    }
+}
+
+
+' -- Player Systems --
+package "Player Systems" {
+    class PlayerController <<Comp>> {
+        - playerInputHandler: PlayerInputHandler
+        - playerMovement: PlayerMovement
+        - playerCombat: PlayerCombat
+        - playerHealthManaNoise: PlayerHealthManaNoise
+        - playerAnimationController: PlayerAnimationController
+        - cameraController: CameraController
+        + Init()
+    }
+
+    class PlayerInputHandler <<Comp>> {
+        + OnMove(input: Vector2)
+        + OnJump()
+        + OnCrouch()
+        + OnDodgeRoll()
+        + OnLedgeTeleport()
+        + OnPrimaryAttack()
+        + OnSecondaryAttack()
+        + OnSkillUse(skillIndex: int)
+        + OnToggleAimMode()
+        + OnToggleCursorMode()
+        + OnWeaponSwitch(weaponIndex: int)
+        + OnLook(mouseDelta: Vector2)
+    }
+
+    class PlayerMovement <<Comp>> {
+        - walkSpeed: float
+        - runSpeed: float
+        - crouchSpeed: float
+        - jumpForce: float
+        - dodgeRollDuration: float
+        - dodgeRollInvincibilityWindow: float
+        + Move(direction: Vector3)
+        + Jump()
+        + Crouch(isCrouching: bool)
+        + DodgeRoll()
+        + LedgeTeleport(targetPos: Vector3)
+        + SetMovementSpeedModifier(modifier: float)
+    }
+
+    class PlayerCombat <<Comp>> {
+        - equippedWeapon: IWeapon
+        - isAiming: bool
+        + PrimaryAttack()
+        + SecondaryAttack()
+        + ToggleAimMode()
+        + SwitchWeapon(newWeapon: WeaponType)
+        + PerformFinisher(target: Enemy)
+    }
+
+    class PlayerHealthManaNoise <<Comp>> {
+        - currentHealth: float
+        - maxHealth: float
+        - currentMana: float
+        - maxMana: float
+        - currentNoiseLevel: float
+        + TakeDamage(amount: float)
+        + RestoreHealth(amount: float)
+        + RestoreMana(amount: float)
+        + GenerateNoise(amount: float)
+        + SetNoiseModifier(modifier: float)
+        -- Events --
+        + OnHealthChanged: event
+        + OnManaChanged: event
+        + OnNoiseChanged: event
+    }
+
+    class PlayerAnimationController <<Comp>> {
+        + SetLocomotionState(state: PlayerMovementState)
+        + PlayWeaponAnimation(animationType: WeaponAnimationType)
+        + PlaySkillAnimation(skillAnimationType: SkillAnimationType)
+        + SetAimingState(isAiming: bool)
+    }
+
+    class CameraController <<Comp>> {
+        + SetShoulderCam()
+        + SetZoomCam()
+        + SetScryingCam()
+        + SetSpectralShiftCam()
+        + SetCutsceneCam(camIndex: int)
+        + RotateCameraPitch(mouseDeltaY: float)
+        + UpdateAimZoom(isAiming: bool)
+    }
+}
+
+' -- Skill Systems --
+package "Skill Systems" {
+    class SkillManager <<Mgr>> {
+        - skills: Dictionary<string, Skill>
+        + ActivateSkill(skillName: string)
+        + GetSkillCooldown(skillName: string): float
+        + GetSkill(skillName: string): Skill
+        -- Events --
+        + OnManaConsumed: event
+    }
+
+    class Skill <<SO>> {
+        - name: string
+        - icon: Sprite
+        - description: string
+        - manaCost: float
+        - manaCostOverTime: float
+        - cooldown: float
+        - isCombatOnly: bool
+        - castMode: CastMode
+        + Execute(): void
+        + IsUsable(currentMana: float): bool
+    }
+
+    class ScryingSkill <<SO>> {
+        + Execute(): void (implementation triggers ScryingSystem)
+    }
+
+    class ScryingSystem <<Mgr>> {
+        + ActivateScrying()
+        + DeactivateScrying()
+        + SaveMapSnapshot()
+        + GetScryingMapData(): ScryingMapData
+        + UpdateIconPositions()
+    }
+
+    class ScryingMapData {
+        playerPos: Vector3
+        playerIcon: Sprite
+        enemyIcons: Dictionary<EnemyType, List<Vector3>>
+        entryPoint: Vector3
+        exitPoint: Vector3
+        objectives: List<Vector3>
+    }
+}
+
+' -- Weapon Systems --
+package "Weapon Systems" {
+    interface IWeapon {
+        + PrimaryAttack()
+        + SecondaryAttack()
+        + SetAiming(isAiming: bool)
+        + GetWeaponType(): WeaponType
+    }
+
+    class Bow <<SO>> implements IWeapon {
+        - unfocusedSpread: float
+        - focusedAccuracy: float
+        - arrowPrefab: GameObject
+        - arrowEffects: List<ArrowEffectType>
+        + PrimaryAttack()
+        + SecondaryAttack()
+        + SetAiming(isAiming: bool)
+        + GetWeaponType(): WeaponType
+    }
+
+    class Dagger <<SO>> implements IWeapon {
+        - quickSlashDamage: float
+        - dotDuration: float
+        - finisherDamage: float
+        + PrimaryAttack()
+        + SecondaryAttack()
+        + SetAiming(isAiming: bool)
+        + GetWeaponType(): WeaponType
+    }
+
+    class Animancy <<SO>> implements IWeapon {
+        - soulSeverRangedMana: float
+        - soulSeverMeleeMana: float
+        - deathZoneMana: float
+        + PrimaryAttack()
+        + SecondaryAttack()
+        + SetAiming(isAiming: bool)
+        + GetWeaponType(): WeaponType
+    }
+}
+
+' -- Enemy & Detection Systems --
+package "Enemy & Detection Systems" {
+    class EnemyManager <<Mgr>> {
+        + SpawnEnemy(type: EnemyType, position: Vector3)
+        + GetActiveEnemies(): List<Enemy>
+        + TriggerGlobalAlarm()
+    }
+
+    class Enemy {
+        - health: float
+        - isAlerted: bool
+        - type: EnemyType
+        - patrolRoute: PatrolRouteSO
+        - currentFSMState: EnemyState
+        + TakeDamage(amount: float)
+        + SoundAlarm()
+        + Patrol()
+        + Investigate(sourcePos: Vector3)
+        + Alert(sourcePos: Vector3)
+    }
+
+    class EnemyAIState {
+        - stateName: string
+        + Enter(enemy: Enemy)
+        + Execute(enemy: Enemy)
+        + Exit(enemy: Enemy)
+    }
+
+    class PatrolRouteSO <<SO>> {
+        - waypoints: List<Vector3>
+        - loopType: PatrolLoopType
+    }
+
+    class DetectionSystem {
+        - soundThreshold: float
+        - coneAngle: float
+        - range: float
+        - detectionTime: float
+        + CheckSound(sourcePos: Vector3, noiseLevel: float): bool
+        + CheckVision(targetPos: Vector3): bool
+        + GetDetectedTarget(sourcePos: Vector3, targets: List<GameObject>): GameObject
+        -- Events --
+        + OnTargetDetected: event
+        + OnSoundHeard: event
+    }
+}
+
+' -- UI Systems --
+package "UI Systems" {
+    class UIManager <<Mgr>> {
+        - cursorManager: CursorManager
+        - hudManager: HUDManager
+        - menuManager: MenuManager
+        - scryingMapUI: ScryingMapUI
+        + Init()
+        + RequestCursorToggle()
+        + UpdateGameHUD()
+        + OpenPauseMenu()
+        + ShowScryingView()
+    }
+
+    class CursorManager <<Mgr>> {
+        + ToggleCursorMode()
+        + SetCursorLocked(locked: bool)
+        + SetCursorVisible(visible: bool)
+        + SetCursorIcon(icon: Sprite)
+        -- Events --
+        + OnCursorModeChanged: event
+    }
+
+    class HUDManager <<Comp>> {
+        - healthManaNoiseBar: HealthManaNoiseBar
+        - crosshair: Crosshair
+        - skillBar: SkillBar
+        - enemyNoiseBar: EnemyNoiseBar
+        + UpdateHealthManaNoise(health, mana, noise)
+        + UpdateCrosshair(color, targetLocked)
+        + UpdateSkillBar(activeSkills: List<Skill>)
+        + ShowSkillHoverInfo(skill: Skill)
+        + HideSkillHoverInfo()
+        + ShowEnemyNoiseBar(noise)
+        + HideEnemyNoiseBar()
+    }
+
+    class MenuManager <<Comp>> {
+        + ShowStartMenu()
+        + ShowPauseMenu()
+        + ShowDeathMenu()
+        + ShowLoadingScreen(sceneName)
+        + HideAllMenus()
+    }
+
+    class ScryingMapUI <<Comp>> {
+        + DisplayMap(mapData: ScryingMapData)
+        + HideMap()
+        + ShowIconDescription(description: string)
+        + HideIconDescription()
+    }
+}
+
+
+' -- Relationships --
+
+' Game Management Flow
+GameManager --> AudioManager : manages
+GameManager --> SaveLoadManager : manages
+GameManager --> SceneLoader : manages
+GameManager --> PlayerController : initializes
+GameManager --> SkillManager : initializes
+GameManager --> EnemyManager : initializes
+GameManager --> UIManager : initializes
+GameManager --> TeleportManager : initializes
+
+' Player System Relationships
+PlayerController o-- PlayerInputHandler : "has a"
+PlayerController o-- PlayerMovement : "has a"
+PlayerController o-- PlayerCombat : "has a"
+PlayerController o-- PlayerHealthManaNoise : "has a"
+PlayerController o-- PlayerAnimationController : "has a"
+PlayerController o-- CameraController : "has a"
+
+PlayerInputHandler ..> PlayerMovement : notifies
+PlayerInputHandler ..> PlayerCombat : notifies
+PlayerInputHandler ..> SkillManager : notifies
+PlayerInputHandler ..> CursorManager : notifies
+PlayerInputHandler ..> CameraController : notifies
+
+PlayerCombat ..> PlayerHealthManaNoise : consumes mana
+PlayerCombat ..> IWeapon : uses
+SkillManager ..> PlayerHealthManaNoise : consumes mana
+PlayerHealthManaNoise .up.> UIManager : notifies changes (via events)
+PlayerHealthManaNoise .up.> HUDManager : "listens to OnHealth/Mana/NoiseChanged"
+
+' Skill System Relationships
+SkillManager o-- Skill : contains (many)
+Skill <|-- ScryingSkill : inherits
+ScryingSkill --> ScryingSystem : triggers
+
+ScryingSystem ..> DetectionSystem : uses (for enemy data)
+ScryingSystem ..> PlayerHealthManaNoise : uses (for player noise on map)
+ScryingSystem ..> ScryingMapData : provides data
+ScryingSystem ..> UIManager : requests UI display/cursor mode
+
+' Weapon System Relationships
+PlayerCombat ..> IWeapon : "uses"
+IWeapon <|.. Bow : implements
+IWeapon <|.. Dagger : implements
+IWeapon <|.. Animancy : implements
+
+' Enemy & Detection Relationships
+EnemyManager --> Enemy : spawns/manages
+Enemy --> DetectionSystem : uses (for awareness)
+Enemy ..> EnemyAIState : "uses FSM states"
+EnemyAIState o-- Enemy : "controls"
+Enemy o-- PatrolRouteSO : "follows"
+
+DetectionSystem .up.> Enemy : notifies detection (events)
+DetectionSystem .up.> ScryingSystem : provides data
+
+' UI System Relationships
+UIManager o-- CursorManager : "has a"
+UIManager o-- HUDManager : "has a"
+UIManager o-- MenuManager : "has a"
+UIManager o-- ScryingMapUI : "has a"
+
+CursorManager .up.> HUDManager : notifies mode change (enables/disables hover)
+CursorManager .up.> PlayerInputHandler : "sets mouse lock/visibility"
+HUDManager .up.> SkillManager : requests skill data (for icons/info)
+ScryingMapUI ..> ScryingMapData : "displays"
+ScryingMapUI .up.> CursorManager : "requires cursor mode"
+
+' General cross-system relationships
+PlayerMovement ..> PlayerAnimationController : notifies state
+PlayerCombat ..> PlayerAnimationController : notifies state
+SkillManager ..> PlayerAnimationController : notifies state
+TeleportManager ..> PlayerController : performs teleport (updates player pos)
+
+@enduml
