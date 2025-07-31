@@ -1,34 +1,99 @@
+// PlayerHealthManaNoise.cs
+
+using System;
 using UnityEngine;
 
+/// <summary>
+/// Manages the player's core statistics: Health, Mana, and Noise Level.
+/// It handles modifications to these stats and broadcasts events when they change.
+/// </summary>
 public class PlayerHealthManaNoise : MonoBehaviour
 {
-    [Header("Player Stats")]
+    [Header("Health Settings")]
     [SerializeField] private float maxHealth = 100f;
-    public float currentHealth;
+    private float _currentHealth;
 
+    [Header("Mana Settings")]
     [SerializeField] private float maxMana = 100f;
-    public float currentMana;
+    private float _currentMana;
 
-    [SerializeField] private float maxNoiseLevel = 100f;
-    public float currentNoiseLevel;
+    [Header("Noise Settings")]
+    [SerializeField] private float maxNoise = 100f;
+    private float _currentNoiseLevel;
 
-    // Events will be added later in Day 2 for UI updates etc.
-    // public event Action<float> OnHealthChanged;
-    // public event Action<float> OnManaChanged;
-    // public event Action<float> OnNoiseChanged;
+    // --- Public Properties ---
+    public float CurrentHealth => _currentHealth;
+    public float CurrentMana => _currentMana;
+    public float CurrentNoise => _currentNoiseLevel;
+
+    // --- Public Events ---
+    // The UI will subscribe to these events to update itself.
+    // Passes (currentValue, maxValue) for easy percentage calculation.
+    public event Action<float, float> OnHealthChanged;
+    public event Action<float, float> OnManaChanged;
+    public event Action<float, float> OnNoiseChanged;
 
     private void Awake()
     {
-        currentHealth = maxHealth;
-        currentMana = maxMana;
-        currentNoiseLevel = 0f; // Start with no noise
+        // Initialize stats at the beginning.
+        _currentHealth = maxHealth;
+        _currentMana = maxMana;
+        _currentNoiseLevel = 0f;
     }
 
-    // Placeholder methods for now
-    public void TakeDamage(float amount) { /* ... */ }
-    public void RestoreHealth(float amount) { /* ... */ }
-    public void ConsumeMana(float amount) { /* ... */ }
-    public void RestoreMana(float amount) { /* ... */ }
-    public void GenerateNoise(float amount) { /* ... */ }
-    public void SetNoiseModifier(float modifier) { /* ... */ }
+    // --- Public Methods for Modifying Stats ---
+
+    public void TakeDamage(float amount)
+    {
+        _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, maxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+
+        Debug.Log($"Player took {amount} damage. Current Health: {_currentHealth}");
+
+        if (_currentHealth <= 0)
+        {
+            HandleDeath();
+        }
+    }
+
+    public bool ConsumeMana(float amount)
+    {
+        if (_currentMana >= amount)
+        {
+            _currentMana = Mathf.Clamp(_currentMana - amount, 0, maxMana);
+            OnManaChanged?.Invoke(_currentMana, maxMana);
+            Debug.Log($"Player consumed {amount} mana. Current Mana: {_currentMana}");
+            return true; // Success
+        }
+
+        Debug.Log("Not enough mana!");
+        return false; // Failure
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, maxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+        Debug.Log($"Player restored {amount} health. Current Health: {_currentHealth}");
+    }
+
+    public void RestoreMana(float amount)
+    {
+        _currentMana = Mathf.Clamp(_currentMana + amount, 0, maxMana);
+        OnManaChanged?.Invoke(_currentMana, maxMana);
+        Debug.Log($"Player restored {amount} mana. Current Mana: {_currentMana}");
+    }
+
+    public void GenerateNoise(float amount)
+    {
+        _currentNoiseLevel = Mathf.Clamp(_currentNoiseLevel + amount, 0, maxNoise);
+        OnNoiseChanged?.Invoke(_currentNoiseLevel, maxNoise);
+        // We'll also want a way for noise to decay over time, but we can add that later.
+    }
+
+    private void HandleDeath()
+    {
+        Debug.Log("Player has died.");
+        // TODO: Trigger death animation, show death menu, etc.
+    }
 }
