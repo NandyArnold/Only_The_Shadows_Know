@@ -1,33 +1,39 @@
-// HUDManager.cs
+// HUDManager.cs - UPGRADED VERSION
 
 using UnityEngine;
-using UnityEngine.UI; // Required for UI components like Slider
+using UnityEngine.UI;
 
-/// <summary>
-/// Manages the player's Heads-Up Display elements.
-/// It listens to events from other systems to update the UI.
-/// </summary>
 public class HUDManager : MonoBehaviour
 {
+    [Header("UI Containers")]
+    [Tooltip("The parent GameObject for the entire Player HUD.")]
+    [SerializeField] private GameObject playerHUDContainer;
+
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider manaSlider;
 
     private PlayerHealthManaNoise _playerStats;
 
-    void Start()
+    private void Start()
     {
-        // Wait for the player to be registered before trying to find it.
-        // A more robust system might use an event from the GameManager.
-        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        // Subscribe to the GameManager's state changes
+        if (GameManager.Instance != null)
         {
-            InitializeHUD(GameManager.Instance.Player);
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
+
+        // The HUD starts hidden. The GameState change will enable it.
+        if (playerHUDContainer != null) playerHUDContainer.SetActive(false);
     }
 
     private void OnDestroy()
     {
-        // Always unsubscribe from events when this object is destroyed.
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+        }
+
         if (_playerStats != null)
         {
             _playerStats.OnHealthChanged -= UpdateHealthBar;
@@ -35,18 +41,33 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    private void HandleGameStateChanged(GameState newState)
+    {
+        // Show the HUD only when the state is Gameplay.
+        if (playerHUDContainer != null)
+        {
+            playerHUDContainer.SetActive(newState == GameState.Gameplay);
+        }
+
+        // If we are entering gameplay for the first time, find the player and set up the bars.
+        if (newState == GameState.Gameplay && _playerStats == null)
+        {
+            InitializeHUD(GameManager.Instance.Player);
+        }
+    }
+
     private void InitializeHUD(PlayerController player)
     {
+        if (player == null) return;
         _playerStats = player.GetComponent<PlayerHealthManaNoise>();
+
         if (_playerStats != null)
         {
-            // Subscribe to the events
             _playerStats.OnHealthChanged += UpdateHealthBar;
             _playerStats.OnManaChanged += UpdateManaBar;
 
-            // Set the initial values of the bars
-            UpdateHealthBar(_playerStats.CurrentHealth, 100f); // Assuming max health is 100
-            UpdateManaBar(_playerStats.CurrentMana, 100f);   // Assuming max mana is 100
+            UpdateHealthBar(_playerStats.CurrentHealth, 100f);
+            UpdateManaBar(_playerStats.CurrentMana, 100f);
         }
     }
 

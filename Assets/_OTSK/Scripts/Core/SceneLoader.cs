@@ -35,6 +35,7 @@ public class SceneLoader : MonoBehaviour
     // --- Scene Loading Method ---
     public void LoadSceneAsync(SceneDataSO sceneData, string spawnPointTag = "")
     {
+        GameManager.Instance.UpdateGameState(GameState.Loading);
         if (sceneData == null)
         {
             Debug.LogError("SceneLoader: Cannot load a null SceneDataSO!");

@@ -1,5 +1,6 @@
-// GameManager.cs - CORRECTED VERSION
+// GameManager.cs - UPGRADED VERSION
 
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -8,11 +9,15 @@ public class GameManager : MonoBehaviour
     public PlayerController Player { get; private set; }
 
     [Header("Game Start Settings")]
-    [Tooltip("The SceneData for the initial scene to load after Bootstrap.")]
-    [SerializeField] private SceneDataSO initialScene; // Use this instead of a string
+    [SerializeField] private SceneDataSO initialScene;
+
+    // --- Game State Management ---
+    public GameState CurrentState { get; private set; }
+    public event Action<GameState> OnGameStateChanged;
 
     void Awake()
     {
+        // ... (Singleton and DontDestroyOnLoad logic remains the same) ...
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -21,41 +26,46 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        Debug.Log("GameManager Initialized.");
-
-        // Subscribe to the SceneLoader event using the correct signature.
+        // Subscribe to the SceneLoader event
         if (SceneLoader.Instance != null)
         {
             SceneLoader.Instance.OnSceneLoaded += OnSceneWasLoaded;
-
-            // Call the correct LoadSceneAsync method with the SceneDataSO.
-            if (initialScene != null)
-            {
-                SceneLoader.Instance.LoadSceneAsync(initialScene);
-            }
-            else
-            {
-                Debug.LogError("GameManager: Initial Scene Data is not set in the Inspector!", this);
-            }
         }
-        else
+
+        // Load the very first scene
+        if (initialScene != null)
         {
-            Debug.LogError("GameManager: SceneLoader.Instance is null.", this);
+            SceneLoader.Instance.LoadSceneAsync(initialScene);
         }
     }
 
-    // This method now correctly accepts a SceneDataSO parameter.
+    // This is the new central method for changing the game state.
+    public void UpdateGameState(GameState newState)
+    {
+        if (newState == CurrentState) return;
+
+        CurrentState = newState;
+        OnGameStateChanged?.Invoke(newState);
+        Debug.Log($"Game State changed to: {newState}");
+    }
+
     private void OnSceneWasLoaded(SceneDataSO sceneData)
     {
-        Debug.Log($"GameManager: Scene '{sceneData.sceneName}' of type '{sceneData.sceneType}' was loaded.");
-
-        // Here you can add logic based on scene type or name.
-        // For example, find and initialize the PlayerSpawner only in Gameplay scenes.
+        // When a new scene is loaded, update the game state accordingly.
+        switch (sceneData.sceneType)
+        {
+            case SceneType.Menu:
+                UpdateGameState(GameState.Menu);
+                break;
+            case SceneType.Gameplay:
+                UpdateGameState(GameState.Gameplay);
+                break;
+                // The Loading state is handled by the SceneLoader itself.
+        }
     }
 
     private void OnDestroy()
     {
-        // Unsubscribe from events to prevent memory leaks.
         if (SceneLoader.Instance != null)
         {
             SceneLoader.Instance.OnSceneLoaded -= OnSceneWasLoaded;
@@ -64,11 +74,6 @@ public class GameManager : MonoBehaviour
 
     public void RegisterPlayer(PlayerController player)
     {
-        if (Player != null)
-        {
-            Debug.LogWarning("GameManager: A player is already registered. Overwriting reference.");
-        }
         Player = player;
-        Debug.Log("GameManager: Player reference has been registered.");
     }
 }
