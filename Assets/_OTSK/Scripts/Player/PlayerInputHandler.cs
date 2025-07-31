@@ -13,6 +13,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnJumpInput;
     public event Action<bool> OnCrouchInput; // true for crouch, false for stand
     public event Action<bool> OnRunInput; // true for run (e.g., shift held), false for walk
+    public event Action<Vector2> OnLookInput;
 
     // PlayerCombat will subscribe to these later
     public event Action OnPrimaryAttackInput;
@@ -31,6 +32,7 @@ public class PlayerInputHandler : MonoBehaviour
     // --- Internal References ---
     private PlayerInputActions _inputActions;
     private PlayerMovement _playerMovement; // Direct reference for now, will use events later too
+    
 
     // --- State Variables ---
     private bool _isCrouchToggleActive = false; // For toggling crouch behavior
@@ -48,6 +50,8 @@ public class PlayerInputHandler : MonoBehaviour
         SetupInputCallbacks(); // Configure what happens when input actions are performed
     }
 
+  
+
     private void OnEnable()
     {
         _inputActions.Enable(); // Enable all input action maps (e.g., "Player" map)
@@ -55,7 +59,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        _inputActions.Disable(); // Disable all input action maps
+        //_inputActions.Disable(); // Disable all input action maps
+        // The OnDisable logic remains the same.
+       
     }
 
     private void SetupInputCallbacks()
@@ -80,6 +86,9 @@ public class PlayerInputHandler : MonoBehaviour
         // For Run, assuming it's a hold button (like 'Shift')
         _inputActions.Player.Run.performed += ctx => OnRunInput?.Invoke(true);
         _inputActions.Player.Run.canceled += ctx => OnRunInput?.Invoke(false);
+
+        _inputActions.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
+        _inputActions.Player.Look.canceled += ctx => OnLookInput?.Invoke(Vector2.zero);
 
         // --- Other Actions (Uncomment and implement when ready) ---
         // _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();

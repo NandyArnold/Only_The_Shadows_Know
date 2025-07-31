@@ -27,7 +27,7 @@ public class SceneLoader : MonoBehaviour
         // Make this GameObject persist across scene loads
         DontDestroyOnLoad(gameObject);
 
-        Debug.Log("SceneLoader Initialized.");
+        //Debug.Log("SceneLoader Initialized.");
     }
 
     // --- Scene Loading Method ---

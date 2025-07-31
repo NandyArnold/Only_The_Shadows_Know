@@ -17,7 +17,7 @@ public class PlayerAnimationController : MonoBehaviour
     private static readonly int DodgeRollTriggerHash = Animator.StringToHash("DodgeRollTrigger");
     private static readonly int PrimaryAttackTriggerHash = Animator.StringToHash("PrimaryAttackTrigger"); // For later
     private static readonly int SkillCastTriggerHash = Animator.StringToHash("SkillCastTrigger"); // For later
-
+    private static readonly int IsRunningHash = Animator.StringToHash("IsRunning"); // For later, if we use a 2D blend tree for walk/run
     private void Awake()
     {
         // Try to find the Animator component on this GameObject or its children if not assigned
@@ -42,7 +42,7 @@ public class PlayerAnimationController : MonoBehaviour
 
         // Set boolean parameter for crouching state
         animator.SetBool(IsCrouchingHash, isCrouching);
-
+        animator.SetBool(IsRunningHash, isRunning);
         // NOTE: We no longer directly control Speed like a 1D blend tree here.
         // The 2D blend tree's thresholds and the transitions between Locomotion,
         // CrouchLocomotion, and AimedLocomotion (based on IsCrouching/IsAiming)

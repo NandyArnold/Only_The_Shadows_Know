@@ -1,16 +1,37 @@
+// PlayerController.cs
+
 using UnityEngine;
 
+/// <summary>
+/// The main orchestrator for all player-related components. It holds references
+/// to the modular parts and acts as a central point of contact for external systems.
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [Header("Component References")]
+    [Tooltip("The handler for player input.")]
+    [SerializeField] private PlayerInputHandler playerInputHandler;
+    [Tooltip("The handler for player movement and physics.")]
+    [SerializeField] private PlayerMovement playerMovement;
+    [Tooltip("The handler for player animations.")]
+    [SerializeField] private PlayerAnimationController playerAnimationController;
+
+    // We can add references to PlayerCombat, PlayerHealthManaNoise, etc. here later.
+
+    void Awake()
     {
-        
+        // On Awake, this controller registers itself with the GameManager.
+        // This makes the entire Player object findable by any other system.
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterPlayer(this);
+        }
+        else
+        {
+            Debug.LogError("PlayerController could not find GameManager.Instance to register with!", this);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // You can add public methods here later if other systems need to interact with the player,
+    // for example: public void TeleportTo(Vector3 position) { ... }
 }

@@ -5,6 +5,7 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public PlayerController Player { get; private set; }
 
     // References to other managers (will link in inspector later)
     // public UIManager UIManager; // Will create soon
@@ -59,5 +60,16 @@ public class GameManager : MonoBehaviour
         {
             SceneLoader.Instance.OnSceneLoaded -= OnSceneWasLoaded;
         }
+    }
+
+    // Add a public method for the player to register itself.
+    public void RegisterPlayer(PlayerController player)
+    {
+        if (Player != null)
+        {
+            Debug.LogWarning("GameManager: A player is already registered. Overwriting reference.");
+        }
+        Player = player;
+        Debug.Log("GameManager: Player reference has been registered.");
     }
 }
