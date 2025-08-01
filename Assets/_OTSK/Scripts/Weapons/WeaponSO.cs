@@ -12,7 +12,19 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [TextArea]
     public string weaponDescription;
 
+    [Header("Visuals & Sockets")]
+    public GameObject mainHandPrefab; // The 3D model prefab to spawn.
+    public GameObject offHandWeaponPrefab; // Off-hand weapon model, if applicable.
+    
+    public SocketType mainHandEquipSocket;   // Where it goes when equipped.
+    public SocketType offHandEquipSocket; 
+
+    public SocketType mainHandUnequipSocket; // Where it goes when unequipped.
+    public SocketType offHandUnequipSocket;
+
     // Abstract methods that must be implemented by child classes (Dagger, Bow, etc.)
+
+
     public abstract void PrimaryAttack(PlayerCombat combatController);
     public abstract void SecondaryAttack(PlayerCombat combatController);
 }

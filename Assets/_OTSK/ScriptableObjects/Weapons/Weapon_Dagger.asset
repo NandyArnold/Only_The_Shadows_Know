@@ -14,5 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Dagger
   weaponDescription: 
+  mainHandPrefab: {fileID: 6145625656122818527, guid: d4d12e97cda7a4444ae3a762f962d3bb, type: 3}
+  offHandWeaponPrefab: {fileID: 7702092413395270807, guid: e001af02bc95d8640a3ecfeeb1b06b73, type: 3}
+  mainHandEquipSocket: 0
+  offHandEquipSocket: 1
+  mainHandUnequipSocket: 3
+  offHandUnequipSocket: 4
   slashDamage: 20
   finisherDamage: 100

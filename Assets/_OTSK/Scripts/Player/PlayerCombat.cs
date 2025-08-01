@@ -1,5 +1,4 @@
-// PlayerCombat.cs - UPGRADED
-
+// PlayerCombat.cs - REFACTORED
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,24 +7,21 @@ public class PlayerCombat : MonoBehaviour
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerAnimationController playerAnimationController;
+    [SerializeField] private WeaponManager weaponManager; // New reference
 
     [Header("Weapon Settings")]
     [SerializeField] private List<WeaponSO> availableWeapons;
 
     private WeaponSO _currentWeapon;
-
-    // --- Weapon Animation Components ---
-    // We get references to all possible weapon animation components on the player.
     private DaggerAnimation _daggerAnimation;
-    // private BowAnimation _bowAnimation; // We'll add this later
 
     private void Awake()
     {
         // Get component references
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerAnimationController == null) playerAnimationController = GetComponent<PlayerAnimationController>();
+        if (weaponManager == null) weaponManager = GetComponent<WeaponManager>(); // New
 
-        // Get weapon animation component references
         _daggerAnimation = GetComponent<DaggerAnimation>();
 
         // Equip the first weapon by default.
@@ -35,7 +31,24 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    // ... (OnEnable/OnDisable are unchanged) ...
+    // This method is now much simpler.
+    public void EquipWeapon(WeaponSO newWeapon)
+    {
+        _currentWeapon = newWeapon;
+
+        // 1. Tell the WeaponManager to handle the visuals.
+        weaponManager.OnWeaponEquipped(newWeapon);
+
+        // 2. Tell the PlayerAnimationController to handle the animations.
+        if (newWeapon is DaggerSO)
+        {
+            playerAnimationController.SetWeaponAnimation(_daggerAnimation);
+        }
+
+        Debug.Log($"Equipped: {_currentWeapon.weaponName}");
+    }
+
+    #region Unchanged Methods
     private void OnEnable()
     {
         if (playerInputHandler != null)
@@ -53,16 +66,10 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackInput -= HandleSecondaryAttack;
         }
     }
-
-
     private void HandlePrimaryAttack()
     {
         if (_currentWeapon == null) return;
-
-        // Tell the animator to fire the attack, which will use the correct weapon animation.
         playerAnimationController.TriggerPrimaryAttack();
-
-        // The weapon's logic (damage, etc.) is still handled by the SO.
         _currentWeapon.PrimaryAttack(this);
     }
 
@@ -72,21 +79,5 @@ public class PlayerCombat : MonoBehaviour
         playerAnimationController.TriggerSecondaryAttack();
         _currentWeapon.SecondaryAttack(this);
     }
-
-    public void EquipWeapon(WeaponSO newWeapon)
-    {
-        _currentWeapon = newWeapon;
-
-        // This is the key part: Tell the PlayerAnimationController which animation component to use.
-        if (newWeapon is DaggerSO)
-        {
-            playerAnimationController.SetWeaponAnimation(_daggerAnimation);
-        }
-        // else if (newWeapon is BowSO)
-        // {
-        //     playerAnimationController.SetWeaponAnimation(_bowAnimation);
-        // }
-
-        Debug.Log($"Equipped: {_currentWeapon.weaponName}");
-    }
+    #endregion
 }
