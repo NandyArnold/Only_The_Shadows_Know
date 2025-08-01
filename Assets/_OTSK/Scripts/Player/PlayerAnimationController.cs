@@ -63,4 +63,9 @@ public class PlayerAnimationController : MonoBehaviour
         if (animator == null) return;
         animator.SetTrigger(dodgeRollTriggerHash);
     }
+
+    public void SetAimingState(bool isAiming)
+    {
+        _currentWeaponAnimation?.SetAiming(isAiming);
+    }
 }

@@ -111,7 +111,7 @@
                     "id": "b75ff11b-9fb2-44ca-a80c-8ddbd3491076",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 },
                 {
@@ -163,6 +163,15 @@
                     "name": "Skill3",
                     "type": "Button",
                     "id": "af4225ff-736e-49ab-b76a-671ba03d4e12",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DodgeRoll",
+                    "type": "Button",
+                    "id": "6b1d811f-0371-4431-947c-ff551a809183",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -629,6 +638,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Skill3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76c71215-a438-42cc-af4f-bf4b11af473e",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeRoll",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

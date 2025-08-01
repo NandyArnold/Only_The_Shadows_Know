@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections;
 // Enum for basic locomotion states (used internally by PlayerMovement for clarity)
 // PlayerAnimationController will use more granular direct parameter setting
 public enum LocomotionState { Idle, Walk, Run, CrouchWalk, Jump, DodgeRoll }
@@ -26,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float crouchHeight = 1.0f;  // Crouched CharacterController height
     [SerializeField] private float crouchCenterY = 0.5f; // Crouched CharacterController center Y
 
+    [Header("Dodge Roll Settings")] 
+    [SerializeField] private float dodgeRollSpeed = 10f;
+    [SerializeField] private float dodgeRollDuration = 0.5f;
+
     private Vector2 _moveInput;
     private Vector2 _smoothedMoveInput;
     [SerializeField] private float animationSmoothTime = 0.1f;
@@ -35,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRunning; // To track if Shift is held
     private float _currentSpeed; // The actual speed player is moving at
     private bool _isAiming;
+    private bool _isDodgeRolling = false;
 
     private Transform _cameraTransform; // To orient movement relative to camera
 
@@ -66,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
             playerInputHandler.OnRunInput += SetRunningState; // Use a boolean for run (e.g., from Shift key held)
             if (playerCombat != null)
                 playerCombat.OnAimStateChanged += HandleAimStateChanged;
-            // playerInputHandler.OnDodgeRollInput += DodgeRoll; // Uncomment when ready to implement
+            playerInputHandler.OnDodgeRollInput += HandleDodgeRoll;
         }
     }
 
@@ -81,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
             playerInputHandler.OnRunInput -= SetRunningState;
             if (playerCombat != null)
                 playerCombat.OnAimStateChanged -= HandleAimStateChanged;
-            // playerInputHandler.OnDodgeRollInput -= DodgeRoll;
+            playerInputHandler.OnDodgeRollInput += HandleDodgeRoll;
         }
     }
 
@@ -102,25 +107,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandlePlayerRotation()
     {
-        //if (_cameraTransform == null)
-        //{
-        //    _cameraTransform = Camera.main.transform; // Ensure camera reference is set
-        //    if (_cameraTransform == null) return;
-        //}
-
-        //// Get the camera's forward direction, but only on the XZ plane (ignore Y)
-        //Vector3 cameraForwardFlat = Vector3.ProjectOnPlane(_cameraTransform.forward, Vector3.up).normalized;
-
-        //// Rotate the player to match the camera's horizontal forward direction
-        //if (cameraForwardFlat != Vector3.zero) // Avoid LookRotation with zero vector
-        //{
-        //    transform.rotation = Quaternion.Slerp(
-        //        transform.rotation,
-        //        Quaternion.LookRotation(cameraForwardFlat),
-        //        _currentSpeed * 10f * Time.deltaTime // Adjust this rotation speed if player turns too fast/slow
-        //    );
-        //}
-
         if (_cameraTransform == null) return;
 
         // Make the player's forward direction match the camera's horizontal (yaw) direction.
@@ -162,18 +148,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Add placeholders for other actions
-    public void DodgeRoll()
-    {
-        Debug.Log("Dodge Roll (Not Implemented Yet)");
-        playerAnimationController.PlayDodgeRollAnimation();
-    }
-
-    public void LedgeTeleport(Vector3 targetPos)
-    {
-        Debug.Log("Ledge Teleport (Not Implemented Yet)");
-        // Logic for teleportation will go here, using TeleportManager
-    }
-
+   
 
     // --- Internal Movement Logic ---
 
@@ -233,5 +208,29 @@ public class PlayerMovement : MonoBehaviour
         );
         
     }
- 
+    private void HandleDodgeRoll()
+    {
+        // Don't allow dodging if already dodging or not on the ground.
+        if (_isDodgeRolling || !characterController.isGrounded) return;
+
+        StartCoroutine(DodgeRollCoroutine());
+    }
+
+    private IEnumerator DodgeRollCoroutine()
+    {
+        _isDodgeRolling = true;
+        playerAnimationController.PlayDodgeRollAnimation();
+
+        float startTime = Time.time;
+        Vector3 rollDirection = _moveInput.magnitude > 0.1f ? (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized : transform.forward;
+
+        while (Time.time < startTime + dodgeRollDuration)
+        {
+            characterController.Move(rollDirection * dodgeRollSpeed * Time.deltaTime);
+            yield return null; // Wait for the next frame
+        }
+
+        _isDodgeRolling = false;
+    }
+
 }

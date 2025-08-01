@@ -24,9 +24,12 @@ public class PlayerCombat : MonoBehaviour
 
     private WeaponSO _currentWeapon;
     private DaggerAnimation _daggerAnimation;
-    public event Action<bool> OnAimStateChanged;
+    private BowAnimation _bowAnimation;
 
+    public event Action<bool> OnAimStateChanged;
+    public event Action<bool> OnFocusStateChanged;
     private bool _isAiming = false;
+    private bool _isFocused = false;
 
     #region Standard Methods
     private void Awake()
@@ -37,6 +40,7 @@ public class PlayerCombat : MonoBehaviour
         if (weaponManager == null) weaponManager = GetComponent<WeaponManager>();
 
         _daggerAnimation = GetComponent<DaggerAnimation>();
+        _bowAnimation = GetComponent<BowAnimation>();
 
         if (availableWeapons != null && availableWeapons.Count > 0)
         {
@@ -50,6 +54,9 @@ public class PlayerCombat : MonoBehaviour
         {
             playerInputHandler.OnPrimaryAttackInput += HandlePrimaryAttack;
             playerInputHandler.OnSecondaryAttackInput += HandleSecondaryAttack;
+            playerInputHandler.OnSecondaryAttackPressed += HandleSecondaryAttackPress;
+            playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
+
 
             playerInputHandler.OnWeapon1Input += () => HandleWeaponSwitch(0);
             playerInputHandler.OnWeapon2Input += () => HandleWeaponSwitch(1);
@@ -63,6 +70,9 @@ public class PlayerCombat : MonoBehaviour
         {
             playerInputHandler.OnPrimaryAttackInput -= HandlePrimaryAttack;
             playerInputHandler.OnSecondaryAttackInput -= HandleSecondaryAttack;
+            playerInputHandler.OnSecondaryAttackPressed -= HandleSecondaryAttackPress;
+            playerInputHandler.OnSecondaryAttackReleased -= HandleSecondaryAttackRelease;
+
 
             playerInputHandler.OnWeapon1Input -= () => HandleWeaponSwitch(0);
             playerInputHandler.OnWeapon2Input -= () => HandleWeaponSwitch(1);
@@ -80,6 +90,11 @@ public class PlayerCombat : MonoBehaviour
         {
             playerAnimationController.SetWeaponAnimation(_daggerAnimation);
         }
+        else if (newWeapon is BowSO)
+        {
+            playerAnimationController.SetWeaponAnimation(_bowAnimation);
+        }
+        Debug.Log($"Equipped: {_currentWeapon.weaponName}");
     }
 
     // The Handle methods are now very simple one-liners.
@@ -104,13 +119,27 @@ public class PlayerCombat : MonoBehaviour
         if (_currentWeapon == null) return;
 
         // If we have a bow, toggle aim. Otherwise, do a normal secondary attack.
-        if (_currentWeapon is BowSO)
+        // Guard Clause: If we're holding a bow, this event is ignored.
+        if (_currentWeapon is BowSO) return;
+
+        // For any other weapon, perform the secondary attack.
+        _currentWeapon?.SecondaryAttack(this);
+    }
+    private void HandleSecondaryAttackPress()
+    {
+        // Only do something if we have a bow equipped and are in the aim stance
+        if (_currentWeapon is BowSO && _isAiming)
         {
-            ToggleAimMode();
+            SetFocusState(true);
         }
-        else
+    }
+
+    // This handler is for RELEASING A HOLD (for the Bow)
+    private void HandleSecondaryAttackRelease()
+    {
+        if (_currentWeapon is BowSO && _isAiming)
         {
-            _currentWeapon.SecondaryAttack(this);
+            SetFocusState(false);
         }
     }
 
@@ -130,6 +159,17 @@ public class PlayerCombat : MonoBehaviour
     {
         _isAiming = !_isAiming;
         OnAimStateChanged?.Invoke(_isAiming); // Broadcast the change
+        playerAnimationController.SetAimingState(_isAiming);
         Debug.Log($"Aiming: {_isAiming}");
+    }
+    private void SetFocusState(bool isFocused)
+    {
+        // Guard Clause: Only run if the state is actually changing.
+        if (_isFocused == isFocused) return;
+
+        _isFocused = isFocused;
+        // Notify any listening systems (like the CameraController) of the change.
+        OnFocusStateChanged?.Invoke(_isFocused);
+        Debug.Log($"Focus state changed to: {_isFocused}");
     }
 }

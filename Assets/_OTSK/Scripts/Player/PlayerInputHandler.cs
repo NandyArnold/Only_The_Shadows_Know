@@ -11,18 +11,27 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnJumpInput;
     public event Action<bool> OnCrouchInput;
     public event Action<bool> OnRunInput;
+
     public event Action OnPrimaryAttackInput;
-    public event Action OnSecondaryAttackInput;
+    public event Action OnSecondaryAttackInput;     // For simple presses (Dagger)
+    public event Action OnSecondaryAttackPressed;   // For starting a hold (Bow)
+    public event Action OnSecondaryAttackReleased;  // For ending a hold (Bow)
+
     public event Action OnWeapon1Input;
     public event Action OnWeapon2Input;
     public event Action OnWeapon3Input;
+
     public event Action<Vector2> OnLookInput; // For CameraController
     public event Action<int> OnSkillInput;
+    public event Action OnDodgeRollInput;
 
     private PlayerInputActions _inputActions;
     private InputActionMap _playerMap;
     private InputActionMap _uiMap;
     private bool _isCrouchToggleActive = false;
+
+    private float _lastDodgeTapTime;
+    [SerializeField] private float doubleTapTimeWindow = 0.3f;
 
     private void Awake()
     {
@@ -78,11 +87,23 @@ public class PlayerInputHandler : MonoBehaviour
         };
         _inputActions.Player.Run.performed += ctx => OnRunInput?.Invoke(true);
         _inputActions.Player.Run.canceled += ctx => OnRunInput?.Invoke(false);
+
         _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
-        _inputActions.Player.SecondaryAttack.performed += ctx => OnSecondaryAttackInput?.Invoke();
+        _inputActions.Player.SecondaryAttack.performed += ctx =>
+        {
+            // When the button is pressed, fire BOTH the simple and the pressed events
+            OnSecondaryAttackInput?.Invoke();
+            OnSecondaryAttackPressed?.Invoke();
+        };
+        _inputActions.Player.SecondaryAttack.canceled += ctx => OnSecondaryAttackReleased?.Invoke();
+
+
+
+
         _inputActions.Player.Weapon1.performed += ctx => OnWeapon1Input?.Invoke();
         _inputActions.Player.Weapon2.performed += ctx => OnWeapon2Input?.Invoke();
         _inputActions.Player.Weapon3.performed += ctx => OnWeapon3Input?.Invoke();
+
         _inputActions.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
         _inputActions.Player.Look.canceled += ctx => OnLookInput?.Invoke(Vector2.zero);
 
@@ -93,6 +114,8 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Skill1.performed += ctx => OnSkillInput?.Invoke(0);
         _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
         _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
+
+        _inputActions.Player.DodgeRoll.performed += ctx => HandleDodgeInput();
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)
@@ -120,5 +143,17 @@ public class PlayerInputHandler : MonoBehaviour
                 _uiMap.Enable();
                 break;
         }
+    }
+    private void HandleDodgeInput()
+    {
+        // Check if the time since the last tap is within our window.
+        if (Time.time - _lastDodgeTapTime < doubleTapTimeWindow)
+        {
+            // It's a double tap! Fire the event.
+            OnDodgeRollInput?.Invoke();
+        }
+
+        // Always update the time of the last tap.
+        _lastDodgeTapTime = Time.time;
     }
 }
