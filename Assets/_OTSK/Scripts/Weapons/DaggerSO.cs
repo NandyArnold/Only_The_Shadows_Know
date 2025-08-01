@@ -27,7 +27,10 @@ public class DaggerSO : WeaponSO
             foreach (var hit in hits)
             {
                 Debug.Log($"<color=green>Dagger (R):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
-                // TODO: Call a TakeDamage() method on the hit object.
+                if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                {
+                    enemyHealth.TakeDamage(slashDamage);
+                }
             }
         }
     }
@@ -42,7 +45,18 @@ public class DaggerSO : WeaponSO
         bool canPerformFinisher = false; // Placeholder for finisher logic
         if (canPerformFinisher)
         {
-            // Finisher logic...
+            Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
+            if (hits.Any())
+            {
+                foreach (var hit in hits)
+                {
+                    Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
+                    if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                    {
+                        enemyHealth.TakeDamage(finisherDamage);
+                    }
+                }
+            }
         }
         else
         {
@@ -52,7 +66,10 @@ public class DaggerSO : WeaponSO
                 foreach (var hit in hits)
                 {
                     Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
-                    // TODO: Call a TakeDamage() method on the hit object.
+                    if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                    {
+                        enemyHealth.TakeDamage(slashDamage);
+                    }
                 }
             }
         }

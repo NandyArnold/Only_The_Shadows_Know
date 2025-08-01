@@ -834,7 +834,7 @@ GameObject:
   - component: {fileID: 1254408165}
   - component: {fileID: 1254408164}
   - component: {fileID: 1254408163}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -928,6 +928,7 @@ GameObject:
   - component: {fileID: 1272863841}
   - component: {fileID: 1272863840}
   - component: {fileID: 1272863839}
+  - component: {fileID: 1272863843}
   m_Layer: 6
   m_Name: TestDummy
   m_TagString: Enemy
@@ -1026,6 +1027,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1272863843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272863838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3946e679204659449bb52e5aa8a8019b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!224 &1499269314 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6251642165967613813, guid: cff8f63ee4c8a5249a4509709ca24377, type: 3}
