@@ -24,6 +24,11 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnSkill2Input; // E.g., for Scrying
     public event Action OnSkill3Input; // E.g., for DeathZone
 
+    //Weapon changing
+    public event Action OnWeapon1Input;
+    public event Action OnWeapon2Input;
+    public event Action OnWeapon3Input;
+
     // Other inputs
     public event Action OnDodgeRollInput;
     public event Action OnInteractInput;
@@ -97,9 +102,13 @@ public class PlayerInputHandler : MonoBehaviour
 
         _inputActions.Player.ToggleCursorMode.performed += ctx => OnToggleCursorModeInput?.Invoke();
 
-        // --- Other Actions (Uncomment and implement when ready) ---
+       
         _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
         _inputActions.Player.SecondaryAttack.performed += ctx => OnSecondaryAttackInput?.Invoke();
+
+        _inputActions.Player.Weapon1.performed += ctx => OnWeapon1Input?.Invoke();
+        _inputActions.Player.Weapon2.performed += ctx => OnWeapon2Input?.Invoke();
+        _inputActions.Player.Weapon3.performed += ctx => OnWeapon3Input?.Invoke();
         // _inputActions.Player.Skill1.performed += ctx => OnSkill1Input?.Invoke();
         // _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
         // _inputActions.Player.Interact.performed += ctx => OnInteractInput?.Invoke();

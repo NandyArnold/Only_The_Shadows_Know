@@ -17,7 +17,7 @@ public class WeaponManager : MonoBehaviour
     private GameObject _offHandInstance;
 
     // This is the public method that PlayerCombat will call.
-    public void OnWeaponEquipped(WeaponSO weapon)
+    public void EquipNewWeapon(WeaponSO weapon)
     {
         if (_mainHandInstance != null) Destroy(_mainHandInstance);
         if (_offHandInstance != null) Destroy(_offHandInstance);

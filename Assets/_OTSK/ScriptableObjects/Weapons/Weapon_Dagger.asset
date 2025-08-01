@@ -20,5 +20,9 @@ MonoBehaviour:
   offHandEquipSocket: 1
   mainHandUnequipSocket: 3
   offHandUnequipSocket: 4
+  attackRange: 0.7
+  hittableLayers:
+    serializedVersion: 2
+    m_Bits: 64
   slashDamage: 20
   finisherDamage: 100

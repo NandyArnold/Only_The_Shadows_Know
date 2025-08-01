@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2837a247227dc3542b6f2892944c7f2a, type: 3}
+  m_Name: Weapon_Bow
+  m_EditorClassIdentifier: 
+  weaponName: 
+  weaponDescription: 
+  mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}
+  offHandWeaponPrefab: {fileID: 4524251563362808543, guid: 0c6414f5a3a1e9044a6fb663d5f8bf3c, type: 3}
+  mainHandEquipSocket: 1
+  offHandEquipSocket: 0
+  mainHandUnequipSocket: 2
+  offHandUnequipSocket: 2
