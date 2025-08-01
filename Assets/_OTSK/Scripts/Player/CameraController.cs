@@ -15,6 +15,14 @@ public class CameraController : MonoBehaviour
     [Tooltip("The empty GameObject the camera will follow and look at. This object will be rotated.")]
     [SerializeField] private Transform cameraTarget;
 
+    [Header("Component References")] // NEW
+    [SerializeField] private PlayerCombat playerCombat;
+
+    [Header("Cinemachine Cameras")] // UPDATED
+    [SerializeField] private CinemachineCamera shoulderCamera;
+    [SerializeField] private CinemachineCamera zoomCamera;
+
+
     [Header("Settings")]
     [Tooltip("Sensitivity of the mouse look.")]
     [SerializeField] private float lookSensitivity = 1.0f;
@@ -34,6 +42,8 @@ public class CameraController : MonoBehaviour
     {
         if (playerInputHandler == null)
             playerInputHandler = GetComponent<PlayerInputHandler>();
+        if (playerCombat == null)
+            playerCombat = GetComponent<PlayerCombat>();
     }
 
     void Start() // Use Start() to ensure the Player's Awake() has run first.
@@ -57,12 +67,16 @@ public class CameraController : MonoBehaviour
     {
         if (playerInputHandler != null)
             playerInputHandler.OnLookInput += SetLookInput;
+        if (playerCombat != null)
+            playerCombat.OnAimStateChanged += HandleAimStateChanged;
     }
 
     private void OnDisable()
     {
         if (playerInputHandler != null)
             playerInputHandler.OnLookInput -= SetLookInput;
+        if (playerCombat != null)
+            playerCombat.OnAimStateChanged -= HandleAimStateChanged;
     }
 
     private void LateUpdate()
@@ -104,4 +118,14 @@ public class CameraController : MonoBehaviour
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
+
+    private void HandleAimStateChanged(bool isAiming)
+    {
+        if (shoulderCamera == null || zoomCamera == null) return;
+
+        // A higher priority camera becomes the active one.
+        shoulderCamera.Priority = isAiming ? 5 : 10;
+        zoomCamera.Priority = isAiming ? 15 : 5;
+    }
+
 }

@@ -1,5 +1,5 @@
 // PlayerCombat.cs - REFACTORED
-
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +24,9 @@ public class PlayerCombat : MonoBehaviour
 
     private WeaponSO _currentWeapon;
     private DaggerAnimation _daggerAnimation;
+    public event Action<bool> OnAimStateChanged;
+
+    private bool _isAiming = false;
 
     #region Standard Methods
     private void Awake()
@@ -82,12 +85,33 @@ public class PlayerCombat : MonoBehaviour
     // The Handle methods are now very simple one-liners.
     private void HandlePrimaryAttack()
     {
-        _currentWeapon?.PrimaryAttack(this);
+        if (_currentWeapon == null) return;
+
+        // If we are aiming with a bow, fire a focused shot. Otherwise, normal primary attack.
+        if (_isAiming && _currentWeapon is BowSO)
+        {
+            // We'll create a special method in BowSO for this later
+            Debug.Log("Firing a FOCUSED shot.");
+        }
+        else
+        {
+            _currentWeapon.PrimaryAttack(this);
+        }
     }
 
     private void HandleSecondaryAttack()
     {
-        _currentWeapon?.SecondaryAttack(this);
+        if (_currentWeapon == null) return;
+
+        // If we have a bow, toggle aim. Otherwise, do a normal secondary attack.
+        if (_currentWeapon is BowSO)
+        {
+            ToggleAimMode();
+        }
+        else
+        {
+            _currentWeapon.SecondaryAttack(this);
+        }
     }
 
     private void HandleWeaponSwitch(int weaponIndex)
@@ -101,5 +125,11 @@ public class PlayerCombat : MonoBehaviour
                 SwitchWeapon(availableWeapons[weaponIndex]);
             }
         }
+    }
+    private void ToggleAimMode()
+    {
+        _isAiming = !_isAiming;
+        OnAimStateChanged?.Invoke(_isAiming); // Broadcast the change
+        Debug.Log($"Aiming: {_isAiming}");
     }
 }

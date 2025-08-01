@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private PlayerInputHandler playerInputHandler; // Added reference
+    [SerializeField] private PlayerCombat playerCombat;
 
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 3f;
@@ -17,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float crouchSpeedMultiplier = 0.5f; // E.g., 50% of walk speed when crouching
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -9.81f; // Standard Earth gravity
+    [SerializeField] private float aimSpeedMultiplier = 0.5f;
 
     [Header("Character Controller Settings")]
     [SerializeField] private float normalHeight = 2.0f; // Default CharacterController height
@@ -25,10 +27,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float crouchCenterY = 0.5f; // Crouched CharacterController center Y
 
     private Vector2 _moveInput;
+    private Vector2 _smoothedMoveInput;
+    [SerializeField] private float animationSmoothTime = 0.1f;
+
     private Vector3 _velocity; // Current velocity, especially for gravity
     private bool _isCrouching;
     private bool _isRunning; // To track if Shift is held
     private float _currentSpeed; // The actual speed player is moving at
+    private bool _isAiming;
 
     private Transform _cameraTransform; // To orient movement relative to camera
 
@@ -45,6 +51,8 @@ public class PlayerMovement : MonoBehaviour
         _cameraTransform = Camera.main.transform; // Assuming main camera is tagged "MainCamera"
 
         _currentSpeed = walkSpeed; // Start at walk speed
+        if (playerCombat == null)
+            playerCombat = GetComponent<PlayerCombat>();
     }
 
     private void OnEnable()
@@ -56,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
             playerInputHandler.OnJumpInput += Jump;
             playerInputHandler.OnCrouchInput += Crouch; // Use a toggle for Crouch
             playerInputHandler.OnRunInput += SetRunningState; // Use a boolean for run (e.g., from Shift key held)
+            if (playerCombat != null)
+                playerCombat.OnAimStateChanged += HandleAimStateChanged;
             // playerInputHandler.OnDodgeRollInput += DodgeRoll; // Uncomment when ready to implement
         }
     }
@@ -69,6 +79,8 @@ public class PlayerMovement : MonoBehaviour
             playerInputHandler.OnJumpInput -= Jump;
             playerInputHandler.OnCrouchInput -= Crouch;
             playerInputHandler.OnRunInput -= SetRunningState;
+            if (playerCombat != null)
+                playerCombat.OnAimStateChanged -= HandleAimStateChanged;
             // playerInputHandler.OnDodgeRollInput -= DodgeRoll;
         }
     }
@@ -165,11 +177,21 @@ public class PlayerMovement : MonoBehaviour
 
     // --- Internal Movement Logic ---
 
+    private void HandleAimStateChanged(bool isAiming)
+    {
+        _isAiming = isAiming;
+        UpdateCurrentSpeed(); // Recalculate speed immediately.
+    }
+
     private void UpdateCurrentSpeed()
     {
         if (_isCrouching)
         {
             _currentSpeed = walkSpeed * crouchSpeedMultiplier;
+        }
+        else if (_isAiming) // Add this new condition
+        {
+            _currentSpeed = walkSpeed * aimSpeedMultiplier;
         }
         else
         {
@@ -195,57 +217,21 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(moveDirection * _currentSpeed * Time.deltaTime);
         characterController.Move(_velocity * Time.deltaTime); // Apply gravity separately
 
+        // Smooth the raw input over time.
+        _smoothedMoveInput = Vector2.Lerp(_smoothedMoveInput, _moveInput, Time.deltaTime / animationSmoothTime);
+
         // --- Update Animator Parameters ---
         float animSpeedMultiplier = _isRunning && !_isCrouching ? runSpeed / walkSpeed : 1f;
 
         // Pass LOCAL input to the animator. Since the player is always facing forward relative to the camera,
         // _moveInput.y is forward/backward and _moveInput.x is strafing left/right.
         playerAnimationController.SetLocomotionInput(
-            _moveInput.x * animSpeedMultiplier,
-            _moveInput.y * animSpeedMultiplier,
+            _smoothedMoveInput.x * animSpeedMultiplier, // Use smoothed value
+            _smoothedMoveInput.y * animSpeedMultiplier, // Use smoothed value
             _isCrouching,
             _isRunning
         );
-        //// Calculate movement direction relative to camera's forward/right
-        //Vector3 cameraForward = Vector3.ProjectOnPlane(_cameraTransform.forward, Vector3.up).normalized;
-        //Vector3 cameraRight = Vector3.ProjectOnPlane(_cameraTransform.right, Vector3.up).normalized;
-        //Vector3 moveDirection = cameraForward * _moveInput.y + cameraRight * _moveInput.x;
-
-        //// Apply movement
-        //if (_moveInput.magnitude > 0.1f) // Only move if there's significant input
-        //{
-        //    // Rotate player to face movement direction
-        //    //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-        //    //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _currentSpeed * 10f * Time.deltaTime); // Adjust rotation speed as needed
-
-        //    characterController.Move(moveDirection * _currentSpeed * Time.deltaTime + _velocity * Time.deltaTime);
-        //}
-        //else
-        //{
-        //    characterController.Move(_velocity * Time.deltaTime); // Only apply gravity if no horizontal input
-        //}
-
-        //// --- Update Animator Parameters ---
-        //// Pass normalized input directly to the Animator's MoveX and MoveY parameters.
-        //// We'll also pass IsCrouching and IsRunning state for transitions and blend tree adjustments.
-        //// Scale the input based on whether the character is running
-        //float animSpeedMultiplier = 1f;
-        //if (_isRunning && !_isCrouching) // Only multiply if actually running (not crouching)
-        //{
-        //    animSpeedMultiplier = runSpeed / walkSpeed; // e.g., 6/3 = 2
-        //}
-        //else if (_isCrouching)
-        //{
-        //    animSpeedMultiplier = crouchSpeedMultiplier; // e.g., 0.5
-        //}
-
-
-        //// Pass scaled input to animation controller
-        //playerAnimationController.SetLocomotionInput(
-        //    _moveInput.x * animSpeedMultiplier, // Scale X input
-        //    _moveInput.y * animSpeedMultiplier, // Scale Y input
-        //    _isCrouching,
-        //    _isRunning // Still pass this if you want to use it for other logic later
-        //);
+        
     }
+ 
 }
