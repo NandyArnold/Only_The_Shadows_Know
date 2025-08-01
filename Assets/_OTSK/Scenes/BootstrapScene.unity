@@ -716,6 +716,8 @@ GameObject:
   - component: {fileID: 1837955057}
   - component: {fileID: 1837955058}
   - component: {fileID: 1837955059}
+  - component: {fileID: 1837955061}
+  - component: {fileID: 1837955060}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -776,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   crosshairPrefab: {fileID: 7810438744330062705, guid: cff8f63ee4c8a5249a4509709ca24377, type: 3}
+  isCursorLocked: 1
 --- !u!114 &1837955058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -810,6 +813,30 @@ MonoBehaviour:
   maxGroundAngle: 45
   groundCheckOffset: 2
   teleportVFXPrefab: {fileID: 0}
+--- !u!114 &1837955060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e548bfbddc388946936dc4aed33e199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1837955061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b906244e2972b4b88b5a8910bb19d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1985777997
 GameObject:
   m_ObjectHideFlags: 0

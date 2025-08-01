@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &252138 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1869571380571909251, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-  m_PrefabInstance: {fileID: 4754192947251521664}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &124663026
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,11 +221,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!4 &257094940 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7422512713992560123, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-  m_PrefabInstance: {fileID: 4754192947251521664}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &281875770
 GameObject:
   m_ObjectHideFlags: 0
@@ -1521,30 +1511,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6997982617661579710, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: m_Center.y
-      value: 0.92
-      objectReference: {fileID: 0}
-    - target: {fileID: 7367054569523521278, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: handSocketL
-      value: 
-      objectReference: {fileID: 257094940}
-    - target: {fileID: 7367054569523521278, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: handSocketR
-      value: 
-      objectReference: {fileID: 252138}
-    - target: {fileID: 7367054569523521278, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: availableWeapons.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7367054569523521278, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: 'availableWeapons.Array.data[1]'
-      value: 
-      objectReference: {fileID: 11400000, guid: 7c6cb638bc7e5fb468316962919ce671, type: 2}
-    - target: {fileID: 7367054569523521278, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: 'availableWeapons.Array.data[2]'
-      value: 
-      objectReference: {fileID: 11400000, guid: cac6ddebf74158549a360ec91ce6fc16, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

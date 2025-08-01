@@ -17,9 +17,12 @@ public class SkillSO : ScriptableObject
     [Header("Skill Stats")]
     public float manaCost;
     public float cooldown;
-
-    // REPLACED the old boolean with our new, more flexible enum.
     public SkillUsageCondition usageCondition;
+    public CastMode castMode;
+
+
+    [Tooltip("For 'Instant' cast skills, should this lock the player's movement during the cast animation?")]
+    public bool lockMovementWhileCasting; // This is now clearly for Instant skills only.
 
     [Header("Skill Behavior")]
     [Tooltip("The script that defines what this skill actually does.")]

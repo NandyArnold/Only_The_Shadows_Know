@@ -272,9 +272,6 @@ PrefabInstance:
       addedObject: {fileID: 2210745878514288481}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6731655628258351882}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 201230392791682701}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       insertIndex: -1
@@ -300,6 +297,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8374650582106030362}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6023620784964649685}
   m_SourcePrefab: {fileID: 100100000, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
 --- !u!95 &1539351283307477294 stripped
 Animator:
@@ -343,9 +343,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32aa4e59a970f54098c69909107b111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInputHandler: {fileID: 0}
-  playerMovement: {fileID: 0}
-  playerAnimationController: {fileID: 0}
+  playerInputHandler: {fileID: 2210745878514288481}
+  playerMovement: {fileID: 629505888469661623}
+  playerAnimationController: {fileID: 7619512642376539503}
+  playerSkillController: {fileID: 6023620784964649685}
 --- !u!114 &2210745878514288481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,21 +359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93703dfbc5b99a24e91e7677207525fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6731655628258351882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5257710320307730926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f32aa4e59a970f54098c69909107b111, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerInputHandler: {fileID: 2210745878514288481}
-  playerMovement: {fileID: 629505888469661623}
-  playerAnimationController: {fileID: 7619512642376539503}
 --- !u!114 &201230392791682701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -465,7 +451,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.95, z: 0}
+  m_Center: {x: 0, y: 0.92, z: 0}
 --- !u!114 &3620287863217414848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -496,8 +482,12 @@ MonoBehaviour:
   playerInputHandler: {fileID: 2210745878514288481}
   playerAnimationController: {fileID: 7619512642376539503}
   weaponManager: {fileID: 8374650582106030362}
+  handSocketR: {fileID: 1869571380571909251}
+  handSocketL: {fileID: 7422512713992560123}
   availableWeapons:
   - {fileID: 11400000, guid: a1d8bdac0a45b2c488746e008540c9ca, type: 2}
+  - {fileID: 11400000, guid: 7c6cb638bc7e5fb468316962919ce671, type: 2}
+  - {fileID: 11400000, guid: cac6ddebf74158549a360ec91ce6fc16, type: 2}
 --- !u!114 &8271836069866080191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,6 +518,22 @@ MonoBehaviour:
   backSocket: {fileID: 1627628729614435409}
   hipSocketL: {fileID: 1563276738803428886}
   hipSocketR: {fileID: 8494100446243109166}
+--- !u!114 &6023620784964649685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257710320307730926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb5f5ae7e96f664b8b8fa1d4133fd4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInputHandler: {fileID: 2210745878514288481}
+  playerHealthManaNoise: {fileID: 6750015388211781664}
+  skillRegistry: {fileID: 11400000, guid: 5cdffd3c250d9b74e93764dddddbd4dd, type: 2}
+  equippedSkillIDs: 02000000
 --- !u!4 &6738483135370902391 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
