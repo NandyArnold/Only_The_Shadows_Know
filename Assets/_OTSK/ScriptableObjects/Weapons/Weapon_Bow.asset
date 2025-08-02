@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: 
   weaponDescription: 
   mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}
-  offHandWeaponPrefab: {fileID: 4524251563362808543, guid: 0c6414f5a3a1e9044a6fb663d5f8bf3c, type: 3}
+  offHandWeaponPrefab: {fileID: 4595004708150532207, guid: 999496d1dbb7ad04c943f24d56c5000d, type: 3}
   mainHandEquipSocket: 1
   offHandEquipSocket: 0
   mainHandUnequipSocket: 2

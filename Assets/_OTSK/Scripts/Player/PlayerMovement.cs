@@ -95,15 +95,12 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
         HandleMovement();
         //Debug.Log("Is Grounded: " + characterController.isGrounded + ", Velocity Y: " + _velocity.y);
-    
+        HandlePlayerRotation();
     }
 
     // Inside PlayerMovement.cs, after the Update() method
 
-    private void LateUpdate()
-    {
-        HandlePlayerRotation();
-    }
+  
 
     private void HandlePlayerRotation()
     {

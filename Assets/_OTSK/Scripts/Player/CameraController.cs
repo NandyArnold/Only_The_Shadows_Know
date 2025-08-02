@@ -13,6 +13,8 @@ public class CameraController : MonoBehaviour
     [Header("Cinemachine Cameras")]
     [SerializeField] private CinemachineCamera shoulderCamera;
     [SerializeField] private CinemachineCamera zoomCamera;
+    [Tooltip("The empty object the camera follows. This is what we rotate.")]
+    [SerializeField] private Transform cameraTarget;
 
     [Header("Settings")]
     [SerializeField] private float lookSensitivity = 1.0f;
@@ -80,6 +82,10 @@ public class CameraController : MonoBehaviour
         _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch, bottomClamp, topClamp);
         _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
 
+        if (cameraTarget != null)
+        {
+            cameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
+        }
         // In your full player setup, this rotation should be applied to a camera target pivot, not the player directly.
         // For now, this is fine, but the player's rotation should be handled by PlayerMovement.
     }

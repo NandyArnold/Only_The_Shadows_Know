@@ -192,12 +192,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SecondaryAttack"",
+                    ""name"": ""SecondaryAttack_Hold"",
                     ""type"": ""Button"",
                     ""id"": ""b75ff11b-9fb2-44ca-a80c-8ddbd3491076"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SecondaryAttack_Press"",
+                    ""type"": ""Button"",
+                    ""id"": ""5915dc8d-f276-4e38-84ad-41083e97318b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -657,7 +666,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SecondaryAttack"",
+                    ""action"": ""SecondaryAttack_Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea35202e-cd00-46e6-bd5e-99061a2cc865"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondaryAttack_Press"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1353,7 +1373,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_ToggleCursorMode = m_Player.FindAction("ToggleCursorMode", throwIfNotFound: true);
         m_Player_PrimaryAttack = m_Player.FindAction("PrimaryAttack", throwIfNotFound: true);
-        m_Player_SecondaryAttack = m_Player.FindAction("SecondaryAttack", throwIfNotFound: true);
+        m_Player_SecondaryAttack_Hold = m_Player.FindAction("SecondaryAttack_Hold", throwIfNotFound: true);
+        m_Player_SecondaryAttack_Press = m_Player.FindAction("SecondaryAttack_Press", throwIfNotFound: true);
         m_Player_Weapon1 = m_Player.FindAction("Weapon1", throwIfNotFound: true);
         m_Player_Weapon2 = m_Player.FindAction("Weapon2", throwIfNotFound: true);
         m_Player_Weapon3 = m_Player.FindAction("Weapon3", throwIfNotFound: true);
@@ -1466,7 +1487,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_ToggleCursorMode;
     private readonly InputAction m_Player_PrimaryAttack;
-    private readonly InputAction m_Player_SecondaryAttack;
+    private readonly InputAction m_Player_SecondaryAttack_Hold;
+    private readonly InputAction m_Player_SecondaryAttack_Press;
     private readonly InputAction m_Player_Weapon1;
     private readonly InputAction m_Player_Weapon2;
     private readonly InputAction m_Player_Weapon3;
@@ -1530,9 +1552,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @PrimaryAttack => m_Wrapper.m_Player_PrimaryAttack;
         /// <summary>
-        /// Provides access to the underlying input action "Player/SecondaryAttack".
+        /// Provides access to the underlying input action "Player/SecondaryAttack_Hold".
         /// </summary>
-        public InputAction @SecondaryAttack => m_Wrapper.m_Player_SecondaryAttack;
+        public InputAction @SecondaryAttack_Hold => m_Wrapper.m_Player_SecondaryAttack_Hold;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SecondaryAttack_Press".
+        /// </summary>
+        public InputAction @SecondaryAttack_Press => m_Wrapper.m_Player_SecondaryAttack_Press;
         /// <summary>
         /// Provides access to the underlying input action "Player/Weapon1".
         /// </summary>
@@ -1620,9 +1646,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started += instance.OnPrimaryAttack;
             @PrimaryAttack.performed += instance.OnPrimaryAttack;
             @PrimaryAttack.canceled += instance.OnPrimaryAttack;
-            @SecondaryAttack.started += instance.OnSecondaryAttack;
-            @SecondaryAttack.performed += instance.OnSecondaryAttack;
-            @SecondaryAttack.canceled += instance.OnSecondaryAttack;
+            @SecondaryAttack_Hold.started += instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Hold.performed += instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Hold.canceled += instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Press.started += instance.OnSecondaryAttack_Press;
+            @SecondaryAttack_Press.performed += instance.OnSecondaryAttack_Press;
+            @SecondaryAttack_Press.canceled += instance.OnSecondaryAttack_Press;
             @Weapon1.started += instance.OnWeapon1;
             @Weapon1.performed += instance.OnWeapon1;
             @Weapon1.canceled += instance.OnWeapon1;
@@ -1688,9 +1717,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started -= instance.OnPrimaryAttack;
             @PrimaryAttack.performed -= instance.OnPrimaryAttack;
             @PrimaryAttack.canceled -= instance.OnPrimaryAttack;
-            @SecondaryAttack.started -= instance.OnSecondaryAttack;
-            @SecondaryAttack.performed -= instance.OnSecondaryAttack;
-            @SecondaryAttack.canceled -= instance.OnSecondaryAttack;
+            @SecondaryAttack_Hold.started -= instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Hold.performed -= instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Hold.canceled -= instance.OnSecondaryAttack_Hold;
+            @SecondaryAttack_Press.started -= instance.OnSecondaryAttack_Press;
+            @SecondaryAttack_Press.performed -= instance.OnSecondaryAttack_Press;
+            @SecondaryAttack_Press.canceled -= instance.OnSecondaryAttack_Press;
             @Weapon1.started -= instance.OnWeapon1;
             @Weapon1.performed -= instance.OnWeapon1;
             @Weapon1.canceled -= instance.OnWeapon1;
@@ -2101,12 +2133,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPrimaryAttack(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "SecondaryAttack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "SecondaryAttack_Hold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSecondaryAttack(InputAction.CallbackContext context);
+        void OnSecondaryAttack_Hold(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SecondaryAttack_Press" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondaryAttack_Press(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Weapon1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

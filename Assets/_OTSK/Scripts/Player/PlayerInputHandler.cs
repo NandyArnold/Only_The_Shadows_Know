@@ -89,13 +89,10 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Run.canceled += ctx => OnRunInput?.Invoke(false);
 
         _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
-        _inputActions.Player.SecondaryAttack.performed += ctx =>
-        {
-            // When the button is pressed, fire BOTH the simple and the pressed events
-            OnSecondaryAttackInput?.Invoke();
-            OnSecondaryAttackPressed?.Invoke();
-        };
-        _inputActions.Player.SecondaryAttack.canceled += ctx => OnSecondaryAttackReleased?.Invoke();
+        _inputActions.Player.SecondaryAttack_Press.performed += ctx => OnSecondaryAttackInput?.Invoke();
+
+        _inputActions.Player.SecondaryAttack_Hold.performed += ctx => OnSecondaryAttackPressed?.Invoke();
+        _inputActions.Player.SecondaryAttack_Hold.canceled += ctx => OnSecondaryAttackReleased?.Invoke();
 
 
 

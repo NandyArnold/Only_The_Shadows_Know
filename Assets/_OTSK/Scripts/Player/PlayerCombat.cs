@@ -22,12 +22,13 @@ public class PlayerCombat : MonoBehaviour
     [Header("Weapon Settings")]
     [SerializeField] private List<WeaponSO> availableWeapons;
 
+    public event Action<bool> OnAimStateChanged;
+    public event Action<bool> OnFocusStateChanged;
+
     private WeaponSO _currentWeapon;
     private DaggerAnimation _daggerAnimation;
     private BowAnimation _bowAnimation;
 
-    public event Action<bool> OnAimStateChanged;
-    public event Action<bool> OnFocusStateChanged;
     private bool _isAiming = false;
     private bool _isFocused = false;
 
@@ -58,9 +59,9 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
 
 
-            playerInputHandler.OnWeapon1Input += () => HandleWeaponSwitch(0);
-            playerInputHandler.OnWeapon2Input += () => HandleWeaponSwitch(1);
-            playerInputHandler.OnWeapon3Input += () => HandleWeaponSwitch(2);
+            playerInputHandler.OnWeapon1Input += HandleWeapon1Switch;
+            playerInputHandler.OnWeapon2Input += HandleWeapon2Switch;
+            playerInputHandler.OnWeapon3Input += HandleWeapon3Switch;
         }
     }
 
@@ -74,15 +75,16 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackReleased -= HandleSecondaryAttackRelease;
 
 
-            playerInputHandler.OnWeapon1Input -= () => HandleWeaponSwitch(0);
-            playerInputHandler.OnWeapon2Input -= () => HandleWeaponSwitch(1);
-            playerInputHandler.OnWeapon3Input -= () => HandleWeaponSwitch(2);
+            playerInputHandler.OnWeapon1Input -= HandleWeapon1Switch;
+            playerInputHandler.OnWeapon2Input -= HandleWeapon2Switch;
+            playerInputHandler.OnWeapon3Input -= HandleWeapon3Switch;
         }
     }
     #endregion
 
     public void SwitchWeapon(WeaponSO newWeapon)
     {
+        if (newWeapon == null || newWeapon == _currentWeapon) return;
         _currentWeapon = newWeapon;
         weaponManager.EquipNewWeapon(newWeapon);
 
@@ -94,82 +96,79 @@ public class PlayerCombat : MonoBehaviour
         {
             playerAnimationController.SetWeaponAnimation(_bowAnimation);
         }
-        Debug.Log($"Equipped: {_currentWeapon.weaponName}");
+
+        SetAimState(newWeapon is BowSO);
+
+        if (newWeapon is DaggerSO)
+            playerAnimationController.SetWeaponAnimation(_daggerAnimation);
+        else if (newWeapon is BowSO)
+            playerAnimationController.SetWeaponAnimation(_bowAnimation);
     }
 
-    // The Handle methods are now very simple one-liners.
+    private void SetAimState(bool isAiming)
+    {
+        if (_isAiming == isAiming) return;
+        _isAiming = isAiming;
+        OnAimStateChanged?.Invoke(_isAiming);
+        playerAnimationController.SetAimingState(_isAiming);
+        if (!_isAiming && _isFocused) SetFocusState(false);
+    }
+
     private void HandlePrimaryAttack()
     {
-        if (_currentWeapon == null) return;
-
-        // If we are aiming with a bow, fire a focused shot. Otherwise, normal primary attack.
-        if (_isAiming && _currentWeapon is BowSO)
+        if (_isAiming && _isFocused)
         {
-            // We'll create a special method in BowSO for this later
-            Debug.Log("Firing a FOCUSED shot.");
+            Debug.Log("Firing a FOCUSED primary shot!");
+            // Later: _currentWeapon.PrimaryAttack(this, true);
         }
         else
         {
-            _currentWeapon.PrimaryAttack(this);
+            _currentWeapon?.PrimaryAttack(this);
         }
     }
 
     private void HandleSecondaryAttack()
     {
-        if (_currentWeapon == null) return;
-
-        // If we have a bow, toggle aim. Otherwise, do a normal secondary attack.
-        // Guard Clause: If we're holding a bow, this event is ignored.
         if (_currentWeapon is BowSO) return;
-
-        // For any other weapon, perform the secondary attack.
         _currentWeapon?.SecondaryAttack(this);
     }
     private void HandleSecondaryAttackPress()
     {
-        // Only do something if we have a bow equipped and are in the aim stance
-        if (_currentWeapon is BowSO && _isAiming)
-        {
-            SetFocusState(true);
-        }
+        if (_currentWeapon is BowSO && _isAiming) SetFocusState(true);
     }
 
     // This handler is for RELEASING A HOLD (for the Bow)
     private void HandleSecondaryAttackRelease()
     {
-        if (_currentWeapon is BowSO && _isAiming)
-        {
-            SetFocusState(false);
-        }
+        if (_currentWeapon is BowSO && _isAiming) SetFocusState(false);
     }
 
-    private void HandleWeaponSwitch(int weaponIndex)
-    {
-        // Check if the requested weapon exists in our list
-        if (availableWeapons != null && weaponIndex < availableWeapons.Count && availableWeapons[weaponIndex] != null)
-        {
-            // Check if we aren't already holding that weapon
-            if (_currentWeapon != availableWeapons[weaponIndex])
-            {
-                SwitchWeapon(availableWeapons[weaponIndex]);
-            }
-        }
-    }
-    private void ToggleAimMode()
-    {
-        _isAiming = !_isAiming;
-        OnAimStateChanged?.Invoke(_isAiming); // Broadcast the change
-        playerAnimationController.SetAimingState(_isAiming);
-        Debug.Log($"Aiming: {_isAiming}");
-    }
+    private void HandleWeapon1Switch() => SwitchWeapon(availableWeapons[0]);
+         private void HandleWeapon2Switch() => SwitchWeapon(availableWeapons[1]);
+    private void HandleWeapon3Switch() => SwitchWeapon(availableWeapons[2]);
+    //private void HandleWeaponSwitch(int weaponIndex)
+    //{
+    //    // Check if the requested weapon exists in our list
+    //    if (availableWeapons != null && weaponIndex < availableWeapons.Count && availableWeapons[weaponIndex] != null)
+    //    {
+    //        // Check if we aren't already holding that weapon
+    //        if (_currentWeapon != availableWeapons[weaponIndex])
+    //        {
+    //            SwitchWeapon(availableWeapons[weaponIndex]);
+    //        }
+    //    }
+    //}
+    //private void ToggleAimMode()
+    //{
+    //    _isAiming = !_isAiming;
+    //    OnAimStateChanged?.Invoke(_isAiming); // Broadcast the change
+    //    playerAnimationController.SetAimingState(_isAiming);
+    //    Debug.Log($"Aiming: {_isAiming}");
+    //}
     private void SetFocusState(bool isFocused)
     {
-        // Guard Clause: Only run if the state is actually changing.
         if (_isFocused == isFocused) return;
-
         _isFocused = isFocused;
-        // Notify any listening systems (like the CameraController) of the change.
         OnFocusStateChanged?.Invoke(_isFocused);
-        Debug.Log($"Focus state changed to: {_isFocused}");
     }
 }

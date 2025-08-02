@@ -17,6 +17,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [Tooltip("The handler for player skills.")]
     [SerializeField] private PlayerSkillController playerSkillController;
+    [Tooltip("The handler for player combat actions.")]
+    [SerializeField] private PlayerCombat playerCombat;
+    [Tooltip("The handler for camera control and rotation.")]
+    [SerializeField] private CameraController cameraController;
+    [Tooltip("The handler for player health, mana, and noise.")]
+    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
 
     // We can add references to PlayerCombat, PlayerHealthManaNoise, etc. here later.
 

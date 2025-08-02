@@ -106,12 +106,21 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SecondaryAttack",
+                    "name": "SecondaryAttack_Hold",
                     "type": "Button",
                     "id": "b75ff11b-9fb2-44ca-a80c-8ddbd3491076",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SecondaryAttack_Press",
+                    "type": "Button",
+                    "id": "5915dc8d-f276-4e38-84ad-41083e97318b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 },
                 {
@@ -571,7 +580,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SecondaryAttack",
+                    "action": "SecondaryAttack_Hold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ea35202e-cd00-46e6-bd5e-99061a2cc865",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryAttack_Press",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
