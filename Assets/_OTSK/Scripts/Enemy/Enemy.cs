@@ -10,13 +10,19 @@ public class Enemy : MonoBehaviour
     // References to other enemy components
     private EnemyHealth _health;
     private EnemyNavigator _navigator;
+
+    private DetectionSystem _detector; 
+    public DetectionSystem Detector => _detector;
     // We will add references to EnemyAI, EnemyCombatHandler, etc. here later.
 
     private void Awake()
     {
         _health = GetComponent<EnemyHealth>();
         _navigator = GetComponent<EnemyNavigator>();
+        _navigator = GetComponent<EnemyNavigator>();
+        _detector = GetComponent<DetectionSystem>();
     }
+
 
     private void Start()
     {

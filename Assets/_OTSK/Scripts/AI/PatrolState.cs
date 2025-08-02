@@ -1,4 +1,5 @@
-// PatrolState.cs
+// PatrolState.cs - CORRECTED VERSION
+
 using UnityEngine;
 
 public class PatrolState : EnemyAIState
@@ -15,32 +16,37 @@ public class PatrolState : EnemyAIState
     {
         Debug.Log("Entering Patrol State");
         enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
-        GoToNextWaypoint(enemyAI);
+
+        // Set the very first destination immediately.
+        if (_patrolRoute != null && _patrolRoute.waypoints.Count > 0)
+        {
+            enemyAI.Navigator.MoveTo(_patrolRoute.waypoints[0]);
+        }
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
-        // Check if we've reached the destination
-        // Note: NavMeshAgent.remainingDistance can be unreliable. A better check is distance.
-        if (Vector3.Distance(enemyAI.transform.position, _patrolRoute.waypoints[_currentWaypointIndex]) < 1.0f)
+        // First, always check if we can see the player.
+        if (enemyAI.Detector != null && enemyAI.Detector.CanSeePlayer())
         {
-            GoToNextWaypoint(enemyAI);
+            enemyAI.TransitionToState(new ChaseState());
+            return;
+        }
+
+        if (_patrolRoute == null || _patrolRoute.waypoints.Count == 0) return;
+
+        // Check if we are close enough to our CURRENT target waypoint.
+        if (Vector3.Distance(enemyAI.transform.position, _patrolRoute.waypoints[_currentWaypointIndex]) < 1.5f)
+        {
+            // If we are, increment the index to get the next waypoint.
+            _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
+            // Set the new destination.
+            enemyAI.Navigator.MoveTo(_patrolRoute.waypoints[_currentWaypointIndex]);
         }
     }
 
     public override void Exit(EnemyAI enemyAI)
     {
         Debug.Log("Exiting Patrol State");
-    }
-
-    private void GoToNextWaypoint(EnemyAI enemyAI)
-    {
-        if (_patrolRoute.waypoints.Count == 0) return;
-
-        // Move to the current waypoint
-        enemyAI.Navigator.MoveTo(_patrolRoute.waypoints[_currentWaypointIndex]);
-
-        // Increment the index for the next time, looping back to 0 if we're at the end.
-        _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
     }
 }

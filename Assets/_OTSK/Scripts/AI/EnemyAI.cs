@@ -6,6 +6,8 @@ public class EnemyAI : MonoBehaviour
     // Public properties for states to access components
     public EnemyConfigSO Config { get; private set; }
     public EnemyNavigator Navigator { get; private set; }
+    public DetectionSystem Detector { get; private set; } 
+    public Transform PlayerTarget { get; private set; }
 
     [Header("AI Data")]
     [SerializeField] private PatrolRouteSO patrolRoute;
@@ -17,6 +19,13 @@ public class EnemyAI : MonoBehaviour
         // Get references for the states to use
         Config = GetComponent<Enemy>().Config;
         Navigator = GetComponent<EnemyNavigator>();
+        Detector = GetComponent<Enemy>().Detector;
+
+        //  Find the player
+        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        {
+            PlayerTarget = GameManager.Instance.Player.transform;
+        }
     }
 
     private void Start()
