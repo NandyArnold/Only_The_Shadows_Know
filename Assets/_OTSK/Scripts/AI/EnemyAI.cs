@@ -26,11 +26,7 @@ public class EnemyAI : MonoBehaviour
         Detector = GetComponent<Enemy>().Detector;
         _health = GetComponent<EnemyHealth>();
 
-        // Find the player
-        if (GameManager.Instance != null && GameManager.Instance.Player != null)
-        {
-            PlayerTarget = GameManager.Instance.Player.transform;
-        }
+      
     }
 
     // NEW: Subscribe to events when the object is enabled.
@@ -65,6 +61,12 @@ public class EnemyAI : MonoBehaviour
     {
         // The enemy always starts in the Patrol state.
         TransitionToState(new PatrolState(patrolRoute));
+
+        // Find the player
+        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        {
+            PlayerTarget = GameManager.Instance.Player.transform;
+        }
     }
 
     private void Update()

@@ -1,46 +1,69 @@
-// Enemy.cs
-
+// Enemy.cs - UPGRADED to handle death
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyConfigSO config;
     public EnemyConfigSO Config => config;
+    public DetectionSystem Detector { get; private set; }
 
-    // References to other enemy components
+    // Component references
     private EnemyHealth _health;
     private EnemyNavigator _navigator;
-
-    private DetectionSystem _detector; 
-    public DetectionSystem Detector => _detector;
-    // We will add references to EnemyAI, EnemyCombatHandler, etc. here later.
+    private EnemyAI _ai;
+    private EnemyAnimationController _animController;
+    private CapsuleCollider _collider;
 
     private void Awake()
     {
+        Detector = GetComponent<DetectionSystem>();
         _health = GetComponent<EnemyHealth>();
         _navigator = GetComponent<EnemyNavigator>();
-        _navigator = GetComponent<EnemyNavigator>();
-        _detector = GetComponent<DetectionSystem>();
-    }
-
-
-    private void Start()
-    {
-        // Initialize components with data from the config file
-        _navigator.SetSpeed(config.patrolSpeed);
+        _ai = GetComponent<EnemyAI>();
+        _animController = GetComponent<EnemyAnimationController>();
+        _collider = GetComponent<CapsuleCollider>();
     }
 
     private void OnEnable()
     {
         EnemyManager.Instance.RegisterEnemy(this);
+        _health.OnDied += HandleDeath; // Subscribe to the death event
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        // Use a null check in case the manager was destroyed first on scene unload
         if (EnemyManager.Instance != null)
         {
             EnemyManager.Instance.UnregisterEnemy(this);
         }
+        _health.OnDied -= HandleDeath; // Unsubscribe
+    }
+
+    private void Start()
+    {
+        _navigator.SetSpeed(config.patrolSpeed);
+    }
+
+    private void HandleDeath()
+    {
+        // 1. Disable all intelligence and movement
+        _ai.enabled = false;
+        _navigator.enabled = false;
+        GetComponent<NavMeshAgent>().enabled = false;
+        _collider.enabled = false;
+
+        // 2. Play the death animation
+        _animController.PlayDeathAnimation();
+
+        // 3. Start a timer to remove the body
+        StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
+    }
+
+    private IEnumerator CleanupBody(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 }
