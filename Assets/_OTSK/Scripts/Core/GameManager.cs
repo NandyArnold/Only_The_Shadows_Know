@@ -65,11 +65,11 @@ public class GameManager : MonoBehaviour
         }
         if (sceneData.objectiveChain != null)
         {
-            ObjectiveManager.Instance.Initialize(sceneData.objectiveChain);
+            ObjectiveManager.Instance.InitializeObjective(sceneData.objectiveChain);
         }
         if (sceneData.objectiveChain != null)
         {
-            ObjectiveManager.Instance.Initialize(sceneData.objectiveChain);
+            ObjectiveManager.Instance.InitializeObjective(sceneData.objectiveChain);
         }
     }
 

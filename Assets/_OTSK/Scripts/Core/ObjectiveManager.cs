@@ -9,8 +9,11 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Objective Data")]
     [SerializeField] private LevelObjectiveChainSO _currentLevelObjectiveChain;
 
+    [Header("Debug Settings")]
+    [SerializeField] private bool objectivesEnabled = true;
+
     private int _currentObjectiveIndex = 0;
-    private List<bool> _objectivesCompleted;
+    private readonly Dictionary<string, IObjectiveTrigger> _activeTriggers = new Dictionary<string, IObjectiveTrigger>();
 
     // Events for the UI to listen to
     public event Action<ObjectiveSO> OnCurrentObjectiveChanged;
@@ -23,20 +26,44 @@ public class ObjectiveManager : MonoBehaviour
         else Instance = this;
     }
 
-    /// <summary>
-    /// Sets up the manager for a new level's objective chain.
-    /// </summary>
-    public void Initialize(LevelObjectiveChainSO levelObjectives)
+    public void RegisterTrigger(IObjectiveTrigger trigger)
     {
+        if (!objectivesEnabled) return;
+        if (!_activeTriggers.ContainsKey(trigger.TriggerID))
+        {
+            _activeTriggers.Add(trigger.TriggerID, trigger);
+            trigger.OnTriggerActivated += HandleTriggerActivated;
+        }
+    }
+
+    public void UnregisterTrigger(IObjectiveTrigger trigger)
+    {
+        if (!objectivesEnabled) return;
+        if (_activeTriggers.ContainsKey(trigger.TriggerID))
+        {
+            trigger.OnTriggerActivated -= HandleTriggerActivated;
+            _activeTriggers.Remove(trigger.TriggerID);
+        }
+    }
+
+    private void HandleTriggerActivated(string triggerID)
+    {
+        if (!objectivesEnabled) return;
+
+        ObjectiveSO currentObjective = GetCurrentObjective();
+        if (currentObjective != null && currentObjective.completionTriggerID == triggerID)
+        {
+            CompleteCurrentObjective();
+        }
+    }
+
+    public void InitializeObjective(LevelObjectiveChainSO levelObjectives)
+    {
+        if (!objectivesEnabled) return;
+
         _currentLevelObjectiveChain = levelObjectives;
         _currentObjectiveIndex = 0;
-        _objectivesCompleted = new List<bool>();
-        for (int i = 0; i < _currentLevelObjectiveChain.objectives.Count; i++)
-        {
-            _objectivesCompleted.Add(false);
-        }
 
-        // Announce the first objective
         OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
         Debug.Log($"Objective System Initialized for Level: {_currentLevelObjectiveChain.levelID}");
     }
@@ -50,26 +77,18 @@ public class ObjectiveManager : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Marks the current objective as complete and advances to the next one.
-    /// </summary>
     public void CompleteCurrentObjective()
     {
-        ObjectiveSO currentObjective = GetCurrentObjective();
-        if (currentObjective == null)
-        {
-            Debug.LogWarning("Tried to complete objective, but no current objective is active.");
-            return;
-        }
+        if (!objectivesEnabled) return;
 
-        // Mark as complete and fire event
-        _objectivesCompleted[_currentObjectiveIndex] = true;
+        ObjectiveSO currentObjective = GetCurrentObjective();
+        if (currentObjective == null) return;
+
         OnObjectiveCompleted?.Invoke(currentObjective);
         Debug.Log($"Objective Completed: {currentObjective.objectiveDescription}");
 
         _currentObjectiveIndex++;
 
-        // Check if the entire level is complete
         if (_currentObjectiveIndex >= _currentLevelObjectiveChain.objectives.Count)
         {
             OnLevelCompleted?.Invoke();
@@ -77,7 +96,6 @@ public class ObjectiveManager : MonoBehaviour
         }
         else
         {
-            // Announce the new current objective
             OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
         }
     }
