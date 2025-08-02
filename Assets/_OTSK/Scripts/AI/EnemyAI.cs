@@ -9,6 +9,7 @@ public class EnemyAI : MonoBehaviour
     public EnemyNavigator Navigator { get; private set; }
     public DetectionSystem Detector { get; private set; }
     public Transform PlayerTarget { get; private set; }
+    public EnemyAnimationController AnimController { get; private set; }
     public PatrolRouteSO PatrolRoute => patrolRoute; // NEW: Exposes the route for other states
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
@@ -25,8 +26,9 @@ public class EnemyAI : MonoBehaviour
         Navigator = GetComponent<EnemyNavigator>();
         Detector = GetComponent<Enemy>().Detector;
         _health = GetComponent<EnemyHealth>();
+        AnimController = GetComponent<EnemyAnimationController>();
 
-      
+
     }
 
     // NEW: Subscribe to events when the object is enabled.
@@ -41,6 +43,12 @@ public class EnemyAI : MonoBehaviour
         {
             Detector.OnSoundDetected += HandleSoundDetected;
         }
+
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart += () => AnimController.SetIsInCombat(true);
+            CombatManager.Instance.OnCombatEnd += () => AnimController.SetIsInCombat(false);
+        }
     }
 
     // NEW: Unsubscribe from events when the object is disabled.
@@ -54,6 +62,12 @@ public class EnemyAI : MonoBehaviour
         if (Detector != null)
         {
             Detector.OnSoundDetected -= HandleSoundDetected;
+        }
+
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart -= () => AnimController.SetIsInCombat(true);
+            CombatManager.Instance.OnCombatEnd -= () => AnimController.SetIsInCombat(false);
         }
     }
 

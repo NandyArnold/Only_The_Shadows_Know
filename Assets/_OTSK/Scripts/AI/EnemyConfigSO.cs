@@ -17,6 +17,7 @@ public class EnemyConfigSO : ScriptableObject
     [Header("Movement")]
     public float patrolSpeed = 2f;
     public float alertSpeed = 3.5f;
+    public float walkCombatSpeed = 1.5f;
     public float chaseSpeed = 5f;
 
     [Header("Detection")]

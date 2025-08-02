@@ -24,12 +24,28 @@ public class CombatState : EnemyAIState
                 enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
             }
             // Chase them.
+            // --- NEW DYNAMIC SPEED LOGIC ---
+            float combatWalkThreshold = 7f; // Enemy will walk if player is closer than 7 units
+            float newSpeed;
+
+            if (distanceToPlayer > combatWalkThreshold)
+            {
+                newSpeed = enemyAI.Config.chaseSpeed; // Player is far, so run
+            }
+            else
+            {
+                newSpeed = enemyAI.Config.walkCombatSpeed; // Player is close, so walk
+            }
+
+            enemyAI.Navigator.SetSpeed(newSpeed);
+            enemyAI.AnimController.SetSpeed(newSpeed);
             enemyAI.Navigator.MoveTo(enemyAI.LastKnownPlayerPosition);
 
             // TODO: Add attack logic and the "can't attack" alarm timer here.
         }
         else
         {
+            enemyAI.AnimController.SetSpeed(0); // Go to idle while transitioning
             // If we've lost them completely, transition to Alert to investigate their last spot.
             enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
         }

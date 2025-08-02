@@ -46,6 +46,6 @@ MonoBehaviour:
     savedColor: {r: 1, g: 0, b: 0, a: 1}
     isHeader: 1
   - sceneName: _EnemyTestScene
-    scenePath: Assets/_OTSK/Scenes/Testing/_EnemyTestScene.unity
+    scenePath: Assets/_OTSK/Scenes/Testing/_EnemyTestScene/_EnemyTestScene/_EnemyTestScene.unity
     savedColor: {r: 0, g: 0, b: 0, a: 0}
     isHeader: 0

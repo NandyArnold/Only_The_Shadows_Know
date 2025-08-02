@@ -17,6 +17,8 @@ public class PatrolState : EnemyAIState
     {
         Debug.Log("Entering Patrol State");
         enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
+        enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+
         // Start the patrol behavior coroutine
         _patrolCoroutine = enemyAI.StartCoroutine(PatrolRoutine(enemyAI));
     }
@@ -64,13 +66,17 @@ public class PatrolState : EnemyAIState
 
             // Move to the waypoint.
             enemyAI.Navigator.MoveTo(waypoint.position);
+            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
 
             // Wait until we've reached the destination.
             while (Vector3.Distance(enemyAI.transform.position, waypoint.position) > 1.5f)
             {
                 yield return null; // Wait for the next frame
             }
+            // We've arrived. Tell the animator to STOP before we perform the wait action.
+            enemyAI.AnimController.SetSpeed(0f);
             PatrolAction actionToPerform = waypoint.action;
+
 
             if (waypoint.randomizeAction)
             {

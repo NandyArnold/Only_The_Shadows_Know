@@ -1302,12 +1302,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Move"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""4f57fae6-841a-4e82-b099-0d61efde63aa"",
-                    ""expectedControlType"": """",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Run"",
@@ -1326,52 +1326,81 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleCombat"",
+                    ""type"": ""Button"",
+                    ""id"": ""92a90a63-bb4a-47c0-aa8f-07c8bdccda71"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleSpeed"",
+                    ""type"": ""Button"",
+                    ""id"": ""79cd91c5-2c2a-4b5d-8aa4-0381eb0b6056"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
-                    ""name"": """",
-                    ""id"": ""72413972-67dd-4045-8609-d26e88c0e177"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""eab6843d-c9a6-4195-ad89-8ab71e7703d4"",
+                    ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
+                    ""groups"": """",
                     ""action"": ""Move"",
-                    ""isComposite"": false,
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""0979af70-2f7d-40a6-9881-4877e3f97934"",
+                    ""name"": ""up"",
+                    ""id"": ""7fe05ce4-1176-420d-91f8-3eb86bf67c3a"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""b2cf7b56-9365-4ecf-a929-2313fcad4039"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""d3132f69-4c5d-441d-9a26-51b2a56cf3fd"",
+                    ""name"": ""left"",
+                    ""id"": ""a75e9f51-3996-44d6-a80d-bcd0b252353a"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""7c9edc79-6e7d-4411-adbc-f0fc2c5c3d64"",
+                    ""name"": ""right"",
+                    ""id"": ""2426b50e-c24f-4f36-8a2f-d1552a79f4c0"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -1392,6 +1421,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PrimaryAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76deccb0-df2b-4617-9517-f91608aed551"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleCombat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""360b1a41-5ec6-4dc4-a503-8530e01eebab"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleSpeed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1501,6 +1552,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_EnemyDebug_Move = m_EnemyDebug.FindAction("Move", throwIfNotFound: true);
         m_EnemyDebug_Run = m_EnemyDebug.FindAction("Run", throwIfNotFound: true);
         m_EnemyDebug_PrimaryAttack = m_EnemyDebug.FindAction("PrimaryAttack", throwIfNotFound: true);
+        m_EnemyDebug_ToggleCombat = m_EnemyDebug.FindAction("ToggleCombat", throwIfNotFound: true);
+        m_EnemyDebug_CycleSpeed = m_EnemyDebug.FindAction("CycleSpeed", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -2097,6 +2150,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_EnemyDebug_Move;
     private readonly InputAction m_EnemyDebug_Run;
     private readonly InputAction m_EnemyDebug_PrimaryAttack;
+    private readonly InputAction m_EnemyDebug_ToggleCombat;
+    private readonly InputAction m_EnemyDebug_CycleSpeed;
     /// <summary>
     /// Provides access to input actions defined in input action map "EnemyDebug".
     /// </summary>
@@ -2120,6 +2175,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "EnemyDebug/PrimaryAttack".
         /// </summary>
         public InputAction @PrimaryAttack => m_Wrapper.m_EnemyDebug_PrimaryAttack;
+        /// <summary>
+        /// Provides access to the underlying input action "EnemyDebug/ToggleCombat".
+        /// </summary>
+        public InputAction @ToggleCombat => m_Wrapper.m_EnemyDebug_ToggleCombat;
+        /// <summary>
+        /// Provides access to the underlying input action "EnemyDebug/CycleSpeed".
+        /// </summary>
+        public InputAction @CycleSpeed => m_Wrapper.m_EnemyDebug_CycleSpeed;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2155,6 +2218,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started += instance.OnPrimaryAttack;
             @PrimaryAttack.performed += instance.OnPrimaryAttack;
             @PrimaryAttack.canceled += instance.OnPrimaryAttack;
+            @ToggleCombat.started += instance.OnToggleCombat;
+            @ToggleCombat.performed += instance.OnToggleCombat;
+            @ToggleCombat.canceled += instance.OnToggleCombat;
+            @CycleSpeed.started += instance.OnCycleSpeed;
+            @CycleSpeed.performed += instance.OnCycleSpeed;
+            @CycleSpeed.canceled += instance.OnCycleSpeed;
         }
 
         /// <summary>
@@ -2175,6 +2244,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started -= instance.OnPrimaryAttack;
             @PrimaryAttack.performed -= instance.OnPrimaryAttack;
             @PrimaryAttack.canceled -= instance.OnPrimaryAttack;
+            @ToggleCombat.started -= instance.OnToggleCombat;
+            @ToggleCombat.performed -= instance.OnToggleCombat;
+            @ToggleCombat.canceled -= instance.OnToggleCombat;
+            @CycleSpeed.started -= instance.OnCycleSpeed;
+            @CycleSpeed.performed -= instance.OnCycleSpeed;
+            @CycleSpeed.canceled -= instance.OnCycleSpeed;
         }
 
         /// <summary>
@@ -2534,5 +2609,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPrimaryAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleCombat" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleCombat(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CycleSpeed" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCycleSpeed(InputAction.CallbackContext context);
     }
 }

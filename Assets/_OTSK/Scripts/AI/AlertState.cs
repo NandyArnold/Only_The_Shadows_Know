@@ -16,6 +16,8 @@ public class AlertState : EnemyAIState
     {
         Debug.Log("Entering Alert State");
         enemyAI.Navigator.SetSpeed(enemyAI.Config.alertSpeed);
+        enemyAI.AnimController.SetSpeed(enemyAI.Config.alertSpeed);
+
         enemyAI.Navigator.MoveTo(_alertLocation);
         _timer = 0f;
     }
@@ -34,6 +36,7 @@ public class AlertState : EnemyAIState
         if (Vector3.Distance(enemyAI.transform.position, _alertLocation) < 1.5f)
         {
             enemyAI.Navigator.Stop();
+            enemyAI.AnimController.SetSpeed(0f);
             _timer += Time.deltaTime;
 
             // If we've waited long enough and found nothing, go back to patrolling.
