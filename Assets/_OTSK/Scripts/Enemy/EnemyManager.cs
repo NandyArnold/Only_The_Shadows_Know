@@ -30,4 +30,16 @@ public class EnemyManager : MonoBehaviour
             _activeEnemies.Remove(enemy);
         }
     }
+
+    public void BroadcastSound(Vector3 sourcePosition, float intensity, GameObject sourceObject)
+    {
+        foreach (var enemy in _activeEnemies)
+        {
+            // Don't let enemies hear themselves.
+            if (enemy.gameObject == sourceObject) continue;
+
+            // Tell each enemy's detector about the sound.
+            enemy.Detector?.OnSoundHeard(sourcePosition, intensity);
+        }
+    }
 }

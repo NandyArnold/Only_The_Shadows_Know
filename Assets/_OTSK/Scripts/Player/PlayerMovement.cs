@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerCombat playerCombat;
+    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
 
     [Header("Ground Check Settings")]
     [SerializeField] private Transform groundCheckPoint;
@@ -58,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         playerCombat = GetComponent<PlayerCombat>();
         _cameraTransform = Camera.main.transform;
         _currentSpeed = walkSpeed;
+        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
     }
 
     private void OnEnable()
@@ -160,12 +162,15 @@ public class PlayerMovement : MonoBehaviour
         _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         if (_isRunning)
         {
+            playerHealthManaNoise.GenerateNoise(70f);
             playerAnimationController.PlayRunningJumpAnimation();
         }
         else
         {
+            playerHealthManaNoise.GenerateNoise(80f);
             playerAnimationController.PlayStandardJumpAnimation();
         }
+
     }
 
     private void HandleDodgeRoll()

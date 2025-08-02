@@ -88,6 +88,11 @@ public class PlayerHealthManaNoise : MonoBehaviour
     {
         _currentNoiseLevel = Mathf.Clamp(_currentNoiseLevel + amount, 0, maxNoise);
         OnNoiseChanged?.Invoke(_currentNoiseLevel, maxNoise);
+
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.BroadcastSound(transform.position, amount, gameObject);
+        }
         // We'll also want a way for noise to decay over time, but we can add that later.
     }
 
@@ -96,4 +101,5 @@ public class PlayerHealthManaNoise : MonoBehaviour
         Debug.Log("Player has died.");
         // TODO: Trigger death animation, show death menu, etc.
     }
+
 }

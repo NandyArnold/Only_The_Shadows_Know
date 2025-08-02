@@ -1,4 +1,5 @@
 // DetectionSystem.cs
+using System;
 using UnityEngine;
 
 public class DetectionSystem : MonoBehaviour
@@ -11,6 +12,8 @@ public class DetectionSystem : MonoBehaviour
     [Header("Settings")]
     [Tooltip("Layers that will block the enemy's line of sight (e.g., walls, obstacles).")]
     [SerializeField] private LayerMask visionBlockingLayers;
+
+    public event Action<Vector3> OnSoundDetected;
 
     private Transform _playerTransform;
 
@@ -29,7 +32,7 @@ public class DetectionSystem : MonoBehaviour
 
         // 1. Check if the player is within detection range.
         float distanceToPlayer = Vector3.Distance(eyePoint.position, _playerTransform.position);
-        if (distanceToPlayer > config.detectionRange)
+        if (distanceToPlayer > config.visionRange)
         {
             return false;
         }
@@ -61,7 +64,7 @@ public class DetectionSystem : MonoBehaviour
         Gizmos.color = Color.yellow;
 
         // Draw the detection range sphere
-        Gizmos.DrawWireSphere(transform.position, config.detectionRange);
+        Gizmos.DrawWireSphere(transform.position, config.visionRange);
 
         // Calculate the directions for the cone edges
         Vector3 forward = transform.forward;
@@ -73,8 +76,21 @@ public class DetectionSystem : MonoBehaviour
         Vector3 rightRayDirection = rightRayRotation * forward;
 
         // Draw the cone lines
-        Gizmos.DrawLine(eyePoint.position, eyePoint.position + leftRayDirection * config.detectionRange);
-        Gizmos.DrawLine(eyePoint.position, eyePoint.position + rightRayDirection * config.detectionRange);
+        Gizmos.DrawLine(eyePoint.position, eyePoint.position + leftRayDirection * config.visionRange);
+        Gizmos.DrawLine(eyePoint.position, eyePoint.position + rightRayDirection * config.visionRange);
+    }
+
+
+    // NEW: This method is called by the EnemyManager.
+    public void OnSoundHeard(Vector3 soundPosition, float intensity)
+    {
+        // Check if the sound is within hearing range and loud enough.
+        float distanceToSound = Vector3.Distance(transform.position, soundPosition);
+        if (distanceToSound <= config.hearingRange && intensity >= config.hearingThreshold)
+        {
+            // If we heard it, fire our event to notify the AI brain.
+            OnSoundDetected?.Invoke(soundPosition);
+        }
     }
 
 }

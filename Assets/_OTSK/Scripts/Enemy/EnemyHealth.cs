@@ -1,22 +1,27 @@
-// EnemyHealth.cs
-
+// EnemyHealth.cs - UPGRADED
+using System;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
-    [SerializeField] private float maxHealth = 50f;
+    [SerializeField] private float maxHealth = 100f;
     private float _currentHealth;
+
+    // NEW: An event that fires when damaged, passing the attacker.
+    public event Action<GameObject> OnDamaged;
 
     private void Awake()
     {
         _currentHealth = maxHealth;
     }
 
-    // This is the public method our player's attack will call.
-    public void TakeDamage(float damageAmount)
+    // UPDATED: The method now requires an "attacker" parameter.
+    public void TakeDamage(float damageAmount, GameObject attacker)
     {
         _currentHealth -= damageAmount;
-        Debug.Log($"<color=orange>{gameObject.name} took {damageAmount} damage! Health is now {_currentHealth}/{maxHealth}</color>");
+        OnDamaged?.Invoke(attacker); // Fire the event
+
+        Debug.Log($"<color=orange>{gameObject.name} took {damageAmount} damage from {attacker.name}!</color>");
 
         if (_currentHealth <= 0)
         {
@@ -27,7 +32,6 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{gameObject.name} has been defeated.");
-        // For now, we'll just destroy the GameObject to show it's dead.
         Destroy(gameObject);
     }
 }

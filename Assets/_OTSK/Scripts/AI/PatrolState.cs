@@ -1,11 +1,12 @@
-// PatrolState.cs - CORRECTED VERSION
-
+// PatrolState.cs - UPGRADED with Coroutine
+using System.Collections;
 using UnityEngine;
+using System;
 
 public class PatrolState : EnemyAIState
 {
     private readonly PatrolRouteSO _patrolRoute;
-    private int _currentWaypointIndex = 0;
+    private Coroutine _patrolCoroutine;
 
     public PatrolState(PatrolRouteSO route)
     {
@@ -16,37 +17,84 @@ public class PatrolState : EnemyAIState
     {
         Debug.Log("Entering Patrol State");
         enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
-
-        // Set the very first destination immediately.
-        if (_patrolRoute != null && _patrolRoute.waypoints.Count > 0)
-        {
-            enemyAI.Navigator.MoveTo(_patrolRoute.waypoints[0]);
-        }
+        // Start the patrol behavior coroutine
+        _patrolCoroutine = enemyAI.StartCoroutine(PatrolRoutine(enemyAI));
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
-        // First, always check if we can see the player.
+        // The check for the player now transitions to Alert state.
         if (enemyAI.Detector != null && enemyAI.Detector.CanSeePlayer())
         {
-            enemyAI.TransitionToState(new ChaseState());
+            // When we see the player, we become alert and move to their position.
+            enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
+            enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
             return;
         }
-
-        if (_patrolRoute == null || _patrolRoute.waypoints.Count == 0) return;
-
-        // Check if we are close enough to our CURRENT target waypoint.
-        if (Vector3.Distance(enemyAI.transform.position, _patrolRoute.waypoints[_currentWaypointIndex]) < 1.5f)
+        // The Execute method now only needs to check for the player.
+        // The coroutine handles all movement and waiting logic.
+        if (enemyAI.Detector != null && enemyAI.Detector.CanSeePlayer())
         {
-            // If we are, increment the index to get the next waypoint.
-            _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
-            // Set the new destination.
-            enemyAI.Navigator.MoveTo(_patrolRoute.waypoints[_currentWaypointIndex]);
+            enemyAI.TransitionToState(new CombatState());
         }
     }
 
     public override void Exit(EnemyAI enemyAI)
     {
         Debug.Log("Exiting Patrol State");
+        // IMPORTANT: Stop the coroutine when we exit the state.
+        if (_patrolCoroutine != null)
+        {
+            enemyAI.StopCoroutine(_patrolCoroutine);
+        }
+    }
+
+    private IEnumerator PatrolRoutine(EnemyAI enemyAI)
+    {
+        if (_patrolRoute == null || _patrolRoute.waypoints.Count == 0)
+        {
+            Debug.LogWarning("Patrol route is empty, patrol state will do nothing.");
+            yield break; // Exit the coroutine if there's no path.
+        }
+
+        int currentWaypointIndex = 0;
+        while (true)
+        {
+            PatrolWaypoint waypoint = _patrolRoute.waypoints[currentWaypointIndex];
+
+            // Move to the waypoint.
+            enemyAI.Navigator.MoveTo(waypoint.position);
+
+            // Wait until we've reached the destination.
+            while (Vector3.Distance(enemyAI.transform.position, waypoint.position) > 1.5f)
+            {
+                yield return null; // Wait for the next frame
+            }
+            PatrolAction actionToPerform = waypoint.action;
+
+            if (waypoint.randomizeAction)
+            {
+                // Get all possible enum values and pick a random one.
+                var allActions = Enum.GetValues(typeof(PatrolAction));
+                actionToPerform = (PatrolAction)allActions.GetValue(UnityEngine.Random.Range(0, allActions.Length));
+            }
+
+            switch (actionToPerform)
+            {
+                case PatrolAction.Wait:
+                    Debug.Log("Waiting...");
+                    yield return new WaitForSeconds(waypoint.waitTime);
+                    break;
+                case PatrolAction.WaitAndLook:
+                    Debug.Log("Waiting and Looking...");
+                    yield return new WaitForSeconds(waypoint.waitTime);
+                    break;
+                case PatrolAction.Continue:
+                    Debug.Log("Continuing...");
+                    break;
+            }
+
+            currentWaypointIndex = (currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
+        }
     }
 }

@@ -29,7 +29,7 @@ public class DaggerSO : WeaponSO
                 Debug.Log($"<color=green>Dagger (R):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
                 if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
                 {
-                    enemyHealth.TakeDamage(slashDamage);
+                   enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
                 }
             }
         }
@@ -53,7 +53,7 @@ public class DaggerSO : WeaponSO
                     Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
                     if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
                     {
-                        enemyHealth.TakeDamage(finisherDamage);
+                        enemyHealth.TakeDamage(finisherDamage, combatController.gameObject); 
                     }
                 }
             }
@@ -68,7 +68,7 @@ public class DaggerSO : WeaponSO
                     Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
                     if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
                     {
-                        enemyHealth.TakeDamage(slashDamage);
+                        enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
                     }
                 }
             }

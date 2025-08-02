@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: Route_Guard_A
   m_EditorClassIdentifier: 
   waypoints:
-  - {x: 8, y: 0, z: 10}
-  - {x: 0, y: 0, z: 3}
+  - position: {x: 8, y: 0, z: 10}
+    action: 0
+    randomizeAction: 0
+    waitTime: 2
+  - position: {x: 0, y: 0, z: 3}
+    action: 0
+    randomizeAction: 1
+    waitTime: 2
