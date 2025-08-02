@@ -1572,6 +1572,7 @@ GameObject:
   - component: {fileID: 1837955062}
   - component: {fileID: 1837955063}
   - component: {fileID: 1837955064}
+  - component: {fileID: 1837955065}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -1729,6 +1730,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentLevelObjectiveChain: {fileID: 0}
   objectivesEnabled: 1
+--- !u!114 &1837955065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b4b220e9db2634389147b7a07bb0ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saveFileData:
+    fileName: SaveSlot01
+    saveLocation: 0
+    filePath: Example/Path
+    fileType: 0
+    encryptionMethod: 0
+    aesKey: 
+    aesIV: 
+    addToStorage: 1
+    backgroundTask: 0
 --- !u!1 &1985777997
 GameObject:
   m_ObjectHideFlags: 0

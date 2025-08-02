@@ -1,10 +1,23 @@
 // Enemy.cs - UPGRADED to handle death
 using System.Collections;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+// We add [RequireComponent] to ensure a UniqueID is always present.
+[RequireComponent(typeof(UniqueID))]
+public class Enemy : MonoBehaviour, ISaveable
 {
+
+    // --- Save Data Structure ---
+    [System.Serializable]
+    private struct EnemySaveData
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public float currentHealth;
+    }
+    // --- Component References 
     [SerializeField] private EnemyConfigSO config;
     public EnemyConfigSO Config => config;
     public DetectionSystem Detector { get; private set; }
@@ -15,7 +28,29 @@ public class Enemy : MonoBehaviour
     private EnemyAI _ai;
     private EnemyAnimationController _animController;
     private CapsuleCollider _collider;
+    private UniqueID _uniqueID;
 
+
+    // --- ISaveable Implementation ---
+    public string UniqueID => _uniqueID.ID;
+
+    public object CaptureState()
+    {
+        return new EnemySaveData
+        {
+            position = transform.position,
+            rotation = transform.rotation,
+            currentHealth = _health.CurrentHealth // We need to add this property to EnemyHealth
+        };
+    }
+
+    public void RestoreState(object state)
+    {
+        var saveData = (EnemySaveData)state;
+        transform.position = saveData.position;
+        transform.rotation = saveData.rotation;
+        _health.SetHealth(saveData.currentHealth);
+    }
     private void Awake()
     {
         Detector = GetComponent<DetectionSystem>();
@@ -24,6 +59,7 @@ public class Enemy : MonoBehaviour
         _ai = GetComponent<EnemyAI>();
         _animController = GetComponent<EnemyAnimationController>();
         _collider = GetComponent<CapsuleCollider>();
+        _uniqueID = GetComponent<UniqueID>();
     }
 
     private void OnEnable()

@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 50f;
+    public float CurrentHealth => _currentHealth;
     private float _currentHealth;
     private bool _isDead = false;
 
@@ -38,5 +39,16 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} has been defeated.");
         OnDied?.Invoke();
+    }
+
+    public void SetHealth(float healthValue)
+    {
+        _currentHealth = healthValue;
+        if (_currentHealth <= 0)
+        {
+            // If loaded health is zero, make sure the enemy is already dead.
+            _isDead = true;
+            gameObject.SetActive(false); // Instantly hide it.
+        }
     }
 }
