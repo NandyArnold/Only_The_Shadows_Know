@@ -13,6 +13,10 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int isRunningHash = Animator.StringToHash("IsRunning");
     private readonly int jumpTriggerHash = Animator.StringToHash("JumpTrigger");
     private readonly int dodgeRollTriggerHash = Animator.StringToHash("DodgeRollTrigger");
+    private readonly int standardJumpTriggerHash = Animator.StringToHash("StandardJumpTrigger");
+    private readonly int runningJumpTriggerHash = Animator.StringToHash("RunningJumpTrigger");
+
+
 
     // --- WEAPON ANIMATION ---
     private IWeaponAnimation _currentWeaponAnimation;
@@ -52,10 +56,16 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetBool(isRunningHash, isRunning);
     }
 
-    public void PlayJumpAnimation()
+    public void PlayStandardJumpAnimation()
     {
         if (animator == null) return;
-        animator.SetTrigger(jumpTriggerHash);
+        animator.SetTrigger(standardJumpTriggerHash);
+    }
+
+    public void PlayRunningJumpAnimation()
+    {
+        if (animator == null) return;
+        animator.SetTrigger(runningJumpTriggerHash);
     }
 
     public void PlayDodgeRollAnimation()

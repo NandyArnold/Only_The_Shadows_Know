@@ -30,8 +30,6 @@ public class PlayerInputHandler : MonoBehaviour
     private InputActionMap _uiMap;
     private bool _isCrouchToggleActive = false;
 
-    private float _lastDodgeTapTime;
-    [SerializeField] private float doubleTapTimeWindow = 0.3f;
 
     private void Awake()
     {
@@ -80,7 +78,9 @@ public class PlayerInputHandler : MonoBehaviour
         // --- Player Map Actions ---
         _inputActions.Player.Move.performed += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
         _inputActions.Player.Move.canceled += ctx => OnMoveInput?.Invoke(Vector2.zero);
+
         _inputActions.Player.Jump.performed += ctx => OnJumpInput?.Invoke();
+
         _inputActions.Player.Crouch.performed += ctx => {
             _isCrouchToggleActive = !_isCrouchToggleActive;
             OnCrouchInput?.Invoke(_isCrouchToggleActive);
@@ -112,7 +112,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
         _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
 
-        _inputActions.Player.DodgeRoll.performed += ctx => HandleDodgeInput();
+        _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)
@@ -141,16 +141,5 @@ public class PlayerInputHandler : MonoBehaviour
                 break;
         }
     }
-    private void HandleDodgeInput()
-    {
-        // Check if the time since the last tap is within our window.
-        if (Time.time - _lastDodgeTapTime < doubleTapTimeWindow)
-        {
-            // It's a double tap! Fire the event.
-            OnDodgeRollInput?.Invoke();
-        }
-
-        // Always update the time of the last tap.
-        _lastDodgeTapTime = Time.time;
-    }
+  
 }

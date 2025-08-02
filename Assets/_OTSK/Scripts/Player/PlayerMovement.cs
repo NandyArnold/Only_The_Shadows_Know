@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
-// Enum for basic locomotion states (used internally by PlayerMovement for clarity)
-// PlayerAnimationController will use more granular direct parameter setting
+
 public enum LocomotionState { Idle, Walk, Run, CrouchWalk, Jump, DodgeRoll }
 
 public class PlayerMovement : MonoBehaviour
@@ -9,24 +8,30 @@ public class PlayerMovement : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlayerAnimationController playerAnimationController;
-    [SerializeField] private PlayerInputHandler playerInputHandler; // Added reference
+    [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerCombat playerCombat;
+
+    [Header("Ground Check Settings")]
+    [SerializeField] private Transform groundCheckPoint;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private float groundCastDistance = 0.1f;
+    [SerializeField] private LayerMask groundLayer;
 
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float runSpeed = 6f;
-    [SerializeField] private float crouchSpeedMultiplier = 0.5f; // E.g., 50% of walk speed when crouching
+    [SerializeField] private float crouchSpeedMultiplier = 0.5f;
     [SerializeField] private float jumpHeight = 1.5f;
-    [SerializeField] private float gravity = -9.81f; // Standard Earth gravity
+    [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float aimSpeedMultiplier = 0.5f;
 
     [Header("Character Controller Settings")]
-    [SerializeField] private float normalHeight = 2.0f; // Default CharacterController height
-    [SerializeField] private float normalCenterY = 1.0f; // Default CharacterController center Y
-    [SerializeField] private float crouchHeight = 1.0f;  // Crouched CharacterController height
-    [SerializeField] private float crouchCenterY = 0.5f; // Crouched CharacterController center Y
+    [SerializeField] private float normalHeight = 2.0f;
+    [SerializeField] private float normalCenterY = 1.0f;
+    [SerializeField] private float crouchHeight = 1.0f;
+    [SerializeField] private float crouchCenterY = 0.5f;
 
-    [Header("Dodge Roll Settings")] 
+    [Header("Dodge Roll Settings")]
     [SerializeField] private float dodgeRollSpeed = 10f;
     [SerializeField] private float dodgeRollDuration = 0.5f;
 
@@ -34,86 +39,167 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _smoothedMoveInput;
     [SerializeField] private float animationSmoothTime = 0.1f;
 
-    private Vector3 _velocity; // Current velocity, especially for gravity
+    private Vector3 _velocity;
     private bool _isCrouching;
-    private bool _isRunning; // To track if Shift is held
-    private float _currentSpeed; // The actual speed player is moving at
+    private bool _isRunning;
+    private float _currentSpeed;
     private bool _isAiming;
     private bool _isDodgeRolling = false;
+    private bool _isGrounded;
+    private bool _isFocused;
 
-    private Transform _cameraTransform; // To orient movement relative to camera
+    private Transform _cameraTransform;
 
     private void Awake()
     {
-        // Get references if not set in Inspector
-        if (characterController == null)
-            characterController = GetComponent<CharacterController>();
-        if (playerAnimationController == null)
-            playerAnimationController = GetComponent<PlayerAnimationController>();
-        if (playerInputHandler == null) // Get PlayerInputHandler from the same GameObject
-            playerInputHandler = GetComponent<PlayerInputHandler>();
-
-        _cameraTransform = Camera.main.transform; // Assuming main camera is tagged "MainCamera"
-
-        _currentSpeed = walkSpeed; // Start at walk speed
-        if (playerCombat == null)
-            playerCombat = GetComponent<PlayerCombat>();
+        characterController = GetComponent<CharacterController>();
+        playerAnimationController = GetComponent<PlayerAnimationController>();
+        playerInputHandler = GetComponent<PlayerInputHandler>();
+        playerCombat = GetComponent<PlayerCombat>();
+        _cameraTransform = Camera.main.transform;
+        _currentSpeed = walkSpeed;
     }
 
     private void OnEnable()
     {
-        // Subscribe to input events
-        if (playerInputHandler != null)
-        {
-            playerInputHandler.OnMoveInput += SetMoveInput;
-            playerInputHandler.OnJumpInput += Jump;
-            playerInputHandler.OnCrouchInput += Crouch; // Use a toggle for Crouch
-            playerInputHandler.OnRunInput += SetRunningState; // Use a boolean for run (e.g., from Shift key held)
-            if (playerCombat != null)
-                playerCombat.OnAimStateChanged += HandleAimStateChanged;
-            playerInputHandler.OnDodgeRollInput += HandleDodgeRoll;
-        }
-    }
-
-    private void OnDisable()
-    {
-        // Unsubscribe from input events to prevent memory leaks
         if (playerInputHandler != null)
         {
             playerInputHandler.OnMoveInput -= SetMoveInput;
             playerInputHandler.OnJumpInput -= Jump;
             playerInputHandler.OnCrouchInput -= Crouch;
             playerInputHandler.OnRunInput -= SetRunningState;
+
+            playerInputHandler.OnDodgeRollInput -= HandleDodgeRoll;
+
             if (playerCombat != null)
+            {
                 playerCombat.OnAimStateChanged -= HandleAimStateChanged;
+                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; // NEW: Unsubscribe
+            }
+
+            playerInputHandler.OnMoveInput += SetMoveInput;
+            playerInputHandler.OnJumpInput += Jump;
+            playerInputHandler.OnCrouchInput += Crouch;
+            playerInputHandler.OnRunInput += SetRunningState;
+
             playerInputHandler.OnDodgeRollInput += HandleDodgeRoll;
+
+            if (playerCombat != null)
+            {
+                playerCombat.OnAimStateChanged += HandleAimStateChanged;
+                playerCombat.OnFocusStateChanged += HandleFocusStateChanged; // NEW: Subscribe
+            }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnMoveInput -= SetMoveInput;
+            playerInputHandler.OnJumpInput -= Jump;
+            playerInputHandler.OnCrouchInput -= Crouch;
+            playerInputHandler.OnRunInput -= SetRunningState;
+
+            if (playerCombat != null)
+            {
+                playerCombat.OnAimStateChanged -= HandleAimStateChanged;
+                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; // NEW: Unsubscribe
+            }
+
+            playerInputHandler.OnDodgeRollInput -= HandleDodgeRoll;
         }
     }
 
     private void Update()
     {
+        CheckIfGrounded();
         ApplyGravity();
         HandleMovement();
-        //Debug.Log("Is Grounded: " + characterController.isGrounded + ", Velocity Y: " + _velocity.y);
         HandlePlayerRotation();
     }
 
-    // Inside PlayerMovement.cs, after the Update() method
+    private void CheckIfGrounded()
+    {
+        _isGrounded = Physics.SphereCast(
+            groundCheckPoint.position,
+            groundCheckRadius,
+            Vector3.down,
+            out RaycastHit hitInfo,
+            groundCastDistance,
+            groundLayer,
+            QueryTriggerInteraction.Ignore
+        );
+    }
 
-  
+    public void Jump()
+    {
+        Debug.Log("<color=yellow>ACTION: Jump method called.</color>");
 
+        if (_isFocused)
+        {
+            Debug.Log("<color=red>JUMP BLOCKED: Is Focused.</color>");
+            return;
+        }
+
+        if (_isDodgeRolling)
+        {
+            Debug.Log("<color=red>JUMP BLOCKED: Is Dodge Rolling.</color>");
+            return;
+        }
+
+        
+        // We check if the player is NOT grounded and return.
+        if (!_isGrounded)
+        {
+            Debug.Log("<color=red>JUMP BLOCKED: Not Grounded.</color>");
+            return;
+        }
+
+        // If the checks above pass, we are clear to jump.
+        _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        if (_isRunning)
+        {
+            playerAnimationController.PlayRunningJumpAnimation();
+        }
+        else
+        {
+            playerAnimationController.PlayStandardJumpAnimation();
+        }
+    }
+
+    private void HandleDodgeRoll()
+    {
+        Debug.Log("<color=yellow>ACTION: HandleDodgeRoll method called.</color>");
+        if (_isDodgeRolling)
+        {
+            Debug.Log("<color=red>DODGE BLOCKED: Already Dodge Rolling.</color>");
+            return;
+        }
+
+        // --- THIS IS THE FIX ---
+        // We check if the player is NOT grounded and return.
+        if (!_isGrounded)
+        {
+            Debug.Log("<color=red>DODGE BLOCKED: Not Grounded.</color>");
+            return;
+        }
+
+        StartCoroutine(DodgeRollCoroutine());
+    }
+
+    // ... (The rest of the script is unchanged) ...
+
+    #region Unchanged Methods
     private void HandlePlayerRotation()
     {
         if (_cameraTransform == null) return;
-
-        // Make the player's forward direction match the camera's horizontal (yaw) direction.
         transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
     }
-    // --- Input Handling Callbacks (Called by PlayerInputHandler) ---
 
     public void SetMoveInput(Vector2 input)
     {
-        _moveInput = input.normalized; // Normalize to ensure consistent speed for diagonals
+        _moveInput = input.normalized;
     }
 
     public void SetRunningState(bool isRunning)
@@ -122,37 +208,18 @@ public class PlayerMovement : MonoBehaviour
         UpdateCurrentSpeed();
     }
 
-    public void Jump()
-    {
-        if (characterController.isGrounded)
-        {
-            _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            playerAnimationController.PlayJumpAnimation(); // Trigger jump animation
-            Debug.Log("Jump!"); // For testing
-        }
-    }
-
-    public void Crouch(bool isCrouching) // This will be a toggle from Input Handler
+    public void Crouch(bool isCrouching)
     {
         _isCrouching = isCrouching;
-        // Adjust CharacterController height and center immediately
         characterController.height = _isCrouching ? crouchHeight : normalHeight;
         characterController.center = _isCrouching ? new Vector3(0, crouchCenterY, 0) : new Vector3(0, normalCenterY, 0);
-
-        UpdateCurrentSpeed(); // Recalculate speed based on crouching state
-
-        Debug.Log($"Crouching: {_isCrouching}"); // For testing
+        UpdateCurrentSpeed();
     }
-
-    // Add placeholders for other actions
-   
-
-    // --- Internal Movement Logic ---
 
     private void HandleAimStateChanged(bool isAiming)
     {
         _isAiming = isAiming;
-        UpdateCurrentSpeed(); // Recalculate speed immediately.
+        UpdateCurrentSpeed();
     }
 
     private void UpdateCurrentSpeed()
@@ -161,7 +228,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _currentSpeed = walkSpeed * crouchSpeedMultiplier;
         }
-        else if (_isAiming) // Add this new condition
+        else if (_isAiming)
         {
             _currentSpeed = walkSpeed * aimSpeedMultiplier;
         }
@@ -173,44 +240,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (characterController.isGrounded && _velocity.y < 0)
+        if (_isGrounded && _velocity.y < 0)
         {
-            _velocity.y = -2f; // Small negative value to keep player "grounded"
+            _velocity.y = -2f;
         }
         _velocity.y += gravity * Time.deltaTime;
     }
 
     private void HandleMovement()
     {
-        // Movement is now relative to the player's own forward/right, which is aligned with the camera.
         Vector3 moveDirection = transform.forward * _moveInput.y + transform.right * _moveInput.x;
-
-        // Apply movement
         characterController.Move(moveDirection * _currentSpeed * Time.deltaTime);
-        characterController.Move(_velocity * Time.deltaTime); // Apply gravity separately
+        characterController.Move(_velocity * Time.deltaTime);
 
-        // Smooth the raw input over time.
         _smoothedMoveInput = Vector2.Lerp(_smoothedMoveInput, _moveInput, Time.deltaTime / animationSmoothTime);
 
-        // --- Update Animator Parameters ---
         float animSpeedMultiplier = _isRunning && !_isCrouching ? runSpeed / walkSpeed : 1f;
-
-        // Pass LOCAL input to the animator. Since the player is always facing forward relative to the camera,
-        // _moveInput.y is forward/backward and _moveInput.x is strafing left/right.
         playerAnimationController.SetLocomotionInput(
-            _smoothedMoveInput.x * animSpeedMultiplier, // Use smoothed value
-            _smoothedMoveInput.y * animSpeedMultiplier, // Use smoothed value
+            _smoothedMoveInput.x * animSpeedMultiplier,
+            _smoothedMoveInput.y * animSpeedMultiplier,
             _isCrouching,
             _isRunning
         );
-        
     }
-    private void HandleDodgeRoll()
-    {
-        // Don't allow dodging if already dodging or not on the ground.
-        if (_isDodgeRolling || !characterController.isGrounded) return;
 
-        StartCoroutine(DodgeRollCoroutine());
+    private void HandleFocusStateChanged(bool isFocused)
+    {
+        _isFocused = isFocused;
     }
 
     private IEnumerator DodgeRollCoroutine()
@@ -219,15 +275,31 @@ public class PlayerMovement : MonoBehaviour
         playerAnimationController.PlayDodgeRollAnimation();
 
         float startTime = Time.time;
-        Vector3 rollDirection = _moveInput.magnitude > 0.1f ? (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized : transform.forward;
+        Vector3 rollDirection = _moveInput.magnitude > 0.1f
+            ? (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized
+            : transform.forward;
+
+        rollDirection.y = 0;
+        rollDirection = rollDirection.normalized;
 
         while (Time.time < startTime + dodgeRollDuration)
         {
             characterController.Move(rollDirection * dodgeRollSpeed * Time.deltaTime);
-            yield return null; // Wait for the next frame
+            yield return null;
         }
 
         _isDodgeRolling = false;
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheckPoint == null) return;
+
+        Gizmos.color = Color.red;
+        // Draw the starting sphere
+        Gizmos.DrawWireSphere(groundCheckPoint.position, groundCheckRadius);
+        // Draw a line showing the cast path and distance
+        Gizmos.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * groundCastDistance);
+    }
+    #endregion
 }

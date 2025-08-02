@@ -1,16 +1,10 @@
+// PatrolRouteSO.cs
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolRouteSO : MonoBehaviour
+[CreateAssetMenu(fileName = "PatrolRoute_", menuName = "Only The Shadows Know/AI/Patrol Route")]
+public class PatrolRouteSO : ScriptableObject
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [Tooltip("The world-space coordinates for the enemy to patrol between.")]
+    public List<Vector3> waypoints;
 }
