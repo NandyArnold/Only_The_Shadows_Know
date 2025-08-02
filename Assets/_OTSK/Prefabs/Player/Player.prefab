@@ -239,7 +239,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -21.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       propertyPath: m_LocalRotation.w
@@ -723,6 +723,7 @@ MonoBehaviour:
   playerAnimationController: {fileID: 7619512642376539503}
   playerInputHandler: {fileID: 2210745878514288481}
   playerCombat: {fileID: 7367054569523521278}
+  playerHealthManaNoise: {fileID: 6750015388211781664}
   groundCheckPoint: {fileID: 4313145350801755303}
   groundCheckRadius: 0.2
   groundCastDistance: 0.3
@@ -739,7 +740,7 @@ MonoBehaviour:
   normalCenterY: 1
   crouchHeight: 1
   crouchCenterY: 0.5
-  dodgeRollSpeed: 20
+  dodgeRollSpeed: 5
   dodgeRollDuration: 0.5
   animationSmoothTime: 0.05
 --- !u!114 &6750015388211781664

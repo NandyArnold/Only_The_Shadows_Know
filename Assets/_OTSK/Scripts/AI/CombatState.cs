@@ -1,4 +1,5 @@
-// CombatState.cs
+// CombatState.cs - CORRECTED CHASE LOGIC
+
 using UnityEngine;
 
 public class CombatState : EnemyAIState
@@ -6,8 +7,9 @@ public class CombatState : EnemyAIState
     public override void Enter(EnemyAI enemyAI)
     {
         Debug.Log("Entering Combat State");
-        CombatManager.Instance.EnterCombat(); // Notify the global manager
+        CombatManager.Instance.EnterCombat();
         enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
+        enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
     }
 
     public override void Execute(EnemyAI enemyAI)
@@ -18,35 +20,36 @@ public class CombatState : EnemyAIState
         // Condition to STAY in combat: we can see the player OR they are within our lock-on range.
         if (canSeePlayer || distanceToPlayer <= enemyAI.Config.combatLockRange)
         {
-            if (canSeePlayer)
+            // If we're in attack range, switch to the Attack state and check walk or run.
+            if (distanceToPlayer <= enemyAI.Config.walkCombatRange)
             {
-                // If we see them, always update their last known position.
-                enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
-            }
-            // Chase them.
-            // --- NEW DYNAMIC SPEED LOGIC ---
-            float combatWalkThreshold = 7f; // Enemy will walk if player is closer than 7 units
-            float newSpeed;
-
-            if (distanceToPlayer > combatWalkThreshold)
-            {
-                newSpeed = enemyAI.Config.chaseSpeed; // Player is far, so run
+                // Player is close, so switch to combat walk.
+                enemyAI.Navigator.SetSpeed(enemyAI.Config.walkCombatSpeed);
+                enemyAI.AnimController.SetSpeed(enemyAI.Config.walkCombatSpeed);
             }
             else
             {
-                newSpeed = enemyAI.Config.walkCombatSpeed; // Player is close, so walk
+                // Player is far, so run.
+                enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
+                enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
             }
 
-            enemyAI.Navigator.SetSpeed(newSpeed);
-            enemyAI.AnimController.SetSpeed(newSpeed);
-            enemyAI.Navigator.MoveTo(enemyAI.LastKnownPlayerPosition);
+            // Check if we are in attack range.
+            if (distanceToPlayer <= enemyAI.Config.attackRange)
+            {
+                enemyAI.TransitionToState(new AttackState());
+                return;
+            }
 
-            // TODO: Add attack logic and the "can't attack" alarm timer here.
+            // Always chase the player's CURRENT position while locked on.
+            enemyAI.Navigator.MoveTo(enemyAI.PlayerTarget.position);
+
+            // TODO: Add "can't attack" alarm timer logic here.
         }
         else
         {
-            enemyAI.AnimController.SetSpeed(0); // Go to idle while transitioning
-            // If we've lost them completely, transition to Alert to investigate their last spot.
+            // If we've lost them completely (no sight AND outside lock-on range), investigate their last spot.
+            enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
             enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
         }
     }
@@ -54,8 +57,5 @@ public class CombatState : EnemyAIState
     public override void Exit(EnemyAI enemyAI)
     {
         Debug.Log("Exiting Combat State");
-        // NOTE: We don't call CombatManager.ExitCombat() here.
-        // The manager will decide when combat is truly over (e.g., when ALL enemies are out of combat).
-        enemyAI.Navigator.Stop();
     }
 }

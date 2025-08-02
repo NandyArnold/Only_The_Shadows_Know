@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     // --- Game State Management ---
     public GameState CurrentState { get; private set; }
     public event Action<GameState> OnGameStateChanged;
+   
 
     void Awake()
     {
@@ -61,6 +62,14 @@ public class GameManager : MonoBehaviour
                 UpdateGameState(GameState.Gameplay);
                 break;
                 // The Loading state is handled by the SceneLoader itself.
+        }
+        if (sceneData.objectiveChain != null)
+        {
+            ObjectiveManager.Instance.Initialize(sceneData.objectiveChain);
+        }
+        if (sceneData.objectiveChain != null)
+        {
+            ObjectiveManager.Instance.Initialize(sceneData.objectiveChain);
         }
     }
 

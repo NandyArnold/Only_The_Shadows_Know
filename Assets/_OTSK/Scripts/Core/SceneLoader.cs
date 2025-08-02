@@ -7,6 +7,7 @@ public class SceneLoader : MonoBehaviour
 {
     // Public static property to access the single instance of SceneLoader
     public static SceneLoader Instance { get; private set; }
+    public SceneDataSO CurrentSceneData { get; private set; }
 
     // Events that other scripts can subscribe to
     public event Action<SceneDataSO> OnSceneLoaded;
@@ -85,6 +86,14 @@ public class SceneLoader : MonoBehaviour
 
         // Invoke events AFTER scene is fully loaded and activated
         OnSceneLoaded?.Invoke(_currentSceneData);
+        // Scene is now active
+        Debug.Log($"SceneLoader: Scene '{sceneName}' loaded and activated.");
+
+        // update the public property:
+        CurrentSceneData = _currentSceneData;
+
+        // Invoke events AFTER scene is fully loaded and activated
+        OnSceneLoaded?.Invoke(_currentSceneData);
 
         // Store spawnPointTag temporarily if needed, e.g., in GameManager, or pass directly
         // For now, it's passed but not used by SceneLoader itself.
@@ -115,5 +124,17 @@ public class SceneLoader : MonoBehaviour
 
         Debug.Log($"SceneLoader: Scene '{sceneName}' unloaded.");
         OnSceneUnloaded?.Invoke(sceneName);
+    }
+
+    public void RestartCurrentScene()
+    {
+        if (CurrentSceneData != null)
+        {
+            LoadSceneAsync(CurrentSceneData);
+        }
+        else
+        {
+            Debug.LogWarning("SceneLoader: No current scene data to restart!");
+        }
     }
 }

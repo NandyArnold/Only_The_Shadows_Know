@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3909493796801281686}
   - component: {fileID: 3446622411678235474}
   - component: {fileID: 3961324408764969352}
+  - component: {fileID: 6157043936471997615}
   m_Layer: 6
   m_Name: Knight_Patrol_Prefab
   m_TagString: Enemy
@@ -117,8 +118,8 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_AngularSpeed: 1500
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -187,6 +188,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be8523572c68fa840997ac7b4472514f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6157043936471997615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576752461769993476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c16b1916ece39c549b37d6bb2f9a4072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6430670802362619096

@@ -13,6 +13,7 @@ public class EnemyConfigSO : ScriptableObject
     public float maxHealth = 100f;
     public float attackDamage = 10f;
     public float attackRange = 1.5f;
+    public float attackCooldown = 2f;
 
     [Header("Movement")]
     public float patrolSpeed = 2f;
@@ -34,4 +35,8 @@ public class EnemyConfigSO : ScriptableObject
     public float cantAttackAlarmTime = 10f; 
     [Tooltip("When damaged from stealth, does this enemy instantly know where the player is?")]
     public bool instantlyKnowsAttackerLocation = true;
+    [Tooltip("When in combat, the distance from which it walks instead of running.")]
+    public float walkCombatRange = 7f;
+
+
 }

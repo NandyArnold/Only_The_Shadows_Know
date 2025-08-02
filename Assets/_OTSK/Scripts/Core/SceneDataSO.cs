@@ -25,4 +25,7 @@ public class SceneDataSO : ScriptableObject
     [TextArea]
     [Tooltip("Optional: Lore or tip text for loading screens.")]
     public string description;
+
+    public LevelObjectiveChainSO objectiveChain;
+
 }

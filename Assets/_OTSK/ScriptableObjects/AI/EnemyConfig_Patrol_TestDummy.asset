@@ -16,8 +16,11 @@ MonoBehaviour:
   displayName: Test Dummy
   maxHealth: 100
   attackDamage: 10
-  attackRange: 1.5
+  attackRange: 1.8
+  attackCooldown: 1.25
   patrolSpeed: 2
+  alertSpeed: 3.5
+  walkCombatSpeed: 1.5
   chaseSpeed: 5
   visionRange: 15
   detectionConeAngle: 90
@@ -27,3 +30,4 @@ MonoBehaviour:
   combatLockRange: 30
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
+  walkCombatRange: 3
