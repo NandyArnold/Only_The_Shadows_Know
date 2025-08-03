@@ -20,6 +20,10 @@ public class TeleportManager : MonoBehaviour
     [Tooltip("How far above the target point to cast down from to find the ground.")]
     [SerializeField] private float groundCheckOffset = 2f;
 
+    [Header("Player Dimensions")] 
+    [SerializeField] private float playerHeight = 2f;
+    [SerializeField] private float playerRadius = 0.5f;
+
     [Header("Feedback")]
     [SerializeField] private GameObject teleportVFXPrefab;
     // We'll add SFX later when the AudioManager is more developed.
@@ -45,6 +49,29 @@ public class TeleportManager : MonoBehaviour
     /// Checks for a valid teleport location in a given direction from the player.
     /// </summary>
     /// <returns>True if a valid location was found.</returns>
+    /// // NEW: A more flexible validation method
+    public bool IsValidTeleportLocation(Vector3 position, out Vector3 validGroundPosition)
+    {
+        validGroundPosition = position;
+
+        // Check if the area is physically clear for the player to stand in.
+        if (Physics.CheckCapsule(position + Vector3.up * playerRadius, position + Vector3.up * (playerHeight - playerRadius), playerRadius, ~0, QueryTriggerInteraction.Ignore))
+        {
+            return false; // Something is blocking the capsule.
+        }
+
+        // Check for flat ground underneath.
+        if (Physics.Raycast(position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 1f, validTeleportLayerMask))
+        {
+            if (IsLocationFlatEnough(hit.normal))
+            {
+                validGroundPosition = hit.point;
+                return true;
+            }
+        }
+
+        return false;
+    }
     public bool RequestLineOfSightTeleport(Transform playerTransform)
     {
         // Raycast forward to find a potential obstacle or distant ground point.
@@ -75,11 +102,11 @@ public class TeleportManager : MonoBehaviour
     /// <summary>
     /// Executes the teleport, moving the player to the pre-validated position.
     /// </summary>
-    public void ExecuteTeleport(CharacterController playerCharacterController)
+    public void ExecuteTeleport(CharacterController playerCharacterController, Vector3 position)
     {
         // Disable the controller to teleport, then re-enable it.
         playerCharacterController.enabled = false;
-        playerCharacterController.transform.position = _validatedTeleportPosition;
+        playerCharacterController.transform.position = position;
         playerCharacterController.enabled = true;
 
         // Play visual effects

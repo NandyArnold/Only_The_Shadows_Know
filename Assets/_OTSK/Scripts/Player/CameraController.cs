@@ -13,6 +13,9 @@ public class CameraController : MonoBehaviour
     [Header("Cinemachine Cameras")]
     [SerializeField] private CinemachineCamera shoulderCamera;
     [SerializeField] private CinemachineCamera zoomCamera;
+    [SerializeField] private CinemachineCamera scryingCamera;
+    [SerializeField] private CinemachineCamera targetingCamera;
+
     [Tooltip("The empty object the camera follows. This is what we rotate.")]
     [SerializeField] private Transform cameraTarget;
 
@@ -95,5 +98,24 @@ public class CameraController : MonoBehaviour
         if (lfAngle < -360f) lfAngle += 360f;
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
+    }
+    public void ActivateScryingCamera()
+    {
+        scryingCamera.Priority = 20; // Give it the highest priority
+    }
+
+    public void DeactivateScryingCamera()
+    {
+        scryingCamera.Priority = 5; // Return priority to normal
+    }
+
+    public void ActivateTargetingCamera()
+    {
+        targetingCamera.Priority = 20; // Give it the highest priority
+    }
+
+    public void DeactivateTargetingCamera()
+    {
+        targetingCamera.Priority = 5; // Return priority to normal
     }
 }

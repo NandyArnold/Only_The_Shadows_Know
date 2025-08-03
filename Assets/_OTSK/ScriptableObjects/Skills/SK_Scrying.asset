@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f353ff15f1f34478c8d052e95d5203, type: 3}
+  m_Name: SK_Scrying
+  m_EditorClassIdentifier: 
+  skillID: 1
+  skillType: 1
+  skillName: Scrying
+  icon: {fileID: 21300000, guid: ca0b9bb570f71c84d94974ae01d55efc, type: 3}
+  description: 
+  manaCost: 0
+  cooldown: 50
+  usageCondition: 2
+  castMode: 2
+  lockMovementWhileCasting: 1
+  skillEffectData: {fileID: 11400000, guid: a0ea6bea56676af40827fc06346394b0, type: 2}

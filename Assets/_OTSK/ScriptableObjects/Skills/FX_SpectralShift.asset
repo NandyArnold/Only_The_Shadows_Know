@@ -12,3 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcd64ab060d71f41a7acbbddc6ef137, type: 3}
   m_Name: FX_SpectralShift
   m_EditorClassIdentifier: 
+  targetingIndicatorPrefab: {fileID: 7527345028319761921, guid: 10e7ca9ee95815a449a0f3c5c33a82d4, type: 3}
+  maxTargetingDistance: 30
+  targetingLayerMask:
+    serializedVersion: 2
+    m_Bits: 128

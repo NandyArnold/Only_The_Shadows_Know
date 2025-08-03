@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700294a81d953f14e89d673f99a0fb99, type: 3}
-  m_Name: SkillRegistry
+  m_Script: {fileID: 11500000, guid: a9396bc2d719360449c73c608d1287b2, type: 3}
+  m_Name: FX_Scrying
   m_EditorClassIdentifier: 
-  allSkills:
-  - {fileID: 11400000, guid: 3285abb47eb3be24593caba92a651a38, type: 2}
-  - {fileID: 11400000, guid: c29a5d09d9e28664f9509c9af3b61e60, type: 2}

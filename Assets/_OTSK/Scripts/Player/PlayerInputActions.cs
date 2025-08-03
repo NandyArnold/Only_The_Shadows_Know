@@ -1447,6 +1447,74 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Targeting"",
+            ""id"": ""aede3ea3-9346-4525-b8e5-fcc72c89ab8d"",
+            ""actions"": [
+                {
+                    ""name"": ""Confirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""fc59f147-bfff-4e0c-bf98-fed32bc4a6ff"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""ede9ef46-7966-4099-8ccb-772dac228685"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Point"",
+                    ""type"": ""Value"",
+                    ""id"": ""e7be3cc9-3af0-452b-8871-b6307630d96c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1e94c080-18ce-447e-ba36-1e0f8711288c"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e4228463-4313-4891-b8cb-355a84a9626e"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65fa3137-3b9e-472a-be78-efee7b420b27"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1554,6 +1622,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_EnemyDebug_PrimaryAttack = m_EnemyDebug.FindAction("PrimaryAttack", throwIfNotFound: true);
         m_EnemyDebug_ToggleCombat = m_EnemyDebug.FindAction("ToggleCombat", throwIfNotFound: true);
         m_EnemyDebug_CycleSpeed = m_EnemyDebug.FindAction("CycleSpeed", throwIfNotFound: true);
+        // Targeting
+        m_Targeting = asset.FindActionMap("Targeting", throwIfNotFound: true);
+        m_Targeting_Confirm = m_Targeting.FindAction("Confirm", throwIfNotFound: true);
+        m_Targeting_Cancel = m_Targeting.FindAction("Cancel", throwIfNotFound: true);
+        m_Targeting_Point = m_Targeting.FindAction("Point", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1561,6 +1634,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_EnemyDebug.enabled, "This will cause a leak and performance issues, PlayerInputActions.EnemyDebug.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Targeting.enabled, "This will cause a leak and performance issues, PlayerInputActions.Targeting.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2283,6 +2357,124 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="EnemyDebugActions" /> instance referencing this action map.
     /// </summary>
     public EnemyDebugActions @EnemyDebug => new EnemyDebugActions(this);
+
+    // Targeting
+    private readonly InputActionMap m_Targeting;
+    private List<ITargetingActions> m_TargetingActionsCallbackInterfaces = new List<ITargetingActions>();
+    private readonly InputAction m_Targeting_Confirm;
+    private readonly InputAction m_Targeting_Cancel;
+    private readonly InputAction m_Targeting_Point;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Targeting".
+    /// </summary>
+    public struct TargetingActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public TargetingActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Targeting/Confirm".
+        /// </summary>
+        public InputAction @Confirm => m_Wrapper.m_Targeting_Confirm;
+        /// <summary>
+        /// Provides access to the underlying input action "Targeting/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_Targeting_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "Targeting/Point".
+        /// </summary>
+        public InputAction @Point => m_Wrapper.m_Targeting_Point;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Targeting; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="TargetingActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(TargetingActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="TargetingActions" />
+        public void AddCallbacks(ITargetingActions instance)
+        {
+            if (instance == null || m_Wrapper.m_TargetingActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TargetingActionsCallbackInterfaces.Add(instance);
+            @Confirm.started += instance.OnConfirm;
+            @Confirm.performed += instance.OnConfirm;
+            @Confirm.canceled += instance.OnConfirm;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @Point.started += instance.OnPoint;
+            @Point.performed += instance.OnPoint;
+            @Point.canceled += instance.OnPoint;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="TargetingActions" />
+        private void UnregisterCallbacks(ITargetingActions instance)
+        {
+            @Confirm.started -= instance.OnConfirm;
+            @Confirm.performed -= instance.OnConfirm;
+            @Confirm.canceled -= instance.OnConfirm;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @Point.started -= instance.OnPoint;
+            @Point.performed -= instance.OnPoint;
+            @Point.canceled -= instance.OnPoint;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="TargetingActions.UnregisterCallbacks(ITargetingActions)" />.
+        /// </summary>
+        /// <seealso cref="TargetingActions.UnregisterCallbacks(ITargetingActions)" />
+        public void RemoveCallbacks(ITargetingActions instance)
+        {
+            if (m_Wrapper.m_TargetingActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="TargetingActions.AddCallbacks(ITargetingActions)" />
+        /// <seealso cref="TargetingActions.RemoveCallbacks(ITargetingActions)" />
+        /// <seealso cref="TargetingActions.UnregisterCallbacks(ITargetingActions)" />
+        public void SetCallbacks(ITargetingActions instance)
+        {
+            foreach (var item in m_Wrapper.m_TargetingActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_TargetingActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="TargetingActions" /> instance referencing this action map.
+    /// </summary>
+    public TargetingActions @Targeting => new TargetingActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2623,5 +2815,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCycleSpeed(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Targeting" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="TargetingActions.AddCallbacks(ITargetingActions)" />
+    /// <seealso cref="TargetingActions.RemoveCallbacks(ITargetingActions)" />
+    public interface ITargetingActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Confirm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnConfirm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Point" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPoint(InputAction.CallbackContext context);
     }
 }

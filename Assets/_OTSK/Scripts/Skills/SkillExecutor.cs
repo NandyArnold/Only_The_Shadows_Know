@@ -1,5 +1,6 @@
 // SkillExecutor.cs
 using UnityEngine;
+using System.Collections;
 
 public class SkillExecutor : MonoBehaviour
 {
@@ -21,5 +22,10 @@ public class SkillExecutor : MonoBehaviour
 
         // This is the payoff for our polymorphic design. We just tell the effect to activate.
         skill.skillEffectData.Activate(caster);
+    }
+
+    public void ExecuteCoroutine(IEnumerator routine)
+    {
+        StartCoroutine(routine);
     }
 }

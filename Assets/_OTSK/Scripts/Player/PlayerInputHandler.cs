@@ -25,9 +25,13 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<int> OnSkillInput;
     public event Action OnDodgeRollInput;
 
+    public event Action OnConfirmInput;  // For confirming Targeting Mode
+    public event Action OnCancelInput;
+
     private PlayerInputActions _inputActions;
     private InputActionMap _playerMap;
     private InputActionMap _uiMap;
+    private InputActionMap _targetingMap;
     private bool _isCrouchToggleActive = false;
 
 
@@ -38,6 +42,8 @@ public class PlayerInputHandler : MonoBehaviour
         // Get references to the maps
         _playerMap = _inputActions.asset.FindActionMap("Player");
         _uiMap = _inputActions.asset.FindActionMap("UI");
+        _targetingMap = _inputActions.asset.FindActionMap("Targeting");
+
 
         SetupInputCallbacks();
     }
@@ -108,6 +114,11 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.ToggleCursorMode.performed += HandleToggleInput;
         _inputActions.UI.ToggleCursorMode.performed += HandleToggleInput;
 
+        // Callbacks for the Targeting Map
+        _inputActions.Targeting.Confirm.performed += ctx => OnConfirmInput?.Invoke();
+        _inputActions.Targeting.Cancel.performed += ctx => OnCancelInput?.Invoke();
+
+
         _inputActions.Player.Skill1.performed += ctx => OnSkillInput?.Invoke(0);
         _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
         _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
@@ -138,6 +149,9 @@ public class PlayerInputHandler : MonoBehaviour
                 break;
             case "UI":
                 _uiMap.Enable();
+                break;
+            case "Targeting":
+                _targetingMap.Enable();
                 break;
         }
     }

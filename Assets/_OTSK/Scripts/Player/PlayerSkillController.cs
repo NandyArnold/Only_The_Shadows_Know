@@ -1,4 +1,4 @@
-// PlayerSkillController.cs
+// PlayerSkillController.cs - CORRECTED and STABLE VERSION
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +14,7 @@ public class PlayerSkillController : MonoBehaviour
     [SerializeField] private List<SkillIdentifier> equippedSkillIDs;
 
     private List<SkillSO> _equippedSkills;
+    private bool _isInCombat = false;
 
     private void Awake()
     {
@@ -25,6 +26,11 @@ public class PlayerSkillController : MonoBehaviour
 
     private void InitializeSkills()
     {
+        if (skillRegistry == null)
+        {
+            Debug.LogError("Skill Registry is not assigned!", this);
+            return;
+        }
         skillRegistry.Initialize();
         _equippedSkills = new List<SkillSO>();
         foreach (var skillID in equippedSkillIDs)
@@ -39,6 +45,13 @@ public class PlayerSkillController : MonoBehaviour
         {
             playerInputHandler.OnSkillInput += TryActivateSkill;
         }
+
+        // Subscribe to the CombatManager's events using named methods.
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart += HandleCombatStart;
+            CombatManager.Instance.OnCombatEnd += HandleCombatEnd;
+        }
     }
 
     private void OnDisable()
@@ -47,38 +60,64 @@ public class PlayerSkillController : MonoBehaviour
         {
             playerInputHandler.OnSkillInput -= TryActivateSkill;
         }
+
+        // Unsubscribe from the named methods. This is stable.
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart -= HandleCombatStart;
+            CombatManager.Instance.OnCombatEnd -= HandleCombatEnd;
+        }
     }
+
+    // --- NEW Event Handlers ---
+    private void HandleCombatStart() => _isInCombat = true;
+    private void HandleCombatEnd() => _isInCombat = false;
+
 
     private void TryActivateSkill(int skillIndex)
     {
-        // 1. Validate the index
         if (skillIndex < 0 || skillIndex >= _equippedSkills.Count) return;
 
         SkillSO skill = _equippedSkills[skillIndex];
-        if (skill == null) return;
+        if (skill == null)
+        {
+            Debug.LogError($"SKILL FAILED: No skill data found at index {skillIndex} in the Skill Registry.");
+            return;
+        }
 
-        // 2. Check cooldown
         if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID))
         {
-            Debug.Log($"Skill '{skill.skillName}' is on cooldown.");
+            Debug.Log($"<color=red>SKILL FAILED:</color> '{skill.skillName}' is on cooldown.");
             return;
         }
 
-        // 3. Check mana cost
         if (playerHealthManaNoise.CurrentMana < skill.manaCost)
         {
-            Debug.Log($"Not enough mana for '{skill.skillName}'.");
+            Debug.Log($"<color=red>SKILL FAILED:</color> Not enough mana for '{skill.skillName}'.");
             return;
         }
 
-        // 4. TODO: Check Usage Condition (e.g., CombatOnly vs OutOfCombatOnly)
-        // We will add this check later when we have a combat state.
+        switch (skill.usageCondition)
+        {
+            case SkillUsageCondition.CombatOnly:
+                if (!_isInCombat)
+                {
+                    Debug.Log($"<color=red>SKILL FAILED:</color> Cannot use '{skill.skillName}' outside of combat.");
+                    return;
+                }
+                break;
+            case SkillUsageCondition.OutOfCombatOnly:
+                if (_isInCombat)
+                {
+                    Debug.Log($"<color=red>SKILL FAILED:</color> Cannot use '{skill.skillName}' while in combat.");
+                    return;
+                }
+                break;
+        }
 
-        // --- All checks passed, execute the skill ---
+        Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
         playerHealthManaNoise.ConsumeMana(skill.manaCost);
         SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
         SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
-
-        // TODO: Play a casting animation
     }
 }
