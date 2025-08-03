@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c0553cd8bf448c46a929c4c004d30bd, type: 3}
-  m_Name: LevelObjectiveChain_Tutorial
+  m_Script: {fileID: 11500000, guid: 0d5a0e7993bf8d24e9f50bec3924bafa, type: 3}
+  m_Name: TUT_01_Move
   m_EditorClassIdentifier: 
-  levelID: 
-  objectives: []
-  nextLevelSpawnPointTag: 
+  objectiveID: TUT_01_Move
+  objectiveDescription: Use WASD to Move
+  completionTriggerID: TUT_FiNISH_MOVE

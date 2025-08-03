@@ -99,4 +99,19 @@ public class ObjectiveManager : MonoBehaviour
             OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
         }
     }
+
+    public ObjectiveStateData CaptureState()
+    {
+        return new ObjectiveStateData
+        {
+            levelID = _currentLevelObjectiveChain.levelID,
+            currentObjectiveIndex = _currentObjectiveIndex
+        };
+    }
+
+    public void RestoreState(ObjectiveStateData state)
+    {
+        _currentObjectiveIndex = state.currentObjectiveIndex;
+        OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
+    }
 }

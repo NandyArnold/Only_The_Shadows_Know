@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: TutorialScene
   sceneType: 0
-  displayName: 
-  description: 
+  displayName: TutorialScene
+  description: The scene zhere the player learn to use its abilities
   objectiveChain: {fileID: 11400000, guid: c9c9e3cbc38ccb3499cbda9924dabe80, type: 2}

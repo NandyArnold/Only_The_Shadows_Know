@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HUDManager : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class HUDManager : MonoBehaviour
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider manaSlider;
+
+    [Header("Objective UI")] // NEW
+    [SerializeField]
+    private TextMeshProUGUI objectiveText;
 
     private PlayerHealthManaNoise _playerStats;
 
@@ -25,6 +30,15 @@ public class HUDManager : MonoBehaviour
 
         // The HUD starts hidden. The GameState change will enable it.
         if (playerHUDContainer != null) playerHUDContainer.SetActive(false);
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged += UpdateObjectiveText;
+            ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
+        }
+
+        // Hide text initially
+        objectiveText.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -39,6 +53,13 @@ public class HUDManager : MonoBehaviour
             _playerStats.OnHealthChanged -= UpdateHealthBar;
             _playerStats.OnManaChanged -= UpdateManaBar;
         }
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged -= UpdateObjectiveText;
+            ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
+        }
+
     }
 
     private void HandleGameStateChanged(GameState newState)
@@ -86,4 +107,22 @@ public class HUDManager : MonoBehaviour
             manaSlider.value = currentMana / maxMana;
         }
     }
+
+    private void UpdateObjectiveText(ObjectiveSO newObjective)
+    {
+        if (newObjective != null)
+        {
+            objectiveText.text = newObjective.objectiveDescription;
+            objectiveText.gameObject.SetActive(true);
+        }
+        else
+        {
+            objectiveText.gameObject.SetActive(false);
+        }
+    }
+    private void HandleLevelCompleted()
+    {
+        objectiveText.text = "All Objectives Complete!";
+    }
+
 }

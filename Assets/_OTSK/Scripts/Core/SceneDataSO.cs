@@ -26,6 +26,7 @@ public class SceneDataSO : ScriptableObject
     [Tooltip("Optional: Lore or tip text for loading screens.")]
     public string description;
 
+    [Header("Level Logic")] // You can add a header for organization
     public LevelObjectiveChainSO objectiveChain;
 
 }

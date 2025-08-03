@@ -63,14 +63,12 @@ public class GameManager : MonoBehaviour
                 break;
                 // The Loading state is handled by the SceneLoader itself.
         }
+        Debug.Log($"GameManager: Scene '{sceneData.sceneName}' was loaded.");
         if (sceneData.objectiveChain != null)
         {
             ObjectiveManager.Instance.InitializeObjective(sceneData.objectiveChain);
         }
-        if (sceneData.objectiveChain != null)
-        {
-            ObjectiveManager.Instance.InitializeObjective(sceneData.objectiveChain);
-        }
+       
     }
 
     private void OnDestroy()

@@ -101,5 +101,12 @@ public class PlayerHealthManaNoise : MonoBehaviour
         Debug.Log("Player has died.");
         // TODO: Trigger death animation, show death menu, etc.
     }
+    public void RestoreStats(float health, float mana)
+    {
+        _currentHealth = health;
+        _currentMana = mana;
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+        OnManaChanged?.Invoke(_currentMana, maxMana);
+    }
 
 }

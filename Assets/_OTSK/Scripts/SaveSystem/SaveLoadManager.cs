@@ -33,33 +33,55 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
-    public void SaveGame()
+    public void SaveGame(string saveFileName = "save_slot_1")
     {
-        if (_saveFile == null) return;
+        if (_saveFile == null)
+        {
+            Debug.LogError("Save file is not initialized!");
+            return;
+        }
 
         _currentGameState = new GameStateData();
 
         GatherPlayerData();
-        // ... GatherObjectiveData() and GatherWorldData() will be called here ...
+        GatherObjectiveData();
+        GatherWorldData();
 
         _saveFile.AddOrUpdateData(GameStateKey, _currentGameState);
         _saveFile.Save();
 
-        //Debug.Log($"<color=green>Game Saved via ESave:</color> {saveFileSetup.fileName}");
+        Debug.Log($"<color=green>Game Saved via ESave:</color> {saveFileName}");
     }
 
-    public void LoadGame()
+    public void LoadGame(string saveFileName = "save_slot_1")
     {
-        if (_saveFile == null) return;
+        if (_saveFile == null)
+        {
+            Debug.LogError("Save file is not initialized!");
+            return;
+        }
 
         if (_saveFile.HasData(GameStateKey))
         {
             _currentGameState = _saveFile.GetData<GameStateData>(GameStateKey);
 
             RestorePlayerData();
-            // ... RestoreObjectiveData() and RestoreWorldData() will be called here ...
+            RestoreObjectiveData();
+            RestoreWorldData();
 
-            //Debug.Log($"<color=cyan>Game Loaded via ESave:</color> {saveFileSetup.fileName}");
+            Debug.Log($"<color=cyan>Game Loaded via ESave:</color> {saveFileName}");
+        }
+        else
+        {
+            Debug.LogWarning($"Save file found, but no GameState data was present.");
+        }
+    }
+
+    private void GatherObjectiveData()
+    {
+        if (ObjectiveManager.Instance != null)
+        {
+            _currentGameState.objectiveData = ObjectiveManager.Instance.CaptureState();
         }
     }
 
@@ -90,9 +112,45 @@ public class SaveLoadManager : MonoBehaviour
         player.transform.rotation = _currentGameState.playerData.rotation.quaternionValue;
 
         controller.enabled = true;
-
-        // TODO: Restore Health/Mana by adding a "SetStats" method to PlayerHealthManaNoise
+        var stats = player.GetComponent<PlayerHealthManaNoise>();
+        stats.RestoreStats(_currentGameState.playerData.currentHealth, _currentGameState.playerData.currentMana);
     }
 
-    // --- (Gather/Restore for Objectives and World Data remain the same) ---
+    private void RestoreObjectiveData()
+    {
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.RestoreState(_currentGameState.objectiveData);
+        }
+    }
+    private void GatherWorldData()
+    {
+        // Find all objects in the scene that implement the ISaveable interface.
+        var saveableEntities = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).OfType<ISaveable>();
+
+        var worldState = new Dictionary<string, object>();
+        foreach (var entity in saveableEntities)
+        {
+            // For each object, capture its state and store it in a dictionary with its unique ID.
+            worldState[entity.UniqueID] = entity.CaptureState();
+        }
+
+        _currentGameState.worldData = new WorldStateData(worldState);
+    }
+
+    private void RestoreWorldData()
+    {
+        var saveableEntities = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).OfType<ISaveable>();
+        var worldState = _currentGameState.worldData.ToDictionary();
+
+        foreach (var entity in saveableEntities)
+        {
+            // For each saveable object in the scene, find its saved data using its unique ID.
+            if (worldState.TryGetValue(entity.UniqueID, out object state))
+            {
+                // If data is found, tell the object to restore its state.
+                entity.RestoreState(state);
+            }
+        }
+    }
 }
