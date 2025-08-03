@@ -23,7 +23,15 @@ public class PlayerSkillController : MonoBehaviour
 
         InitializeSkills();
     }
-
+    private void Start()
+    {
+        // Subscribe to the CombatManager's events using named methods.
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart += HandleCombatStart;
+            CombatManager.Instance.OnCombatEnd += HandleCombatEnd;
+        }
+    }
     private void InitializeSkills()
     {
         if (skillRegistry == null)
@@ -31,7 +39,7 @@ public class PlayerSkillController : MonoBehaviour
             Debug.LogError("Skill Registry is not assigned!", this);
             return;
         }
-        skillRegistry.Initialize();
+        
         _equippedSkills = new List<SkillSO>();
         foreach (var skillID in equippedSkillIDs)
         {
@@ -46,12 +54,7 @@ public class PlayerSkillController : MonoBehaviour
             playerInputHandler.OnSkillInput += TryActivateSkill;
         }
 
-        // Subscribe to the CombatManager's events using named methods.
-        if (CombatManager.Instance != null)
-        {
-            CombatManager.Instance.OnCombatStart += HandleCombatStart;
-            CombatManager.Instance.OnCombatEnd += HandleCombatEnd;
-        }
+        
     }
 
     private void OnDisable()
@@ -85,6 +88,29 @@ public class PlayerSkillController : MonoBehaviour
             return;
         }
 
+        // --- Special, SAFE Check for Scrying Toggle ---
+        if (skill.skillID == SkillIdentifier.Scrying)
+        {
+            // First, check if the system is ready before trying to use it.
+            if (ScryingSystem.Instance != null)
+            {
+                // If the system is ready, THEN we check if the skill is active.
+                if (ScryingSystem.Instance.IsScryingActive)
+                {
+                    Debug.Log("Scrying is already active. Executing toggle-off.");
+                    SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+                    return; // Exit here after toggling off.
+                }
+            }
+            else
+            {
+                // If this log appears, it confirms the ScryingSystem isn't ready in time.
+                Debug.LogError("SKILL CHECK FAILED: ScryingSystem.Instance was not ready!");
+                return; // Block the skill use if the system isn't ready.
+            }
+        }
+
+        // --- Standard Validation Checks ---
         if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID))
         {
             Debug.Log($"<color=red>SKILL FAILED:</color> '{skill.skillName}' is on cooldown.");

@@ -9,6 +9,6 @@ public class ScryingEffectSO : SkillEffectSO
     {
         // Tell the ScryingSystem to start, passing in the player
         // so it can find the CameraController.
-        ScryingSystem.Instance.ActivateScrying(caster);
+        ScryingSystem.Instance.ToggleScrying(caster);
     }
 }
