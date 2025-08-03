@@ -1478,6 +1478,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CycleTargetingMode"",
+                    ""type"": ""Value"",
+                    ""id"": ""c6112d47-ed55-42e4-8076-3186cb5b2f1f"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""AdjustPitch"",
+                    ""type"": ""Value"",
+                    ""id"": ""3e3313d0-292b-40d7-9552-88ed143df432"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1513,6 +1531,61 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Point"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""83597cd3-9143-4631-b86d-a9722193ea5d"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleTargetingMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6f43b58-0bd4-4e53-b4e4-ba32fca14cba"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AdjustPitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""e04fce9e-5f93-43f3-93b8-34b4614fa77a"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AdjustPitch"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""e931d037-78d0-43ae-85f9-91e8c48fb9b9"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AdjustPitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""a358294e-5207-4e78-8845-4412e760a088"",
+                    ""path"": ""<Mouse>/delta/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AdjustPitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -1627,6 +1700,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Targeting_Confirm = m_Targeting.FindAction("Confirm", throwIfNotFound: true);
         m_Targeting_Cancel = m_Targeting.FindAction("Cancel", throwIfNotFound: true);
         m_Targeting_Point = m_Targeting.FindAction("Point", throwIfNotFound: true);
+        m_Targeting_CycleTargetingMode = m_Targeting.FindAction("CycleTargetingMode", throwIfNotFound: true);
+        m_Targeting_AdjustPitch = m_Targeting.FindAction("AdjustPitch", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -2364,6 +2439,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Targeting_Confirm;
     private readonly InputAction m_Targeting_Cancel;
     private readonly InputAction m_Targeting_Point;
+    private readonly InputAction m_Targeting_CycleTargetingMode;
+    private readonly InputAction m_Targeting_AdjustPitch;
     /// <summary>
     /// Provides access to input actions defined in input action map "Targeting".
     /// </summary>
@@ -2387,6 +2464,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Targeting/Point".
         /// </summary>
         public InputAction @Point => m_Wrapper.m_Targeting_Point;
+        /// <summary>
+        /// Provides access to the underlying input action "Targeting/CycleTargetingMode".
+        /// </summary>
+        public InputAction @CycleTargetingMode => m_Wrapper.m_Targeting_CycleTargetingMode;
+        /// <summary>
+        /// Provides access to the underlying input action "Targeting/AdjustPitch".
+        /// </summary>
+        public InputAction @AdjustPitch => m_Wrapper.m_Targeting_AdjustPitch;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2422,6 +2507,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Point.started += instance.OnPoint;
             @Point.performed += instance.OnPoint;
             @Point.canceled += instance.OnPoint;
+            @CycleTargetingMode.started += instance.OnCycleTargetingMode;
+            @CycleTargetingMode.performed += instance.OnCycleTargetingMode;
+            @CycleTargetingMode.canceled += instance.OnCycleTargetingMode;
+            @AdjustPitch.started += instance.OnAdjustPitch;
+            @AdjustPitch.performed += instance.OnAdjustPitch;
+            @AdjustPitch.canceled += instance.OnAdjustPitch;
         }
 
         /// <summary>
@@ -2442,6 +2533,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Point.started -= instance.OnPoint;
             @Point.performed -= instance.OnPoint;
             @Point.canceled -= instance.OnPoint;
+            @CycleTargetingMode.started -= instance.OnCycleTargetingMode;
+            @CycleTargetingMode.performed -= instance.OnCycleTargetingMode;
+            @CycleTargetingMode.canceled -= instance.OnCycleTargetingMode;
+            @AdjustPitch.started -= instance.OnAdjustPitch;
+            @AdjustPitch.performed -= instance.OnAdjustPitch;
+            @AdjustPitch.canceled -= instance.OnAdjustPitch;
         }
 
         /// <summary>
@@ -2844,5 +2941,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPoint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CycleTargetingMode" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCycleTargetingMode(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AdjustPitch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAdjustPitch(InputAction.CallbackContext context);
     }
 }

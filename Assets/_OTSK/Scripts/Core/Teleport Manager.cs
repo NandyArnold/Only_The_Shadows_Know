@@ -12,7 +12,8 @@ public class TeleportManager : MonoBehaviour
 
     [Header("Teleport Settings")]
     [SerializeField] private float maxTeleportDistance = 15f;
-    [SerializeField] private LayerMask validTeleportLayerMask; // Layers we can teleport onto (e.g., "Ground")
+    [SerializeField] private LayerMask validTeleportLayerMask; // Layers we can teleport onto (e.g., "Ground", "Roof")
+    [SerializeField] private LayerMask obstacleLayerMask;
 
     [Header("Validation Settings")]
     [Tooltip("The maximum angle of a slope the player can teleport onto.")]
@@ -50,27 +51,27 @@ public class TeleportManager : MonoBehaviour
     /// </summary>
     /// <returns>True if a valid location was found.</returns>
     /// // NEW: A more flexible validation method
-    public bool IsValidTeleportLocation(Vector3 position, out Vector3 validGroundPosition)
+    public bool IsValidTeleportLocation(Vector3 position, Vector3 surfaceNormal)
     {
-        validGroundPosition = position;
-
-        // Check if the area is physically clear for the player to stand in.
-        if (Physics.CheckCapsule(position + Vector3.up * playerRadius, position + Vector3.up * (playerHeight - playerRadius), playerRadius, ~0, QueryTriggerInteraction.Ignore))
+        // 1. Check if the surface is flat enough.
+        if (!IsLocationFlatEnough(surfaceNormal))
         {
-            return false; // Something is blocking the capsule.
+            return false;
         }
 
-        // Check for flat ground underneath.
-        if (Physics.Raycast(position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 1f, validTeleportLayerMask))
+        // 2. Check if the space is clear for the player to stand in.
+        if (Physics.CheckCapsule(
+            position + Vector3.up * playerRadius,
+            position + Vector3.up * (playerHeight - playerRadius),
+            playerRadius,
+            obstacleLayerMask,
+            QueryTriggerInteraction.Ignore))
         {
-            if (IsLocationFlatEnough(hit.normal))
-            {
-                validGroundPosition = hit.point;
-                return true;
-            }
+            return false; // An obstacle is in the way.
         }
 
-        return false;
+        // If both checks pass, the location is valid.
+        return true;
     }
     public bool RequestLineOfSightTeleport(Transform playerTransform)
     {

@@ -198,6 +198,7 @@ public class PlayerMovement : MonoBehaviour
     #region Unchanged Methods
     private void HandlePlayerRotation()
     {
+        if (GameManager.Instance.CurrentState != GameState.Gameplay) return;
         if (_cameraTransform == null) return;
         transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
     }

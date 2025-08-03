@@ -24,21 +24,32 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float topClamp = 70.0f;
     [SerializeField] private float bottomClamp = -30.0f;
 
+    [Header("Targeting Settings")] 
+    [SerializeField] private float targetingPitchMin = 30f;
+    [SerializeField] private float targetingPitchMax = 80f;
+
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     private Vector2 _lookInput;
+
+    private float _pitchAdjustInput;
+
+    private CinemachineBrain _cinemachineBrain;
 
     private void Awake()
     {
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerCombat == null) playerCombat = GetComponent<PlayerCombat>();
+        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
     }
 
     private void OnEnable()
     {
         if (playerInputHandler != null)
+        {
             playerInputHandler.OnLookInput += SetLookInput;
-
+            playerInputHandler.OnAdjustPitchInput += SetPitchAdjustInput;
+        }
         // UPDATED: Subscribe to the focus event, not the aim event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
@@ -47,8 +58,10 @@ public class CameraController : MonoBehaviour
     private void OnDisable()
     {
         if (playerInputHandler != null)
+        {
             playerInputHandler.OnLookInput -= SetLookInput;
-
+            playerInputHandler.OnAdjustPitchInput -= SetPitchAdjustInput;
+        }
         // UPDATED: Unsubscribe from the focus event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
@@ -74,24 +87,39 @@ public class CameraController : MonoBehaviour
         _lookInput = input;
     }
 
+    private void SetPitchAdjustInput(float pitchInput)
+    {
+        _pitchAdjustInput = pitchInput;
+    }
     private void ApplyCameraRotation()
     {
-        // This logic is unchanged.
-        if (_lookInput.sqrMagnitude >= 0.01f)
+        // THIS IS THE FIX: We get the currently active camera from the brain
+        // and compare it to our targetingCamera reference.
+        if (_cinemachineBrain != null && (Object)_cinemachineBrain.ActiveVirtualCamera == targetingCamera)
         {
-            _cinemachineTargetYaw += _lookInput.x * lookSensitivity * Time.deltaTime;
-            _cinemachineTargetPitch -= _lookInput.y * lookSensitivity * Time.deltaTime;
+            // If in targeting mode, only adjust pitch with the new input
+            _cinemachineTargetPitch -= _pitchAdjustInput * lookSensitivity * Time.deltaTime;
+            _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch, targetingPitchMin, targetingPitchMax);
         }
-        _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch, bottomClamp, topClamp);
-        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+        else
+        {
+            // Otherwise, use the standard gameplay look controls
+            if (_lookInput.sqrMagnitude >= 0.01f)
+            {
+                _cinemachineTargetYaw += _lookInput.x * lookSensitivity * Time.deltaTime;
+                _cinemachineTargetPitch -= _lookInput.y * lookSensitivity * Time.deltaTime;
+            }
+            _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch, bottomClamp, topClamp);
+        }
 
+        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
         if (cameraTarget != null)
         {
             cameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
         }
-        // In your full player setup, this rotation should be applied to a camera target pivot, not the player directly.
-        // For now, this is fine, but the player's rotation should be handled by PlayerMovement.
     }
+       
+
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
     {

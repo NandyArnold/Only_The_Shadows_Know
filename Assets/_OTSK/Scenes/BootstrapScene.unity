@@ -2494,7 +2494,10 @@ MonoBehaviour:
   maxTeleportDistance: 15
   validTeleportLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 640
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 375
   maxGroundAngle: 45
   groundCheckOffset: 2
   playerHeight: 2

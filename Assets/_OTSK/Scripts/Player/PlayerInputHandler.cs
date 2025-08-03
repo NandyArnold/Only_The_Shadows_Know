@@ -25,8 +25,12 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<int> OnSkillInput;
     public event Action OnDodgeRollInput;
 
+    public event Action<float> OnCycleTargetingModeInput;
+
     public event Action OnConfirmInput;  // For confirming Targeting Mode
     public event Action OnCancelInput;
+
+    public event Action<float> OnAdjustPitchInput;
 
     private PlayerInputActions _inputActions;
     private InputActionMap _playerMap;
@@ -123,10 +127,16 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Targeting.Confirm.performed += ctx => OnConfirmInput?.Invoke();
         _inputActions.Targeting.Cancel.performed += ctx => OnCancelInput?.Invoke();
 
+        _inputActions.Targeting.AdjustPitch.performed += ctx => OnAdjustPitchInput?.Invoke(ctx.ReadValue<float>());
+        _inputActions.Targeting.AdjustPitch.canceled += ctx => OnAdjustPitchInput?.Invoke(0f);
+
+
 
         _inputActions.Player.Skill1.performed += ctx => OnSkillInput?.Invoke(0);
         _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
         _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
+
+        _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 
         _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
     }
