@@ -2555,37 +2555,6 @@ Transform:
   - {fileID: 35129125}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2063639222
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2063639223}
-  m_Layer: 8
-  m_Name: TargetingCameraTarget
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2063639223
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2063639222}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.24, z: 5.31}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4754192947251521666}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1988418179646733781
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2896,14 +2865,6 @@ PrefabInstance:
       propertyPath: targetingCamera
       value: 
       objectReference: {fileID: 616045872}
-    - target: {fileID: 201230392791682701, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: targetingPitchMax
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 201230392791682701, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: targetingPitchMin
-      value: -18
-      objectReference: {fileID: 0}
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2948,34 +2909,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5257710320307730926, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6023620784964649685, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: equippedSkillIDs.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6023620784964649685, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      propertyPath: 'equippedSkillIDs.Array.data[1]'
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2063639223}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
 --- !u!4 &4754192947251521665 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7211673708618776878, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
-  m_PrefabInstance: {fileID: 4754192947251521664}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4754192947251521666 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
   m_PrefabInstance: {fileID: 4754192947251521664}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6278276872011578089

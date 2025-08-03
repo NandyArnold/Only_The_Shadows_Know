@@ -22,6 +22,11 @@ public class PlayerCombat : MonoBehaviour
     [Header("Weapon Settings")]
     [SerializeField] private List<WeaponSO> availableWeapons;
 
+    [Header("Combat Points")]
+    [SerializeField] private Transform firePoint;
+    public Transform FirePoint => firePoint;
+    public bool IsFocused => _isFocused;
+
     public event Action<bool> OnAimStateChanged;
     public event Action<bool> OnFocusStateChanged;
 
@@ -82,6 +87,12 @@ public class PlayerCombat : MonoBehaviour
     }
     #endregion
 
+    public void SwitchWeaponByIndex(int index)
+    {
+        if (index < 0 || index >= availableWeapons.Count) return;
+        SwitchWeapon(availableWeapons[index]);
+    }
+
     public void SwitchWeapon(WeaponSO newWeapon)
     {
         if (newWeapon == null || newWeapon == _currentWeapon) return;
@@ -116,13 +127,13 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandlePrimaryAttack()
     {
-        if (_isAiming && _isFocused)
+        if (_currentWeapon is BowSO && _isFocused)
         {
-            Debug.Log("Firing a FOCUSED primary shot!");
-            // Later: _currentWeapon.PrimaryAttack(this, true);
+            _currentWeapon.SecondaryAttack(this);
         }
         else
         {
+            // Otherwise, it's a normal primary attack (dagger slash, or bow hip-fire).
             _currentWeapon?.PrimaryAttack(this);
         }
     }

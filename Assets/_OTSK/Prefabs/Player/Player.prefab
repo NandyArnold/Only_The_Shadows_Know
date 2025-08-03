@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3848660203734398207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2787693862012752324
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2862543130965560594}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2862543130965560594
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2787693862012752324}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.198, y: -0.32, z: 0.77}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7211673708618776878}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3837455420814254338
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +245,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.84, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2862543130965560594}
   m_Father: {fileID: 4881043288752694100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4915197956431660223
@@ -432,6 +464,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       propertyPath: m_Layer
@@ -703,10 +739,14 @@ MonoBehaviour:
   playerCombat: {fileID: 7367054569523521278}
   shoulderCamera: {fileID: 0}
   zoomCamera: {fileID: 0}
+  scryingCamera: {fileID: 0}
+  targetingCamera: {fileID: 0}
   cameraTarget: {fileID: 7211673708618776878}
   lookSensitivity: 20
   topClamp: 70
   bottomClamp: -30
+  targetingPitchMin: -18
+  targetingPitchMax: 50
 --- !u!114 &629505888469661623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -832,6 +872,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a1d8bdac0a45b2c488746e008540c9ca, type: 2}
   - {fileID: 11400000, guid: 7c6cb638bc7e5fb468316962919ce671, type: 2}
   - {fileID: 11400000, guid: cac6ddebf74158549a360ec91ce6fc16, type: 2}
+  firePoint: {fileID: 2862543130965560594}
 --- !u!114 &8271836069866080191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -890,7 +931,7 @@ MonoBehaviour:
   playerInputHandler: {fileID: 2210745878514288481}
   playerHealthManaNoise: {fileID: 6750015388211781664}
   skillRegistry: {fileID: 11400000, guid: 5cdffd3c250d9b74e93764dddddbd4dd, type: 2}
-  equippedSkillIDs: 02000000
+  equippedSkillIDs: 0200000001000000
 --- !u!4 &6738483135370902391 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}

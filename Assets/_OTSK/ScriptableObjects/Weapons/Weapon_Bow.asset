@@ -20,3 +20,11 @@ MonoBehaviour:
   offHandEquipSocket: 0
   mainHandUnequipSocket: 2
   offHandUnequipSocket: 2
+  arrowPrefab: {fileID: 2748330518523898865, guid: faf148121ddae8d43ba5439f6723f77f, type: 3}
+  aimLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  timeBetweenShots: 0.5
+  arrowSpeed: 20
+  focusedArrowSpeed: 50
+  unfocusedSpreadRadius: 100
