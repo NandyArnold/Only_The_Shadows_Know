@@ -53,29 +53,34 @@ public class PlayerInputHandler : MonoBehaviour
         // Subscribe to the CursorManager's event to know when to switch maps.
         if (CursorManager.Instance != null)
         {
-            CursorManager.Instance.OnCursorLockStateChanged += HandleCursorLockStateChanged;
+            CursorManager.Instance.OnStateChanged += HandleCursorStateChanged;
             // Set the initial state
-            HandleCursorLockStateChanged(true); // Start with cursor locked
+            
         }
+        SwitchActionMap("Player");
     }
 
     private void OnDestroy()
     {
         if (CursorManager.Instance != null)
         {
-            CursorManager.Instance.OnCursorLockStateChanged -= HandleCursorLockStateChanged;
+            CursorManager.Instance.OnStateChanged -= HandleCursorStateChanged;
         }
     }
 
-    private void HandleCursorLockStateChanged(bool isLocked)
+    private void HandleCursorStateChanged(CursorState newState)
     {
-        if (isLocked)
+        switch (newState)
         {
-            SwitchActionMap("Player");
-        }
-        else
-        {
-            SwitchActionMap("UI");
+            case CursorState.Gameplay:
+                SwitchActionMap("Player");
+                break;
+            case CursorState.UI:
+                SwitchActionMap("UI");
+                break;
+            case CursorState.Targeting:
+                SwitchActionMap("Targeting");
+                break;
         }
     }
 
@@ -130,7 +135,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (CursorManager.Instance != null)
         {
-            CursorManager.Instance.ToggleCursorMode();
+            CursorManager.Instance?.ToggleUIMode();
         }
     }
 
@@ -139,7 +144,7 @@ public class PlayerInputHandler : MonoBehaviour
         // Disable all maps first
         _playerMap.Disable();
         _uiMap.Disable();
-        // We will add the Targeting map here later
+        _targetingMap.Disable();
 
         // Enable the requested map
         switch (mapName)

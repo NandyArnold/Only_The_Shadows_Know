@@ -1,125 +1,83 @@
-// In CursorManager.cs - REVISED
-using System;
 using UnityEngine;
 
 public class CursorManager : MonoBehaviour
 {
     public static CursorManager Instance { get; private set; }
 
-    [SerializeField] private GameObject crosshairPrefab;
-    private GameObject _crosshairInstance;
+    [Tooltip("The crosshair used for standard gameplay.")]
+    [SerializeField] private GameObject gameplayCrosshairUI;
 
-    // ADD THIS: A field to remember the current scene type.
-    private SceneType _currentSceneType;
+    private CursorState _currentState;
+    public event System.Action<CursorState> OnStateChanged;
 
-    public event Action<bool> OnCursorLockStateChanged;
-
-    public bool isCursorLocked = true; // Default to locked cursor state.
-    // ... (Awake and InstantiateCrosshair methods are unchanged) ...
-    void Awake()
+    private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
         DontDestroyOnLoad(gameObject);
-        InstantiateCrosshair();
     }
 
-    private void InstantiateCrosshair()
-    {
-        PersistentObject persistentCanvasObject = UnityEngine.Object.FindFirstObjectByType<PersistentObject>();
-        if (crosshairPrefab != null && persistentCanvasObject != null)
-        {
-            _crosshairInstance = Instantiate(crosshairPrefab, persistentCanvasObject.transform);
-            _crosshairInstance.SetActive(false);
-        }
-    }
-
-
+    // We now subscribe to events instead of using Start().
     private void OnEnable()
     {
-        if (SceneLoader.Instance != null)
+        if (GameManager.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoaded += HandleSceneLoaded;
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
     }
 
     private void OnDisable()
     {
-        if (SceneLoader.Instance != null)
+        if (GameManager.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoaded -= HandleSceneLoaded;
+            GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
         }
     }
 
-    private void HandleSceneLoaded(SceneDataSO sceneData)
+    // This handler will be called automatically by the GameManager.
+    private void HandleGameStateChanged(GameState newState)
     {
-        // ADD THIS LINE: Store the current scene type.
-        _currentSceneType = sceneData.sceneType;
-
-        switch (sceneData.sceneType)
+        switch (newState)
         {
-            case SceneType.Gameplay:
-                LockCursor();
+            case GameState.Gameplay:
+                SetState(CursorState.Gameplay);
                 break;
-            case SceneType.Menu:
-                UnlockCursor();
+            case GameState.Menu:
+            case GameState.Cutscene: // Also unlock cursor for cutscenes
+            case GameState.Loading:  // And for loading screens
+                SetState(CursorState.UI);
                 break;
         }
     }
 
-    // ADD THIS METHOD BACK: The new, smarter toggle method.
-    public void ToggleCursorMode()
+    public void SetState(CursorState newState)
     {
-        isCursorLocked = !isCursorLocked;
-        ApplyCursorState();
-        //// Guard Clause: Only allow manual toggling in a gameplay scene.
-        //if (_currentSceneType != SceneType.Gameplay) return;
-
-        //// If it's currently locked, unlock it. Otherwise, lock it.
-        //if (Cursor.lockState == CursorLockMode.Locked)
-        //{
-        //    UnlockCursor();
-        //}
-        //else
-        //{
-        //    LockCursor();
-        //}
-    }
-
-    public void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        if (_crosshairInstance != null) _crosshairInstance.SetActive(true);
-    }
-
-    public void UnlockCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        if (_crosshairInstance != null) _crosshairInstance.SetActive(false);
-    }
-
-    private void ApplyCursorState()
-    {
-        if (isCursorLocked)
+        _currentState = newState;
+        switch (_currentState)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            if (_crosshairInstance != null) _crosshairInstance.SetActive(true);
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            if (_crosshairInstance != null) _crosshairInstance.SetActive(false);
-        }
+            case CursorState.Gameplay:
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                if (gameplayCrosshairUI != null) gameplayCrosshairUI.SetActive(true);
+                break;
 
-        // Fire the event to notify other systems (like the Input Handler).
-        OnCursorLockStateChanged?.Invoke(isCursorLocked);
+            case CursorState.UI:
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                if (gameplayCrosshairUI != null) gameplayCrosshairUI.SetActive(false);
+                break;
+
+            case CursorState.Targeting:
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = false;
+                if (gameplayCrosshairUI != null) gameplayCrosshairUI.SetActive(false);
+                break;
+        }
+        OnStateChanged?.Invoke(_currentState);
+    }
+
+    public void ToggleUIMode()
+    {
+        SetState(_currentState == CursorState.Gameplay ? CursorState.UI : CursorState.Gameplay);
     }
 }

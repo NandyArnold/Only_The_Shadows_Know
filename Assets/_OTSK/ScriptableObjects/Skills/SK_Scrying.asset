@@ -18,7 +18,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: ca0b9bb570f71c84d94974ae01d55efc, type: 3}
   description: 
   manaCost: 0
-  cooldown: 50
+  cooldown: 0
   usageCondition: 2
   castMode: 2
   lockMovementWhileCasting: 1

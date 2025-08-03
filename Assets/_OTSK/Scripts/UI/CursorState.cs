@@ -1,0 +1,1 @@
+public enum CursorState { Gameplay, UI, Targeting }

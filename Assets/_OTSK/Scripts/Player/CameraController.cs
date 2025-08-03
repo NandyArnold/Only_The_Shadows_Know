@@ -107,6 +107,8 @@ public class CameraController : MonoBehaviour
     public void DeactivateScryingCamera()
     {
         scryingCamera.Priority = 5; // Return priority to normal
+        shoulderCamera.Priority = 10;
+        zoomCamera.Priority = 5;
     }
 
     public void ActivateTargetingCamera()
@@ -117,5 +119,7 @@ public class CameraController : MonoBehaviour
     public void DeactivateTargetingCamera()
     {
         targetingCamera.Priority = 5; // Return priority to normal
+        shoulderCamera.Priority = 10;
+        zoomCamera.Priority = 5;
     }
 }
