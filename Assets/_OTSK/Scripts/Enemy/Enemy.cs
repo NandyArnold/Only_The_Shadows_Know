@@ -18,7 +18,12 @@ public class Enemy : MonoBehaviour, ISaveable
         public float currentHealth;
     }
     // --- Component References 
+    [Header("Data")] [Tooltip("The enemy's configuration data, including stats and behavior.")]
     [SerializeField] private EnemyConfigSO config;
+
+    [Header("UI")] // NEW
+    [SerializeField] private GameObject statusBarPrefab;
+    [SerializeField] private Transform statusBarAnchor;
     public EnemyConfigSO Config => config;
     public DetectionSystem Detector { get; private set; }
 
@@ -29,6 +34,7 @@ public class Enemy : MonoBehaviour, ISaveable
     private EnemyAnimationController _animController;
     private CapsuleCollider _collider;
     private UniqueID _uniqueID;
+    private EnemyUIController _uiController;
 
 
     // --- ISaveable Implementation ---
@@ -60,6 +66,12 @@ public class Enemy : MonoBehaviour, ISaveable
         _animController = GetComponent<EnemyAnimationController>();
         _collider = GetComponent<CapsuleCollider>();
         _uniqueID = GetComponent<UniqueID>();
+
+        statusBarAnchor = transform.Find("StatusBarAnchor");
+        if (statusBarAnchor == null)
+        {
+            Debug.LogError("StatusBarAnchor child object not found on Enemy!", this.gameObject);
+        }
     }
 
     private void OnEnable()
@@ -80,6 +92,17 @@ public class Enemy : MonoBehaviour, ISaveable
     private void Start()
     {
         _navigator.SetSpeed(config.patrolSpeed);
+
+        //Instantiate and set up the status bar
+        if (statusBarPrefab != null)
+        {
+            GameObject statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
+            _uiController = statusBarInstance.GetComponent<EnemyUIController>();
+
+            // Connect the health bar to the health changed event
+            _health.OnHealthChanged += _uiController.UpdateHealth;
+            _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
+        }
     }
 
     private void HandleDeath()

@@ -10,7 +10,8 @@ public class EnemyHealth : MonoBehaviour
     private bool _isDead = false;
 
     // The new event that EnemyAI will listen to.
-    public event Action<GameObject> OnDamaged;
+    public event Action<GameObject> OnDamaged; // For AI logic
+    public event Action<float, float> OnHealthChanged; // For UI
     public event Action OnDied;
 
     private void Awake()
@@ -25,6 +26,7 @@ public class EnemyHealth : MonoBehaviour
 
         _currentHealth -= damageAmount;
         OnDamaged?.Invoke(attacker); // Fire the event to notify the AI.
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth); // Notify UI about health change.
 
         Debug.Log($"<color=orange>{gameObject.name} took {damageAmount} damage from {attacker.name}!</color>");
 
@@ -44,6 +46,7 @@ public class EnemyHealth : MonoBehaviour
     public void SetHealth(float healthValue)
     {
         _currentHealth = healthValue;
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
         if (_currentHealth <= 0)
         {
             // If loaded health is zero, make sure the enemy is already dead.

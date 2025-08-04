@@ -42,6 +42,7 @@ Transform:
   m_Children:
   - {fileID: 8598703289818991878}
   - {fileID: 8366838318671023242}
+  - {fileID: 1942529453905322263}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8742543326378770538
@@ -70,6 +71,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+  statusBarPrefab: {fileID: 8542730887588098974, guid: 200591ffff209e34fb6f49aeef873453, type: 3}
+  statusBarAnchor: {fileID: 1942529453905322263}
 --- !u!136 &1830360367132146648
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -216,6 +219,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 55a27da6-d1a6-4343-9289-e520d5f5d3d8
+--- !u!1 &2080416359781553335
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1942529453905322263}
+  m_Layer: 6
+  m_Name: StatusBarAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1942529453905322263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2080416359781553335}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.932, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3313542892861222217}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6430670802362619096
 GameObject:
   m_ObjectHideFlags: 0

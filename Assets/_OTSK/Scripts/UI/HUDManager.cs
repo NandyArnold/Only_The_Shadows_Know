@@ -12,6 +12,7 @@ public class HUDManager : MonoBehaviour
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider manaSlider;
+    [SerializeField] private Slider noiseSlider;
 
     [Header("Objective UI")]
     [SerializeField] private TextMeshProUGUI objectiveText;
@@ -58,6 +59,9 @@ public class HUDManager : MonoBehaviour
             objectiveText.gameObject.SetActive(true);
             objectiveText.alpha = 0; // Start fully transparent
         }
+        if (healthSlider != null) healthSlider.gameObject.SetActive(false);
+        if (manaSlider != null) manaSlider.gameObject.SetActive(false);
+        if (noiseSlider != null) noiseSlider.gameObject.SetActive(false);
     }
 
     private void Update() 
@@ -93,8 +97,25 @@ public class HUDManager : MonoBehaviour
             inputHandler.OnShowObjectiveInput += HandleShowObjective;
         }
 
-        // You can also move other player-dependent subscriptions here.
-        // For example, if you add the health/mana bar logic back.
+        RegisterPlayerForDebugging(player.GetComponent<PlayerCombat>());
+
+        // --- THIS IS THE KEY LOGIC ---
+        // Get the stats component and subscribe to its events.
+        if (player.TryGetComponent<PlayerHealthManaNoise>(out var stats))
+        {
+            stats.OnHealthChanged += UpdateHealthBar;
+            stats.OnManaChanged += UpdateManaBar;
+            stats.OnNoiseChanged += UpdateNoiseBar;
+
+            // Set the initial values and make the bars visible
+            UpdateHealthBar(stats.CurrentHealth, 100f); // Assuming max health is 100
+            UpdateManaBar(stats.CurrentMana, 100f);   // Assuming max mana is 100
+            UpdateNoiseBar(stats.CurrentNoise, 100f); // Assuming max noise is 100
+
+            healthSlider.gameObject.SetActive(true);
+            manaSlider.gameObject.SetActive(true);
+            noiseSlider.gameObject.SetActive(true);
+        }
     }
 
 
@@ -173,8 +194,22 @@ public class HUDManager : MonoBehaviour
         }
     }
     public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }
-      private void HandleGameStateChanged(GameState newState) { /* ... */ }
-    private void UpdateHealthBar(float currentHealth, float maxHealth) { /* ... */ }
-    private void UpdateManaBar(float currentMana, float maxMana) { /* ... */ }
-    
+
+    private void HandleGameStateChanged(GameState newState) { /* ... */ }
+
+    private void UpdateHealthBar(float currentHealth, float maxHealth)
+    {
+        if (healthSlider != null) healthSlider.value = currentHealth / maxHealth;
+    }
+
+    private void UpdateManaBar(float currentMana, float maxMana)
+    {
+        if (manaSlider != null) manaSlider.value = currentMana / maxMana;
+    }
+
+    private void UpdateNoiseBar(float currentNoise, float maxNoise)
+    {
+        if (noiseSlider != null) noiseSlider.value = currentNoise / maxNoise;
+    }
+
 }

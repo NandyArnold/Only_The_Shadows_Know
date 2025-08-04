@@ -9,7 +9,7 @@ public class SceneLoader : MonoBehaviour
 
     public SceneDataSO CurrentSceneData { get; private set; }
     public event Action<SceneDataSO> OnSceneLoaded;
-    public event Action<string> OnSceneUnloaded;
+    //public event Action<string> OnSceneUnloaded;
 
     private SceneDataSO _sceneDataToLoad;
     private bool _isLoading = false; // The new flag to prevent duplicate loads
