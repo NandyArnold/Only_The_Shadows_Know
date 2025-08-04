@@ -25,9 +25,9 @@ public class DaggerAnimation : MonoBehaviour, IWeaponAnimation
         animator.SetTrigger(daggerSecondaryAttackTrigger);
     }
 
-    public void SetAiming(bool isAiming)
-    {
-        // Dagger does not have an aiming state, so we can leave this empty or log a message if needed.
-        Debug.Log("Dagger does not support aiming.");
-    }
+    //public void SetAiming(bool isAiming)
+    //{
+    //    // Dagger does not have an aiming state, so we can leave this empty or log a message if needed.
+    //    Debug.Log("Dagger does not support aiming.");
+    //}
 }

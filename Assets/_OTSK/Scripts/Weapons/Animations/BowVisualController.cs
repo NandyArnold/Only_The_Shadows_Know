@@ -25,16 +25,22 @@ public class BowVisualsController : MonoBehaviour
     private void OnEnable()
     {
         // Listen for when any bow fires
-        BowSO.OnBowFired += HideArrowForShot;
+        
 
-        // Listen for when the player switches weapons
-        _playerCombat.OnWeaponSwitched += HandleWeaponSwitch;
+        if (_playerCombat != null)
+        {
+            _playerCombat.OnBowFire += HideArrowForShot;
+            _playerCombat.OnWeaponSwitched += HandleWeaponSwitch;
+        }
     }
 
     private void OnDisable()
     {
-        BowSO.OnBowFired -= HideArrowForShot;
-        _playerCombat.OnWeaponSwitched -= HandleWeaponSwitch;
+        if (_playerCombat != null)
+        {
+            _playerCombat.OnBowFire -= HideArrowForShot;
+            _playerCombat.OnWeaponSwitched -= HandleWeaponSwitch;
+        }
     }
 
     private void HandleWeaponSwitch(WeaponSO newWeapon)

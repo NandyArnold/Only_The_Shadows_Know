@@ -15,6 +15,7 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int dodgeRollTriggerHash = Animator.StringToHash("DodgeRollTrigger");
     private readonly int standardJumpTriggerHash = Animator.StringToHash("StandardJumpTrigger");
     private readonly int runningJumpTriggerHash = Animator.StringToHash("RunningJumpTrigger");
+    private readonly int isAimingHash = Animator.StringToHash("IsAiming");
 
 
 
@@ -32,6 +33,13 @@ public class PlayerAnimationController : MonoBehaviour
     {
         _currentWeaponAnimation = weaponAnimation;
     }
+
+    public void SetAimingState(bool isAiming)
+    {
+        if (animator == null) return;
+        animator.SetBool(isAimingHash, isAiming);
+    }
+
 
     // --- DELEGATION TO WEAPON ---
     // PlayerCombat calls this, and we pass the command to the current weapon animator.
@@ -77,8 +85,8 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetTrigger(dodgeRollTriggerHash);
     }
 
-    public void SetAimingState(bool isAiming)
-    {
-        _currentWeaponAnimation?.SetAiming(isAiming);
-    }
+    //public void SetAimingState(bool isAiming)
+    //{
+    //    _currentWeaponAnimation?.SetAiming(isAiming);
+    //}
 }

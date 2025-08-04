@@ -13,10 +13,10 @@ public class BowAnimation : MonoBehaviour, IWeaponAnimation
         if (animator == null) animator = GetComponent<Animator>();
     }
 
-    public void SetAiming(bool isAiming)
-    {
-        animator.SetBool(isAimingHash, isAiming);
-    }
+    //public void SetAiming(bool isAiming)
+    //{
+    //    animator.SetBool(isAimingHash, isAiming);
+    //}
 
     // This method is now filled in.
     public void PlayPrimaryAttack()

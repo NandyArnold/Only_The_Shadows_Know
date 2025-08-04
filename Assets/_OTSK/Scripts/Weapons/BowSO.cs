@@ -1,5 +1,5 @@
 using UnityEngine;
-using System;
+
 
 [CreateAssetMenu(fileName = "Weapon_Bow", menuName = "Only The Shadows Know/Weapons/Bow")]
 public class BowSO : WeaponSO
@@ -12,7 +12,7 @@ public class BowSO : WeaponSO
     [SerializeField] private float timeBetweenShots = 0.5f;
     [SerializeField] private float unfocusedSpreadRadius = 25f;
 
-    public static event Action OnBowFired;
+   
 
     // Static variable to track the last fire time for this weapon type.
     private static float _lastFireTime;
@@ -25,8 +25,7 @@ public class BowSO : WeaponSO
             return;
         }
         _lastFireTime = Time.time;
-        OnBowFired?.Invoke();
-
+      
         Debug.Log("1. BowSO Fire method called. Attempting to trigger animation...");
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
 
