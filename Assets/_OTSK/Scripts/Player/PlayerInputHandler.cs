@@ -30,6 +30,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnConfirmInput;  // For confirming Targeting Mode
     public event Action OnCancelInput;
 
+    public event Action OnShowObjectiveInput;
+
     public event Action<float> OnAdjustPitchInput;
 
     private PlayerInputActions _inputActions;
@@ -139,6 +141,8 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 
         _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
+
+        _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)

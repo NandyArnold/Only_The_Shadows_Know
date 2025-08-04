@@ -185,6 +185,15 @@
                     "processors": "",
                     "interactions": "Press,Tap",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ShowObjective",
+                    "type": "Button",
+                    "id": "0ffda7d5-9b82-439b-8838-0d077b5af949",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -669,6 +678,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "DodgeRoll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f254ab4b-6a76-4785-8f69-8df4c491de97",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowObjective",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

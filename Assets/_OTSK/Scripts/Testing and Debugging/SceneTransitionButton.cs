@@ -26,11 +26,14 @@ public class SceneTransitionButton : MonoBehaviour
     {
         if (SceneLoader.Instance != null)
         {
+            PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
+
             SceneLoader.Instance.LoadSceneAsync(targetSceneData);
         }
         else
         {
             Debug.LogError("SceneTransitionButton: SceneLoader.Instance is null! Is it initialized in BootstrapScene?");
         }
+        
     }
 }

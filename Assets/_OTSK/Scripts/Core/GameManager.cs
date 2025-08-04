@@ -14,7 +14,9 @@ public class GameManager : MonoBehaviour
     // --- Game State Management ---
     public GameState CurrentState { get; private set; }
     public event Action<GameState> OnGameStateChanged;
-   
+
+
+    public event Action<PlayerController> OnPlayerRegistered;
 
     void Awake()
     {
@@ -81,6 +83,15 @@ public class GameManager : MonoBehaviour
 
     public void RegisterPlayer(PlayerController player)
     {
+        if (Player != null)
+        {
+            Debug.LogWarning("GameManager: A player is already registered. Overwriting reference.");
+        }
         Player = player;
+
+        // Fire the event to notify all listening systems that the player is ready.
+        OnPlayerRegistered?.Invoke(player);
+
+        Debug.Log("GameManager: Player reference has been registered and announced.");
     }
 }

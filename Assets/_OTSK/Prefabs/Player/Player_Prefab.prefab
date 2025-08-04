@@ -1117,8 +1117,10 @@ MonoBehaviour:
   targetingPitchMin: -18
   targetingPitchMax: 50
   recoilShakeAmplitude: 10
-  recoilShakeDuration: 0.3
-  recoilFovKick: 1
+  recoilShakeDuration: 0.5
+  recoilFovKick: 30
+  recoilKickDuration: 0.1
+  recoilReturnDuration: 0.25
   normalAimFov: 30
   focusedAimFov: 15
 --- !u!114 &629505888469661623

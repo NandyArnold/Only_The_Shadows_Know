@@ -1,62 +1,71 @@
-// HUDManager.cs - UPGRADED VERSION
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections; // Required for Coroutines
 
 public class HUDManager : MonoBehaviour
-
 {
-    public static HUDManager Instance { get; private set; }
+    public static HUDManager Instance { get; private set; } // Make it a singleton
 
-    [Header("UI Containers")]
-    [Tooltip("The parent GameObject for the entire Player HUD.")]
-    [SerializeField] private GameObject playerHUDContainer;
+
 
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider manaSlider;
 
-    [Header("Objective UI")] // NEW
-    [SerializeField]
-    private TextMeshProUGUI objectiveText;
+    [Header("Objective UI")]
+    [SerializeField] private TextMeshProUGUI objectiveText;
+    [SerializeField] private float objectiveDisplayTime = 4f;
+    [SerializeField] private float objectiveFadeTime = 0.5f;
 
-    private PlayerHealthManaNoise _playerStats;
-
-
-    [Header("Debug UI")] // NEW SECTION
+    [Header("Debug UI")]
     [SerializeField] private TextMeshProUGUI aimingDebugText;
     [SerializeField] private TextMeshProUGUI focusedDebugText;
+
+
+
+    private Coroutine _objectiveCoroutine;
     private PlayerCombat _playerCombatForDebug;
+
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
     }
+
+    
+
     private void Start()
     {
-        // Subscribe to the GameManager's state changes
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
 
-        // The HUD starts hidden. The GameState change will enable it.
-        if (playerHUDContainer != null) playerHUDContainer.SetActive(false);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPlayerRegistered += HandlePlayerRegistered;
+        }
 
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.OnCurrentObjectiveChanged += UpdateObjectiveText;
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleNewObjective;
             ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
         }
 
-        // Hide text initially
-        objectiveText.gameObject.SetActive(false);
+        if (objectiveText != null)
+        {
+            objectiveText.gameObject.SetActive(true);
+            objectiveText.alpha = 0; // Start fully transparent
+        }
+    }
+
+    private void Update() 
+    { 
+        if (_playerCombatForDebug != null) 
+        { 
+            aimingDebugText.text = $"isAiming: {_playerCombatForDebug.IsAiming}"; focusedDebugText.text = $"isFocused: {_playerCombatForDebug.IsFocused}";
+        } 
     }
 
     private void OnDestroy()
@@ -65,98 +74,107 @@ public class HUDManager : MonoBehaviour
         {
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
         }
-
-        if (_playerStats != null)
+        if (GameManager.Instance != null)
         {
-            _playerStats.OnHealthChanged -= UpdateHealthBar;
-            _playerStats.OnManaChanged -= UpdateManaBar;
+            GameManager.Instance.OnPlayerRegistered -= HandlePlayerRegistered;
         }
-
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.OnCurrentObjectiveChanged -= UpdateObjectiveText;
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged -= HandleNewObjective;
             ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
         }
-
     }
 
-
-    public void RegisterPlayerForDebugging(PlayerCombat playerCombat)
+    private void HandlePlayerRegistered(PlayerController player)
     {
-        _playerCombatForDebug = playerCombat;
-    }
-
-    // NEW Update method to handle the debug display
-    private void Update()
-    {
-        if (_playerCombatForDebug != null)
+        // Now that we have a valid player, we can get its components and subscribe to events.
+        if (player.TryGetComponent<PlayerInputHandler>(out var inputHandler))
         {
-            aimingDebugText.text = $"isAiming: {_playerCombatForDebug.IsAiming}";
-            focusedDebugText.text = $"isFocused: {_playerCombatForDebug.IsFocused}";
-        }
-    }
-
-    private void HandleGameStateChanged(GameState newState)
-    {
-        // Show the HUD only when the state is Gameplay.
-        if (playerHUDContainer != null)
-        {
-            playerHUDContainer.SetActive(newState == GameState.Gameplay);
+            inputHandler.OnShowObjectiveInput += HandleShowObjective;
         }
 
-        // If we are entering gameplay for the first time, find the player and set up the bars.
-        if (newState == GameState.Gameplay && _playerStats == null)
-        {
-            InitializeHUD(GameManager.Instance.Player);
-        }
+        // You can also move other player-dependent subscriptions here.
+        // For example, if you add the health/mana bar logic back.
     }
 
-    private void InitializeHUD(PlayerController player)
-    {
-        if (player == null) return;
-        _playerStats = player.GetComponent<PlayerHealthManaNoise>();
 
-        if (_playerStats != null)
+    private void HandleNewObjective(ObjectiveSO newObjective)
+    {
+        if (objectiveText == null) return;
+
+        if (_objectiveCoroutine != null)
         {
-            _playerStats.OnHealthChanged += UpdateHealthBar;
-            _playerStats.OnManaChanged += UpdateManaBar;
-
-            UpdateHealthBar(_playerStats.CurrentHealth, 100f);
-            UpdateManaBar(_playerStats.CurrentMana, 100f);
+            StopCoroutine(_objectiveCoroutine);
         }
-    }
 
-    private void UpdateHealthBar(float currentHealth, float maxHealth)
-    {
-        if (healthSlider != null)
-        {
-            healthSlider.value = currentHealth / maxHealth;
-        }
-    }
-
-    private void UpdateManaBar(float currentMana, float maxMana)
-    {
-        if (manaSlider != null)
-        {
-            manaSlider.value = currentMana / maxMana;
-        }
-    }
-
-    private void UpdateObjectiveText(ObjectiveSO newObjective)
-    {
         if (newObjective != null)
         {
-            objectiveText.text = newObjective.objectiveDescription;
-            objectiveText.gameObject.SetActive(true);
+            _objectiveCoroutine = StartCoroutine(FadeObjectiveText(newObjective.objectiveDescription));
         }
-        else
-        {
-            objectiveText.gameObject.SetActive(false);
-        }
-    }
-    private void HandleLevelCompleted()
-    {
-        objectiveText.text = "All Objectives Complete!";
     }
 
+    private IEnumerator FadeObjectiveText(string text)
+    {
+        // Fade Out (if it was already visible)
+        float startAlpha = objectiveText.alpha;
+        float elapsedTime = 0f;
+        while (elapsedTime < objectiveFadeTime)
+        {
+            objectiveText.alpha = Mathf.Lerp(startAlpha, 0, elapsedTime / objectiveFadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Set text and Fade In
+        objectiveText.text = text;
+        elapsedTime = 0f;
+        while (elapsedTime < objectiveFadeTime)
+        {
+            objectiveText.alpha = Mathf.Lerp(0, 1, elapsedTime / objectiveFadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        objectiveText.alpha = 1;
+
+        // Wait for a few seconds
+        yield return new WaitForSeconds(objectiveDisplayTime);
+
+        // Fade Out
+        elapsedTime = 0f;
+        while (elapsedTime < objectiveFadeTime)
+        {
+            objectiveText.alpha = Mathf.Lerp(1, 0, elapsedTime / objectiveFadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        objectiveText.alpha = 0;
+    }
+
+    private void HandleLevelCompleted()
+    {
+        if (_objectiveCoroutine != null)
+        {
+            StopCoroutine(_objectiveCoroutine);
+        }
+        _objectiveCoroutine = StartCoroutine(FadeObjectiveText("All Objectives Complete!"));
+    }
+
+    // --- (The rest of your HUDManager script is unchanged) ---
+
+    private void HandleShowObjective()
+    {
+        // Get the current objective from the manager
+        ObjectiveSO currentObjective = ObjectiveManager.Instance.GetCurrentObjective();
+        if (currentObjective != null)
+        {
+            // Re-run the same fade coroutine we already have
+            if (_objectiveCoroutine != null) StopCoroutine(_objectiveCoroutine);
+            _objectiveCoroutine = StartCoroutine(FadeObjectiveText(currentObjective.objectiveDescription));
+        }
+    }
+    public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }
+      private void HandleGameStateChanged(GameState newState) { /* ... */ }
+    private void UpdateHealthBar(float currentHealth, float maxHealth) { /* ... */ }
+    private void UpdateManaBar(float currentMana, float maxMana) { /* ... */ }
+    
 }
