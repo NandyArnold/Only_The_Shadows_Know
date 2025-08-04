@@ -31,8 +31,14 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Combat Points")]
     [SerializeField] private Transform firePoint;
-   
-    
+
+    [Header("Data References")]
+    [SerializeField] private NoiseSettingsSO noiseSettings;
+    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    public NoiseSettingsSO NoiseSettings => noiseSettings;
+    public PlayerHealthManaNoise HealthManaNoise => playerHealthManaNoise;
+
+
 
     public event Action<bool> OnAimStateChanged;
     public event Action<bool> OnFocusStateChanged;
@@ -68,7 +74,10 @@ public class PlayerCombat : MonoBehaviour
         {
             SwitchWeapon(availableWeapons[0]);
         }
-       
+        if (noiseSettings == null) Debug.LogError("NoiseSettingsSO not assigned on PlayerCombat!");
+        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+
+
     }
 
     private void OnEnable()

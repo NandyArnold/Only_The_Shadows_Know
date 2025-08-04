@@ -13,19 +13,19 @@ public class PlayerSpawner : MonoBehaviour
         // This is a very verbose singleton check for debugging.
         if (Instance != null && Instance != this)
         {
-            Debug.LogError($"--- DUPLICATE SPAWNER DETECTED --- \nThis spawner on '{gameObject.name}' with ID {GetInstanceID()} is a duplicate. The original is on '{Instance.gameObject.name}'. Destroying this duplicate.", this.gameObject);
+            //Debug.LogError($"--- DUPLICATE SPAWNER DETECTED --- \nThis spawner on '{gameObject.name}' with ID {GetInstanceID()} is a duplicate. The original is on '{Instance.gameObject.name}'. Destroying this duplicate.", this.gameObject);
             Destroy(gameObject);
             return;
         }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Debug.LogWarning($"--- SINGLETON INITIALIZED --- \nPlayerSpawner instance is set on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
+        //Debug.LogWarning($"--- SINGLETON INITIALIZED --- \nPlayerSpawner instance is set on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
 
         if (SceneLoader.Instance != null)
         {
             SceneLoader.Instance.OnSceneLoaded += SpawnPlayer;
-            Debug.Log($"Spawner (ID: {GetInstanceID()}) has subscribed to OnSceneLoaded.");
+            //Debug.Log($"Spawner (ID: {GetInstanceID()}) has subscribed to OnSceneLoaded.");
         }
         else
         {
@@ -41,7 +41,7 @@ public class PlayerSpawner : MonoBehaviour
     private void SpawnPlayer(SceneDataSO sceneData)
     {
         // This log includes the instance ID, so we can see WHO is spawning.
-        Debug.Log($"--- SPAWN PLAYER CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
+        //Debug.Log($"--- SPAWN PLAYER CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
 
         if (sceneData.sceneType == SceneType.Menu) return;
 

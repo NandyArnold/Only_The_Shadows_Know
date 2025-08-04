@@ -1253,8 +1253,6 @@ MonoBehaviour:
   recoilFovKick: 30
   recoilKickDuration: 0.1
   recoilReturnDuration: 0.25
-  normalAimFov: 30
-  focusedAimFov: 15
 --- !u!114 &629505888469661623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1290,6 +1288,7 @@ MonoBehaviour:
   crouchCenterY: 0.5
   dodgeRollSpeed: 5
   dodgeRollDuration: 0.5
+  noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
   animationSmoothTime: 0.05
 --- !u!114 &6750015388211781664
 MonoBehaviour:
@@ -1342,6 +1341,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7c6cb638bc7e5fb468316962919ce671, type: 2}
   - {fileID: 11400000, guid: cac6ddebf74158549a360ec91ce6fc16, type: 2}
   firePoint: {fileID: 2862543130965560594}
+  noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
+  playerHealthManaNoise: {fileID: 6750015388211781664}
 --- !u!114 &8271836069866080191
 MonoBehaviour:
   m_ObjectHideFlags: 0

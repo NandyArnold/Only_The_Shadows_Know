@@ -19,6 +19,7 @@ public class DaggerSO : WeaponSO
     {
         // 1. Tell the animator to play the attack.
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
+        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         // 2. Perform the hit detection.
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketL.position, attackRange, hittableLayers);
@@ -40,7 +41,7 @@ public class DaggerSO : WeaponSO
     {
         // 1. Tell the animator to play the attack.
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
-
+        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
         // 2. Perform the hit detection.
         bool canPerformFinisher = false; // Placeholder for finisher logic
         if (canPerformFinisher)
@@ -56,6 +57,7 @@ public class DaggerSO : WeaponSO
                         enemyHealth.TakeDamage(finisherDamage, combatController.gameObject); 
                     }
                 }
+            
             }
         }
         else
@@ -71,6 +73,7 @@ public class DaggerSO : WeaponSO
                         enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
                     }
                 }
+            
             }
         }
     }

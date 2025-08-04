@@ -102,6 +102,11 @@ public class Enemy : MonoBehaviour, ISaveable
             // Connect the health bar to the health changed event
             _health.OnHealthChanged += _uiController.UpdateHealth;
             _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
+
+            //  Connect the sound gauge to the alert bar
+            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+            // Initialize the alert bar to zero
+            _uiController.UpdateAlert(0, config.hearingThreshold);
         }
     }
 

@@ -63,6 +63,7 @@ public class BowSO : WeaponSO
             {
                 projectile.Initialize(isFocused);
             }
+            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
         }
       
     }

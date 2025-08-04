@@ -10,12 +10,15 @@ public class DetectionSystem : MonoBehaviour
     [SerializeField] private Transform eyePoint;
 
     [Header("Settings")]
-    [Tooltip("Layers that will block the enemy's line of sight (e.g., walls, obstacles).")]
-    [SerializeField] private LayerMask visionBlockingLayers;
+    
+    [SerializeField] private LayerMask visionBlockingLayers; //Layers that will block the enemy's line of sight (e.g., walls, obstacles).
+    [SerializeField] private float noiseDecayRate = 10f; // How fast the gauge empties per second
 
     public event Action<Vector3> OnSoundDetected;
+    public event Action<float, float> OnSoundGaugeChanged;
 
     private Transform _playerTransform;
+    private float _soundGauge = 0f;
 
     private void Start()
     {
@@ -25,6 +28,17 @@ public class DetectionSystem : MonoBehaviour
             _playerTransform = GameManager.Instance.Player.transform;
         }
     }
+
+    private void Update()
+    {
+        // Decay the sound gauge over time
+        if (_soundGauge > 0)
+        {
+            _soundGauge = Mathf.Max(0, _soundGauge - noiseDecayRate * Time.deltaTime);
+            OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
+        }
+    }
+
 
     public bool CanSeePlayer()
     {
@@ -86,10 +100,19 @@ public class DetectionSystem : MonoBehaviour
     {
         // Check if the sound is within hearing range and loud enough.
         float distanceToSound = Vector3.Distance(transform.position, soundPosition);
-        if (distanceToSound <= config.hearingRange && intensity >= config.hearingThreshold)
+        if (distanceToSound > config.hearingRange) return;
+
+        // Add the noise intensity to the gauge
+        _soundGauge += intensity;
+        OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
+        Debug.Log($"Enemy heard sound. Gauge is now at: {_soundGauge} / {config.hearingThreshold}");
+
+        // If the gauge is full, fire the event
+        if (_soundGauge >= config.hearingThreshold)
         {
-            // If we heard it, fire our event to notify the AI brain.
             OnSoundDetected?.Invoke(soundPosition);
+            _soundGauge = 0f; // Reset the gauge after being alerted
+            OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
         }
     }
 

@@ -92,25 +92,30 @@ public class HUDManager : MonoBehaviour
     private void HandlePlayerRegistered(PlayerController player)
     {
         // Now that we have a valid player, we can get its components and subscribe to events.
+        StartCoroutine(InitializePlayerHUDCoroutine(player));
+    }
+    private IEnumerator InitializePlayerHUDCoroutine(PlayerController player)
+    {
+        // Wait for the end of the frame to ensure all Awake() and Start() on the player have run.
+        yield return new WaitForEndOfFrame();
+
+        RegisterPlayerForDebugging(player.GetComponent<PlayerCombat>());
+
         if (player.TryGetComponent<PlayerInputHandler>(out var inputHandler))
         {
             inputHandler.OnShowObjectiveInput += HandleShowObjective;
         }
 
-        RegisterPlayerForDebugging(player.GetComponent<PlayerCombat>());
-
-        // --- THIS IS THE KEY LOGIC ---
-        // Get the stats component and subscribe to its events.
         if (player.TryGetComponent<PlayerHealthManaNoise>(out var stats))
         {
             stats.OnHealthChanged += UpdateHealthBar;
             stats.OnManaChanged += UpdateManaBar;
             stats.OnNoiseChanged += UpdateNoiseBar;
 
-            // Set the initial values and make the bars visible
-            UpdateHealthBar(stats.CurrentHealth, 100f); // Assuming max health is 100
-            UpdateManaBar(stats.CurrentMana, 100f);   // Assuming max mana is 100
-            UpdateNoiseBar(stats.CurrentNoise, 100f); // Assuming max noise is 100
+            // Now we can safely get the initial values.
+            UpdateHealthBar(stats.CurrentHealth, 100f);
+            UpdateManaBar(stats.CurrentMana, 100f);
+            UpdateNoiseBar(stats.CurrentNoise, 100f);
 
             healthSlider.gameObject.SetActive(true);
             manaSlider.gameObject.SetActive(true);

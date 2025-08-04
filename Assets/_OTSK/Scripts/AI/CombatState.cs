@@ -14,6 +14,13 @@ public class CombatState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (enemyAI.PlayerTarget == null) // If the player is no longer available, exit combat.
+        {
+            // Go back to patrolling since there's nothing to chase.
+            enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
+            return;
+        }
+
         bool canSeePlayer = enemyAI.Detector.CanSeePlayer();
         float distanceToPlayer = Vector3.Distance(enemyAI.transform.position, enemyAI.PlayerTarget.position);
 

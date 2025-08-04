@@ -36,6 +36,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dodgeRollSpeed = 10f;
     [SerializeField] private float dodgeRollDuration = 0.5f;
 
+    [Header("Data References")] // NEW HEADER
+    [SerializeField] private NoiseSettingsSO noiseSettings;
+    
+
+    private bool _wasGrounded;
+
     private Vector2 _moveInput;
     private Vector2 _smoothedMoveInput;
     [SerializeField] private float animationSmoothTime = 0.1f;
@@ -59,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
         playerCombat = GetComponent<PlayerCombat>();
         _cameraTransform = Camera.main.transform;
         _currentSpeed = walkSpeed;
+        if (noiseSettings == null) Debug.LogError("NoiseSettingsSO not assigned on PlayerMovement!");
         if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
     }
 
@@ -119,11 +126,12 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
         HandleMovement();
         HandlePlayerRotation();
+        HandleContinuousNoise();
     }
 
     private void CheckIfGrounded()
     {
-        _isGrounded = Physics.SphereCast(
+        bool isGroundedNow = Physics.SphereCast(
             groundCheckPoint.position,
             groundCheckRadius,
             Vector3.down,
@@ -132,6 +140,15 @@ public class PlayerMovement : MonoBehaviour
             groundLayer,
             QueryTriggerInteraction.Ignore
         );
+
+        if (!_wasGrounded && isGroundedNow)
+        {
+            playerHealthManaNoise.GenerateNoise(noiseSettings.landNoise);
+        }
+
+        _isGrounded = isGroundedNow;
+        _wasGrounded = isGroundedNow;
+
     }
 
     public void Jump()
@@ -159,17 +176,15 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // If the checks above pass, we are clear to jump.
+        float noiseToGenerate = _isRunning ? noiseSettings.jumpRunningNoise : noiseSettings.jumpNoise;
+        playerHealthManaNoise.GenerateNoise(noiseToGenerate);
+
         _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+
         if (_isRunning)
-        {
-            playerHealthManaNoise.GenerateNoise(70f);
             playerAnimationController.PlayRunningJumpAnimation();
-        }
         else
-        {
-            playerHealthManaNoise.GenerateNoise(80f);
             playerAnimationController.PlayStandardJumpAnimation();
-        }
 
     }
 
@@ -184,18 +199,18 @@ public class PlayerMovement : MonoBehaviour
 
         // --- THIS IS THE FIX ---
         // We check if the player is NOT grounded and return.
-        if (!_isGrounded)
+        if (!_isGrounded || _isDodgeRolling)
         {
             Debug.Log("<color=red>DODGE BLOCKED: Not Grounded.</color>");
             return;
         }
-
+        playerHealthManaNoise.GenerateNoise(noiseSettings.dodgeRollNoise);
         StartCoroutine(DodgeRollCoroutine());
     }
 
-    // ... (The rest of the script is unchanged) ...
+   
 
-    #region Unchanged Methods
+    
     private void HandlePlayerRotation()
     {
         if (GameManager.Instance.CurrentState != GameState.Gameplay) return;
@@ -307,5 +322,28 @@ public class PlayerMovement : MonoBehaviour
         // Draw a line showing the cast path and distance
         Gizmos.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * groundCastDistance);
     }
-    #endregion
+
+    private void HandleContinuousNoise()
+    {
+        // If we are moving
+        if (_moveInput.magnitude > 0.1f)
+        {
+            if (_isCrouching)
+            {
+                // Generate crouch-walk noise (e.g., 25 * 0.5 = 12.5 per second)
+                float crouchNoise = noiseSettings.walkNoise * noiseSettings.crouchNoiseModifier;
+                playerHealthManaNoise.GenerateNoise(crouchNoise * Time.deltaTime);
+            }
+            else if (_isRunning)
+            {
+                // Generate run noise
+                playerHealthManaNoise.GenerateNoise(noiseSettings.runNoise * Time.deltaTime);
+            }
+            else // Must be walking
+            {
+                // Generate walk noise
+                playerHealthManaNoise.GenerateNoise(noiseSettings.walkNoise * Time.deltaTime);
+            }
+        }
+    }
 }
