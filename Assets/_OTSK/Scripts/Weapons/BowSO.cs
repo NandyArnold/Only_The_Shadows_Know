@@ -31,7 +31,7 @@ public class BowSO : WeaponSO
 
 
         // ... (The rest of the Fire method is unchanged)
-        #region Unchanged Logic
+        
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
@@ -64,7 +64,7 @@ public class BowSO : WeaponSO
                 projectile.Initialize(isFocused);
             }
         }
-        #endregion
+      
     }
 
     public override void PrimaryAttack(PlayerCombat combatController)

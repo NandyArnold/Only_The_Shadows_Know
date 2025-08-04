@@ -5,7 +5,10 @@ using UnityEngine.UI;
 using TMPro;
 
 public class HUDManager : MonoBehaviour
+
 {
+    public static HUDManager Instance { get; private set; }
+
     [Header("UI Containers")]
     [Tooltip("The parent GameObject for the entire Player HUD.")]
     [SerializeField] private GameObject playerHUDContainer;
@@ -20,6 +23,21 @@ public class HUDManager : MonoBehaviour
 
     private PlayerHealthManaNoise _playerStats;
 
+
+    [Header("Debug UI")] // NEW SECTION
+    [SerializeField] private TextMeshProUGUI aimingDebugText;
+    [SerializeField] private TextMeshProUGUI focusedDebugText;
+    private PlayerCombat _playerCombatForDebug;
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
     private void Start()
     {
         // Subscribe to the GameManager's state changes
@@ -60,6 +78,22 @@ public class HUDManager : MonoBehaviour
             ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
         }
 
+    }
+
+
+    public void RegisterPlayerForDebugging(PlayerCombat playerCombat)
+    {
+        _playerCombatForDebug = playerCombat;
+    }
+
+    // NEW Update method to handle the debug display
+    private void Update()
+    {
+        if (_playerCombatForDebug != null)
+        {
+            aimingDebugText.text = $"isAiming: {_playerCombatForDebug.IsAiming}";
+            focusedDebugText.text = $"isFocused: {_playerCombatForDebug.IsFocused}";
+        }
     }
 
     private void HandleGameStateChanged(GameState newState)

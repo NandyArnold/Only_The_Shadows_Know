@@ -11,6 +11,7 @@ public class PlayerCombat : MonoBehaviour
     public PlayerAnimationController PlayerAnimationController => playerAnimationController;
     public Transform FirePoint => firePoint;
     public bool IsFocused => _isFocused;
+    public bool IsAiming => _isAiming;
     public WeaponSO CurrentWeapon => _currentWeapon;
     public Transform HandSocketR => handSocketR;
     public Transform HandSocketL => handSocketL;
@@ -37,6 +38,7 @@ public class PlayerCombat : MonoBehaviour
     public event Action<bool> OnFocusStateChanged;
     public event Action<WeaponSO> OnWeaponSwitched;
     public event Action OnBowFire;
+    public event Action OnFocusedShotFired;
 
     private Coroutine _rigWeightCoroutine;
 
@@ -160,7 +162,8 @@ public class PlayerCombat : MonoBehaviour
         {
             _currentWeapon.SecondaryAttack(this);
             OnBowFire?.Invoke(); // Announce that a focused shot was fired
-            SetFocusState(false);
+            OnFocusedShotFired?.Invoke(); // Notify that a focused shot was fired
+
         }
         else if (_currentWeapon is BowSO) // Added check for unfocused bow shot
         {

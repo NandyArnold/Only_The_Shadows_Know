@@ -1,7 +1,7 @@
 // CameraController.cs - REFACTORED for Focus State
 
 using UnityEngine;
-
+using System.Collections;
 using Unity.Cinemachine;
 
 public class CameraController : MonoBehaviour
@@ -28,6 +28,18 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float targetingPitchMin = 30f;
     [SerializeField] private float targetingPitchMax = 80f;
 
+    [Header("Recoil Settings")]
+    [SerializeField] private float recoilShakeAmplitude = 2f;
+    [SerializeField] private float recoilShakeDuration = 0.2f;
+    [SerializeField] private float recoilFovKick = 5f;
+    [SerializeField] private float recoilKickDuration = 0.1f;
+    [SerializeField] private float recoilReturnDuration = 0.25f;
+
+
+    [Header("Aiming Settings")]
+    [SerializeField] private float normalAimFov = 40f;
+    [SerializeField] private float focusedAimFov = 25f;
+
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     private Vector2 _lookInput;
@@ -35,6 +47,8 @@ public class CameraController : MonoBehaviour
     private float _pitchAdjustInput;
 
     private CinemachineBrain _cinemachineBrain;
+
+    private Coroutine _recoilCoroutine;
 
     private void Awake()
     {
@@ -53,6 +67,7 @@ public class CameraController : MonoBehaviour
         // UPDATED: Subscribe to the focus event, not the aim event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
+            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
     }
 
     private void OnDisable()
@@ -65,6 +80,7 @@ public class CameraController : MonoBehaviour
         // UPDATED: Unsubscribe from the focus event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
+            playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
     }
 
     private void LateUpdate()
@@ -150,4 +166,63 @@ public class CameraController : MonoBehaviour
         shoulderCamera.Priority = 10;
         zoomCamera.Priority = 5;
     }
+
+    private void HandleFocusedShotFired()
+    {
+        if (_recoilCoroutine != null)
+        {
+            StopCoroutine(_recoilCoroutine);
+        }
+        // Start the new recoil and store a reference to it.
+        _recoilCoroutine = StartCoroutine(RecoilRoutine());
+    }
+
+    private IEnumerator RecoilRoutine()
+    {
+       ICinemachineCamera liveCamera = _cinemachineBrain.ActiveVirtualCamera;
+        if (liveCamera == null) yield break;
+
+        var noise = zoomCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+        if (noise == null) yield break;
+
+        var vcam = liveCamera as CinemachineCamera;
+
+        // 1. Store the camera's original FOV before we change anything.
+        float originalFov = vcam.Lens.FieldOfView;
+        float targetKickFov = originalFov + recoilFovKick;
+
+        // --- KICK ---
+        noise.AmplitudeGain = recoilShakeAmplitude;
+        float elapsedTime = 0f;
+        while (elapsedTime < recoilKickDuration)
+        {
+            float t = elapsedTime / recoilKickDuration;
+            vcam.Lens.FieldOfView = Mathf.SmoothStep(originalFov, targetKickFov, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        vcam.Lens.FieldOfView += recoilFovKick;
+
+        // --- RETURN ---
+        yield return new WaitForSeconds(recoilShakeDuration);
+
+        noise.AmplitudeGain = 0f;
+
+        // --- SMOOTHLY RETURN TO ORIGINAL FOV ---
+        elapsedTime = 0f;
+        float startFov = vcam.Lens.FieldOfView;
+        // 2. Set the target FOV for the return trip to be the original value.
+        float targetFov = originalFov;
+
+        while (elapsedTime < 0.2f) // 0.2s to return to normal
+        {   
+            float t = elapsedTime / recoilReturnDuration; // Normalize time
+            vcam.Lens.FieldOfView = Mathf.SmoothStep(startFov, originalFov, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        vcam.Lens.FieldOfView = originalFov;
+    }
+
 }
