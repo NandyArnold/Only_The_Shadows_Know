@@ -7,7 +7,9 @@ public class CombatState : EnemyAIState
     public override void Enter(EnemyAI enemyAI)
     {
         Debug.Log("Entering Combat State");
-        CombatManager.Instance.EnterCombat();
+        //Pass a reference to the enemy.
+        CombatManager.Instance.RegisterEnemyInCombat(enemyAI.GetComponent<Enemy>());
+
         enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
         enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
     }

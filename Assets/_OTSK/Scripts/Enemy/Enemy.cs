@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour, ISaveable
     private CapsuleCollider _collider;
     private UniqueID _uniqueID;
     private EnemyUIController _uiController;
+    private GameObject _statusBarInstance;
 
 
     // --- ISaveable Implementation ---
@@ -89,6 +90,20 @@ public class Enemy : MonoBehaviour, ISaveable
         _health.OnDied -= HandleDeath; // Unsubscribe
     }
 
+    private void OnDestroy()
+    {
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.UnregisterEnemy(this);
+        }
+
+        // ADD THIS: Notify the combat manager that this enemy is gone.
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.UnregisterEnemyFromCombat(this);
+        }
+    }
+
     private void Start()
     {
         _navigator.SetSpeed(config.patrolSpeed);
@@ -112,6 +127,12 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void HandleDeath()
     {
+        //  Destroy the status bar immediately.
+        if (_statusBarInstance != null)
+        {
+            Destroy(_statusBarInstance);
+        }
+
         // 1. Disable all intelligence and movement
         _ai.enabled = false;
         _navigator.enabled = false;
