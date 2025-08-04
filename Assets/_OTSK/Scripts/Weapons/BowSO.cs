@@ -1,4 +1,3 @@
-// BowSO.cs - UPGRADED with Spread and Focused Shot
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Weapon_Bow", menuName = "Only The Shadows Know/Weapons/Bow")]
@@ -6,20 +5,22 @@ public class BowSO : WeaponSO
 {
     [Header("Bow Specifics")]
     [SerializeField] private GameObject arrowPrefab;
-    [Tooltip("Which layers the aiming raycast will hit.")]
     [SerializeField] private LayerMask aimLayerMask;
-    [Tooltip("The max radius (in screen pixels) for the random spread of an unfocused shot.")]
     [SerializeField] private float unfocusedSpreadRadius = 25f;
+
+    // NOTE: The speed and fire rate variables are no longer here.
 
     public void Fire(PlayerCombat combatController, bool isFocused)
     {
+        // Fire rate and speed are now handled by the projectile itself or player stats.
+        // We will re-add the fire rate limiter to PlayerCombat later.
+
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
         Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Vector2 aimPoint = screenCenter;
 
-        // If the shot is NOT focused, add a random spread.
         if (!isFocused)
         {
             aimPoint += Random.insideUnitCircle * unfocusedSpreadRadius;
@@ -41,17 +42,22 @@ public class BowSO : WeaponSO
 
         if (arrowPrefab != null)
         {
-            Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
+            GameObject arrowObject = Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
+
+            // Get the projectile script from the new arrow.
+            if (arrowObject.TryGetComponent<ArrowProjectile>(out var projectile))
+            {
+                // Tell the projectile whether the shot was focused or not.
+                projectile.Initialize(isFocused);
+            }
         }
     }
 
-    // Unfocused shot (LMB)
     public override void PrimaryAttack(PlayerCombat combatController)
     {
         Fire(combatController, false);
     }
 
-    // Focused shot (RMB)
     public override void SecondaryAttack(PlayerCombat combatController)
     {
         Fire(combatController, true);
