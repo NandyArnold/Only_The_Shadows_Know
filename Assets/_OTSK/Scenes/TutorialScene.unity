@@ -2865,6 +2865,14 @@ PrefabInstance:
       propertyPath: targetingCamera
       value: 
       objectReference: {fileID: 616045872}
+    - target: {fileID: 2862543130965560594, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.465
+      objectReference: {fileID: 0}
+    - target: {fileID: 2862543130965560594, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.837
+      objectReference: {fileID: 0}
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

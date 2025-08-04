@@ -6,21 +6,30 @@ public class BowSO : WeaponSO
     [Header("Bow Specifics")]
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private LayerMask aimLayerMask;
+
+    [Header("Combat Stats")] // Added a new header for organization
+    [SerializeField] private float timeBetweenShots = 0.5f;
     [SerializeField] private float unfocusedSpreadRadius = 25f;
 
-    // NOTE: The speed and fire rate variables are no longer here.
+    // Static variable to track the last fire time for this weapon type.
+    private static float _lastFireTime;
 
     public void Fire(PlayerCombat combatController, bool isFocused)
     {
-        // Fire rate and speed are now handled by the projectile itself or player stats.
-        // We will re-add the fire rate limiter to PlayerCombat later.
+        // Add the cooldown check at the very top.
+        if (Time.time < _lastFireTime + timeBetweenShots)
+        {
+            return;
+        }
+        _lastFireTime = Time.time;
 
+        // ... (The rest of the Fire method is unchanged)
+        #region Unchanged Logic
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
         Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Vector2 aimPoint = screenCenter;
-
         if (!isFocused)
         {
             aimPoint += Random.insideUnitCircle * unfocusedSpreadRadius;
@@ -43,14 +52,12 @@ public class BowSO : WeaponSO
         if (arrowPrefab != null)
         {
             GameObject arrowObject = Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
-
-            // Get the projectile script from the new arrow.
             if (arrowObject.TryGetComponent<ArrowProjectile>(out var projectile))
             {
-                // Tell the projectile whether the shot was focused or not.
                 projectile.Initialize(isFocused);
             }
         }
+        #endregion
     }
 
     public override void PrimaryAttack(PlayerCombat combatController)

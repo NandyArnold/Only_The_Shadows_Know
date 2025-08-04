@@ -24,4 +24,5 @@ MonoBehaviour:
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  timeBetweenShots: 1
   unfocusedSpreadRadius: 100

@@ -1,47 +1,55 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BoxCollider))] // Changed to BoxCollider as requested
+[RequireComponent(typeof(BoxCollider))]
 public class ArrowProjectile : MonoBehaviour
 {
     [Header("Stats")]
-    [SerializeField] private float normalSpeed = 30f; // Renamed for clarity
+    [SerializeField] private float normalSpeed = 30f;
     [SerializeField] private float focusedSpeed = 50f;
     [SerializeField] private float damage = 15f;
-    [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private float lifeTime = 10f; // Increased lifetime so it can stick for a while
 
-    private Rigidbody _rigidbody;
+    private Rigidbody _rb;
+    private bool _hasHit = false;
     private float _speedToUse;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        GetComponent<BoxCollider>().isTrigger = true; // Use trigger for enemy detection
+        _rb = GetComponent<Rigidbody>();
+        // We now need a solid collider for OnCollisionEnter, so Is Trigger is false.
+        GetComponent<BoxCollider>().isTrigger = false;
     }
 
-    private void Start()
+    public void Initialize(bool isShotFocused)
     {
-        _rigidbody.linearVelocity = transform.forward * _speedToUse;
+        _speedToUse = isShotFocused ? focusedSpeed : normalSpeed;
+
+        // We set the velocity immediately upon initialization
+        transform.forward = transform.forward; // Ensures rotation is applied before setting velocity
+        _rb.linearVelocity = transform.forward * _speedToUse;
+
         Destroy(gameObject, lifeTime);
     }
 
-    /// <summary>
-    /// This method is called by the BowSO immediately after instantiation.
-    /// </summary>
-    public void Initialize(bool isShotFocused)
+    // We use OnCollisionEnter for solid objects like the ground, walls, and enemies.
+    private void OnCollisionEnter(Collision collision)
     {
-        // The arrow sets its own speed based on the context provided by the bow.
-        _speedToUse = isShotFocused ? focusedSpeed : normalSpeed;
-    }
+        // Prevent the same arrow from hitting multiple things.
+        if (_hasHit) return;
+        _hasHit = true;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+        // Stop all physics movement to "stick" the arrow.
+        _rb.linearVelocity = Vector3.zero;
+        _rb.isKinematic = true;
+
+        // Parent the arrow to the object it hit.
+        transform.SetParent(collision.transform);
+
+        // Check if the object we hit was an enemy.
+        if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
         {
             enemyHealth.TakeDamage(damage, GameManager.Instance.Player.gameObject);
         }
-
-        // As per our revert, destroy on impact.
-        Destroy(gameObject);
     }
 }
