@@ -36,5 +36,5 @@ MonoBehaviour:
       Constant: 0
     Z:
       Frequency: 10
-      Amplitude: 80
+      Amplitude: 5
       Constant: 0

@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkNoise: 25
   runNoise: 50
-  jumpNoise: 40
+  jumpNoise: 30
+  jumpRunningNoise: 60
   landNoise: 60
   dodgeRollNoise: 35
+  crouchNoiseModifier: 0.5
   daggerAttackNoise: 15
   bowFireNoise: 30
   spectralShiftNoise: 70
