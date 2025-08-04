@@ -12,6 +12,11 @@ public class SkillRegistrySO : ScriptableObject
     private Dictionary<SkillIdentifier, SkillSO> _skillDictionary;
     private bool _isInitialized = false;
 
+    private void OnEnable()
+    {
+        _isInitialized = false; // Reset on enable
+    }
+
     public void Initialize()
     {
         if (_isInitialized) return;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerSpawner : MonoBehaviour
 {
@@ -9,18 +10,27 @@ public class PlayerSpawner : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
-    }
+        // This is a very verbose singleton check for debugging.
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogError($"--- DUPLICATE SPAWNER DETECTED --- \nThis spawner on '{gameObject.name}' with ID {GetInstanceID()} is a duplicate. The original is on '{Instance.gameObject.name}'. Destroying this duplicate.", this.gameObject);
+            Destroy(gameObject);
+            return;
+        }
 
-    private void OnEnable()
-    {
-        SceneLoader.Instance.OnSceneLoaded += SpawnPlayer;
-    }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        Debug.LogWarning($"--- SINGLETON INITIALIZED --- \nPlayerSpawner instance is set on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
 
-    private void OnDisable()
-    {
-        SceneLoader.Instance.OnSceneLoaded -= SpawnPlayer;
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.OnSceneLoaded += SpawnPlayer;
+            Debug.Log($"Spawner (ID: {GetInstanceID()}) has subscribed to OnSceneLoaded.");
+        }
+        else
+        {
+            Debug.LogError("PlayerSpawner could not find SceneLoader to subscribe to events!", this);
+        }
     }
 
     public void SetNextSpawnPoint(string tag)
@@ -30,39 +40,45 @@ public class PlayerSpawner : MonoBehaviour
 
     private void SpawnPlayer(SceneDataSO sceneData)
     {
-        // Don't spawn a player in the Main Menu
+        // This log includes the instance ID, so we can see WHO is spawning.
+        Debug.Log($"--- SPAWN PLAYER CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
+
         if (sceneData.sceneType == SceneType.Menu) return;
 
-        // Clear previous spawn points before new ones register
-        GlobalSpawnRegistry.Instance.ClearRegistry();
-
-        // Use a slight delay to ensure all spawn points in the new scene have registered.
-        StartCoroutine(SpawnPlayerRoutine());
+        StartCoroutine(SpawnPlayerRoutine(sceneData));
     }
 
-    private System.Collections.IEnumerator SpawnPlayerRoutine()
+    private IEnumerator SpawnPlayerRoutine(SceneDataSO sceneData)
     {
-        yield return null; // Wait one frame for spawn points to register in their OnEnable.
+        // ... (This coroutine logic is likely fine, but we leave it for completeness)
+        GlobalSpawnRegistry.Instance.ClearRegistry();
+        yield return new WaitForEndOfFrame();
 
-        ISpawnPoint spawnPoint = GlobalSpawnRegistry.Instance.GetSpawnPoint(_nextSpawnPointTag);
+        string tagToUse = _nextSpawnPointTag;
+        if (string.IsNullOrEmpty(tagToUse))
+        {
+            tagToUse = sceneData.defaultSpawnPointTag;
+        }
+
+        ISpawnPoint spawnPoint = GlobalSpawnRegistry.Instance.GetSpawnPoint(tagToUse);
 
         if (spawnPoint == null)
         {
-            Debug.LogWarning($"Spawn point '{_nextSpawnPointTag}' not found! Using first available as fallback.");
-            spawnPoint = Object.FindAnyObjectByType<PlayerSpawnPoint>(); // Fallback
+            Debug.LogWarning($"Spawn point '{tagToUse}' not found! Using first available as fallback.", this.gameObject);
+            spawnPoint = Object.FindFirstObjectByType<PlayerSpawnPoint>();
         }
 
         if (spawnPoint != null)
         {
+            Debug.Log($"Spawning player at point '{tagToUse}'.");
             Instantiate(playerPrefab, spawnPoint.SpawnTransform.position, spawnPoint.SpawnTransform.rotation);
         }
         else
         {
-            Debug.LogError("No spawn points found in the scene! Spawning player at world origin.");
+            Debug.LogError("No spawn points found in the scene! Spawning player at world origin.", this.gameObject);
             Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         }
 
-        // Clear the tag so it's not reused accidentally
         _nextSpawnPointTag = null;
     }
 }

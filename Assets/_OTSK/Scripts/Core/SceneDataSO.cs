@@ -28,5 +28,6 @@ public class SceneDataSO : ScriptableObject
 
     [Header("Level Logic")] // You can add a header for organization
     public LevelObjectiveChainSO objectiveChain;
+    public string defaultSpawnPointTag = "InitialSpawn";
 
 }

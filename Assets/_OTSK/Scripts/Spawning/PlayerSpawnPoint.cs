@@ -7,7 +7,7 @@ public class PlayerSpawnPoint : MonoBehaviour, ISpawnPoint
     public string SpawnPointTag => spawnPointTag;
     public Transform SpawnTransform => transform;
 
-    private void OnEnable()
+    private void Awake()
     {
         GlobalSpawnRegistry.Instance?.RegisterSpawnPoint(this);
     }

@@ -18,10 +18,7 @@ public class PlayerSkillController : MonoBehaviour
 
     private void Awake()
     {
-        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
-
-        InitializeSkills();
+        
     }
     private void Start()
     {
@@ -31,6 +28,10 @@ public class PlayerSkillController : MonoBehaviour
             CombatManager.Instance.OnCombatStart += HandleCombatStart;
             CombatManager.Instance.OnCombatEnd += HandleCombatEnd;
         }
+        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
+        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+
+        InitializeSkills();
     }
     private void InitializeSkills()
     {

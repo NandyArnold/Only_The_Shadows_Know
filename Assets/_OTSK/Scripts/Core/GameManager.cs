@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public event Action<PlayerController> OnPlayerRegistered;
 
+    private CameraManager _cameraManager;
+
     void Awake()
     {
         // ... (Singleton and DontDestroyOnLoad logic remains the same) ...
@@ -93,5 +95,15 @@ public class GameManager : MonoBehaviour
         OnPlayerRegistered?.Invoke(player);
 
         Debug.Log("GameManager: Player reference has been registered and announced.");
+
+        if (_cameraManager != null)
+        {
+            _cameraManager.ConnectToPlayer(player);
+        }
+    }
+
+    public void RegisterCameraManager(CameraManager camManager)
+    {
+        _cameraManager = camManager;
     }
 }

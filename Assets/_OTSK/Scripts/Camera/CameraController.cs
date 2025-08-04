@@ -6,15 +6,16 @@ using Unity.Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
+    //CineMachine Cameras
+    private CinemachineCamera shoulderCamera;
+    private CinemachineCamera zoomCamera;
+    private CinemachineCamera scryingCamera;
+    private CinemachineCamera targetingCamera;
+
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerCombat playerCombat;
 
-    [Header("Cinemachine Cameras")]
-    [SerializeField] private CinemachineCamera shoulderCamera;
-    [SerializeField] private CinemachineCamera zoomCamera;
-    [SerializeField] private CinemachineCamera scryingCamera;
-    [SerializeField] private CinemachineCamera targetingCamera;
 
     [Tooltip("The empty object the camera follows. This is what we rotate.")]
     [SerializeField] private Transform cameraTarget;
@@ -36,9 +37,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float recoilReturnDuration = 0.25f;
 
 
-    [Header("Aiming Settings")]
-    [SerializeField] private float normalAimFov = 40f;
-    [SerializeField] private float focusedAimFov = 25f;
+    //[Header("Aiming Settings")]
+    //[SerializeField] private float normalAimFov = 40f;
+    //[SerializeField] private float focusedAimFov = 25f;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -50,12 +51,7 @@ public class CameraController : MonoBehaviour
 
     private Coroutine _recoilCoroutine;
 
-    private void Awake()
-    {
-        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerCombat == null) playerCombat = GetComponent<PlayerCombat>();
-        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-    }
+    
 
     private void OnEnable()
     {
@@ -70,6 +66,62 @@ public class CameraController : MonoBehaviour
             playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
     }
 
+    public void Initialize(CameraManager manager)
+    {
+        Debug.Log("CameraController Initializing...");
+
+        // Get camera references from the manager
+        shoulderCamera = manager.GetCamera(CameraType.Shoulder);
+        zoomCamera = manager.GetCamera(CameraType.Zoom);
+        scryingCamera = manager.GetCamera(CameraType.Scrying);
+        targetingCamera = manager.GetCamera(CameraType.Targeting);
+
+        // Get local components
+        playerInputHandler = GetComponent<PlayerInputHandler>();
+        playerCombat = GetComponent<PlayerCombat>();
+        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
+
+        // Find the camera target pivot
+        if (cameraTarget == null)
+        {
+            cameraTarget = transform.Find("PlayerCameraTarget");
+        }
+        if (shoulderCamera != null && cameraTarget != null)
+        {
+            shoulderCamera.Follow = cameraTarget;
+            shoulderCamera.LookAt = cameraTarget;
+        }
+        if (zoomCamera != null && cameraTarget != null)
+        {
+            zoomCamera.Follow = cameraTarget;
+            zoomCamera.LookAt = cameraTarget;
+        }
+
+        // Subscribe to events now that we know everything exists
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnLookInput += SetLookInput;
+            playerInputHandler.OnAdjustPitchInput += SetPitchAdjustInput;
+        }
+        if (playerCombat != null)
+        {
+            playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
+            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
+        }
+
+        SetDefaultCameraState();
+    }
+
+    private void SetDefaultCameraState()
+    {
+        if (shoulderCamera == null) return;
+
+        // Give the shoulder camera the highest priority to make it active.
+        shoulderCamera.Priority = 20;
+        zoomCamera.Priority = 10;
+        targetingCamera.Priority = 10;
+        scryingCamera.Priority = 10;
+    }
     private void OnDisable()
     {
         if (playerInputHandler != null)
@@ -77,12 +129,13 @@ public class CameraController : MonoBehaviour
             playerInputHandler.OnLookInput -= SetLookInput;
             playerInputHandler.OnAdjustPitchInput -= SetPitchAdjustInput;
         }
-        // UPDATED: Unsubscribe from the focus event.
+        //  Unsubscribe from the focus event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
             playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
     }
 
+    
     private void LateUpdate()
     {
         ApplyCameraRotation();
