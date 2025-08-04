@@ -1,7 +1,9 @@
 // PlayerCombat.cs - REFACTORED
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private WeaponManager weaponManager;
+    [SerializeField] private Rig ikRig;
 
     [Header("Socket Transforms")]
     [SerializeField] private Transform handSocketR;
@@ -29,8 +32,12 @@ public class PlayerCombat : MonoBehaviour
 
     public event Action<bool> OnAimStateChanged;
     public event Action<bool> OnFocusStateChanged;
+    public event Action<WeaponSO> OnWeaponSwitched;
+
+    private Coroutine _rigWeightCoroutine;
 
     private WeaponSO _currentWeapon;
+    public WeaponSO CurrentWeapon => _currentWeapon;
     private DaggerAnimation _daggerAnimation;
     private BowAnimation _bowAnimation;
 
@@ -52,6 +59,8 @@ public class PlayerCombat : MonoBehaviour
         {
             SwitchWeapon(availableWeapons[0]);
         }
+        if (ikRig == null)
+            ikRig = GetComponentInChildren<Rig>();
     }
 
     private void OnEnable()
@@ -96,24 +105,42 @@ public class PlayerCombat : MonoBehaviour
     public void SwitchWeapon(WeaponSO newWeapon)
     {
         if (newWeapon == null || newWeapon == _currentWeapon) return;
+
         _currentWeapon = newWeapon;
+
+        OnWeaponSwitched?.Invoke(_currentWeapon);
+        // 1. Tell the WeaponManager to handle the visuals.
         weaponManager.EquipNewWeapon(newWeapon);
 
-        if (newWeapon is DaggerSO)
-        {
-            playerAnimationController.SetWeaponAnimation(_daggerAnimation);
-        }
-        else if (newWeapon is BowSO)
+        // 2. Determine if the new weapon should use the IK aiming rig.
+        bool usesAimIK = (newWeapon is BowSO || newWeapon is AnimancySO);
+        UpdateRigWeight(usesAimIK);
+
+        // 3. Set the correct animation component and aim state in one clean block.
+        if (newWeapon is BowSO)
         {
             playerAnimationController.SetWeaponAnimation(_bowAnimation);
+            SetAimState(true); // Enter aim stance
         }
+        else 
+        {
+            if (_isAiming) SetAimState(false);
+            if (_isFocused) SetFocusState(false);
 
-        SetAimState(newWeapon is BowSO);
-
-        if (newWeapon is DaggerSO)
-            playerAnimationController.SetWeaponAnimation(_daggerAnimation);
-        else if (newWeapon is BowSO)
-            playerAnimationController.SetWeaponAnimation(_bowAnimation);
+            if (newWeapon is DaggerSO)
+                {
+                    playerAnimationController.SetWeaponAnimation(_daggerAnimation);
+                    SetAimState(false); // Daggers are not in aim stance
+                }
+      
+            if (newWeapon is AnimancySO)
+            {
+                // When we create AnimancyAnimation, we'll set it here.
+                // playerAnimationController.SetWeaponAnimation(_animancyAnimation);
+                SetAimState(false); // Animancy is not in aim stance
+            }
+        }
+       
     }
 
     private void SetAimState(bool isAiming)
@@ -157,25 +184,31 @@ public class PlayerCombat : MonoBehaviour
     private void HandleWeapon1Switch() => SwitchWeapon(availableWeapons[0]);
          private void HandleWeapon2Switch() => SwitchWeapon(availableWeapons[1]);
     private void HandleWeapon3Switch() => SwitchWeapon(availableWeapons[2]);
-    //private void HandleWeaponSwitch(int weaponIndex)
-    //{
-    //    // Check if the requested weapon exists in our list
-    //    if (availableWeapons != null && weaponIndex < availableWeapons.Count && availableWeapons[weaponIndex] != null)
-    //    {
-    //        // Check if we aren't already holding that weapon
-    //        if (_currentWeapon != availableWeapons[weaponIndex])
-    //        {
-    //            SwitchWeapon(availableWeapons[weaponIndex]);
-    //        }
-    //    }
-    //}
-    //private void ToggleAimMode()
-    //{
-    //    _isAiming = !_isAiming;
-    //    OnAimStateChanged?.Invoke(_isAiming); // Broadcast the change
-    //    playerAnimationController.SetAimingState(_isAiming);
-    //    Debug.Log($"Aiming: {_isAiming}");
-    //}
+    private void UpdateRigWeight(bool enable)
+    {
+        if (_rigWeightCoroutine != null)
+        {
+            StopCoroutine(_rigWeightCoroutine);
+        }
+        float targetWeight = enable ? 1f : 0f;
+        _rigWeightCoroutine = StartCoroutine(FadeRigWeight(targetWeight, 0.25f));
+    }
+
+    // NEW: The coroutine that smoothly changes the weight over time.
+    private IEnumerator FadeRigWeight(float targetWeight, float duration)
+    {
+        float startTime = Time.time;
+        float startWeight = ikRig.weight;
+
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            ikRig.weight = Mathf.Lerp(startWeight, targetWeight, t);
+            yield return null;
+        }
+
+        ikRig.weight = targetWeight;
+    }
     private void SetFocusState(bool isFocused)
     {
         if (_isFocused == isFocused) return;

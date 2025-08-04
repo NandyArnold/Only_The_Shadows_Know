@@ -1,10 +1,12 @@
-// Create this new script: BowAnimation.cs
+// In BowAnimation.cs
 using UnityEngine;
 
 public class BowAnimation : MonoBehaviour, IWeaponAnimation
 {
     [SerializeField] private Animator animator;
+
     private readonly int isAimingHash = Animator.StringToHash("IsAiming");
+    private readonly int fireTriggerHash = Animator.StringToHash("Bow_Fire"); // NEW
 
     void Awake()
     {
@@ -16,6 +18,12 @@ public class BowAnimation : MonoBehaviour, IWeaponAnimation
         animator.SetBool(isAimingHash, isAiming);
     }
 
-    public void PlayPrimaryAttack() { /* For unfocused shot */ }
-    public void PlaySecondaryAttack() { /* Not used by bow */ }
+    // This method is now filled in.
+    public void PlayPrimaryAttack()
+    {
+        Debug.Log("3. BowAnimation is playing the Bow_Fire trigger.");
+        animator.SetTrigger(fireTriggerHash);
+    }
+
+    public void PlaySecondaryAttack() { /* The bow doesn't use a separate secondary attack animation */ }
 }
