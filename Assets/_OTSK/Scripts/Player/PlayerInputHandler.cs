@@ -23,7 +23,12 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnWeapon3Input;
 
     public event Action<Vector2> OnLookInput; // For CameraController
-    public event Action<int> OnSkillInput;
+    
+    public event Action<int> OnSkillPerformedInput;
+    public event Action<int> OnSkillCanceledInput;
+
+    public event Action OnCancelActionInput;
+
     public event Action OnDodgeRollInput;
 
     public event Action<float> OnCycleTargetingModeInput;
@@ -135,10 +140,13 @@ public class PlayerInputHandler : MonoBehaviour
 
 
 
-        _inputActions.Player.Skill1.performed += ctx => OnSkillInput?.Invoke(0);
-        _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
-        _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
-        _inputActions.Player.Skill4.performed += ctx => OnSkillInput?.Invoke(3);
+        _inputActions.Player.Skill1.performed += ctx => OnSkillPerformedInput?.Invoke(0);
+        _inputActions.Player.Skill2.performed += ctx => OnSkillPerformedInput?.Invoke(1);
+        _inputActions.Player.Skill3.performed += ctx => OnSkillPerformedInput?.Invoke(2);
+        _inputActions.Player.Skill4.started += ctx => OnSkillPerformedInput?.Invoke(3);
+        _inputActions.Player.Skill4.canceled += ctx => OnSkillCanceledInput?.Invoke(3);
+        _inputActions.Player.Skill5.performed += ctx => OnSkillPerformedInput?.Invoke(4);
+
 
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 

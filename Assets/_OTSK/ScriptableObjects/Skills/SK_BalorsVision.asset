@@ -17,9 +17,10 @@ MonoBehaviour:
   skillName: Balors Vision
   icon: {fileID: 21300000, guid: 39ef6bdce8ac1184182549464863dba7, type: 3}
   description: 
-  manaCost: 0
+  manaCost: 10
   cooldown: 0
+  manaCostOverTime: 5
   usageCondition: 0
-  castMode: 0
+  castMode: 2
   lockMovementWhileCasting: 0
   skillEffectData: {fileID: 11400000, guid: 0040f0d90d9dfc94b8d50d5fc2ad331e, type: 2}

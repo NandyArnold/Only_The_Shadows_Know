@@ -192,7 +192,7 @@
                     "id": "20eb88a5-0b68-4a91-a980-0573b4fee1ba",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold(duration=0.1)",
                     "initialStateCheck": false
                 },
                 {
@@ -208,6 +208,24 @@
                     "name": "ShowObjective",
                     "type": "Button",
                     "id": "0ffda7d5-9b82-439b-8838-0d077b5af949",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CancelAction",
+                    "type": "Button",
+                    "id": "316ecb51-96f9-47c6-9964-806bdbbcf8c8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Skill5",
+                    "type": "Button",
+                    "id": "dc6b6fd6-37af-44cc-8e10-f78cbf948a59",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -729,6 +747,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Skill4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "40f2ca8e-07bb-4313-83bf-3f0e12283a5b",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CancelAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9270c43e-fd98-4c7a-9325-30409e10dba8",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skill5",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

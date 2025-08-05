@@ -278,7 +278,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""20eb88a5-0b68-4a91-a980-0573b4fee1ba"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold(duration=0.1)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -294,6 +294,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""ShowObjective"",
                     ""type"": ""Button"",
                     ""id"": ""0ffda7d5-9b82-439b-8838-0d077b5af949"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CancelAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""316ecb51-96f9-47c6-9964-806bdbbcf8c8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skill5"",
+                    ""type"": ""Button"",
+                    ""id"": ""dc6b6fd6-37af-44cc-8e10-f78cbf948a59"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -815,6 +833,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Skill4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""40f2ca8e-07bb-4313-83bf-3f0e12283a5b"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CancelAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9270c43e-fd98-4c7a-9325-30409e10dba8"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skill5"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1738,6 +1778,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Skill4 = m_Player.FindAction("Skill4", throwIfNotFound: true);
         m_Player_DodgeRoll = m_Player.FindAction("DodgeRoll", throwIfNotFound: true);
         m_Player_ShowObjective = m_Player.FindAction("ShowObjective", throwIfNotFound: true);
+        m_Player_CancelAction = m_Player.FindAction("CancelAction", throwIfNotFound: true);
+        m_Player_Skill5 = m_Player.FindAction("Skill5", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1871,6 +1913,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Skill4;
     private readonly InputAction m_Player_DodgeRoll;
     private readonly InputAction m_Player_ShowObjective;
+    private readonly InputAction m_Player_CancelAction;
+    private readonly InputAction m_Player_Skill5;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1975,6 +2019,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ShowObjective => m_Wrapper.m_Player_ShowObjective;
         /// <summary>
+        /// Provides access to the underlying input action "Player/CancelAction".
+        /// </summary>
+        public InputAction @CancelAction => m_Wrapper.m_Player_CancelAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Skill5".
+        /// </summary>
+        public InputAction @Skill5 => m_Wrapper.m_Player_Skill5;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2069,6 +2121,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ShowObjective.started += instance.OnShowObjective;
             @ShowObjective.performed += instance.OnShowObjective;
             @ShowObjective.canceled += instance.OnShowObjective;
+            @CancelAction.started += instance.OnCancelAction;
+            @CancelAction.performed += instance.OnCancelAction;
+            @CancelAction.canceled += instance.OnCancelAction;
+            @Skill5.started += instance.OnSkill5;
+            @Skill5.performed += instance.OnSkill5;
+            @Skill5.canceled += instance.OnSkill5;
         }
 
         /// <summary>
@@ -2149,6 +2207,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ShowObjective.started -= instance.OnShowObjective;
             @ShowObjective.performed -= instance.OnShowObjective;
             @ShowObjective.canceled -= instance.OnShowObjective;
+            @CancelAction.started -= instance.OnCancelAction;
+            @CancelAction.performed -= instance.OnCancelAction;
+            @CancelAction.canceled -= instance.OnCancelAction;
+            @Skill5.started -= instance.OnSkill5;
+            @Skill5.performed -= instance.OnSkill5;
+            @Skill5.canceled -= instance.OnSkill5;
         }
 
         /// <summary>
@@ -2901,6 +2965,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShowObjective(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CancelAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancelAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Skill5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkill5(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

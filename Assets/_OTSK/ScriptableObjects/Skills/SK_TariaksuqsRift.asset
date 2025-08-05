@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9f353ff15f1f34478c8d052e95d5203, type: 3}
-  m_Name: SK_SpectralShift
+  m_Name: SK_TariaksuqsRift
   m_EditorClassIdentifier: 
-  skillID: 2
-  skillType: 2
-  skillName: Spectral Shift
-  icon: {fileID: 21300000, guid: 818e2dc40f5ec964eb7017ab00376f7c, type: 3}
+  skillID: 0
+  skillType: 0
+  skillName: 
+  icon: {fileID: 0}
   description: 
-  manaCost: 10
+  manaCost: 0
   cooldown: 0
   manaCostOverTime: 0
-  usageCondition: 2
+  usageCondition: 0
   castMode: 0
-  lockMovementWhileCasting: 1
-  skillEffectData: {fileID: 11400000, guid: dfbd5e0cd6a23f44b8e436606f67e573, type: 2}
+  lockMovementWhileCasting: 0
+  skillEffectData: {fileID: 0}

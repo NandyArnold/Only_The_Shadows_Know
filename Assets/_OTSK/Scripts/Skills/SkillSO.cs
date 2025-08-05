@@ -17,6 +17,7 @@ public class SkillSO : ScriptableObject
     [Header("Skill Stats")]
     public float manaCost;
     public float cooldown;
+    public float manaCostOverTime;
     public SkillUsageCondition usageCondition;
     public CastMode castMode;
 

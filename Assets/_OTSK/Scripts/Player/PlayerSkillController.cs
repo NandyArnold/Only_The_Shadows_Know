@@ -1,5 +1,4 @@
-// PlayerSkillController.cs - CORRECTED and STABLE VERSION
-
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,24 +14,27 @@ public class PlayerSkillController : MonoBehaviour
 
     private List<SkillSO> _equippedSkills;
     private bool _isInCombat = false;
+    private SkillSO _channeledSkill;
+    private Coroutine _manaDrainCoroutine;
+    private Coroutine _channelingCoroutine;
+    private bool _isActivatingASkill = false;
 
     private void Awake()
     {
-        
+        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
+        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
     }
+
     private void Start()
     {
-        // Subscribe to the CombatManager's events using named methods.
+        InitializeSkills();
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnCombatStart += HandleCombatStart;
             CombatManager.Instance.OnCombatEnd += HandleCombatEnd;
         }
-        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
-
-        InitializeSkills();
     }
+
     private void InitializeSkills()
     {
         if (skillRegistry == null)
@@ -40,7 +42,7 @@ public class PlayerSkillController : MonoBehaviour
             Debug.LogError("Skill Registry is not assigned!", this);
             return;
         }
-        
+        skillRegistry.Initialize();
         _equippedSkills = new List<SkillSO>();
         foreach (var skillID in equippedSkillIDs)
         {
@@ -52,20 +54,22 @@ public class PlayerSkillController : MonoBehaviour
     {
         if (playerInputHandler != null)
         {
-            playerInputHandler.OnSkillInput += TryActivateSkill;
-        }
+            playerInputHandler.OnSkillPerformedInput += TryActivateSkill;
+            playerInputHandler.OnSkillCanceledInput += HandleSkillCanceled;
 
-        
+            playerInputHandler.OnCancelActionInput += HandleCancelAction;
+        }
     }
 
     private void OnDisable()
     {
         if (playerInputHandler != null)
         {
-            playerInputHandler.OnSkillInput -= TryActivateSkill;
-        }
+            playerInputHandler.OnSkillPerformedInput -= TryActivateSkill;
+            playerInputHandler.OnSkillCanceledInput -= HandleSkillCanceled;
 
-        // Unsubscribe from the named methods. This is stable.
+            playerInputHandler.OnCancelActionInput -= HandleCancelAction;
+        }
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnCombatStart -= HandleCombatStart;
@@ -73,88 +77,101 @@ public class PlayerSkillController : MonoBehaviour
         }
     }
 
-    // --- NEW Event Handlers ---
     private void HandleCombatStart() => _isInCombat = true;
     private void HandleCombatEnd() => _isInCombat = false;
 
+    public void TryActivateSkill(SkillIdentifier skillID)
+    {
+        int skillIndex = _equippedSkills.FindIndex(s => s != null && s.skillID == skillID);
+        if (skillIndex != -1) TryActivateSkill(skillIndex);
+    }
 
     private void TryActivateSkill(int skillIndex)
     {
+        if (_isActivatingASkill || _channeledSkill != null) return;
         if (skillIndex < 0 || skillIndex >= _equippedSkills.Count) return;
 
         SkillSO skill = _equippedSkills[skillIndex];
-        if (skill == null)
-        {
-            Debug.LogError($"SKILL FAILED: No skill data found at index {skillIndex} in the Skill Registry.");
-            return;
-        }
+        if (skill == null) return;
 
-        // --- Special Toggle-Off Logic Block ---
         if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingActive)
         {
-            Debug.Log("Scrying is already active. Executing toggle-off.");
             SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
             return;
         }
-        // ADD THIS to handle the Endwalker toggle
         else if (skill.skillID == SkillIdentifier.Endwalker && GetComponent<PlayerController>().IsInEndwalkerState)
         {
-            Debug.Log("Endwalker is already active. Executing toggle-off.");
             SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
             return;
         }
 
-
-        // --- Standard Validation Checks ---
-        if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID))
-        {
-            Debug.Log($"<color=red>SKILL FAILED:</color> '{skill.skillName}' is on cooldown.");
-            return;
-        }
-
-        if (playerHealthManaNoise.CurrentMana < skill.manaCost)
-        {
-            Debug.Log($"<color=red>SKILL FAILED:</color> Not enough mana for '{skill.skillName}'.");
-            return;
-        }
+        if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID)) return;
+        if (playerHealthManaNoise.CurrentMana < skill.manaCost) return;
 
         switch (skill.usageCondition)
         {
-            case SkillUsageCondition.CombatOnly:
-                if (!_isInCombat)
-                {
-                    Debug.Log($"<color=red>SKILL FAILED:</color> Cannot use '{skill.skillName}' outside of combat.");
-                    return;
-                }
-                break;
-            case SkillUsageCondition.OutOfCombatOnly:
-                if (_isInCombat)
-                {
-                    Debug.Log($"<color=red>SKILL FAILED:</color> Cannot use '{skill.skillName}' while in combat.");
-                    return;
-                }
-                break;
+            case SkillUsageCondition.CombatOnly: if (!_isInCombat) return; break;
+            case SkillUsageCondition.OutOfCombatOnly: if (_isInCombat) return; break;
         }
 
-        Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
+        // --- EXECUTION LOGIC IS NOW ONLY HERE ---
+        _isActivatingASkill = true;
         playerHealthManaNoise.ConsumeMana(skill.manaCost);
-        SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
-        SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+        Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
+
+        switch (skill.castMode)
+        {
+            case CastMode.Instant:
+            case CastMode.Targeted:
+                SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
+                SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+                StartCoroutine(SkillActivationGracePeriod());
+                break;
+            case CastMode.Channel:
+                _channeledSkill = skill;
+                _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
+                _manaDrainCoroutine = StartCoroutine(DrainManaOverTime(skill));
+                break;
+        }
     }
 
-    public void TryActivateSkill(SkillIdentifier skillID)
+    private void HandleSkillCanceled(int skillIndex)
     {
-        // Find the index of the skill in our equipped list.
-        int skillIndex = _equippedSkills.FindIndex(s => s != null && s.skillID == skillID);
-
-        if (skillIndex != -1)
+        if (_channeledSkill != null && skillIndex < _equippedSkills.Count && _equippedSkills[skillIndex] == _channeledSkill)
         {
-            // If we found it, call our original private method with the correct index.
-            TryActivateSkill(skillIndex);
+            _channeledSkill.skillEffectData.StopChannel(this.gameObject);
+            if (_manaDrainCoroutine != null) StopCoroutine(_manaDrainCoroutine);
+            if (_channelingCoroutine != null) StopCoroutine(_channelingCoroutine);
+            _channeledSkill = null;
+            _isActivatingASkill = false; // Release the lock
         }
-        else
+    }
+
+    private void HandleCancelAction()
+    {
+        // Check the static property on the effect script and call the static cancel method.
+        if (TariaksuqsRiftEffectSO.IsRiftActive)
         {
-            Debug.LogWarning($"Attempted to activate skill '{skillID}' but it is not equipped or found.");
+            TariaksuqsRiftEffectSO.CancelRift();
+        }
+    }
+
+    private IEnumerator SkillActivationGracePeriod()
+    {
+        yield return new WaitForSeconds(0.1f);
+        _isActivatingASkill = false;
+    }
+
+    private IEnumerator DrainManaOverTime(SkillSO skill)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            if (!playerHealthManaNoise.ConsumeMana(skill.manaCostOverTime))
+            {
+                HandleSkillCanceled(System.Array.IndexOf(_equippedSkills.ToArray(), skill));
+                yield break;
+            }
         }
     }
 }

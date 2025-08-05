@@ -22,6 +22,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
 
     public override void Activate(GameObject caster)
     {
+        Debug.Log($"SPECTRAL SHIFT ACTIVATED at frame {Time.frameCount}");
         SkillExecutor.Instance.ExecuteCoroutine(TargetingRoutine(caster));
     }
 

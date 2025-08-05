@@ -3414,7 +3414,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ae09cf72c5da44b84bb56824710aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  revealVFXPrefab: {fileID: 3226536765728988306, guid: 3efaf693f44baf64eadfffd2dc4ef0b9, type: 3}
+  revealVFXMappings:
+  - type: 1
+    vfxPrefab: {fileID: 1157070160192592598, guid: 24f5234dcde427f4db88ad4f54f93b1e, type: 3}
+  - type: 0
+    vfxPrefab: {fileID: 4006852704607330979, guid: 5e7e7e5226a3c8a4396cb8abc69c6245, type: 3}
+  - type: 2
+    vfxPrefab: {fileID: 1063613071519003308, guid: e3dd49f0760906f48aac13fed2cc65f6, type: 3}
 --- !u!1 &1891975900
 GameObject:
   m_ObjectHideFlags: 0
