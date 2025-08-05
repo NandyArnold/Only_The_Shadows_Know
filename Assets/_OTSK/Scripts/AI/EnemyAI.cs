@@ -17,6 +17,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private PatrolRouteSO patrolRoute;
 
     private EnemyAIState _currentState;
+    public EnemyAIState CurrentState => _currentState;
+
     private EnemyHealth _health;
 
     private void Awake()

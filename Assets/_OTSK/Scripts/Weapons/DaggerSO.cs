@@ -39,41 +39,33 @@ public class DaggerSO : WeaponSO
     // The Secondary Attack uses the RIGHT hand.
     public override void SecondaryAttack(PlayerCombat combatController)
     {
-        // 1. Tell the animator to play the attack.
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
+
+        // Noise is generated whether we hit or not.
         combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
-        // 2. Perform the hit detection.
-        bool canPerformFinisher = false; // Placeholder for finisher logic
-        if (canPerformFinisher)
+
+        Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
+        if (hits.Any())
         {
-            Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
-            if (hits.Any())
+            foreach (var hit in hits)
             {
-                foreach (var hit in hits)
+                // We need both health and AI components from the enemy.
+                if (hit.TryGetComponent<EnemyHealth>(out var enemyHealth) &&
+                    hit.TryGetComponent<EnemyAI>(out var enemyAI))
                 {
-                    Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
-                    if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                    // THE FINISHER CHECK: Is the enemy in its PatrolState?
+                    if (enemyAI.CurrentState is PatrolState)
                     {
-                        enemyHealth.TakeDamage(finisherDamage, combatController.gameObject); 
+                        Debug.Log("<color=red>FINISHER!</color>");
+                        enemyHealth.TakeDamage(finisherDamage, combatController.gameObject);
                     }
-                }
-            
-            }
-        }
-        else
-        {
-            Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
-            if (hits.Any())
-            {
-                foreach (var hit in hits)
-                {
-                    Debug.Log($"<color=cyan>Dagger (L):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
-                    if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                    else
                     {
+                        // If the enemy is alerted or in combat, just do a normal slash.
+                        Debug.Log("Enemy is alert. Performing a normal heavy slash.");
                         enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
                     }
                 }
-            
             }
         }
     }
