@@ -138,6 +138,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Skill1.performed += ctx => OnSkillInput?.Invoke(0);
         _inputActions.Player.Skill2.performed += ctx => OnSkillInput?.Invoke(1);
         _inputActions.Player.Skill3.performed += ctx => OnSkillInput?.Invoke(2);
+        _inputActions.Player.Skill4.performed += ctx => OnSkillInput?.Invoke(3);
 
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 

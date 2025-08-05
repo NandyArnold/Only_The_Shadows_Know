@@ -2759,7 +2759,7 @@ MonoBehaviour:
   playerInputHandler: {fileID: 2210745878514288481}
   playerHealthManaNoise: {fileID: 6750015388211781664}
   skillRegistry: {fileID: 11400000, guid: 5cdffd3c250d9b74e93764dddddbd4dd, type: 2}
-  equippedSkillIDs: 020000000100000003000000
+  equippedSkillIDs: 02000000010000000300000006000000
 --- !u!114 &2990850092433171703
 MonoBehaviour:
   m_ObjectHideFlags: 0

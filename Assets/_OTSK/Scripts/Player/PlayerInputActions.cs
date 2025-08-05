@@ -273,6 +273,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Skill4"",
+                    ""type"": ""Button"",
+                    ""id"": ""20eb88a5-0b68-4a91-a980-0573b4fee1ba"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""DodgeRoll"",
                     ""type"": ""Button"",
                     ""id"": ""6b1d811f-0371-4431-947c-ff551a809183"",
@@ -795,6 +804,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""TertiaryAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""212262d6-d202-41d2-8e3c-bd8ebba3b5fa"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skill4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1715,6 +1735,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Skill1 = m_Player.FindAction("Skill1", throwIfNotFound: true);
         m_Player_Skill2 = m_Player.FindAction("Skill2", throwIfNotFound: true);
         m_Player_Skill3 = m_Player.FindAction("Skill3", throwIfNotFound: true);
+        m_Player_Skill4 = m_Player.FindAction("Skill4", throwIfNotFound: true);
         m_Player_DodgeRoll = m_Player.FindAction("DodgeRoll", throwIfNotFound: true);
         m_Player_ShowObjective = m_Player.FindAction("ShowObjective", throwIfNotFound: true);
         // UI
@@ -1847,6 +1868,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Skill1;
     private readonly InputAction m_Player_Skill2;
     private readonly InputAction m_Player_Skill3;
+    private readonly InputAction m_Player_Skill4;
     private readonly InputAction m_Player_DodgeRoll;
     private readonly InputAction m_Player_ShowObjective;
     /// <summary>
@@ -1941,6 +1963,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Skill3 => m_Wrapper.m_Player_Skill3;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Skill4".
+        /// </summary>
+        public InputAction @Skill4 => m_Wrapper.m_Player_Skill4;
+        /// <summary>
         /// Provides access to the underlying input action "Player/DodgeRoll".
         /// </summary>
         public InputAction @DodgeRoll => m_Wrapper.m_Player_DodgeRoll;
@@ -2034,6 +2060,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Skill3.started += instance.OnSkill3;
             @Skill3.performed += instance.OnSkill3;
             @Skill3.canceled += instance.OnSkill3;
+            @Skill4.started += instance.OnSkill4;
+            @Skill4.performed += instance.OnSkill4;
+            @Skill4.canceled += instance.OnSkill4;
             @DodgeRoll.started += instance.OnDodgeRoll;
             @DodgeRoll.performed += instance.OnDodgeRoll;
             @DodgeRoll.canceled += instance.OnDodgeRoll;
@@ -2111,6 +2140,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Skill3.started -= instance.OnSkill3;
             @Skill3.performed -= instance.OnSkill3;
             @Skill3.canceled -= instance.OnSkill3;
+            @Skill4.started -= instance.OnSkill4;
+            @Skill4.performed -= instance.OnSkill4;
+            @Skill4.canceled -= instance.OnSkill4;
             @DodgeRoll.started -= instance.OnDodgeRoll;
             @DodgeRoll.performed -= instance.OnDodgeRoll;
             @DodgeRoll.canceled -= instance.OnDodgeRoll;
@@ -2848,6 +2880,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSkill3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Skill4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkill4(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "DodgeRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

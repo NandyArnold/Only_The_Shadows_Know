@@ -187,6 +187,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Skill4",
+                    "type": "Button",
+                    "id": "20eb88a5-0b68-4a91-a980-0573b4fee1ba",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "DodgeRoll",
                     "type": "Button",
                     "id": "6b1d811f-0371-4431-947c-ff551a809183",
@@ -709,6 +718,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TertiaryAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "212262d6-d202-41d2-8e3c-bd8ebba3b5fa",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skill4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
