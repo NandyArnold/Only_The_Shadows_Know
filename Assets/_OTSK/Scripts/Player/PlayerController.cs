@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The handler for player health, mana, and noise.")]
     [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
 
-    // We can add references to PlayerCombat, PlayerHealthManaNoise, etc. here later.
+    public bool IsInEndwalkerState { get; private set; } = false;
 
     void Awake()
     {
@@ -40,6 +40,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void SetEndwalkerState(bool isActive)
+    {
+        IsInEndwalkerState = isActive;
+        Debug.Log("Endwalker state set to: " + isActive);
+        // We can trigger VFX/SFX from here later.
+    }
     // You can add public methods here later if other systems need to interact with the player,
     // for example: public void TeleportTo(Vector3 position) { ... }
 }

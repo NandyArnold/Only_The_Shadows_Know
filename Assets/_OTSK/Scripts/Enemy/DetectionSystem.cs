@@ -44,6 +44,17 @@ public class DetectionSystem : MonoBehaviour
     {
         if (_playerTransform == null) return false;
 
+        if (_playerTransform.TryGetComponent<PlayerController>(out var playerController))
+        {
+            if (playerController.IsInEndwalkerState)
+            {
+                // If the player is invisible, only Undead enemies can see them.
+                if (config.enemyType != EnemyType.Undead)
+                {
+                    return false; // Not Undead, so vision check fails immediately.
+                }
+            }
+        }
         // 1. Check if the player is within detection range.
         float distanceToPlayer = Vector3.Distance(eyePoint.position, _playerTransform.position);
         if (distanceToPlayer > config.visionRange)

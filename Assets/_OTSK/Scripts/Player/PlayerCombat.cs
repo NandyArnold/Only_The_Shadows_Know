@@ -243,7 +243,7 @@ public class PlayerCombat : MonoBehaviour
         if (_currentWeapon is AnimancySO)
         {
             // We tell the skill controller to try and activate the skill by its ID.
-            playerSkillController.TryActivateSkillByID(SkillIdentifier.DeathZone);
+            playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone);
         }
     }
 

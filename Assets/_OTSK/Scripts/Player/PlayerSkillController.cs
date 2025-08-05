@@ -89,27 +89,21 @@ public class PlayerSkillController : MonoBehaviour
             return;
         }
 
-        // --- Special, SAFE Check for Scrying Toggle ---
-        if (skill.skillID == SkillIdentifier.Scrying)
+        // --- Special Toggle-Off Logic Block ---
+        if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingActive)
         {
-            // First, check if the system is ready before trying to use it.
-            if (ScryingSystem.Instance != null)
-            {
-                // If the system is ready, THEN we check if the skill is active.
-                if (ScryingSystem.Instance.IsScryingActive)
-                {
-                    Debug.Log("Scrying is already active. Executing toggle-off.");
-                    SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
-                    return; // Exit here after toggling off.
-                }
-            }
-            else
-            {
-                // If this log appears, it confirms the ScryingSystem isn't ready in time.
-                Debug.LogError("SKILL CHECK FAILED: ScryingSystem.Instance was not ready!");
-                return; // Block the skill use if the system isn't ready.
-            }
+            Debug.Log("Scrying is already active. Executing toggle-off.");
+            SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+            return;
         }
+        // ADD THIS to handle the Endwalker toggle
+        else if (skill.skillID == SkillIdentifier.Endwalker && GetComponent<PlayerController>().IsInEndwalkerState)
+        {
+            Debug.Log("Endwalker is already active. Executing toggle-off.");
+            SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+            return;
+        }
+
 
         // --- Standard Validation Checks ---
         if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID))
@@ -148,7 +142,7 @@ public class PlayerSkillController : MonoBehaviour
         SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
     }
 
-    public void TryActivateSkillByID(SkillIdentifier skillID)
+    public void TryActivateSkill(SkillIdentifier skillID)
     {
         // Find the index of the skill in our equipped list.
         int skillIndex = _equippedSkills.FindIndex(s => s != null && s.skillID == skillID);
