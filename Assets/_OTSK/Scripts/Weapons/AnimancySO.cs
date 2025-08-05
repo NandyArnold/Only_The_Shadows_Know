@@ -20,6 +20,7 @@ public class AnimancySO : WeaponSO
     [Header("Specialized Damage")]
     [Tooltip("Define damage multipliers for specific enemy types.")]
     [SerializeField] private List<DamageMultiplier> damageMultipliers;
+    [SerializeField] private List<DamageInstance> damageProfile;
 
     // Ranged Soul Sever (LMB)
     public override void PrimaryAttack(PlayerCombat combatController)
@@ -60,7 +61,7 @@ public class AnimancySO : WeaponSO
         {
             if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth))
             {
-                enemyHealth.TakeDamage(rangedDamage, combatController.gameObject);
+                enemyHealth.TakeDamage(damageProfile, combatController.gameObject);
             }
         }
     }
@@ -81,7 +82,8 @@ public class AnimancySO : WeaponSO
                     // Calculate final damage with multiplier
                     float multiplier = GetMultiplierFor(enemy.Config.enemyType);
                     float finalDamage = meleeDamage * multiplier;
-                    enemyHealth.TakeDamage(finalDamage, combatController.gameObject);
+
+                    enemyHealth.TakeDamage(damageProfile, combatController.gameObject);
                 }
             }
         }

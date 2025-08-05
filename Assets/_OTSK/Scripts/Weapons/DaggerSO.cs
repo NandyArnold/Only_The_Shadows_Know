@@ -1,5 +1,6 @@
 // DaggerSO.cs - UPGRADED
 
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,9 +11,11 @@ public class DaggerSO : WeaponSO
     [SerializeField] private float attackRange = 0.7f;
     [SerializeField] private LayerMask hittableLayers;
 
-    [Header("Dagger Damage")]
-    [SerializeField] private float slashDamage = 10f;
-    [SerializeField] private float finisherDamage = 100f;
+    [Header("Primary Attack Damage")]
+    public List<DamageInstance> primaryDamageProfile;
+
+    [Header("Finisher Damage")]
+    public List<DamageInstance> finisherDamageProfile;
 
     // The Primary Attack uses the LEFT hand.
     public override void PrimaryAttack(PlayerCombat combatController)
@@ -27,10 +30,11 @@ public class DaggerSO : WeaponSO
         {
             foreach (var hit in hits)
             {
-                Debug.Log($"<color=green>Dagger (R):</color> Hit {hit.gameObject.name} for {slashDamage} damage.");
+                Debug.Log($"<color=green>Dagger (R):</color> Hit {hit.gameObject.name} for {primaryDamageProfile} damage.");
                 if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
                 {
-                   enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
+                 
+                    enemyHealth.TakeDamage(primaryDamageProfile,combatController.gameObject);
                 }
             }
         }
@@ -57,13 +61,13 @@ public class DaggerSO : WeaponSO
                     if (enemyAI.CurrentState is PatrolState)
                     {
                         Debug.Log("<color=red>FINISHER!</color>");
-                        enemyHealth.TakeDamage(finisherDamage, combatController.gameObject);
+                        enemyHealth.TakeDamage(finisherDamageProfile, combatController.gameObject);
                     }
                     else
                     {
                         // If the enemy is alerted or in combat, just do a normal slash.
                         Debug.Log("Enemy is alert. Performing a normal heavy slash.");
-                        enemyHealth.TakeDamage(slashDamage, combatController.gameObject);
+                        enemyHealth.TakeDamage(primaryDamageProfile, combatController.gameObject);
                     }
                 }
             }

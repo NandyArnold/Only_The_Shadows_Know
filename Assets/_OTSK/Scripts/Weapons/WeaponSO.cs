@@ -12,6 +12,9 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [TextArea]
     public string weaponDescription;
 
+    [Header("Combat")]
+    public DamageTypeSO damageType;
+
     [Header("Visuals & Sockets")]
     public GameObject mainHandPrefab; // The 3D model prefab to spawn.
     public GameObject offHandWeaponPrefab; // Off-hand weapon model, if applicable.

@@ -131,6 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalSpeed: 30
   focusedSpeed: 50
+  damageType: {fileID: 11400000, guid: e9c3382cf53885342ab1ca03733d3728, type: 2}
   damage: 15
   lifeTime: 5
 --- !u!1 &2800058975225031064

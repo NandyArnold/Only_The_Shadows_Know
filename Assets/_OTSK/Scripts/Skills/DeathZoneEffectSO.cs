@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "FX_DeathZone", menuName = "Only The Shadows Know/Skills/Effects/Death Zone Effect")]
@@ -7,6 +8,8 @@ public class DeathZoneEffectSO : SkillEffectSO
     [Header("Death Zone Settings")]
     [SerializeField] private GameObject deathZoneVFXPrefab;
     [Tooltip("How long the player must channel to execute the finisher.")]
+    [SerializeField] private List<DamageInstance> damageProfile;
+    [SerializeField] private DamageTypeSO damageType;
     [SerializeField] private float channelDuration = 2f;
     [Tooltip("The maximum range to find a target from the player.")]
     [SerializeField] private float maxTargetingRange = 5f;
@@ -15,7 +18,7 @@ public class DeathZoneEffectSO : SkillEffectSO
 
     private GameObject _vfxInstance;
     private EnemyHealth _targetEnemyHealth;
-
+    
     public override void Activate(GameObject caster) { }
 
     public override IEnumerator StartChannel(GameObject caster)
@@ -55,7 +58,8 @@ public class DeathZoneEffectSO : SkillEffectSO
         if (_targetEnemyHealth != null && Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) <= maxTargetingRange)
         {
             Debug.Log($"<color=purple>Death Zone Finisher</color> on {_targetEnemyHealth.name}!");
-            _targetEnemyHealth.TakeDamage(9999f, caster); // Overkill damage for a finisher
+            
+            _targetEnemyHealth.TakeDamage(damageProfile, caster); // Overkill damage for a finisher
         }
 
         // 5. Tell the controller the channel is complete

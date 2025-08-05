@@ -1,11 +1,13 @@
 // EnemyHealth.cs - UPGRADED with OnDinamaged event
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 50f;
     public float CurrentHealth => _currentHealth;
+    public float MaxHealth => maxHealth;
     private float _currentHealth;
     private bool _isDead = false;
 
@@ -14,21 +16,34 @@ public class EnemyHealth : MonoBehaviour
     public event Action<float, float> OnHealthChanged; // For UI
     public event Action OnDied;
 
+    private EnemyResistances _resistances;
+
     private void Awake()
     {
         _currentHealth = maxHealth;
+        _resistances = GetComponent<EnemyResistances>();
     }
 
     // The TakeDamage method now requires an "attacker" so it can broadcast who did the damage.
-    public void TakeDamage(float damageAmount, GameObject attacker)
+    public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker)
     {
         if (_isDead) return;
 
-        _currentHealth -= damageAmount;
-        OnDamaged?.Invoke(attacker); // Fire the event to notify the AI.
-        OnHealthChanged?.Invoke(_currentHealth, maxHealth); // Notify UI about health change.
+        float totalDamage = 0;
+        // Loop through each piece of damage in the attack
+        foreach (var instance in damageInstances)
+        {
+            // Ask the DamageType to calculate its damage, and then apply resistances
+            float damage = instance.DamageType.CalculateDamage(instance.Value, this.gameObject);
+            float multiplier = _resistances != null ? _resistances.GetMultiplier(instance.DamageType) : 1f;
+            totalDamage += damage * multiplier;
+        }
 
-        Debug.Log($"<color=orange>{gameObject.name} took {damageAmount} damage from {attacker.name}!</color>");
+        _currentHealth -= totalDamage;
+        OnDamaged?.Invoke(attacker);
+        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+
+        Debug.Log($"<color=orange>{gameObject.name} took {totalDamage} total damage!</color>");
 
         if (_currentHealth <= 0)
         {

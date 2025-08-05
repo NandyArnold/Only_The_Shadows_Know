@@ -9,6 +9,8 @@ public class BowSO : WeaponSO
     [SerializeField] private LayerMask aimLayerMask;
 
     [Header("Combat Stats")] // Added a new header for organization
+    [SerializeField] private float arrowSpeed = 30f;
+    [SerializeField] private float focusedArrowSpeed = 50f;
     [SerializeField] private float timeBetweenShots = 0.5f;
     [SerializeField] private float unfocusedSpreadRadius = 25f;
 
@@ -61,7 +63,13 @@ public class BowSO : WeaponSO
             GameObject arrowObject = Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
             if (arrowObject.TryGetComponent<ArrowProjectile>(out var projectile))
             {
-                projectile.Initialize(isFocused);
+                float currentSpeed = isFocused ? focusedArrowSpeed : arrowSpeed;
+                projectile.Initialize(combatController.gameObject, currentSpeed);
+            }
+            if (arrowObject.TryGetComponent<Rigidbody>(out var rb))
+            {
+                float currentSpeed = isFocused ? focusedArrowSpeed : arrowSpeed;
+                rb.AddForce(direction * currentSpeed, ForceMode.VelocityChange);
             }
             combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
         }

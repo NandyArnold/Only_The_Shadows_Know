@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: 
   weaponDescription: 
+  damageType: {fileID: 11400000, guid: 0ad1ec77c0287b048ad67b2577558aa1, type: 2}
   mainHandPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   offHandWeaponPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   mainHandEquipSocket: 0
