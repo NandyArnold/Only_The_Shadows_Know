@@ -96,6 +96,17 @@ public class CameraController : MonoBehaviour
             zoomCamera.Follow = cameraTarget;
             zoomCamera.LookAt = cameraTarget;
         }
+        if (targetingCamera != null && cameraTarget != null)
+        {
+            targetingCamera.Follow = cameraTarget;
+            targetingCamera.LookAt = cameraTarget;
+        }
+        if (scryingCamera != null)
+        {
+            // Scrying camera should be static, so it does not follow the player.
+            scryingCamera.Follow = null;
+            scryingCamera.LookAt = null;
+        }
 
         // Subscribe to events now that we know everything exists
         if (playerInputHandler != null)

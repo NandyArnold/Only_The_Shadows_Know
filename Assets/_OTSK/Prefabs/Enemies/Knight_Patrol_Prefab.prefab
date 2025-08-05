@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 3961324408764969352}
   - component: {fileID: 6157043936471997615}
   - component: {fileID: 3011562132158654508}
+  - component: {fileID: 6345878136775759085}
   m_Layer: 6
   m_Name: Knight_Patrol_Prefab
   m_TagString: Enemy
@@ -160,6 +161,7 @@ MonoBehaviour:
   visionBlockingLayers:
     serializedVersion: 2
     m_Bits: 247
+  noiseDecayRate: 10
 --- !u!95 &3446622411678235474
 Animator:
   serializedVersion: 7
@@ -219,6 +221,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 55a27da6-d1a6-4343-9289-e520d5f5d3d8
+--- !u!114 &6345878136775759085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576752461769993476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 573999e140df096418d268faf2c1834e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
 --- !u!1 &2080416359781553335
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +295,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3313542892861222217}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7586702055936715610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3792202433283026624}
+  m_Layer: 0
+  m_Name: DeathZoneSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3792202433283026624
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7586702055936715610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.106, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2481599839943941641}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1133913828647574030
 PrefabInstance:
@@ -479,11 +525,19 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8941713592807251193, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1722683153061393051}
+    - targetCorrespondingSourceObject: {fileID: 73987777293503837, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3792202433283026624}
     - targetCorrespondingSourceObject: {fileID: 999661320832882504, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6333952365544411496}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}
+--- !u!4 &2481599839943941641 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 73987777293503837, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}
+  m_PrefabInstance: {fileID: 2555426194984702804}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3362271618351727644 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 999661320832882504, guid: 1e17cdb2070eae84698525d23013a5f0, type: 3}

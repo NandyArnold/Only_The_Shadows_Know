@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9f353ff15f1f34478c8d052e95d5203, type: 3}
-  m_Name: SK_TariaksuqsRift
+  m_Name: SK_DeathZone
   m_EditorClassIdentifier: 
-  skillID: 7
-  skillType: 1
-  skillName: Tarkiaksuqs Rift
-  icon: {fileID: 21300000, guid: 8cf6d4dfa37f0b14ba5c131f76b3760e, type: 3}
+  skillID: 4
+  skillType: 4
+  skillName: Death Zone
+  icon: {fileID: 21300000, guid: 45b68c8316432934fbf482e311cbb736, type: 3}
   description: 
-  manaCost: 0
+  manaCost: 10
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
-  castMode: 0
+  castMode: 2
   lockMovementWhileCasting: 0
-  skillEffectData: {fileID: 11400000, guid: 2bdc48b054cca004ab5c85892b275d51, type: 2}
+  skillEffectData: {fileID: 11400000, guid: fa9ae86b6db9026468c953b5b3bb4baa, type: 2}

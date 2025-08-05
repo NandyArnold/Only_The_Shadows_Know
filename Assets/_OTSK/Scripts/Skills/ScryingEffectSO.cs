@@ -7,6 +7,7 @@ public class ScryingEffectSO : SkillEffectSO
     // The caster is the player GameObject.
     public override void Activate(GameObject caster)
     {
+        Debug.Log("Scrying skill activated (logic not yet implemented).");
         // Tell the ScryingSystem to start, passing in the player
         // so it can find the CameraController.
         ScryingSystem.Instance.ToggleScrying(caster);

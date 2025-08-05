@@ -21,4 +21,4 @@ MonoBehaviour:
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 375
-  maxPlayerTeleportRange: 12
+  maxPlayerTeleportRange: 15

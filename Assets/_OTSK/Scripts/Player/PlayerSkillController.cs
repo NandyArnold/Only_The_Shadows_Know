@@ -156,6 +156,16 @@ public class PlayerSkillController : MonoBehaviour
         }
     }
 
+    public void CancelChannel()
+    {
+        if (_channeledSkill != null)
+        {
+            // Find the index of the channeled skill to pass to the handler
+            int skillIndex = System.Array.IndexOf(_equippedSkills.ToArray(), _channeledSkill);
+            HandleSkillCanceled(skillIndex);
+        }
+    }
+
     private IEnumerator SkillActivationGracePeriod()
     {
         yield return new WaitForSeconds(0.1f);
