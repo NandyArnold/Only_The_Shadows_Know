@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public PlayerController Player { get; private set; }
+     public Transform AimTarget { get; private set; }
 
     [Header("Game Start Settings")]
     [SerializeField] private SceneDataSO initialScene;
@@ -105,5 +106,10 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager camManager)
     {
         _cameraManager = camManager;
+    }
+
+    public void RegisterAimTarget(Transform target)
+    {
+        AimTarget = target;
     }
 }

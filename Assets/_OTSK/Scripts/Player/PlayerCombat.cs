@@ -21,6 +21,8 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private WeaponManager weaponManager;
     [SerializeField] private Rig ikRig;
+    [SerializeField] private MultiAimConstraint aimConstraint; 
+  
 
     [Header("Socket Transforms")]
     [SerializeField] private Transform handSocketR;
@@ -52,6 +54,7 @@ public class PlayerCombat : MonoBehaviour
     
     private DaggerAnimation _daggerAnimation;
     private BowAnimation _bowAnimation;
+    private AnimancyAnimation _animancyAnimation;
 
     private bool _isAiming = false;
     private bool _isFocused = false;
@@ -66,9 +69,31 @@ public class PlayerCombat : MonoBehaviour
 
         _daggerAnimation = GetComponent<DaggerAnimation>();
         _bowAnimation = GetComponent<BowAnimation>();
+        _animancyAnimation = GetComponent<AnimancyAnimation>();
 
         if (ikRig == null)
             ikRig = GetComponentInChildren<Rig>();
+        if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
+        {
+            // Create a source object array for the constraint
+            var sourceList = new WeightedTransformArray();
+            sourceList.Add(new WeightedTransform(GameManager.Instance.AimTarget, 1f));
+
+            // Assign the source (the _AimTarget) to both constraints
+            if (aimConstraint != null)
+            {
+                aimConstraint.data.sourceObjects = sourceList;
+            }
+
+
+            // Rebuild the rig with the new data
+            var rigBuilder = GetComponent<RigBuilder>();
+            if (rigBuilder != null) rigBuilder.Build();
+        }
+        else
+        {
+            Debug.LogError("PlayerCombat could not find AimTarget from GameManager to initialize IK rig!", this);
+        }
 
         if (availableWeapons != null && availableWeapons.Count > 0)
         {
@@ -145,8 +170,8 @@ public class PlayerCombat : MonoBehaviour
         }
         else if (newWeapon is AnimancySO)
         {
-            // When we create AnimancyAnimation, we'll set it here.
-            // playerAnimationController.SetWeaponAnimation(_animancyAnimation);
+            
+            playerAnimationController.SetWeaponAnimation(_animancyAnimation);
             SetAimState(false);
         }
 

@@ -17,6 +17,15 @@ public class AimTargetController : MonoBehaviour
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
     }
+    private void Start()
+    {
+        _mainCamera = Camera.main;
+        // ADD THIS LINE: Register with the GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterAimTarget(transform);
+        }
+    }
 
     private void OnDestroy()
     {

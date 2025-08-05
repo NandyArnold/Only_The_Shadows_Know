@@ -105,7 +105,7 @@ public class DetectionSystem : MonoBehaviour
         // Add the noise intensity to the gauge
         _soundGauge += intensity;
         OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
-        Debug.Log($"Enemy heard sound. Gauge is now at: {_soundGauge} / {config.hearingThreshold}");
+        //Debug.Log($"Enemy heard sound. Gauge is now at: {_soundGauge} / {config.hearingThreshold}");
 
         // If the gauge is full, fire the event
         if (_soundGauge >= config.hearingThreshold)
