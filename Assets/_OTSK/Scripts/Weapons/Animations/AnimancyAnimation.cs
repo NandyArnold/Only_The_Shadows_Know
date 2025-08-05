@@ -1,12 +1,13 @@
+// In AnimancyAnimation.cs
 using UnityEngine;
 
 public class AnimancyAnimation : MonoBehaviour, IWeaponAnimation
 {
     [SerializeField] private Animator animator;
 
-    // We can add specific trigger hashes here later
-    // private readonly int rangedCastTrigger = Animator.StringToHash("Animancy_RangedCast");
-    // private readonly int meleeCastTrigger = Animator.StringToHash("Animancy_MeleeCast");
+    // NEW: Specific trigger hashes
+    private readonly int rangedCastTrigger = Animator.StringToHash("Animancy_Ranged");
+    private readonly int meleeCastTrigger = Animator.StringToHash("Animancy_Melee");
 
     private void Awake()
     {
@@ -15,13 +16,11 @@ public class AnimancyAnimation : MonoBehaviour, IWeaponAnimation
 
     public void PlayPrimaryAttack()
     {
-        // TODO: Trigger a ranged casting animation
-        Debug.Log("Animancy Animation: Playing Ranged Attack");
+        animator.SetTrigger(rangedCastTrigger);
     }
 
     public void PlaySecondaryAttack()
     {
-        // TODO: Trigger a melee casting animation
-        Debug.Log("Animancy Animation: Playing Melee Attack");
+        animator.SetTrigger(meleeCastTrigger);
     }
 }

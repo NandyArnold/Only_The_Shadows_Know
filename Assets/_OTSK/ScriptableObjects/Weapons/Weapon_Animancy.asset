@@ -20,3 +20,15 @@ MonoBehaviour:
   offHandEquipSocket: 1
   mainHandUnequipSocket: 3
   offHandUnequipSocket: 4
+  beamVFXPrefab: {fileID: 7924996381254816273, guid: 311c01e33f8fe374783d0c98007ffa07, type: 3}
+  rangedDamage: 20
+  rangedRange: 10
+  aimLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  meleeDamage: 30
+  meleeRange: 2
+  hittableLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  damageMultipliers: []

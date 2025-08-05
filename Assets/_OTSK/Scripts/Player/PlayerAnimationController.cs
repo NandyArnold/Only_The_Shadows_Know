@@ -9,13 +9,19 @@ public class PlayerAnimationController : MonoBehaviour
     // --- CORE LOCOMOTION HASHES (Kept) ---
     private readonly int moveXHash = Animator.StringToHash("MoveX");
     private readonly int moveYHash = Animator.StringToHash("MoveY");
+    private readonly int speedHash = Animator.StringToHash("Speed");
+
     private readonly int isCrouchingHash = Animator.StringToHash("IsCrouching");
+
     private readonly int isRunningHash = Animator.StringToHash("IsRunning");
-    private readonly int jumpTriggerHash = Animator.StringToHash("JumpTrigger");
+
     private readonly int dodgeRollTriggerHash = Animator.StringToHash("DodgeRollTrigger");
+
     private readonly int standardJumpTriggerHash = Animator.StringToHash("StandardJumpTrigger");
     private readonly int runningJumpTriggerHash = Animator.StringToHash("RunningJumpTrigger");
+
     private readonly int isAimingHash = Animator.StringToHash("IsAiming");
+    private readonly int weaponTypeHash = Animator.StringToHash("WeaponType");
 
 
 
@@ -61,8 +67,13 @@ public class PlayerAnimationController : MonoBehaviour
     public void SetLocomotionInput(float moveX, float moveY, bool isCrouching, bool isRunning)
     {
         if (animator == null) return;
+
         animator.SetFloat(moveXHash, moveX);
         animator.SetFloat(moveYHash, moveY);
+
+        float speed = new Vector2(moveX, moveY).magnitude;
+        animator.SetFloat(speedHash, speed);
+
         animator.SetBool(isCrouchingHash, isCrouching);
         animator.SetBool(isRunningHash, isRunning);
     }
@@ -85,8 +96,9 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetTrigger(dodgeRollTriggerHash);
     }
 
-    //public void SetAimingState(bool isAiming)
-    //{
-    //    _currentWeaponAnimation?.SetAiming(isAiming);
-    //}
+    public void SetWeaponType(int type)
+    {
+        animator.SetInteger(weaponTypeHash, type);
+    }
+ 
 }

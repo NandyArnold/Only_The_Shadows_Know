@@ -161,17 +161,20 @@ public class PlayerCombat : MonoBehaviour
         if (newWeapon is BowSO)
         {
             playerAnimationController.SetWeaponAnimation(_bowAnimation);
+            playerAnimationController.SetWeaponType(2);
             SetAimState(true);
         }
         else if (newWeapon is DaggerSO)
         {
             playerAnimationController.SetWeaponAnimation(_daggerAnimation);
+            playerAnimationController.SetWeaponType(1);
             SetAimState(false);
         }
         else if (newWeapon is AnimancySO)
         {
             
             playerAnimationController.SetWeaponAnimation(_animancyAnimation);
+            playerAnimationController.SetWeaponType(3);
             SetAimState(false);
         }
 
