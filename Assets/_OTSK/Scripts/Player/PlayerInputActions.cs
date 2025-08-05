@@ -192,6 +192,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""TertiaryAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""122c7d4f-16ee-44f1-bd2d-07d9e63e3ca7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""SecondaryAttack_Hold"",
                     ""type"": ""Button"",
                     ""id"": ""b75ff11b-9fb2-44ca-a80c-8ddbd3491076"",
@@ -775,6 +784,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ShowObjective"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4bde239e-1a2a-4529-9753-10126fdf7135"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TertiaryAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1686,6 +1706,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_ToggleCursorMode = m_Player.FindAction("ToggleCursorMode", throwIfNotFound: true);
         m_Player_PrimaryAttack = m_Player.FindAction("PrimaryAttack", throwIfNotFound: true);
+        m_Player_TertiaryAttack = m_Player.FindAction("TertiaryAttack", throwIfNotFound: true);
         m_Player_SecondaryAttack_Hold = m_Player.FindAction("SecondaryAttack_Hold", throwIfNotFound: true);
         m_Player_SecondaryAttack_Press = m_Player.FindAction("SecondaryAttack_Press", throwIfNotFound: true);
         m_Player_Weapon1 = m_Player.FindAction("Weapon1", throwIfNotFound: true);
@@ -1817,6 +1838,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_ToggleCursorMode;
     private readonly InputAction m_Player_PrimaryAttack;
+    private readonly InputAction m_Player_TertiaryAttack;
     private readonly InputAction m_Player_SecondaryAttack_Hold;
     private readonly InputAction m_Player_SecondaryAttack_Press;
     private readonly InputAction m_Player_Weapon1;
@@ -1882,6 +1904,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/PrimaryAttack".
         /// </summary>
         public InputAction @PrimaryAttack => m_Wrapper.m_Player_PrimaryAttack;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/TertiaryAttack".
+        /// </summary>
+        public InputAction @TertiaryAttack => m_Wrapper.m_Player_TertiaryAttack;
         /// <summary>
         /// Provides access to the underlying input action "Player/SecondaryAttack_Hold".
         /// </summary>
@@ -1981,6 +2007,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started += instance.OnPrimaryAttack;
             @PrimaryAttack.performed += instance.OnPrimaryAttack;
             @PrimaryAttack.canceled += instance.OnPrimaryAttack;
+            @TertiaryAttack.started += instance.OnTertiaryAttack;
+            @TertiaryAttack.performed += instance.OnTertiaryAttack;
+            @TertiaryAttack.canceled += instance.OnTertiaryAttack;
             @SecondaryAttack_Hold.started += instance.OnSecondaryAttack_Hold;
             @SecondaryAttack_Hold.performed += instance.OnSecondaryAttack_Hold;
             @SecondaryAttack_Hold.canceled += instance.OnSecondaryAttack_Hold;
@@ -2055,6 +2084,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PrimaryAttack.started -= instance.OnPrimaryAttack;
             @PrimaryAttack.performed -= instance.OnPrimaryAttack;
             @PrimaryAttack.canceled -= instance.OnPrimaryAttack;
+            @TertiaryAttack.started -= instance.OnTertiaryAttack;
+            @TertiaryAttack.performed -= instance.OnTertiaryAttack;
+            @TertiaryAttack.canceled -= instance.OnTertiaryAttack;
             @SecondaryAttack_Hold.started -= instance.OnSecondaryAttack_Hold;
             @SecondaryAttack_Hold.performed -= instance.OnSecondaryAttack_Hold;
             @SecondaryAttack_Hold.canceled -= instance.OnSecondaryAttack_Hold;
@@ -2753,6 +2785,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPrimaryAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TertiaryAttack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTertiaryAttack(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "SecondaryAttack_Hold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

@@ -21,8 +21,9 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private WeaponManager weaponManager;
     [SerializeField] private Rig ikRig;
-    [SerializeField] private MultiAimConstraint aimConstraint; 
-  
+    [SerializeField] private MultiAimConstraint aimConstraint;
+    [SerializeField] private PlayerSkillController playerSkillController;
+
 
     [Header("Socket Transforms")]
     [SerializeField] private Transform handSocketR;
@@ -66,6 +67,7 @@ public class PlayerCombat : MonoBehaviour
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerAnimationController == null) playerAnimationController = GetComponent<PlayerAnimationController>();
         if (weaponManager == null) weaponManager = GetComponent<WeaponManager>();
+        if (playerSkillController == null) playerSkillController = GetComponent<PlayerSkillController>();
 
         _daggerAnimation = GetComponent<DaggerAnimation>();
         _bowAnimation = GetComponent<BowAnimation>();
@@ -113,7 +115,7 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackInput += HandleSecondaryAttack;
             playerInputHandler.OnSecondaryAttackPressed += HandleSecondaryAttackPress;
             playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
-
+            playerInputHandler.OnTertiaryAttackInput += HandleTertiaryAttack;
 
             playerInputHandler.OnWeapon1Input += () => SwitchWeaponByIndex(0);
             playerInputHandler.OnWeapon2Input += () => SwitchWeaponByIndex(1);
@@ -129,7 +131,7 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackInput -= HandleSecondaryAttack;
             playerInputHandler.OnSecondaryAttackPressed -= HandleSecondaryAttackPress;
             playerInputHandler.OnSecondaryAttackReleased -= HandleSecondaryAttackRelease;
-
+            playerInputHandler.OnTertiaryAttackInput -= HandleTertiaryAttack;
 
             playerInputHandler.OnWeapon1Input -= HandleWeapon1Switch;
             playerInputHandler.OnWeapon2Input -= HandleWeapon2Switch;
@@ -232,6 +234,16 @@ public class PlayerCombat : MonoBehaviour
             {
                 SetFocusState(false);
             }
+        }
+    }
+
+    private void HandleTertiaryAttack()
+    {
+        // If we are holding the Animancy weapon, this button activates the DeathZone skill.
+        if (_currentWeapon is AnimancySO)
+        {
+            // We tell the skill controller to try and activate the skill by its ID.
+            playerSkillController.TryActivateSkillByID(SkillIdentifier.DeathZone);
         }
     }
 

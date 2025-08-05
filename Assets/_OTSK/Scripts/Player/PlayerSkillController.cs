@@ -147,4 +147,20 @@ public class PlayerSkillController : MonoBehaviour
         SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
         SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
     }
+
+    public void TryActivateSkillByID(SkillIdentifier skillID)
+    {
+        // Find the index of the skill in our equipped list.
+        int skillIndex = _equippedSkills.FindIndex(s => s != null && s.skillID == skillID);
+
+        if (skillIndex != -1)
+        {
+            // If we found it, call our original private method with the correct index.
+            TryActivateSkill(skillIndex);
+        }
+        else
+        {
+            Debug.LogWarning($"Attempted to activate skill '{skillID}' but it is not equipped or found.");
+        }
+    }
 }

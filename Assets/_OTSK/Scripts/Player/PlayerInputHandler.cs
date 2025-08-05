@@ -16,6 +16,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnSecondaryAttackInput;     // For simple presses (Dagger)
     public event Action OnSecondaryAttackPressed;   // For starting a hold (Bow)
     public event Action OnSecondaryAttackReleased;  // For ending a hold (Bow)
+    public event Action OnTertiaryAttackInput;    // For Animancy or other special attacks
 
     public event Action OnWeapon1Input;
     public event Action OnWeapon2Input;
@@ -111,7 +112,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.SecondaryAttack_Hold.performed += ctx => OnSecondaryAttackPressed?.Invoke();
         _inputActions.Player.SecondaryAttack_Hold.canceled += ctx => OnSecondaryAttackReleased?.Invoke();
 
-
+        _inputActions.Player.TertiaryAttack.performed += ctx => OnTertiaryAttackInput?.Invoke();
 
 
         _inputActions.Player.Weapon1.performed += ctx => OnWeapon1Input?.Invoke();

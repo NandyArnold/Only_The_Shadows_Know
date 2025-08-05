@@ -106,6 +106,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "TertiaryAttack",
+                    "type": "Button",
+                    "id": "122c7d4f-16ee-44f1-bd2d-07d9e63e3ca7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SecondaryAttack_Hold",
                     "type": "Button",
                     "id": "b75ff11b-9fb2-44ca-a80c-8ddbd3491076",
@@ -689,6 +698,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ShowObjective",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4bde239e-1a2a-4529-9753-10126fdf7135",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TertiaryAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
