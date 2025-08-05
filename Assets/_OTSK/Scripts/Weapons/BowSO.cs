@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using UnityEngine;
-
 
 [CreateAssetMenu(fileName = "Weapon_Bow", menuName = "Only The Shadows Know/Weapons/Bow")]
 public class BowSO : WeaponSO
@@ -8,32 +8,24 @@ public class BowSO : WeaponSO
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private LayerMask aimLayerMask;
 
-    [Header("Combat Stats")] // Added a new header for organization
+    [Header("Combat Stats")]
     [SerializeField] private float arrowSpeed = 30f;
     [SerializeField] private float focusedArrowSpeed = 50f;
-    [SerializeField] private float timeBetweenShots = 0.5f;
     [SerializeField] private float unfocusedSpreadRadius = 25f;
+    [SerializeField] private float timeBetweenShots = 0.5f;
 
-   
+    [Header("Damage Profiles")]
+    public List<DamageInstance> unfocusedDamageProfile;
+    public List<DamageInstance> focusedDamageProfile;
 
-    // Static variable to track the last fire time for this weapon type.
     private static float _lastFireTime;
 
-    public void Fire(PlayerCombat combatController, bool isFocused)
+    // A central fire method to avoid repeating code
+    private void Fire(PlayerCombat combatController, bool isFocused)
     {
-        // Add the cooldown check at the very top.
-        if (Time.time < _lastFireTime + timeBetweenShots)
-        {
-            return;
-        }
+        if (Time.time < _lastFireTime + timeBetweenShots) return;
         _lastFireTime = Time.time;
-      
-        Debug.Log("1. BowSO Fire method called. Attempting to trigger animation...");
-        combatController.PlayerAnimationController.TriggerPrimaryAttack();
 
-
-        // ... (The rest of the Fire method is unchanged)
-        
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
@@ -63,26 +55,28 @@ public class BowSO : WeaponSO
             GameObject arrowObject = Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
             if (arrowObject.TryGetComponent<ArrowProjectile>(out var projectile))
             {
+                // Determine which speed and damage profile to use from the base WeaponSO class
                 float currentSpeed = isFocused ? focusedArrowSpeed : arrowSpeed;
-                projectile.Initialize(combatController.gameObject, currentSpeed);
+                List<DamageInstance> damageToApply = isFocused ? focusedDamageProfile : unfocusedDamageProfile;
+
+                // Initialize the projectile with all the correct data
+                projectile.Initialize(combatController.gameObject, damageToApply, currentSpeed);
             }
-            if (arrowObject.TryGetComponent<Rigidbody>(out var rb))
-            {
-                float currentSpeed = isFocused ? focusedArrowSpeed : arrowSpeed;
-                rb.AddForce(direction * currentSpeed, ForceMode.VelocityChange);
-            }
-            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
         }
-      
     }
 
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-        Fire(combatController, false);
+        // For the bow, LMB press depends on the focus state. PlayerCombat handles this.
+        // We will call the appropriate Fire method from PlayerCombat.
+        // This is a placeholder, the real logic is in PlayerCombat's HandlePrimaryAttack.
+        Fire(combatController, combatController.IsFocused);
     }
 
     public override void SecondaryAttack(PlayerCombat combatController)
     {
-        Fire(combatController, true);
+        // For the bow, RMB is for focusing, not attacking.
+        // The actual "focused shot" is triggered by PrimaryAttack while focused.
+        // This method can be left empty, as PlayerCombat handles the focus state.
     }
 }

@@ -1,4 +1,3 @@
-// AnimancySO.cs - REFACTORED for Hitscan
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,33 +5,33 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon_Animancy", menuName = "Only The Shadows Know/Weapons/Animancy")]
 public class AnimancySO : WeaponSO
 {
-    [Header("Ranged Attack (Hitscan)")]
-    [SerializeField] private GameObject beamVFXPrefab; // The beam effect we just made
-    [SerializeField] private float rangedDamage = 20f;
+    [Header("Ranged Attack (LMB)")]
+    [SerializeField] private GameObject beamVFXPrefab;
     [SerializeField] private float rangedRange = 100f;
     [SerializeField] private LayerMask aimLayerMask;
+    [SerializeField] private List<DamageInstance> rangedDamageProfile;
 
-    [Header("Melee Attack")]
-    [SerializeField] private float meleeDamage = 30f;
+    [Header("Melee Attack (RMB)")]
     [SerializeField] private float meleeRange = 2f;
     [SerializeField] private LayerMask hittableLayers;
+    [SerializeField] private List<DamageInstance> meleeDamageProfile;
 
-    [Header("Specialized Damage")]
-    [Tooltip("Define damage multipliers for specific enemy types.")]
-    [SerializeField] private List<DamageMultiplier> damageMultipliers;
-    [SerializeField] private List<DamageInstance> damageProfile;
+    [Header("Execution Mechanic")]
+    [Tooltip("Enemy types in this list will receive additional 'Execution' damage from all attacks.")]
+    [SerializeField] private List<EnemyType> vulnerableToExecution;
+    [SerializeField] private List<DamageInstance> executionDamageProfile;
 
     // Ranged Soul Sever (LMB)
     public override void PrimaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.animancyRangedAttackNoise);
+        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise); // Placeholder
 
         Transform firePoint = combatController.FirePoint;
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
-        // Find where the player is aiming
+        // Find where the player is aiming from the center of the screen
         Vector3 targetPoint;
         Ray screenCenterRay = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(screenCenterRay, out RaycastHit screenHit, rangedRange, aimLayerMask))
@@ -44,33 +43,46 @@ public class AnimancySO : WeaponSO
             targetPoint = screenCenterRay.GetPoint(rangedRange);
         }
 
-        // Calculate the direction from the fire point to the aim target
         Vector3 fireDirection = (targetPoint - firePoint.position).normalized;
+        Vector3 endPoint = firePoint.position + fireDirection * rangedRange;
+
+        // Perform the actual hitscan raycast from the fire point to deal damage
+        if (Physics.Raycast(firePoint.position, fireDirection, out RaycastHit damageHit, rangedRange, hittableLayers))
+        {
+            endPoint = damageHit.point; // Make the beam stop where it hit
+            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+
+            if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth) && damageHit.collider.TryGetComponent<Enemy>(out var enemy))
+            {
+                // 1. Apply the standard ranged damage
+                enemyHealth.TakeDamage(rangedDamageProfile, combatController.gameObject);
+
+                // 2. Check for and apply additional execution damage
+                if (vulnerableToExecution.Contains(enemy.Config.enemyType))
+                {
+                    enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
+                }
+            }
+        }
 
         // Spawn the visual beam effect
         if (beamVFXPrefab != null)
         {
             GameObject beamObject = Instantiate(beamVFXPrefab, firePoint.position, Quaternion.LookRotation(fireDirection));
             LineRenderer line = beamObject.GetComponent<LineRenderer>();
-            line.SetPosition(0, Vector3.zero); // Start of the line at the fire point
-            line.SetPosition(1, new Vector3(0, 0, rangedRange)); // End of the line stretches out
-        }
-
-        // Perform the actual hitscan raycast
-        if (Physics.Raycast(firePoint.position, fireDirection, out RaycastHit damageHit, rangedRange, hittableLayers))
-        {
-            if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth))
+            if (line != null)
             {
-                enemyHealth.TakeDamage(damageProfile, combatController.gameObject);
+                line.SetPosition(0, Vector3.zero);
+                line.SetPosition(1, new Vector3(0, 0, Vector3.Distance(firePoint.position, endPoint)));
             }
         }
     }
 
-    // Melee Soul Sever (RMB) - This logic remains unchanged.
+    // Melee Soul Sever (RMB)
     public override void SecondaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.animancyMeleeAttackNoise);
+        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, meleeRange, hittableLayers);
         if (hits.Any())
@@ -79,20 +91,16 @@ public class AnimancySO : WeaponSO
             {
                 if (h.TryGetComponent<EnemyHealth>(out var enemyHealth) && h.TryGetComponent<Enemy>(out var enemy))
                 {
-                    // Calculate final damage with multiplier
-                    float multiplier = GetMultiplierFor(enemy.Config.enemyType);
-                    float finalDamage = meleeDamage * multiplier;
+                    // 1. Apply the standard melee damage
+                    enemyHealth.TakeDamage(meleeDamageProfile, combatController.gameObject);
 
-                    enemyHealth.TakeDamage(damageProfile, combatController.gameObject);
+                    // 2. Check for and apply additional execution damage
+                    if (vulnerableToExecution.Contains(enemy.Config.enemyType))
+                    {
+                        enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
+                    }
                 }
             }
         }
-    }
-
-    //  Helper method to find the correct multiplier.
-    private float GetMultiplierFor(EnemyType type)
-    {
-        var multiplier = damageMultipliers.FirstOrDefault(m => m.enemyType == type);
-        return multiplier != null ? multiplier.multiplier : 1f; // Default to 1x damage
     }
 }

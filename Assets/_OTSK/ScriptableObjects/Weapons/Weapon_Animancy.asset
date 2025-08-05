@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: 
   weaponDescription: 
-  damageType: {fileID: 11400000, guid: 0ad1ec77c0287b048ad67b2577558aa1, type: 2}
   mainHandPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   offHandWeaponPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   mainHandEquipSocket: 0
@@ -22,14 +21,21 @@ MonoBehaviour:
   mainHandUnequipSocket: 3
   offHandUnequipSocket: 4
   beamVFXPrefab: {fileID: 7924996381254816273, guid: 311c01e33f8fe374783d0c98007ffa07, type: 3}
-  rangedDamage: 20
   rangedRange: 10
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  meleeDamage: 30
+  rangedDamageProfile:
+  - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
+    Value: 150
   meleeRange: 2
   hittableLayers:
     serializedVersion: 2
     m_Bits: 0
-  damageMultipliers: []
+  meleeDamageProfile:
+  - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
+    Value: 150
+  vulnerableToExecution: 04000000
+  executionDamageProfile:
+  - DamageType: {fileID: 11400000, guid: d18aea837f3d939458876ee353196e1e, type: 2}
+    Value: 100

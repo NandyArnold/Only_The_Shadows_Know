@@ -52,8 +52,8 @@ public class PlayerAnimationController : MonoBehaviour
     public void TriggerPrimaryAttack()
     {
         _currentWeaponAnimation?.PlayPrimaryAttack();
-        Debug.Log("2. PlayerAnimationController received TriggerPrimaryAttack command.");
-        Debug.Log("--> Current Weapon Animation is: " + _currentWeaponAnimation?.GetType().Name);
+        //Debug.Log("2. PlayerAnimationController received TriggerPrimaryAttack command.");
+        //Debug.Log("--> Current Weapon Animation is: " + _currentWeaponAnimation?.GetType().Name);
 
     }
 

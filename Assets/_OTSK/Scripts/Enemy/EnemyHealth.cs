@@ -17,11 +17,17 @@ public class EnemyHealth : MonoBehaviour
     public event Action OnDied;
 
     private EnemyResistances _resistances;
+    private EnemyConfigSO _config;
 
     private void Awake()
     {
-        _currentHealth = maxHealth;
+        _config = GetComponent<Enemy>().Config;
+        if (_config != null)
+        {
+            _currentHealth = _config.maxHealth;
+        }
         _resistances = GetComponent<EnemyResistances>();
+
     }
 
     // The TakeDamage method now requires an "attacker" so it can broadcast who did the damage.

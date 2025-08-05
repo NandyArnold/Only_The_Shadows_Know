@@ -1,5 +1,3 @@
-// DaggerSO.cs - UPGRADED
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,45 +5,48 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon_Dagger", menuName = "Only The Shadows Know/Weapons/Dagger")]
 public class DaggerSO : WeaponSO
 {
-    [Header("Dagger Attack Settings")]
-    [SerializeField] private float attackRange = 0.7f;
+    [Header("Dagger Specifics")]
+    [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private LayerMask hittableLayers;
 
-    [Header("Primary Attack Damage")]
-    public List<DamageInstance> primaryDamageProfile;
-
-    [Header("Finisher Damage")]
+    [Header("Damage Profiles")]
+    [Tooltip("Damage dealt by a standard primary (LMB) or non-finisher secondary (RMB) attack.")]
+    public List<DamageInstance> slashDamageProfile;
+    [Tooltip("Damage dealt by a secondary (RMB) attack on an un-alerted enemy.")]
     public List<DamageInstance> finisherDamageProfile;
 
-    // The Primary Attack uses the LEFT hand.
+    // Primary Attack (LMB) - Always a standard slash.
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-        // 1. Tell the animator to play the attack.
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
         combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
-        // 2. Perform the hit detection.
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketL.position, attackRange, hittableLayers);
         if (hits.Any())
         {
             foreach (var hit in hits)
             {
-                Debug.Log($"<color=green>Dagger (R):</color> Hit {hit.gameObject.name} for {primaryDamageProfile} damage.");
-                if (hit.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+                // First, check if it's a real enemy with full components.
+                if (hit.TryGetComponent<EnemyHealth>(out var enemyHealth))
                 {
-                 
-                    enemyHealth.TakeDamage(primaryDamageProfile,combatController.gameObject);
+                    enemyHealth.TakeDamage(slashDamageProfile, combatController.gameObject);
+                }
+                // If it's not a real enemy, THEN check if it's a test dummy.
+                else if (hit.TryGetComponent<DamageableDummy>(out var dummyHealth))
+                {
+                    if (slashDamageProfile != null && slashDamageProfile.Count > 0)
+                    {
+                        dummyHealth.TakeDamage(slashDamageProfile[0].Value);
+                    }
                 }
             }
         }
     }
 
-    // The Secondary Attack uses the RIGHT hand.
+    // Secondary Attack (RMB) - A finisher if the enemy is unaware.
     public override void SecondaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
-
-        // Noise is generated whether we hit or not.
         combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
@@ -53,21 +54,28 @@ public class DaggerSO : WeaponSO
         {
             foreach (var hit in hits)
             {
-                // We need both health and AI components from the enemy.
+                // First, check if it's a REAL enemy with an AI state.
                 if (hit.TryGetComponent<EnemyHealth>(out var enemyHealth) &&
                     hit.TryGetComponent<EnemyAI>(out var enemyAI))
                 {
-                    // THE FINISHER CHECK: Is the enemy in its PatrolState?
                     if (enemyAI.CurrentState is PatrolState)
                     {
-                        Debug.Log("<color=red>FINISHER!</color>");
+                        Debug.Log("<color=red>FINISHER!</color> (on Unaware Enemy)");
                         enemyHealth.TakeDamage(finisherDamageProfile, combatController.gameObject);
                     }
                     else
                     {
-                        // If the enemy is alerted or in combat, just do a normal slash.
                         Debug.Log("Enemy is alert. Performing a normal heavy slash.");
-                        enemyHealth.TakeDamage(primaryDamageProfile, combatController.gameObject);
+                        enemyHealth.TakeDamage(slashDamageProfile, combatController.gameObject);
+                    }
+                }
+                // If it's NOT a real enemy, THEN check if it's our special test dummy.
+                else if (hit.CompareTag("TestingDummy") && hit.TryGetComponent<DamageableDummy>(out var dummyHealth))
+                {
+                    Debug.Log("<color=red>FINISHER!</color> (on Test Dummy)");
+                    if (finisherDamageProfile != null && finisherDamageProfile.Count > 0)
+                    {
+                        dummyHealth.TakeDamage(finisherDamageProfile[0].Value);
                     }
                 }
             }

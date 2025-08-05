@@ -14,3 +14,4 @@ public class EnemyResistances : MonoBehaviour
         return entry != null ? entry.multiplier : 1f;
     }
 }
+

@@ -129,11 +129,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae2c29989e83c347b4d318a19b5daae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalSpeed: 30
-  focusedSpeed: 50
-  damageType: {fileID: 11400000, guid: e9c3382cf53885342ab1ca03733d3728, type: 2}
-  damage: 15
   lifeTime: 5
+  damageProfile:
+  - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
+    Value: 75
 --- !u!1 &2800058975225031064
 GameObject:
   m_ObjectHideFlags: 0

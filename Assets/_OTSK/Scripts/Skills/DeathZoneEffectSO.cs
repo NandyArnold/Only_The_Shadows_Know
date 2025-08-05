@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Generic; // Required for List
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "FX_DeathZone", menuName = "Only The Shadows Know/Skills/Effects/Death Zone Effect")]
@@ -7,42 +7,31 @@ public class DeathZoneEffectSO : SkillEffectSO
 {
     [Header("Death Zone Settings")]
     [SerializeField] private GameObject deathZoneVFXPrefab;
-    [Tooltip("How long the player must channel to execute the finisher.")]
-    [SerializeField] private List<DamageInstance> damageProfile;
-    [SerializeField] private DamageTypeSO damageType;
     [SerializeField] private float channelDuration = 2f;
-    [Tooltip("The maximum range to find a target from the player.")]
     [SerializeField] private float maxTargetingRange = 5f;
-    [Tooltip("Layers that contain valid targets.")]
     [SerializeField] private LayerMask targetLayers;
+
+    // REPLACE the old damage fields with this list
+    [Header("Damage Profile")]
+    [SerializeField] private List<DamageInstance> damageProfile;
 
     private GameObject _vfxInstance;
     private EnemyHealth _targetEnemyHealth;
-    
+
     public override void Activate(GameObject caster) { }
 
     public override IEnumerator StartChannel(GameObject caster)
     {
-        // 1. Find a Target
         _targetEnemyHealth = FindClosestTarget(caster);
-
         if (_targetEnemyHealth == null)
         {
-            Debug.Log("Death Zone failed: No valid target in range.");
-            // We need to tell the controller to stop the channel immediately
             caster.GetComponent<PlayerSkillController>().CancelChannel();
             yield break;
         }
 
-        // 2. Find the socket on the target
-        Transform vfxAnchor = _targetEnemyHealth.transform.Find("DeathZoneSocket");
-        if (vfxAnchor == null)
-        {
-            vfxAnchor = _targetEnemyHealth.transform; // Fallback to the root if no socket found
-        }
-        // 3. Spawn VFX on the target
         if (deathZoneVFXPrefab != null)
         {
+            Transform vfxAnchor = _targetEnemyHealth.transform.Find("DeathZoneSocket") ?? _targetEnemyHealth.transform;
             _vfxInstance = Instantiate(deathZoneVFXPrefab, vfxAnchor);
             if (_vfxInstance.TryGetComponent<DeathZoneController>(out var controller))
             {
@@ -50,25 +39,19 @@ public class DeathZoneEffectSO : SkillEffectSO
             }
         }
 
-        // 3. Wait for the channel to complete
         yield return new WaitForSeconds(channelDuration);
 
-        // 4. Execute the Finisher
-        // Check if the target is still valid (not dead) and in range
         if (_targetEnemyHealth != null && Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) <= maxTargetingRange)
         {
-            Debug.Log($"<color=purple>Death Zone Finisher</color> on {_targetEnemyHealth.name}!");
-            
-            _targetEnemyHealth.TakeDamage(damageProfile, caster); // Overkill damage for a finisher
+            // Pass the entire damage profile list to the TakeDamage method
+            _targetEnemyHealth.TakeDamage(damageProfile, caster);
         }
 
-        // 5. Tell the controller the channel is complete
         caster.GetComponent<PlayerSkillController>().CancelChannel();
     }
 
     public override void StopChannel(GameObject caster)
     {
-        // Clean up the VFX if the channel is stopped early
         if (_vfxInstance != null)
         {
             Destroy(_vfxInstance);
