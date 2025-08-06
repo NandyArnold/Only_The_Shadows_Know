@@ -18,6 +18,10 @@ public class BalorsVisionEffectSO : SkillEffectSO
     [SerializeField][Range(0f, 1f)] private float normalTimeScale = 0.25f;
     [SerializeField][Range(0f, 1f)] private float combatTimeScale = 0.75f;
 
+    [Header("Camera & Time Effect")]
+    [SerializeField] private float transitionDuration = 0.5f;
+    [SerializeField] private float timeScaleAmount = 0.25f;
+
     private Coroutine _revealCoroutine;
     //  A dictionary to track the active VFX for each revealed entity.
     private Dictionary<RevealableEntity, GameObject> _activeVFX = new Dictionary<RevealableEntity, GameObject>();
@@ -28,7 +32,15 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override IEnumerator StartChannel(GameObject caster)
     {
+        var cameraController = caster.GetComponent<CameraController>();
+        if (cameraController != null)
+        {
+            // Call the switch with the new duration parameter
+            cameraController.SwitchToCamera(CameraType.BalorsVision, transitionDuration);
+        }
 
+        // Use the new smooth time transition
+        TimeManager.Instance.DoTimeScale(timeScaleAmount, transitionDuration);
 
         float timeScaleToUse = CombatManager.Instance.IsPlayerInCombat ? combatTimeScale : normalTimeScale;
         TimeManager.Instance.SetTimeScale(timeScaleToUse);
@@ -37,6 +49,13 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override void StopChannel(GameObject caster)
     {
+        var cameraController = caster.GetComponent<CameraController>();
+        if (cameraController != null)
+        {
+            // Switch back to the default gameplay camera
+            cameraController.SwitchToCamera(CameraType.Shoulder);
+        }
+
         TimeManager.Instance.ResetTimeScale();
 
         if (_revealCoroutine != null) SkillExecutor.Instance.StopCoroutine(_revealCoroutine);
@@ -51,6 +70,7 @@ public class BalorsVisionEffectSO : SkillEffectSO
             }
         }
         _activeVFX.Clear(); // Clear the tracking dictionary.
+        caster.GetComponent<CameraController>().SwitchToCamera(CameraType.Shoulder);
     }
 
 

@@ -1,5 +1,5 @@
 // CameraController.cs - REFACTORED for Focus State
-
+using DG.Tweening;
 using UnityEngine;
 using System.Collections;
 using Unity.Cinemachine;
@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     private CinemachineCamera zoomCamera;
     private CinemachineCamera scryingCamera;
     private CinemachineCamera targetingCamera;
+    private CinemachineCamera balorsVisionCamera;
 
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
@@ -29,17 +30,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float targetingPitchMin = 30f;
     [SerializeField] private float targetingPitchMax = 80f;
 
-    [Header("Recoil Settings")]
-    [SerializeField] private float recoilShakeAmplitude = 2f;
-    [SerializeField] private float recoilShakeDuration = 0.2f;
-    [SerializeField] private float recoilFovKick = 5f;
-    [SerializeField] private float recoilKickDuration = 0.1f;
-    [SerializeField] private float recoilReturnDuration = 0.25f;
-
-
-    //[Header("Aiming Settings")]
-    //[SerializeField] private float normalAimFov = 40f;
-    //[SerializeField] private float focusedAimFov = 25f;
+    [Header("Balor's Vision FX Settings")] // NEW
+    [SerializeField] private float fovPulseAmount = 180f;
+    [SerializeField] private float fovPulseHangTime = 0.1f;
+    [SerializeField] private float fovPulseDuration = 0.5f;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -49,7 +43,7 @@ public class CameraController : MonoBehaviour
 
     private CinemachineBrain _cinemachineBrain;
 
-    private Coroutine _recoilCoroutine;
+
 
     
 
@@ -63,7 +57,7 @@ public class CameraController : MonoBehaviour
         // UPDATED: Subscribe to the focus event, not the aim event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
-            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
+           
     }
 
     public void Initialize(CameraManager manager)
@@ -75,6 +69,7 @@ public class CameraController : MonoBehaviour
         zoomCamera = manager.GetCamera(CameraType.Zoom);
         scryingCamera = manager.GetCamera(CameraType.Scrying);
         targetingCamera = manager.GetCamera(CameraType.Targeting);
+        balorsVisionCamera = manager.GetCamera(CameraType.BalorsVision);
 
         // Get local components
         playerInputHandler = GetComponent<PlayerInputHandler>();
@@ -107,6 +102,11 @@ public class CameraController : MonoBehaviour
             scryingCamera.Follow = null;
             scryingCamera.LookAt = null;
         }
+        if (balorsVisionCamera != null && cameraTarget != null)
+        { 
+            balorsVisionCamera.Follow = cameraTarget;
+            balorsVisionCamera.LookAt = cameraTarget;
+        }
 
         // Subscribe to events now that we know everything exists
         if (playerInputHandler != null)
@@ -117,10 +117,56 @@ public class CameraController : MonoBehaviour
         if (playerCombat != null)
         {
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
-            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
+          
         }
 
         SetDefaultCameraState();
+    }
+
+    public void SwitchToCamera(CameraType type,float duration = 0.25f)
+    {
+        // Reset all camera priorities to a low value first
+        shoulderCamera.Priority = 10;
+        zoomCamera.Priority = 10;
+        scryingCamera.Priority = 10;
+        targetingCamera.Priority = 10;
+        balorsVisionCamera.Priority = 10;
+
+        // Then, give the target camera the highest priority
+        var targetCam = CameraManager.Instance.GetCamera(type);
+        if (targetCam == null) return;
+
+        // --- SPECIAL TRANSITION FOR BALOR'S VISION ---
+        if (type == CameraType.BalorsVision)
+        {
+            targetCam.Priority = 20;
+            StartCoroutine(BalorsVisionFXRoutine(targetCam));
+        }
+        else
+        {
+            // --- Standard Instant Switch for all other cameras ---
+            shoulderCamera.Priority = 10;
+            zoomCamera.Priority = 10;
+            scryingCamera.Priority = 10;
+            targetingCamera.Priority = 10;
+            balorsVisionCamera.Priority = 10;
+
+            targetCam.Priority = 20;
+        }
+    }
+
+    private IEnumerator BalorsVisionFXRoutine(CinemachineCamera vcam)
+    {
+        // We use a small delay to let the camera blend finish first.
+        yield return new WaitForSeconds(0.1f);
+
+        float originalFov = vcam.Lens.FieldOfView;
+
+        // Use a DOTween Sequence for the multi-part animation.
+        DOTween.Sequence()
+            .Append(DOTween.To(() => vcam.Lens.FieldOfView, x => vcam.Lens.FieldOfView = x, fovPulseAmount, fovPulseDuration / 2).SetEase(Ease.OutQuad))
+            .AppendInterval(fovPulseHangTime)
+            .Append(DOTween.To(() => vcam.Lens.FieldOfView, x => vcam.Lens.FieldOfView = x, originalFov, fovPulseDuration / 2).SetEase(Ease.InQuad));
     }
 
     private void SetDefaultCameraState()
@@ -143,7 +189,7 @@ public class CameraController : MonoBehaviour
         //  Unsubscribe from the focus event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
-            playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
+           
     }
 
     
@@ -231,62 +277,8 @@ public class CameraController : MonoBehaviour
         zoomCamera.Priority = 5;
     }
 
-    private void HandleFocusedShotFired()
-    {
-        if (_recoilCoroutine != null)
-        {
-            StopCoroutine(_recoilCoroutine);
-        }
-        // Start the new recoil and store a reference to it.
-        _recoilCoroutine = StartCoroutine(RecoilRoutine());
-    }
 
-    private IEnumerator RecoilRoutine()
-    {
-       ICinemachineCamera liveCamera = _cinemachineBrain.ActiveVirtualCamera;
-        if (liveCamera == null) yield break;
 
-        var noise = zoomCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
-        if (noise == null) yield break;
-
-        var vcam = liveCamera as CinemachineCamera;
-
-        // 1. Store the camera's original FOV before we change anything.
-        float originalFov = vcam.Lens.FieldOfView;
-        float targetKickFov = originalFov + recoilFovKick;
-
-        // --- KICK ---
-        noise.AmplitudeGain = recoilShakeAmplitude;
-        float elapsedTime = 0f;
-        while (elapsedTime < recoilKickDuration)
-        {
-            float t = elapsedTime / recoilKickDuration;
-            vcam.Lens.FieldOfView = Mathf.SmoothStep(originalFov, targetKickFov, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        vcam.Lens.FieldOfView += recoilFovKick;
-
-        // --- RETURN ---
-        yield return new WaitForSeconds(recoilShakeDuration);
-
-        noise.AmplitudeGain = 0f;
-
-        // --- SMOOTHLY RETURN TO ORIGINAL FOV ---
-        elapsedTime = 0f;
-        float startFov = vcam.Lens.FieldOfView;
-        // 2. Set the target FOV for the return trip to be the original value.
-        float targetFov = originalFov;
-
-        while (elapsedTime < 0.2f) // 0.2s to return to normal
-        {   
-            float t = elapsedTime / recoilReturnDuration; // Normalize time
-            vcam.Lens.FieldOfView = Mathf.SmoothStep(startFov, originalFov, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        vcam.Lens.FieldOfView = originalFov;
-    }
+ 
 
 }

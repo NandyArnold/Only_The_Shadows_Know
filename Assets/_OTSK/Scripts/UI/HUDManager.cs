@@ -8,7 +8,7 @@ public class HUDManager : MonoBehaviour
     public static HUDManager Instance { get; private set; } // Make it a singleton
 
     [Header("UI Panels")]
-    [SerializeField] private GameObject playerHUD_Panel;
+    //[SerializeField] private GameObject playerHUD_Panel;
     [SerializeField] private GameObject crosshairPanel;
 
     [Header("Stat Bar References")]
@@ -65,7 +65,7 @@ public class HUDManager : MonoBehaviour
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
         if (noiseSlider != null) noiseSlider.gameObject.SetActive(false);
-        if (crosshairPanel != null) playerHUD_Panel.SetActive(false);
+        if (crosshairPanel != null) crosshairPanel.SetActive(false);
     }
 
     private void Update() 

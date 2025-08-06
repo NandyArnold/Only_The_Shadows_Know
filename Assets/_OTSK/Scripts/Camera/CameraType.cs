@@ -7,7 +7,8 @@ public enum CameraType
     Shoulder,
     Zoom,
     Scrying,
-    Targeting
+    Targeting,
+    BalorsVision
 }
 
 [Serializable]
