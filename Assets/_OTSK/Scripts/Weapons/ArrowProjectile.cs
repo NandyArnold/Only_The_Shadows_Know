@@ -1,4 +1,3 @@
-// In ArrowProjectile.cs
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,22 +10,36 @@ public class ArrowProjectile : MonoBehaviour
     private Rigidbody _rb;
     private bool _hasHit = false;
     private GameObject _owner;
-    private List<DamageInstance> _damageProfile; // Will be set by the BowSO
+    private List<DamageInstance> _damageProfile; // Will be given its data by the BowSO
+    private float _initialSpeed;                 // Will be given its data by the BowSO
+    private bool _isReadyToFire = false;
 
     private void Awake()
     {
+        Debug.Log($"(7) Arrow (ID: {GetInstanceID()}) has AWOKEN.");
         _rb = GetComponent<Rigidbody>();
         GetComponent<BoxCollider>().isTrigger = false;
         _rb.useGravity = true;
     }
 
-    // The Initialize method now accepts the damage profile from the bow
+    // This is the method the BowSO will call to give the arrow its stats.
     public void Initialize(GameObject owner, List<DamageInstance> damageProfile, float speed)
     {
+        Debug.Log($"(8) Arrow (ID: {GetInstanceID()}) is being INITIALIZED with speed {speed}.");
         _owner = owner;
         _damageProfile = damageProfile;
-        _rb.linearVelocity = transform.forward * speed;
+        _initialSpeed = speed;
+        _isReadyToFire = true;
         Destroy(gameObject, lifeTime);
+    }
+
+    private void FixedUpdate()
+    {
+        if (_isReadyToFire)
+        {
+            _rb.linearVelocity = transform.forward * _initialSpeed;
+            _isReadyToFire = false;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -34,15 +47,17 @@ public class ArrowProjectile : MonoBehaviour
         if (_hasHit) return;
         _hasHit = true;
 
-        // Stop physics movement
         _rb.isKinematic = true;
         _rb.linearVelocity = Vector3.zero;
         transform.SetParent(collision.transform);
 
         if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
         {
-            // Pass the damage profile and the stored owner.
-            enemyHealth.TakeDamage(_damageProfile, _owner);
+            // Use the damage profile it was given at the start.
+            if (_damageProfile != null)
+            {
+                enemyHealth.TakeDamage(_damageProfile, _owner);
+            }
         }
     }
 }

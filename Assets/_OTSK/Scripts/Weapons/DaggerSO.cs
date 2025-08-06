@@ -46,7 +46,7 @@ public class DaggerSO : WeaponSO
     // Secondary Attack (RMB) - A finisher if the enemy is unaware.
     public override void SecondaryAttack(PlayerCombat combatController)
     {
-        combatController.PlayerAnimationController.TriggerSecondaryAttack();
+        
         combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
@@ -61,6 +61,7 @@ public class DaggerSO : WeaponSO
                     if (enemyAI.CurrentState is PatrolState)
                     {
                         Debug.Log("<color=red>FINISHER!</color> (on Unaware Enemy)");
+                        combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
                         enemyHealth.TakeDamage(finisherDamageProfile, combatController.gameObject);
                     }
                     else
@@ -75,10 +76,15 @@ public class DaggerSO : WeaponSO
                     Debug.Log("<color=red>FINISHER!</color> (on Test Dummy)");
                     if (finisherDamageProfile != null && finisherDamageProfile.Count > 0)
                     {
+                        combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
                         dummyHealth.TakeDamage(finisherDamageProfile[0].Value);
                     }
                 }
             }
         }
+        else
+        {
+            combatController.PlayerAnimationController.TriggerSecondaryAttack();
+        }    
     }
 }

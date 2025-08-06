@@ -2591,7 +2591,7 @@ MonoBehaviour:
   bottomClamp: -30
   targetingPitchMin: -18
   targetingPitchMax: 50
-  recoilShakeAmplitude: 10
+  recoilShakeAmplitude: 2
   recoilShakeDuration: 0.5
   recoilFovKick: 30
   recoilKickDuration: 0.1

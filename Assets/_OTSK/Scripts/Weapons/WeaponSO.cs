@@ -17,7 +17,11 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [Header("Visuals & Sockets")]
     public GameObject mainHandPrefab; // The 3D model prefab to spawn.
     public GameObject offHandWeaponPrefab; // Off-hand weapon model, if applicable.
-    
+
+    [Header("Combat Stats")]
+    [Tooltip("Time in seconds between uses of this weapon.")]
+    public float timeBetweenAttacks = 0.5f;
+
     public SocketType mainHandEquipSocket;   // Where it goes when equipped.
     public SocketType offHandEquipSocket; 
 

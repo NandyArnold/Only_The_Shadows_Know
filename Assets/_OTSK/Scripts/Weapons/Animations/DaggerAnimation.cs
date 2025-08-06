@@ -9,6 +9,7 @@ public class DaggerAnimation : MonoBehaviour, IWeaponAnimation
     // Hashes for the dagger's specific animation triggers
     private readonly int daggerPrimaryAttackTrigger = Animator.StringToHash("Dagger_PrimaryAttack");
     private readonly int daggerSecondaryAttackTrigger = Animator.StringToHash("Dagger_SecondaryAttack");
+    private readonly int finisherTriggerHash = Animator.StringToHash("Dagger_Finisher");
     void Awake()
     {
         if (animator == null)
@@ -25,9 +26,8 @@ public class DaggerAnimation : MonoBehaviour, IWeaponAnimation
         animator.SetTrigger(daggerSecondaryAttackTrigger);
     }
 
-    //public void SetAiming(bool isAiming)
-    //{
-    //    // Dagger does not have an aiming state, so we can leave this empty or log a message if needed.
-    //    Debug.Log("Dagger does not support aiming.");
-    //}
+    public void PlayFinisherAnimation()
+    {
+        animator.SetTrigger(finisherTriggerHash);
+    }
 }

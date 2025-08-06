@@ -1,4 +1,3 @@
-// PlayerCombat.cs - REFACTORED
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,14 +6,14 @@ using UnityEngine.Animations.Rigging;
 
 public class PlayerCombat : MonoBehaviour
 {
-    // Public properties for other scripts (like WeaponSO) to access.
+    // Public properties for other scripts to access
     public PlayerAnimationController PlayerAnimationController => playerAnimationController;
     public Transform FirePoint => firePoint;
     public bool IsFocused => _isFocused;
     public bool IsAiming => _isAiming;
     public WeaponSO CurrentWeapon => _currentWeapon;
-    public Transform HandSocketR => handSocketR;
-    public Transform HandSocketL => handSocketL;
+    public NoiseSettingsSO NoiseSettings => noiseSettings;
+    public PlayerHealthManaNoise HealthManaNoise => playerHealthManaNoise;
 
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
@@ -24,87 +23,59 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private MultiAimConstraint aimConstraint;
     [SerializeField] private PlayerSkillController playerSkillController;
 
+    [Header("Data References")]
+    [SerializeField] private NoiseSettingsSO noiseSettings;
+    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
 
-    [Header("Socket Transforms")]
+    [Header("Combat Points")]
+    [SerializeField] private Transform firePoint;
     [SerializeField] private Transform handSocketR;
     [SerializeField] private Transform handSocketL;
 
     [Header("Weapon Settings")]
     [SerializeField] private List<WeaponSO> availableWeapons;
 
-    [Header("Combat Points")]
-    [SerializeField] private Transform firePoint;
-
-    [Header("Data References")]
-    [SerializeField] private NoiseSettingsSO noiseSettings;
-    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
-    public NoiseSettingsSO NoiseSettings => noiseSettings;
-    public PlayerHealthManaNoise HealthManaNoise => playerHealthManaNoise;
-
-
-
     public event Action<bool> OnAimStateChanged;
     public event Action<bool> OnFocusStateChanged;
     public event Action<WeaponSO> OnWeaponSwitched;
     public event Action OnBowFire;
-    public event Action OnFocusedShotFired;
-
-    private Coroutine _rigWeightCoroutine;
 
     private WeaponSO _currentWeapon;
-    
     private DaggerAnimation _daggerAnimation;
     private BowAnimation _bowAnimation;
     private AnimancyAnimation _animancyAnimation;
-
     private bool _isAiming = false;
     private bool _isFocused = false;
+    private Coroutine _rigWeightCoroutine;
+    private float _lastAttackTime;
 
-    #region Standard Methods
     private void Awake()
     {
         // Get component references
-        if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerAnimationController == null) playerAnimationController = GetComponent<PlayerAnimationController>();
-        if (weaponManager == null) weaponManager = GetComponent<WeaponManager>();
-        if (playerSkillController == null) playerSkillController = GetComponent<PlayerSkillController>();
-
+        playerInputHandler = GetComponent<PlayerInputHandler>();
+        playerAnimationController = GetComponent<PlayerAnimationController>();
+        weaponManager = GetComponent<WeaponManager>();
+        playerSkillController = GetComponent<PlayerSkillController>();
         _daggerAnimation = GetComponent<DaggerAnimation>();
         _bowAnimation = GetComponent<BowAnimation>();
         _animancyAnimation = GetComponent<AnimancyAnimation>();
+        ikRig = GetComponentInChildren<Rig>();
+        noiseSettings = GetComponent<NoiseSettingsSO>(); // Assuming it's on the player now
+        playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
 
-        if (ikRig == null)
-            ikRig = GetComponentInChildren<Rig>();
         if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
         {
-            // Create a source object array for the constraint
             var sourceList = new WeightedTransformArray();
             sourceList.Add(new WeightedTransform(GameManager.Instance.AimTarget, 1f));
-
-            // Assign the source (the _AimTarget) to both constraints
-            if (aimConstraint != null)
-            {
-                aimConstraint.data.sourceObjects = sourceList;
-            }
-
-
-            // Rebuild the rig with the new data
+            if (aimConstraint != null) { aimConstraint.data.sourceObjects = sourceList; }
             var rigBuilder = GetComponent<RigBuilder>();
             if (rigBuilder != null) rigBuilder.Build();
-        }
-        else
-        {
-            Debug.LogError("PlayerCombat could not find AimTarget from GameManager to initialize IK rig!", this);
         }
 
         if (availableWeapons != null && availableWeapons.Count > 0)
         {
             SwitchWeapon(availableWeapons[0]);
         }
-        if (noiseSettings == null) Debug.LogError("NoiseSettingsSO not assigned on PlayerCombat!");
-        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
-
-
     }
 
     private void OnEnable()
@@ -116,10 +87,9 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackPressed += HandleSecondaryAttackPress;
             playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
             playerInputHandler.OnTertiaryAttackInput += HandleTertiaryAttack;
-
-            playerInputHandler.OnWeapon1Input += () => SwitchWeaponByIndex(0);
-            playerInputHandler.OnWeapon2Input += () => SwitchWeaponByIndex(1);
-            playerInputHandler.OnWeapon3Input += () => SwitchWeaponByIndex(2);
+            playerInputHandler.OnWeapon1Input += HandleWeapon1Switch;
+            playerInputHandler.OnWeapon2Input += HandleWeapon2Switch;
+            playerInputHandler.OnWeapon3Input += HandleWeapon3Switch;
         }
     }
 
@@ -132,13 +102,12 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnSecondaryAttackPressed -= HandleSecondaryAttackPress;
             playerInputHandler.OnSecondaryAttackReleased -= HandleSecondaryAttackRelease;
             playerInputHandler.OnTertiaryAttackInput -= HandleTertiaryAttack;
-
             playerInputHandler.OnWeapon1Input -= HandleWeapon1Switch;
             playerInputHandler.OnWeapon2Input -= HandleWeapon2Switch;
             playerInputHandler.OnWeapon3Input -= HandleWeapon3Switch;
         }
     }
-    #endregion
+
 
     public void SwitchWeaponByIndex(int index)
     {
@@ -196,30 +165,26 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandlePrimaryAttack()
     {
+        if (_currentWeapon == null) return;
+        if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
 
-        if (_currentWeapon is BowSO && _isFocused)
-        {
-            _currentWeapon.SecondaryAttack(this);
-            OnBowFire?.Invoke(); // Announce that a focused shot was fired
-            OnFocusedShotFired?.Invoke(); // Notify that a focused shot was fired
+        // The Primary Attack button (LMB) handles both focused and unfocused bow shots.
+        // The BowSO itself will check the IsFocused state.
+        _currentWeapon.PrimaryAttack(this);
 
-        }
-        else if (_currentWeapon is BowSO) // Added check for unfocused bow shot
-        {
-            _currentWeapon.PrimaryAttack(this);
-            OnBowFire?.Invoke(); // Announce that an unfocused shot was fired
-        }
-        else
-        {
-            _currentWeapon?.PrimaryAttack(this);
-        }
+        if (_currentWeapon is BowSO) OnBowFire?.Invoke();
+        _lastAttackTime = Time.time;
     }
 
     private void HandleSecondaryAttack()
     {
-        if (_currentWeapon is BowSO) return;
-        _currentWeapon?.SecondaryAttack(this);
+        if (_currentWeapon == null || _currentWeapon is BowSO) return;
+        if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
+
+        _currentWeapon.SecondaryAttack(this);
+        _lastAttackTime = Time.time;
     }
+
     private void HandleSecondaryAttackPress()
     {
         if (_currentWeapon is BowSO && _isAiming) SetFocusState(true);
@@ -228,28 +193,27 @@ public class PlayerCombat : MonoBehaviour
     // This handler is for RELEASING A HOLD (for the Bow)
     private void HandleSecondaryAttackRelease()
     {
-        if (_currentWeapon is BowSO && _isAiming)
+        if (_currentWeapon is BowSO && _isAiming && _isFocused)
         {
-            if (_isFocused)
-            {
-                SetFocusState(false);
-            }
+            SetFocusState(false);
         }
     }
 
     private void HandleTertiaryAttack()
     {
-        // If we are holding the Animancy weapon, this button activates the DeathZone skill.
         if (_currentWeapon is AnimancySO)
         {
-            // We tell the skill controller to try and activate the skill by its ID.
             playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone);
         }
     }
 
-    private void HandleWeapon1Switch() => SwitchWeapon(availableWeapons[0]);
-    private void HandleWeapon2Switch() => SwitchWeapon(availableWeapons[1]);
-    private void HandleWeapon3Switch() => SwitchWeapon(availableWeapons[2]);
+    // Using named methods for weapon switching to ensure stable unsubscription
+    private void HandleWeapon1Switch() => SwitchWeaponByIndex(0);
+    private void HandleWeapon2Switch() => SwitchWeaponByIndex(1);
+    private void HandleWeapon3Switch() => SwitchWeaponByIndex(2);
+    //private void HandleWeapon1Switch() => SwitchWeapon(availableWeapons[0]);
+    //private void HandleWeapon2Switch() => SwitchWeapon(availableWeapons[1]);
+    //private void HandleWeapon3Switch() => SwitchWeapon(availableWeapons[2]);
     private void UpdateRigWeight(bool enable)
     {
         if (_rigWeightCoroutine != null)
