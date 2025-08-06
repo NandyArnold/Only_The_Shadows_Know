@@ -14,7 +14,7 @@ public class CursorManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-        DontDestroyOnLoad(gameObject);
+       
     }
 
     // We now subscribe to events instead of using Start().

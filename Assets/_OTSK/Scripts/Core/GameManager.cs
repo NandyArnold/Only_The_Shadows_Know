@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+       
 
         // Subscribe to the SceneLoader event
         if (SceneLoader.Instance != null)

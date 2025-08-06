@@ -47,8 +47,8 @@ public class ArrowProjectile : MonoBehaviour
         if (_hasHit) return;
         _hasHit = true;
 
-        _rb.isKinematic = true;
         _rb.linearVelocity = Vector3.zero;
+        _rb.isKinematic = true;
         transform.SetParent(collision.transform);
 
         if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))

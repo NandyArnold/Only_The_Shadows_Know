@@ -43,7 +43,7 @@ public class TeleportManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     /// <summary>
