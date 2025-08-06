@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: PlayerBaseCameraBlends
   m_EditorClassIdentifier: 
   CustomBlends:
-  - From: Player_ThirdPerson
-    To: Player_Aiming
+  - From: Player_ThirdPerson_CM
+    To: Player_ZoomAiming_CM
     Blend:
-      Style: 2
-      Time: 1
+      Style: 3
+      Time: 0.2
       CustomCurve:
         serializedVersion: 2
         m_Curve: []
         m_PreInfinity: 0
         m_PostInfinity: 0
         m_RotationOrder: 0
-  - From: Player_Aiming
-    To: Player_ThirdPerson
+  - From: Player_ZoomAiming_CM
+    To: Player_ThirdPerson_CM
     Blend:
       Style: 3
       Time: 1
@@ -35,8 +35,8 @@ MonoBehaviour:
         m_PreInfinity: 0
         m_PostInfinity: 0
         m_RotationOrder: 0
-  - From: Player_ThirdPerson
-    To: Player_Scrying
+  - From: Player_ThirdPerson_CM
+    To: Player_Scrying_CM
     Blend:
       Style: 2
       Time: 2
@@ -46,8 +46,8 @@ MonoBehaviour:
         m_PreInfinity: 0
         m_PostInfinity: 0
         m_RotationOrder: 0
-  - From: Player_Scrying
-    To: Player_ThirdPerson
+  - From: Player_Scrying_CM
+    To: Player_ThirdPerson_CM
     Blend:
       Style: 3
       Time: 1
@@ -57,8 +57,8 @@ MonoBehaviour:
         m_PreInfinity: 0
         m_PostInfinity: 0
         m_RotationOrder: 0
-  - From: Player_Scrying
-    To: Player_ThirdPerson
+  - From: Player_Scrying_CM
+    To: Player_ThirdPerson_CM
     Blend:
       Style: 3
       Time: 1
@@ -84,6 +84,28 @@ MonoBehaviour:
     Blend:
       Style: 3
       Time: 0.5
+      CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+  - From: Player_ZoomAiming_CM
+    To: Player_FocusedShot_CM
+    Blend:
+      Style: 2
+      Time: 0.2
+      CustomCurve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+  - From: Player_FocusedShot_CM
+    To: Player_ZoomAiming_CM
+    Blend:
+      Style: 3
+      Time: 0.1
       CustomCurve:
         serializedVersion: 2
         m_Curve: []

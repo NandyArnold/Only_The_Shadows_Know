@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     private CinemachineCamera scryingCamera;
     private CinemachineCamera targetingCamera;
     private CinemachineCamera balorsVisionCamera;
+    private CinemachineCamera focusedShotCamera;
 
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
@@ -70,6 +71,7 @@ public class CameraController : MonoBehaviour
         scryingCamera = manager.GetCamera(CameraType.Scrying);
         targetingCamera = manager.GetCamera(CameraType.Targeting);
         balorsVisionCamera = manager.GetCamera(CameraType.BalorsVision);
+        focusedShotCamera = manager.GetCamera(CameraType.FocusedShot);
 
         // Get local components
         playerInputHandler = GetComponent<PlayerInputHandler>();
@@ -107,6 +109,10 @@ public class CameraController : MonoBehaviour
             balorsVisionCamera.Follow = cameraTarget;
             balorsVisionCamera.LookAt = cameraTarget;
         }
+        if (focusedShotCamera != null && cameraTarget != null) 
+        { 
+            focusedShotCamera.Follow = cameraTarget; focusedShotCamera.LookAt = cameraTarget; 
+        }
 
         // Subscribe to events now that we know everything exists
         if (playerInputHandler != null)
@@ -131,6 +137,7 @@ public class CameraController : MonoBehaviour
         scryingCamera.Priority = 10;
         targetingCamera.Priority = 10;
         balorsVisionCamera.Priority = 10;
+        focusedShotCamera.Priority = 10;
 
         // Then, give the target camera the highest priority
         var targetCam = CameraManager.Instance.GetCamera(type);
@@ -203,11 +210,26 @@ public class CameraController : MonoBehaviour
     {
         if (shoulderCamera == null || zoomCamera == null) return;
 
-        // When focused, zoom camera is higher priority. When not, shoulder camera is.
-        shoulderCamera.Priority = isFocused ? 5 : 10;
-        zoomCamera.Priority = isFocused ? 15 : 5;
+        // This logic is now simpler: just switch between shoulder and zoom
+        SwitchToCamera(isFocused ? CameraType.Zoom : CameraType.Shoulder);
     }
 
+    private void HandleFocusedShotFired()
+    {
+        StartCoroutine(FocusedShotRecoilRoutine());
+    }
+
+    private IEnumerator FocusedShotRecoilRoutine()
+    {
+        // Switch to the recoil camera
+        SwitchToCamera(CameraType.FocusedShot);
+
+        // Wait for a very short moment. This is how long the recoil "kicks" for.
+        yield return new WaitForSeconds(0.2f);
+
+        // After the wait, switch back to the standard zoom camera.
+        SwitchToCamera(CameraType.Zoom);
+    }
     private void SetLookInput(Vector2 input)
     {
         _lookInput = input;
@@ -277,8 +299,9 @@ public class CameraController : MonoBehaviour
         zoomCamera.Priority = 5;
     }
 
-
-
  
+    
+
+
 
 }

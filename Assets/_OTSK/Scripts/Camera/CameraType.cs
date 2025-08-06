@@ -8,7 +8,8 @@ public enum CameraType
     Zoom,
     Scrying,
     Targeting,
-    BalorsVision
+    BalorsVision,
+    FocusedShot
 }
 
 [Serializable]
