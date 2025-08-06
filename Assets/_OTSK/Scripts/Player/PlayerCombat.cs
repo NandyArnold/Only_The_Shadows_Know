@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using Unity.Cinemachine;
 
 public class PlayerCombat : MonoBehaviour
 {
     // Public properties for other scripts to access
+    public CinemachineBrain Brain { get; private set; }
     public PlayerAnimationController PlayerAnimationController => playerAnimationController;
     public Transform FirePoint => firePoint;
     public bool IsFocused => _isFocused;
@@ -63,7 +65,8 @@ public class PlayerCombat : MonoBehaviour
         _bowAnimation = GetComponent<BowAnimation>();
         _animancyAnimation = GetComponent<AnimancyAnimation>();
         ikRig = GetComponentInChildren<Rig>();
-        
+        Brain = Camera.main.GetComponent<CinemachineBrain>();
+
         playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
 
         if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
@@ -128,7 +131,7 @@ public class PlayerCombat : MonoBehaviour
         weaponManager.EquipNewWeapon(newWeapon);
 
         // Determine if the weapon uses the IK aiming rig.
-        bool usesAimIK = (newWeapon is BowSO || newWeapon is AnimancySO);
+        bool usesAimIK = (newWeapon is BowSO);
         UpdateRigWeight(usesAimIK);
 
         // --- SINGLE, CLEAN LOGIC BLOCK ---
@@ -206,6 +209,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (_currentWeapon is AnimancySO)
         {
+            // First, trigger the animation
+            playerAnimationController.TriggerTertiaryAttack();
+            // Then, activate the skill
             playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone);
         }
     }

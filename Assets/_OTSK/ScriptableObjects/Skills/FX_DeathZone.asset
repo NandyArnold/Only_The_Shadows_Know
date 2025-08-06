@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: FX_DeathZone
   m_EditorClassIdentifier: 
   deathZoneVFXPrefab: {fileID: 6824903412663903792, guid: 12582fbcbb1d442479b0283c92f4de25, type: 3}
-  damageProfile:
-  - DamageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
-    Value: 1
-  damageType: {fileID: 0}
-  channelDuration: 2
+  channelDuration: 5
   maxTargetingRange: 10
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
+  damageProfile:
+  - DamageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
+    Value: 1

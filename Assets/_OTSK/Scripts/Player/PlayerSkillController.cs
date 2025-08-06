@@ -7,6 +7,7 @@ public class PlayerSkillController : MonoBehaviour
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    [SerializeField ]private PlayerMovement _playerMovement;
 
     [Header("Skill Data")]
     [SerializeField] private SkillRegistrySO skillRegistry;
@@ -23,6 +24,7 @@ public class PlayerSkillController : MonoBehaviour
     {
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+        if (_playerMovement == null) _playerMovement = GetComponent<PlayerMovement>();
     }
 
     private void Start()
@@ -56,8 +58,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             playerInputHandler.OnSkillPerformedInput += TryActivateSkill;
             playerInputHandler.OnSkillCanceledInput += HandleSkillCanceled;
-
-            playerInputHandler.OnCancelActionInput += HandleCancelAction;
+            EventManager.Instance.OnCancelActionInput += HandleCancelAction; 
         }
     }
 
@@ -67,8 +68,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             playerInputHandler.OnSkillPerformedInput -= TryActivateSkill;
             playerInputHandler.OnSkillCanceledInput -= HandleSkillCanceled;
-
-            playerInputHandler.OnCancelActionInput -= HandleCancelAction;
+            EventManager.Instance.OnCancelActionInput -= HandleCancelAction;
         }
         if (CombatManager.Instance != null)
         {
@@ -128,6 +128,11 @@ public class PlayerSkillController : MonoBehaviour
                 StartCoroutine(SkillActivationGracePeriod());
                 break;
             case CastMode.Channel:
+                if (skill.lockMovementWhileCasting)
+                {
+                    _playerMovement.SetMovementLock(true);
+                }
+                _channeledSkill = skill;
                 _channeledSkill = skill;
                 _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
                 _manaDrainCoroutine = StartCoroutine(DrainManaOverTime(skill));
@@ -142,6 +147,10 @@ public class PlayerSkillController : MonoBehaviour
             _channeledSkill.skillEffectData.StopChannel(this.gameObject);
             if (_manaDrainCoroutine != null) StopCoroutine(_manaDrainCoroutine);
             if (_channelingCoroutine != null) StopCoroutine(_channelingCoroutine);
+            if (_channeledSkill.lockMovementWhileCasting)
+            {
+                _playerMovement.SetMovementLock(false);
+            }
             _channeledSkill = null;
             _isActivatingASkill = false; // Release the lock
         }
@@ -149,6 +158,7 @@ public class PlayerSkillController : MonoBehaviour
 
     private void HandleCancelAction()
     {
+        Debug.Log("Cancel Action input received."); Debug.Log("Cancel Action input received.");
         // Check the static property on the effect script and call the static cancel method.
         if (TariaksuqsRiftEffectSO.IsRiftActive)
         {

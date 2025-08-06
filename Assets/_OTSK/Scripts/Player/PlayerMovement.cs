@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dodgeRollSpeed = 10f;
     [SerializeField] private float dodgeRollDuration = 0.5f;
 
-    [Header("Data References")] // NEW HEADER
+    [Header("Data References")] 
     [SerializeField] private NoiseSettingsSO noiseSettings;
     
 
@@ -54,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isDodgeRolling = false;
     private bool _isGrounded;
     private bool _isFocused;
+    private bool _movementLocked = false;
 
     private Transform _cameraTransform;
 
@@ -122,11 +123,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        CheckIfGrounded();
         ApplyGravity();
-        HandleMovement();
         HandlePlayerRotation();
         HandleContinuousNoise();
+
+        if (_movementLocked)
+        {
+            // If movement is locked, stop all animations...
+            playerAnimationController.SetLocomotionInput(0, 0, _isCrouching, false);
+            // ...apply only the gravity velocity...
+            characterController.Move(_velocity * Time.deltaTime);
+            // ...and exit the method so HandleMovement() is not called.
+            return;
+        }
+
+        CheckIfGrounded();
+        HandleMovement();
+       
     }
 
     private void CheckIfGrounded()
@@ -346,4 +359,11 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+    public void SetMovementLock(bool isLocked)
+    {
+        _movementLocked = isLocked;
+    }
+
+   
 }

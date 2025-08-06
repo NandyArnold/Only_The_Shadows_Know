@@ -30,4 +30,5 @@ public class DaggerAnimation : MonoBehaviour, IWeaponAnimation
     {
         animator.SetTrigger(finisherTriggerHash);
     }
+    public void PlayTertiaryAttack() { }
 }

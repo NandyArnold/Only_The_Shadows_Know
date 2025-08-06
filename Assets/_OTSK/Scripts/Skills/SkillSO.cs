@@ -20,6 +20,7 @@ public class SkillSO : ScriptableObject
     public float manaCostOverTime;
     public SkillUsageCondition usageCondition;
     public CastMode castMode;
+  
 
 
     [Tooltip("For 'Instant' cast skills, should this lock the player's movement during the cast animation?")]

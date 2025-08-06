@@ -19,7 +19,7 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         //Debug.LogWarning($"--- SINGLETON INITIALIZED --- \nPlayerSpawner instance is set on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
 
         if (SceneLoader.Instance != null)

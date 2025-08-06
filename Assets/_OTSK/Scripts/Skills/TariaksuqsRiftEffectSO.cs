@@ -1,12 +1,16 @@
 // Create this new script: TariaksuqsRiftEffectSO.cs
 using UnityEngine;
 using System.Collections;
+using System;
 
 [CreateAssetMenu(fileName = "FX_TariaksuqsRift", menuName = "Only The Shadows Know/Skills/Effects/Tariaksuqs Rift Effect")]
 public class TariaksuqsRiftEffectSO : SkillEffectSO
 {
     [SerializeField] private GameObject riftMarkerPrefab;
+    [Tooltip("The minimum distance the player must be from the rift to teleport to it.")]
+    [SerializeField] private float maxTeleportRange = 2f;
 
+   
     // Static variables hold the state across all uses of this skill.
     private static Vector3? _riftPosition = null;
     private static GameObject _riftInstance;
@@ -21,14 +25,24 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
             _riftPosition = caster.transform.position;
             _riftInstance = Instantiate(riftMarkerPrefab, _riftPosition.Value, Quaternion.identity);
             Debug.Log($"Rift placed at {_riftPosition.Value}");
+            EventManager.Instance.RiftPlaced(_riftPosition.Value, maxTeleportRange);
         }
         else // A rift is already placed, so teleport to it.
         {
+
+            float distanceToRift = Vector3.Distance(caster.transform.position, _riftPosition.Value);
+            if (distanceToRift > maxTeleportRange)
+            {
+                Debug.Log($"Too far to teleport to rift. Distance: {distanceToRift}");
+                return; // Exit without teleporting.
+            }
+            // -----------------------------
+
             Debug.Log($"Teleporting to rift at {_riftPosition.Value}");
             var cc = caster.GetComponent<CharacterController>();
             TeleportManager.Instance.ExecuteTeleport(cc, _riftPosition.Value);
 
-            CancelRift(); // Clean up the rift after using it.
+            CancelRift(); // Clean up the rift after teleporting.
         }
     }
 
@@ -40,6 +54,7 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
         }
         _riftInstance = null;
         _riftPosition = null;
+        EventManager.Instance.RiftCancelledOrUsed();
         Debug.Log("Rift cancelled.");
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Weapon_Bow", menuName = "Only The Shadows Know/Weapons/Bow")]
@@ -21,9 +22,12 @@ public class BowSO : WeaponSO
     // A central fire method to avoid repeating code
     private void Fire(PlayerCombat combatController, bool isFocused)
     {
-        
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null) return;
+
+        CinemachineBrain cinemachineBrain = combatController.Brain;
+        if (cinemachineBrain == null) return;
+
+        // Get the active camera
+        Camera activeCamera = cinemachineBrain.OutputCamera;
 
         Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Vector2 aimPoint = screenCenter;
@@ -32,7 +36,7 @@ public class BowSO : WeaponSO
             aimPoint += UnityEngine.Random.insideUnitCircle * unfocusedSpreadRadius;
         }
 
-        Ray ray = mainCamera.ScreenPointToRay(aimPoint);
+        Ray ray = activeCamera.ScreenPointToRay(aimPoint);
         Vector3 targetPoint;
         //Ray ray = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask))

@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: FX_TariaksuqsRift
   m_EditorClassIdentifier: 
   riftMarkerPrefab: {fileID: 2896813399296741940, guid: dda5dc777783d1b4a97d8db3aa17b15d, type: 3}
+  maxTeleportRange: 15

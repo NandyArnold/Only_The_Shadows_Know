@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Weapon_Animancy", menuName = "Only The Shadows Know/Weapons/Animancy")]
@@ -7,6 +8,7 @@ public class AnimancySO : WeaponSO
 {
     [Header("Ranged Attack (LMB)")]
     [SerializeField] private GameObject beamVFXPrefab;
+    [SerializeField] private float beamDuration; // Duration for the beam effect
     [SerializeField] private float rangedRange = 100f;
     [SerializeField] private LayerMask aimLayerMask;
     [SerializeField] private List<DamageInstance> rangedDamageProfile;
@@ -25,15 +27,18 @@ public class AnimancySO : WeaponSO
     public override void PrimaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise); // Placeholder
+        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         Transform firePoint = combatController.FirePoint;
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null) return;
+        CinemachineBrain cinemachineBrain = combatController.Brain;
+        if (cinemachineBrain == null) return;
 
-        // Find where the player is aiming from the center of the screen
+        // Get the active camera
+        Camera activeCamera = cinemachineBrain.OutputCamera;
+
+        // 1. Find where the player is aiming at the center of the screen
         Vector3 targetPoint;
-        Ray screenCenterRay = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
+        Ray screenCenterRay = activeCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(screenCenterRay, out RaycastHit screenHit, rangedRange, aimLayerMask))
         {
             targetPoint = screenHit.point;
@@ -46,34 +51,51 @@ public class AnimancySO : WeaponSO
         Vector3 fireDirection = (targetPoint - firePoint.position).normalized;
         Vector3 endPoint = firePoint.position + fireDirection * rangedRange;
 
-        // Perform the actual hitscan raycast from the fire point to deal damage
+        // 2. Perform the actual hitscan raycast from the fire point to deal damage
         if (Physics.Raycast(firePoint.position, fireDirection, out RaycastHit damageHit, rangedRange, hittableLayers))
         {
-            endPoint = damageHit.point; // Make the beam stop where it hit
+            endPoint = damageHit.point; // The beam should end exactly where the damage was dealt.
+                                        
             combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
+            // Check if the hit object is a real enemy
             if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth) && damageHit.collider.TryGetComponent<Enemy>(out var enemy))
             {
                 // 1. Apply the standard ranged damage
                 enemyHealth.TakeDamage(rangedDamageProfile, combatController.gameObject);
-
+                
                 // 2. Check for and apply additional execution damage
                 if (vulnerableToExecution.Contains(enemy.Config.enemyType))
                 {
                     enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
                 }
             }
+            // Check if the hit object is a test dummy
+            else if (damageHit.collider.TryGetComponent<DamageableDummy>(out var dummyHealth))
+            {
+                if (rangedDamageProfile != null && rangedDamageProfile.Count > 0)
+                {
+                    dummyHealth.TakeDamage(rangedDamageProfile[0].Value);
+                }
+            }
         }
 
-        // Spawn the visual beam effect
+        // 3. Spawn the visual beam effect and set its world positions
         if (beamVFXPrefab != null)
         {
-            GameObject beamObject = Instantiate(beamVFXPrefab, firePoint.position, Quaternion.LookRotation(fireDirection));
+            // We spawn it at the fire point, but its rotation doesn't matter now.
+            GameObject beamObject = Instantiate(beamVFXPrefab, firePoint.position, Quaternion.identity);
             LineRenderer line = beamObject.GetComponent<LineRenderer>();
             if (line != null)
             {
-                line.SetPosition(0, Vector3.zero);
-                line.SetPosition(1, new Vector3(0, 0, Vector3.Distance(firePoint.position, endPoint)));
+                // THE FIX: Set the line's start and end points in absolute WORLD space.
+                line.SetPosition(0, firePoint.position);
+                line.SetPosition(1, endPoint);
+            }
+            if (beamObject.TryGetComponent<VFXCleanup>(out var cleanup))
+            {
+                // You can make this duration a variable in the SO later if you want.
+                cleanup.BeginCleanup(beamDuration);
             }
         }
     }
@@ -89,15 +111,22 @@ public class AnimancySO : WeaponSO
         {
             foreach (var h in hits)
             {
+                // --- THIS IS THE FIX ---
+                // First, check if it's a real enemy
                 if (h.TryGetComponent<EnemyHealth>(out var enemyHealth) && h.TryGetComponent<Enemy>(out var enemy))
                 {
-                    // 1. Apply the standard melee damage
                     enemyHealth.TakeDamage(meleeDamageProfile, combatController.gameObject);
-
-                    // 2. Check for and apply additional execution damage
                     if (vulnerableToExecution.Contains(enemy.Config.enemyType))
                     {
                         enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
+                    }
+                }
+                // If not, check if it's a test dummy
+                else if (h.TryGetComponent<DamageableDummy>(out var dummyHealth))
+                {
+                    if (meleeDamageProfile != null && meleeDamageProfile.Count > 0)
+                    {
+                        dummyHealth.TakeDamage(meleeDamageProfile[0].Value);
                     }
                 }
             }

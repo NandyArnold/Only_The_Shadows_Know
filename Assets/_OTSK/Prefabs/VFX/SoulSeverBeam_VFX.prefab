@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dae55340da034bb4aad02f53914272f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTime: 0.15
 --- !u!120 &5309491324548315810
 LineRenderer:
   serializedVersion: 2
@@ -101,8 +100,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 0.9902973
+        time: 0.0013160706
+        value: 0.3151512
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -110,8 +109,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.47123784
-        value: 0.47572812
+        time: 0.46465442
+        value: 0.30909094
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -159,6 +158,6 @@ LineRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MaskInteraction: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1

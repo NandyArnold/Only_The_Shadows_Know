@@ -27,7 +27,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<int> OnSkillPerformedInput;
     public event Action<int> OnSkillCanceledInput;
 
-    public event Action OnCancelActionInput;
+    
 
     public event Action OnDodgeRollInput;
 
@@ -153,6 +153,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
 
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
+        _inputActions.Player.CancelAction.performed += ctx => EventManager.Instance.CancelActionInput();
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)

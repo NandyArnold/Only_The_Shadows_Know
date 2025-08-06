@@ -150,7 +150,7 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: 20, y: 100, z: 0}
+    m_Offset: {x: 20, y: 120, z: 0}
     m_MinLimit: -90
     m_MaxLimit: 90
     m_AimAxis: 4
@@ -2758,6 +2758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInputHandler: {fileID: 2210745878514288481}
   playerHealthManaNoise: {fileID: 6750015388211781664}
+  _playerMovement: {fileID: 0}
   skillRegistry: {fileID: 11400000, guid: 5cdffd3c250d9b74e93764dddddbd4dd, type: 2}
   equippedSkillIDs: 020000000100000003000000060000000700000004000000
 --- !u!114 &2990850092433171703

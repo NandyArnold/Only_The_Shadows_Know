@@ -16,22 +16,24 @@ MonoBehaviour:
   weaponDescription: 
   mainHandPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   offHandWeaponPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
+  timeBetweenAttacks: 1
   mainHandEquipSocket: 0
   offHandEquipSocket: 1
   mainHandUnequipSocket: 3
   offHandUnequipSocket: 4
   beamVFXPrefab: {fileID: 7924996381254816273, guid: 311c01e33f8fe374783d0c98007ffa07, type: 3}
-  rangedRange: 10
+  beamDuration: 0.15
+  rangedRange: 15
   aimLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 16119
   rangedDamageProfile:
   - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     Value: 150
   meleeRange: 2
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 16119
   meleeDamageProfile:
   - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     Value: 150

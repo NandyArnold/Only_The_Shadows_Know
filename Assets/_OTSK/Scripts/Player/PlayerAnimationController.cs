@@ -61,6 +61,10 @@ public class PlayerAnimationController : MonoBehaviour
     {
         _currentWeaponAnimation?.PlaySecondaryAttack();
     }
+    public void TriggerTertiaryAttack()
+    {
+        _currentWeaponAnimation?.PlayTertiaryAttack();
+    }
 
     // --- CORE LOCOMOTION METHODS (Kept) ---
 

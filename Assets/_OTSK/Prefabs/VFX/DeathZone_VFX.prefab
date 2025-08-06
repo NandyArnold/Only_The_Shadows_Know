@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8337705321318901594}
   - component: {fileID: 2107996584723439702}
   - component: {fileID: -3459905338687684740}
+  - component: {fileID: 8953867965655519246}
   m_Layer: 0
   m_Name: DeathZone_VFX
   m_TagString: Untagged
@@ -165,8 +166,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.0014343262
-        value: 0.12437439
+        time: 0.010643005
+        value: 0.42437744
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -174,8 +175,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.44613117
-        value: 1
+        time: 0.47902912
+        value: 0
         inSlope: 0.4026459
         outSlope: 0.4026459
         tangentMode: 0
@@ -183,8 +184,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.9899292
-        value: 0.30756378
+        time: 0.9991455
+        value: 0.049987793
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -245,5 +246,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef2e5f62cb5df714fa0b392cb59bc278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8953867965655519246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6824903412663903792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dae55340da034bb4aad02f53914272f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -26,4 +26,5 @@ public class BowAnimation : MonoBehaviour, IWeaponAnimation
     }
 
     public void PlaySecondaryAttack() { /* The bow doesn't use a separate secondary attack animation */ }
+    public void PlayTertiaryAttack() {}
 }

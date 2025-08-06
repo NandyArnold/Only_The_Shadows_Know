@@ -1,14 +1,14 @@
 using UnityEngine;
-
+using Unity.Cinemachine;
 public class AimTargetController : MonoBehaviour
 {
     [SerializeField] private LayerMask aimLayerMask;
-    private Camera _mainCamera;
+    private CinemachineBrain _cinemachineBrain;
     private MeshRenderer _renderer; // Optional: for a visual debug marker
 
     private void Awake()
     {
-        _mainCamera = Camera.main;
+        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
         _renderer = GetComponent<MeshRenderer>();
 
         // Subscribe to game state changes
@@ -19,7 +19,7 @@ public class AimTargetController : MonoBehaviour
     }
     private void Start()
     {
-        _mainCamera = Camera.main;
+        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
         // ADD THIS LINE: Register with the GameManager
         if (GameManager.Instance != null)
         {
@@ -46,7 +46,11 @@ public class AimTargetController : MonoBehaviour
 
     void Update()
     {
-        Ray ray = _mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
+        if (_cinemachineBrain == null) return;
+
+        // Get the truly active camera from the brain
+        Camera activeCamera = _cinemachineBrain.OutputCamera;
+        Ray ray = activeCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask))
             transform.position = hit.point;
         else

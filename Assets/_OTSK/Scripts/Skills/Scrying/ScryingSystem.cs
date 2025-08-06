@@ -18,7 +18,7 @@ public class ScryingSystem : MonoBehaviour
         Instance = this;
 
         
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     // NEW: A single method to toggle the scrying state.
