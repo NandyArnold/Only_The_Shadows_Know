@@ -197,7 +197,7 @@ public class CameraController : MonoBehaviour
         //  Unsubscribe from the focus event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
-           
+            playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
     }
 
     
