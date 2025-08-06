@@ -14,6 +14,10 @@ public class BalorsVisionEffectSO : SkillEffectSO
     [SerializeField] private float normalDuration = 3f;
     [SerializeField] private float combatDuration = 1.5f;
 
+    [Header("Time Slow Effect")]
+    [SerializeField][Range(0f, 1f)] private float normalTimeScale = 0.25f;
+    [SerializeField][Range(0f, 1f)] private float combatTimeScale = 0.75f;
+
     private Coroutine _revealCoroutine;
     //  A dictionary to track the active VFX for each revealed entity.
     private Dictionary<RevealableEntity, GameObject> _activeVFX = new Dictionary<RevealableEntity, GameObject>();
@@ -24,11 +28,17 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override IEnumerator StartChannel(GameObject caster)
     {
+
+
+        float timeScaleToUse = CombatManager.Instance.IsPlayerInCombat ? combatTimeScale : normalTimeScale;
+        TimeManager.Instance.SetTimeScale(timeScaleToUse);
         return RevealRoutine(caster);
     }
 
     public override void StopChannel(GameObject caster)
     {
+        TimeManager.Instance.ResetTimeScale();
+
         if (_revealCoroutine != null) SkillExecutor.Instance.StopCoroutine(_revealCoroutine);
 
         // When the channel stops, tell all active VFX to begin their cleanup.
@@ -70,7 +80,7 @@ public class BalorsVisionEffectSO : SkillEffectSO
                     }
                 }
             }
-            yield return new WaitForSeconds(revealTickRate);
+            yield return new WaitForSecondsRealtime(revealTickRate);
         }
     }
 }
