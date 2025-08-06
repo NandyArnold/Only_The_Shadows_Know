@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 1058065718298867277}
   m_Layer: 5
   m_Name: Crosshair
-  m_TagString: Untagged
+  m_TagString: TargetingCrosshair
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6251642165967613813
 RectTransform:
   m_ObjectHideFlags: 0

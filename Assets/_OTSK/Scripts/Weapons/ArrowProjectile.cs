@@ -25,7 +25,7 @@ public class ArrowProjectile : MonoBehaviour
     // This is the method the BowSO will call to give the arrow its stats.
     public void Initialize(GameObject owner, List<DamageInstance> damageProfile, float speed)
     {
-        Debug.Log($"(8) Arrow (ID: {GetInstanceID()}) is being INITIALIZED with speed {speed}.");
+        //Debug.Log($"(8) Arrow (ID: {GetInstanceID()}) is being INITIALIZED with speed {speed}.");
         _owner = owner;
         _damageProfile = damageProfile;
         _initialSpeed = speed;

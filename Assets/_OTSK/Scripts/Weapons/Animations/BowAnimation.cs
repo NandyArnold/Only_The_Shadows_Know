@@ -21,7 +21,7 @@ public class BowAnimation : MonoBehaviour, IWeaponAnimation
     // This method is now filled in.
     public void PlayPrimaryAttack()
     {
-        Debug.Log("3. BowAnimation is playing the Bow_Fire trigger.");
+        //Debug.Log("3. BowAnimation is playing the Bow_Fire trigger.");
         animator.SetTrigger(fireTriggerHash);
     }
 

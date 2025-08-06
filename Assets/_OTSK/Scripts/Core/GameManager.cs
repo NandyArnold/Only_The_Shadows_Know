@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
 
         CurrentState = newState;
         OnGameStateChanged?.Invoke(newState);
-        Debug.Log($"Game State changed to: {newState}");
+        //Debug.Log($"Game State changed to: {newState}");
     }
 
     private void OnSceneWasLoaded(SceneDataSO sceneData)

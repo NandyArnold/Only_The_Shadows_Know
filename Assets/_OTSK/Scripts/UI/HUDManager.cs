@@ -7,7 +7,9 @@ public class HUDManager : MonoBehaviour
 {
     public static HUDManager Instance { get; private set; } // Make it a singleton
 
-
+    [Header("UI Panels")]
+    [SerializeField] private GameObject playerHUD_Panel;
+    [SerializeField] private GameObject crosshairPanel;
 
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
@@ -19,10 +21,11 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private float objectiveDisplayTime = 4f;
     [SerializeField] private float objectiveFadeTime = 0.5f;
 
+    [SerializeField] private GameObject crosshairPrefab;
+
     [Header("Debug UI")]
     [SerializeField] private TextMeshProUGUI aimingDebugText;
     [SerializeField] private TextMeshProUGUI focusedDebugText;
-
 
 
     private Coroutine _objectiveCoroutine;
@@ -62,6 +65,7 @@ public class HUDManager : MonoBehaviour
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
         if (noiseSlider != null) noiseSlider.gameObject.SetActive(false);
+        if (crosshairPanel != null) playerHUD_Panel.SetActive(false);
     }
 
     private void Update() 
@@ -120,6 +124,11 @@ public class HUDManager : MonoBehaviour
             healthSlider.gameObject.SetActive(true);
             manaSlider.gameObject.SetActive(true);
             noiseSlider.gameObject.SetActive(true);
+        }
+
+        if (crosshairPrefab != null && crosshairPanel != null)
+        {
+            Instantiate(crosshairPrefab, crosshairPanel.transform);
         }
     }
 
@@ -200,7 +209,15 @@ public class HUDManager : MonoBehaviour
     }
     public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }
 
-    private void HandleGameStateChanged(GameState newState) { /* ... */ }
+    private void HandleGameStateChanged(GameState newState)
+    {
+        if (crosshairPanel != null)
+        {
+            // Only show the gameplay HUD when the game is in the Gameplay state.
+            crosshairPanel.SetActive(newState == GameState.Gameplay);
+        }
+    }
+
 
     private void UpdateHealthBar(float currentHealth, float maxHealth)
     {
