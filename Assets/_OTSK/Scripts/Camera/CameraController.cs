@@ -58,7 +58,8 @@ public class CameraController : MonoBehaviour
         // UPDATED: Subscribe to the focus event, not the aim event.
         if (playerCombat != null)
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
-           
+            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
+
     }
 
     public void Initialize(CameraManager manager)
@@ -221,13 +222,22 @@ public class CameraController : MonoBehaviour
 
     private IEnumerator FocusedShotRecoilRoutine()
     {
-        // Switch to the recoil camera
+        if (_cinemachineBrain == null) yield break;
+
+        // 1. Get the blend time directly from the brain's settings.
+        float blendTime = _cinemachineBrain.DefaultBlend.Time;
+
+        // 2. Switch to the recoil camera.
         SwitchToCamera(CameraType.FocusedShot);
 
-        // Wait for a very short moment. This is how long the recoil "kicks" for.
-        yield return new WaitForSeconds(0.2f);
+        // 3. Wait for the blend TO the recoil camera to complete.
+        yield return new WaitForSeconds(blendTime);
 
-        // After the wait, switch back to the standard zoom camera.
+        // 4. Wait for a short "hang time" in the recoil position.
+        //    You can make this a variable later if you want to tweak it.
+        yield return new WaitForSeconds(0.1f);
+
+        // 5. After all waiting is done, switch back to the zoom camera.
         SwitchToCamera(CameraType.Zoom);
     }
     private void SetLookInput(Vector2 input)

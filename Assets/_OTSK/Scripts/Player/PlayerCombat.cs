@@ -176,9 +176,27 @@ public class PlayerCombat : MonoBehaviour
 
         // This is now simple. It just tells the weapon to perform its primary attack.
         // The weapon itself will figure out if it's a focused shot or not.
-        _currentWeapon.PrimaryAttack(this);
+        if (_currentWeapon is BowSO && _isFocused)
+        {
+            // Tell the weapon to perform its "Secondary" (focused) attack
+            _currentWeapon.SecondaryAttack(this);
 
-        if (_currentWeapon is BowSO) OnBowFire?.Invoke();
+            // Fire the event for the camera recoil
+            OnFocusedShotFired?.Invoke();
+        }
+        else
+        {
+            // Otherwise, perform a normal primary attack for any weapon
+            _currentWeapon.PrimaryAttack(this);
+        }
+
+        // Fire the general "bow fired" event for visuals like the hand arrow
+        if (_currentWeapon is BowSO)
+        {
+            OnBowFire?.Invoke();
+        }
+
+        // Update the cooldown timer
         _lastAttackTime = Time.time;
     }
 
