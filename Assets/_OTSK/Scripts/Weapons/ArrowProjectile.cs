@@ -16,7 +16,7 @@ public class ArrowProjectile : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log($"(7) Arrow (ID: {GetInstanceID()}) has AWOKEN.");
+        
         _rb = GetComponent<Rigidbody>();
         GetComponent<BoxCollider>().isTrigger = false;
         _rb.useGravity = true;

@@ -18,12 +18,11 @@ public class BowSO : WeaponSO
     public List<DamageInstance> unfocusedDamageProfile;
     public List<DamageInstance> focusedDamageProfile;
 
-    private static float _lastFireTime;
 
     // A central fire method to avoid repeating code
     private void Fire(PlayerCombat combatController, bool isFocused)
     {
-        Debug.Log($"(5) BowSO.Fire method entered. isFocused = {isFocused}");
+        
         Camera mainCamera = Camera.main;
         if (mainCamera == null) return;
 
@@ -34,7 +33,7 @@ public class BowSO : WeaponSO
             aimPoint += UnityEngine.Random.insideUnitCircle * unfocusedSpreadRadius;
         }
 
-       
+
         Vector3 targetPoint;
         Ray ray = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask)) { targetPoint = hit.point; }
@@ -45,7 +44,7 @@ public class BowSO : WeaponSO
 
         if (arrowPrefab != null)
         {
-            Debug.Log("(6) About to instantiate arrow prefab.");
+            
             GameObject arrowObject = Instantiate(arrowPrefab, combatController.FirePoint.position, arrowRotation);
             if (arrowObject.TryGetComponent<ArrowProjectile>(out var projectile))
             {
@@ -55,6 +54,7 @@ public class BowSO : WeaponSO
 
                 // Initialize the projectile with all the correct data
                 projectile.Initialize(combatController.gameObject, damageToApply, currentSpeed);
+        combatController.PlayerAnimationController.TriggerPrimaryAttack();
             }
         }
     }
@@ -64,8 +64,8 @@ public class BowSO : WeaponSO
         // For the bow, LMB press depends on the focus state. PlayerCombat handles this.
         // We will call the appropriate Fire method from PlayerCombat.
         // This is a placeholder, the real logic is in PlayerCombat's HandlePrimaryAttack.
-        Debug.Log("(4B) BowSO.PrimaryAttack (unfocused) called.");
-        Fire(combatController, false);
+        bool isFocused = combatController.IsFocused;
+        Fire(combatController, isFocused);
     }
 
     public override void SecondaryAttack(PlayerCombat combatController)
@@ -73,7 +73,7 @@ public class BowSO : WeaponSO
         // For the bow, RMB is for focusing, not attacking.
         // The actual "focused shot" is triggered by PrimaryAttack while focused.
         // This method can be left empty, as PlayerCombat handles the focus state.
-        Debug.Log("(4A) BowSO.SecondaryAttack (focused) called.");
-        Fire(combatController, true);
+        bool isFocused = combatController.IsFocused;
+        Fire(combatController, isFocused);
     }
 }

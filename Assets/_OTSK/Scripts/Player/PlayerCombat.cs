@@ -14,6 +14,8 @@ public class PlayerCombat : MonoBehaviour
     public WeaponSO CurrentWeapon => _currentWeapon;
     public NoiseSettingsSO NoiseSettings => noiseSettings;
     public PlayerHealthManaNoise HealthManaNoise => playerHealthManaNoise;
+    public Transform HandSocketR => handSocketR;
+    public Transform HandSocketL => handSocketL;
 
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
@@ -39,6 +41,7 @@ public class PlayerCombat : MonoBehaviour
     public event Action<bool> OnFocusStateChanged;
     public event Action<WeaponSO> OnWeaponSwitched;
     public event Action OnBowFire;
+    public event Action OnFocusedShotFired;
 
     private WeaponSO _currentWeapon;
     private DaggerAnimation _daggerAnimation;
@@ -60,7 +63,7 @@ public class PlayerCombat : MonoBehaviour
         _bowAnimation = GetComponent<BowAnimation>();
         _animancyAnimation = GetComponent<AnimancyAnimation>();
         ikRig = GetComponentInChildren<Rig>();
-        noiseSettings = GetComponent<NoiseSettingsSO>(); // Assuming it's on the player now
+        
         playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
 
         if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
@@ -168,8 +171,8 @@ public class PlayerCombat : MonoBehaviour
         if (_currentWeapon == null) return;
         if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
 
-        // The Primary Attack button (LMB) handles both focused and unfocused bow shots.
-        // The BowSO itself will check the IsFocused state.
+        // This is now simple. It just tells the weapon to perform its primary attack.
+        // The weapon itself will figure out if it's a focused shot or not.
         _currentWeapon.PrimaryAttack(this);
 
         if (_currentWeapon is BowSO) OnBowFire?.Invoke();

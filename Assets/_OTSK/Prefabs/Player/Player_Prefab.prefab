@@ -2678,16 +2678,16 @@ MonoBehaviour:
   weaponManager: {fileID: 8374650582106030362}
   ikRig: {fileID: 7800078291248785385}
   aimConstraint: {fileID: 606680434202663557}
-  playerSkillController: {fileID: 0}
+  playerSkillController: {fileID: 6023620784964649685}
+  noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
+  playerHealthManaNoise: {fileID: 6750015388211781664}
+  firePoint: {fileID: 2862543130965560594}
   handSocketR: {fileID: 1869571380571909251}
   handSocketL: {fileID: 7422512713992560123}
   availableWeapons:
   - {fileID: 11400000, guid: a1d8bdac0a45b2c488746e008540c9ca, type: 2}
   - {fileID: 11400000, guid: 7c6cb638bc7e5fb468316962919ce671, type: 2}
   - {fileID: 11400000, guid: cac6ddebf74158549a360ec91ce6fc16, type: 2}
-  firePoint: {fileID: 2862543130965560594}
-  noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
-  playerHealthManaNoise: {fileID: 6750015388211781664}
 --- !u!114 &8271836069866080191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2773,7 +2773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handArrow: {fileID: 261896887454994826}
-  arrowRespawnDelay: 1.5
+  arrowRespawnDelay: 0.92
 --- !u!4 &5361356829297170697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8191740002585371210, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
