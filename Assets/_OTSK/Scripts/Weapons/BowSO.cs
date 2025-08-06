@@ -12,7 +12,6 @@ public class BowSO : WeaponSO
     [SerializeField] private float arrowSpeed = 30f;
     [SerializeField] private float focusedArrowSpeed = 50f;
     [SerializeField] private float unfocusedSpreadRadius = 25f;
-    [SerializeField] private float timeBetweenShots = 0.5f;
 
     [Header("Damage Profiles")]
     public List<DamageInstance> unfocusedDamageProfile;
@@ -33,11 +32,17 @@ public class BowSO : WeaponSO
             aimPoint += UnityEngine.Random.insideUnitCircle * unfocusedSpreadRadius;
         }
 
-
+        Ray ray = mainCamera.ScreenPointToRay(aimPoint);
         Vector3 targetPoint;
-        Ray ray = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
-        if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask)) { targetPoint = hit.point; }
-        else { targetPoint = ray.GetPoint(100f); }
+        //Ray ray = mainCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
+        if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask))
+        {
+            targetPoint = hit.point;
+        }
+        else
+        {
+            targetPoint = ray.GetPoint(100f);
+        }
 
         Vector3 direction = (targetPoint - combatController.FirePoint.position).normalized;
         Quaternion arrowRotation = Quaternion.LookRotation(direction);

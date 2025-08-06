@@ -16,6 +16,7 @@ MonoBehaviour:
   weaponDescription: 
   mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}
   offHandWeaponPrefab: {fileID: 0}
+  timeBetweenAttacks: 1
   mainHandEquipSocket: 1
   offHandEquipSocket: 0
   mainHandUnequipSocket: 2
@@ -24,9 +25,12 @@ MonoBehaviour:
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  arrowSpeed: 20
+  arrowSpeed: 30
   focusedArrowSpeed: 50
   unfocusedSpreadRadius: 100
-  timeBetweenShots: 1
-  unfocusedDamageProfile: []
-  focusedDamageProfile: []
+  unfocusedDamageProfile:
+  - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
+    Value: 75
+  focusedDamageProfile:
+  - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
+    Value: 150
