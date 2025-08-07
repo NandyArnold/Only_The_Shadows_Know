@@ -103,10 +103,10 @@ public class SpectralShiftEffectSO : SkillEffectSO
             playerInput.OnCancelInput -= onCancel;
             playerInput.OnCycleTargetingModeInput -= onCycleMode;
 
-            skillController.OnSkillEffectFinished();
+            //skillController.OnSkillEffectFinished();
             cameraController.SwitchToCamera(CameraType.Shoulder);
             CursorManager.Instance.SetState(CursorState.Gameplay);
-            if (indicator != null) Destroy(indicator.gameObject);
+            //if (indicator != null) Destroy(indicator.gameObject);
             animController.SetSpectralState(0);
 
         }
@@ -127,11 +127,11 @@ public class SpectralShiftEffectSO : SkillEffectSO
         Debug.Log("TargetingRoutine: Coroutine finished.");
 
 
-        //animController.SetSpectralState(0);
+        if (indicator != null) Destroy(indicator.gameObject);
         //cameraController.SwitchToCamera(CameraType.Shoulder);
         //CursorManager.Instance.SetState(CursorState.Gameplay);
-        //skillController.OnSkillEffectFinished();
-        //if (indicator != null) Destroy(indicator.gameObject);
+        //animController.SetSpectralState(0);
+        skillController.OnSkillEffectFinished();
 
 
     }
