@@ -88,6 +88,14 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetBool(isRunningHash, isRunning);
     }
 
+    public void PlayAnimationTrigger(string triggerName)
+    {
+        if (!string.IsNullOrEmpty(triggerName))
+        {
+            animator.SetTrigger(Animator.StringToHash(triggerName));
+        }
+    }
+
     public void PlayStandardJumpAnimation()
     {
         if (animator == null) return;

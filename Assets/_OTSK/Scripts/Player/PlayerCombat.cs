@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Unity.Cinemachine;
+using System.Net.Sockets;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -35,6 +36,9 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private Transform handSocketR;
     [SerializeField] private Transform handSocketL;
+    [SerializeField] private Transform backSocket;
+    [SerializeField] private Transform hipSocketL;
+    [SerializeField] private Transform hipSocketR;
 
     [Header("Weapon Settings")]
     [SerializeField] private List<WeaponSO> availableWeapons;
@@ -60,6 +64,7 @@ public class PlayerCombat : MonoBehaviour
         playerInputHandler = GetComponent<PlayerInputHandler>();
         playerAnimationController = GetComponent<PlayerAnimationController>();
         weaponManager = GetComponent<WeaponManager>();
+       
         playerSkillController = GetComponent<PlayerSkillController>();
         _daggerAnimation = GetComponent<DaggerAnimation>();
         _bowAnimation = GetComponent<BowAnimation>();
@@ -68,6 +73,19 @@ public class PlayerCombat : MonoBehaviour
         Brain = Camera.main.GetComponent<CinemachineBrain>();
 
         playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+
+        //We initialize the WeaponManager in Start to ensure all other Awake methods have run.
+        //if (availableWeapons != null && availableWeapons.Count > 0)
+        //{
+        //    // Tell the manager about all our weapons and which one is the default.
+        //    weaponManager.Initialize(availableWeapons, availableWeapons[0]);
+        //    // Also set this script's current weapon data immediately.
+        //    _currentWeapon = availableWeapons[0];
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("No available weapons assigned in PlayerCombat!", this);
+        //}
 
         if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
         {
@@ -78,10 +96,7 @@ public class PlayerCombat : MonoBehaviour
             if (rigBuilder != null) rigBuilder.Build();
         }
 
-        if (availableWeapons != null && availableWeapons.Count > 0)
-        {
-            SwitchWeapon(availableWeapons[0]);
-        }
+      
     }
 
     private void OnEnable()
@@ -114,6 +129,17 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        //// NEW: We initialize the WeaponManager in Start to ensure all other Awake methods have run.
+        if (availableWeapons != null && availableWeapons.Count > 0)
+        {
+            // Tell the manager about all our weapons and which one is the default
+            weaponManager.Initialize(availableWeapons, availableWeapons[0]);
+            // Also set the player's current weapon data
+            _currentWeapon = availableWeapons[0];
+        }
+    }
 
     public void SwitchWeaponByIndex(int index)
     {

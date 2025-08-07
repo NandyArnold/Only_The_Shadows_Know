@@ -14,12 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Dagger
   weaponDescription: 
+  timeBetweenAttacks: 0.5
   mainHandPrefab: {fileID: 6145625656122818527, guid: d4d12e97cda7a4444ae3a762f962d3bb, type: 3}
-  offHandWeaponPrefab: {fileID: 7702092413395270807, guid: e001af02bc95d8640a3ecfeeb1b06b73, type: 3}
   mainHandEquipSocket: 0
+  mainHandSheathSocket: 1
+  offHandPrefab: {fileID: 7702092413395270807, guid: e001af02bc95d8640a3ecfeeb1b06b73, type: 3}
   offHandEquipSocket: 1
-  mainHandUnequipSocket: 3
-  offHandUnequipSocket: 4
+  offHandSheathSocket: 2
+  equipTriggerName: Dagger_Equip
+  equipDuration: 0.2
+  unequipTriggerName: Dagger_Unequip
+  unequipDuration: 0.2
   attackRange: 2
   hittableLayers:
     serializedVersion: 2

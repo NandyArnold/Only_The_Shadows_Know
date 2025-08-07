@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: 
   weaponDescription: 
-  mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}
-  offHandWeaponPrefab: {fileID: 0}
   timeBetweenAttacks: 1
+  mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}
   mainHandEquipSocket: 1
+  mainHandSheathSocket: 3
+  offHandPrefab: {fileID: 0}
   offHandEquipSocket: 0
-  mainHandUnequipSocket: 2
-  offHandUnequipSocket: 2
+  offHandSheathSocket: 0
+  equipTriggerName: Bow_Equip
+  equipDuration: 0.2
+  unequipTriggerName: Bow_Unequip
+  unequipDuration: 0.2
   arrowPrefab: {fileID: 2748330518523898865, guid: faf148121ddae8d43ba5439f6723f77f, type: 3}
   aimLayerMask:
     serializedVersion: 2

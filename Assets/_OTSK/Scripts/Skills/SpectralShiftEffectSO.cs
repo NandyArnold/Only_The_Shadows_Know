@@ -104,7 +104,6 @@ public class SpectralShiftEffectSO : SkillEffectSO
             playerInput.OnCycleTargetingModeInput -= onCycleMode;
 
             //skillController.OnSkillEffectFinished();
-            cameraController.SwitchToCamera(CameraType.Shoulder);
             CursorManager.Instance.SetState(CursorState.Gameplay);
             //if (indicator != null) Destroy(indicator.gameObject);
             animController.SetSpectralState(0);
@@ -132,6 +131,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
         //CursorManager.Instance.SetState(CursorState.Gameplay);
         //animController.SetSpectralState(0);
         skillController.OnSkillEffectFinished();
+            cameraController.SwitchToCamera(CameraType.Shoulder);
 
 
     }

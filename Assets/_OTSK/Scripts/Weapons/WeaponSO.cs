@@ -1,39 +1,34 @@
-// WeaponSO.cs
+// WeaponSO.cs - NEW UNIFIED VERSION
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// An abstract base class for all weapon ScriptableObjects.
-/// </summary>
 public abstract class WeaponSO : ScriptableObject, IWeapon
 {
     [Header("Weapon Info")]
     public string weaponName;
-    [TextArea]
     public string weaponDescription;
 
-    [Header("Sheathing & Animations")]
-    public SheathSocket sheathSocket;
-    public string equipTriggerName;
-    public string unequipTriggerName;
-
-    [Header("Visuals & Sockets")]
-    public GameObject mainHandPrefab; // The 3D model prefab to spawn.
-    public GameObject offHandWeaponPrefab; // Off-hand weapon model, if applicable.
-
     [Header("Combat Stats")]
-    [Tooltip("Time in seconds between uses of this weapon.")]
     public float timeBetweenAttacks = 0.5f;
 
-    public SocketType mainHandEquipSocket;   // Where it goes when equipped.
-    public SocketType offHandEquipSocket; 
+    [Header("Visuals & Sockets")]
+    public GameObject mainHandPrefab;
+    public EquipSocket mainHandEquipSocket;
+    public SheathSocket mainHandSheathSocket;
+    [Space]
+    public GameObject offHandPrefab; // Leave empty for single weapons
+    public EquipSocket offHandEquipSocket;
+    public SheathSocket offHandSheathSocket;
 
-    public SocketType mainHandUnequipSocket; // Where it goes when unequipped.
-    public SocketType offHandUnequipSocket;
+    [Header("Animation Triggers")]
+    public string equipTriggerName;
+    public float equipDuration = 0.5f;
+    [Space]
+    public string unequipTriggerName;
+    public float unequipDuration = 0.5f; // NEW
+   
 
-    // Abstract methods that must be implemented by child classes (Dagger, Bow, etc.)
-
-
+    // Damage profiles are defined in the specific weapon scripts (DaggerSO, BowSO, etc.)
     public abstract void PrimaryAttack(PlayerCombat combatController);
     public abstract void SecondaryAttack(PlayerCombat combatController);
 }
