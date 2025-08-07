@@ -8,6 +8,9 @@ public class VFXManager : MonoBehaviour
 
     // This list will be configured in the Inspector
     [SerializeField] private List<VFXMapping> revealVFXMappings;
+    [SerializeField] private GameObject riftPlaceVFXPrefab; 
+    [SerializeField] private GameObject riftTeleportVFXPrefab;
+    [SerializeField] private GameObject scryingCastVFXPrefab;
 
     // We use a dictionary for fast lookups at runtime
     private Dictionary<RevealableType, GameObject> _vfxDictionary;
@@ -30,6 +33,34 @@ public class VFXManager : MonoBehaviour
             {
                 return Instantiate(prefabToSpawn, position, Quaternion.identity);
             }
+        }
+        return null;
+    }
+    public GameObject PlayRiftPlaceEffect(Vector3 position, Transform parent = null)
+    {
+        if (riftPlaceVFXPrefab != null)
+        {
+            // Use the Instantiate overload that takes a parent
+            return Instantiate(riftPlaceVFXPrefab, position, Quaternion.identity, parent);
+        }
+        return null;
+    }
+
+    // NEW method for teleporting to a rift
+    public GameObject PlayRiftTeleportEffect(Vector3 position, Transform parent = null)
+    {
+        if (riftTeleportVFXPrefab != null)
+        {
+            return Instantiate(riftTeleportVFXPrefab, position, Quaternion.identity, parent);
+        }
+        return null;
+    }
+
+    public GameObject PlayScryingCastEffect(Vector3 position, Transform parent)
+    {
+        if (scryingCastVFXPrefab != null)
+        {
+            return Instantiate(scryingCastVFXPrefab, position, Quaternion.identity, parent);
         }
         return null;
     }

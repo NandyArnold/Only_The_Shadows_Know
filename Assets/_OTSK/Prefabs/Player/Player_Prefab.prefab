@@ -2591,11 +2591,9 @@ MonoBehaviour:
   bottomClamp: -30
   targetingPitchMin: -18
   targetingPitchMax: 50
-  recoilShakeAmplitude: 2
-  recoilShakeDuration: 0.5
-  recoilFovKick: 30
-  recoilKickDuration: 0.1
-  recoilReturnDuration: 0.25
+  fovPulseAmount: 160
+  fovPulseHangTime: 0.1
+  fovPulseDuration: 0.5
 --- !u!114 &629505888469661623
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9396bc2d719360449c73c608d1287b2, type: 3}
   m_Name: FX_Scrying
   m_EditorClassIdentifier: 
+  castAnimationDuration: 3.2
+  vfxLingerDuration: 1

@@ -272,4 +272,9 @@ public class PlayerCombat : MonoBehaviour
         _isFocused = isFocused;
         OnFocusStateChanged?.Invoke(_isFocused);
     }
+
+    public Coroutine RunSkillCoroutine(IEnumerator routine)
+    {
+        return StartCoroutine(routine);
+    }
 }

@@ -25,6 +25,10 @@ public class PlayerAnimationController : MonoBehaviour
 
     private readonly int spectralStateHash = Animator.StringToHash("SpectralState");
 
+    private readonly int riftPlaceTriggerHash = Animator.StringToHash("Rift_Place");
+    private readonly int riftTeleportTriggerHash = Animator.StringToHash("Rift_Teleport");
+
+    private readonly int scryingCastTriggerHash = Animator.StringToHash("Scrying_Cast");
 
 
     // --- WEAPON ANIMATION ---
@@ -112,4 +116,17 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetInteger(spectralStateHash, state);
     }
 
+    public void PlayRiftPlaceAnimation()
+    {
+        animator.SetTrigger(riftPlaceTriggerHash);
+    }
+
+    public void PlayRiftTeleportAnimation()
+    {
+        animator.SetTrigger(riftTeleportTriggerHash);
+    }
+    public void PlayScryingCastAnimation()
+    {
+        animator.SetTrigger(scryingCastTriggerHash);
+    }
 }
