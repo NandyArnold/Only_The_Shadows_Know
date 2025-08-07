@@ -21,6 +21,6 @@ MonoBehaviour:
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
-  castMode: 0
+  castMode: 2
   lockMovementWhileCasting: 1
   skillEffectData: {fileID: 11400000, guid: dfbd5e0cd6a23f44b8e436606f67e573, type: 2}

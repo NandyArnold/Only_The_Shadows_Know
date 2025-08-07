@@ -90,6 +90,7 @@ public class PlayerSkillController : MonoBehaviour
     private void TryActivateSkill(int skillIndex)
     {
         if (_isActivatingASkill || _channeledSkill != null) return;
+
         if (skillIndex < 0 || skillIndex >= _equippedSkills.Count) return;
 
         SkillSO skill = _equippedSkills[skillIndex];
@@ -123,12 +124,18 @@ public class PlayerSkillController : MonoBehaviour
         switch (skill.castMode)
         {
             case CastMode.Instant:
-            case CastMode.Targeted:
-                // FIX: Targeted skills use the grace period, not the permanent channel lock.
                 SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
-                // The skill effect itself runs a long coroutine, but the controller is free after activation.
-                skill.skillEffectData.Activate(this.gameObject);
+                SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
                 StartCoroutine(SkillActivationGracePeriod());
+                break;
+
+            case CastMode.Targeted:
+                SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
+                // We use _channeledSkill as a lock to prevent other skills during targeting.
+                _channeledSkill = skill;
+                // The PlayerSkillController now runs the entire targeting routine.
+                _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
+
 
                 //SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
                 //SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
@@ -200,5 +207,21 @@ public class PlayerSkillController : MonoBehaviour
                 yield break;
             }
         }
+    }
+    public void OnSkillEffectFinished()
+    {
+        if (_channeledSkill != null)
+        {
+            if (_channeledSkill.lockMovementWhileCasting)
+            {
+                _playerMovement.SetMovementLock(false);
+            }
+        }
+
+        // Reset the locks
+        _channeledSkill = null;
+        _channelingCoroutine = null;
+        _isActivatingASkill = false;
+        if (_manaDrainCoroutine != null) StopCoroutine(_manaDrainCoroutine);
     }
 }

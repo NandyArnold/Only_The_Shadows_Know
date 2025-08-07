@@ -41,50 +41,53 @@ public class SpectralShiftEffectSO : SkillEffectSO
         var playerInput = caster.GetComponent<PlayerInputHandler>();
         var cameraController = caster.GetComponent<CameraController>();
         var animController = caster.GetComponent<PlayerAnimationController>();
-        var cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
         var skillController = caster.GetComponent<PlayerSkillController>();
-        Transform casterEyes = cameraController.transform;
-        playerInput.SwitchActionMap("Targeting");
 
-
-
-        TargetingIndicator indicator = Instantiate(targetingIndicatorPrefab).GetComponent<TargetingIndicator>();
-
+        TargetingIndicator indicator = null;
+        Coroutine indicatorUpdateRoutine = null;
         bool isTargeting = true;
         bool confirmed = false;
         Vector3 validTeleportPosition = Vector3.zero;
         TargetingMode currentMode = TargetingMode.High;
 
-        Coroutine indicatorUpdateRoutine = skillController.StartCoroutine(
-           UpdateIndicatorRoutine(caster, indicator, (targetPos) => validTeleportPosition = targetPos)
-       );
-
-        Action onConfirm = () => { if (indicator != null && indicator.IsValid) { confirmed = true; isTargeting = false; } };
+        Action onConfirm = () => {
+            if (indicator != null && indicator.IsValid)
+            {
+                confirmed = true;
+                isTargeting = false;
+            }
+            else
+            {
+                // Optional: Play a "fail" sound or show a UI message
+                Debug.Log("Confirm failed: Target not valid.");
+            }
+        };
         Action onCancel = () => isTargeting = false;
-
         Action<float> onCycleMode = (scrollValue) => {
             if (scrollValue > 0) currentMode = TargetingMode.High;
             else if (scrollValue < 0) currentMode = TargetingMode.Low;
-            Debug.Log("Targeting Mode: " + currentMode);
         };
 
         playerInput.OnConfirmInput += onConfirm;
         playerInput.OnCancelInput += onCancel;
         playerInput.OnCycleTargetingModeInput += onCycleMode;
 
-
         try
         {
-            // --- START ANIMATION & SETUP (happens in parallel to the indicator moving) ---
-            animController.SetSpectralState(1); // 1 = Start Cast
+            Debug.Log("TargetingRoutine: START. Entering TRY block.");
+            animController.SetSpectralState(1);
             cameraController.SwitchToCamera(CameraType.Targeting);
             CursorManager.Instance.SetState(CursorState.Targeting);
 
+            Debug.Log("TargetingRoutine: Waiting for startCastDuration.");
             yield return new WaitForSeconds(startCastDuration);
 
-            animController.SetSpectralState(2); // 2 = Looping
+            Debug.Log("TargetingRoutine: Finished startCastDuration wait.");
+            animController.SetSpectralState(2);
+            indicator = Instantiate(targetingIndicatorPrefab).GetComponent<TargetingIndicator>();
 
-            // Wait until the player confirms or cancels
+            indicatorUpdateRoutine = skillController.StartCoroutine(UpdateIndicatorRoutine(caster, indicator, () => currentMode, (targetPos) => validTeleportPosition = targetPos));
+
             while (isTargeting)
             {
                 yield return null;
@@ -92,43 +95,57 @@ public class SpectralShiftEffectSO : SkillEffectSO
         }
         finally
         {
-            // --- CLEANUP ---
-            SkillExecutor.Instance.StopCoroutine(indicatorUpdateRoutine); // Stop the indicator routine
+            Debug.Log("TargetingRoutine: FINALLY block executed.");
+            // CLEANUP: This block now ONLY handles cleanup. It does NOT call CancelChannel.
+            if (indicatorUpdateRoutine != null) skillController.StopCoroutine(indicatorUpdateRoutine);
+
             playerInput.OnConfirmInput -= onConfirm;
             playerInput.OnCancelInput -= onCancel;
-            // ... (unsubscribe from onCycleMode)
+            playerInput.OnCycleTargetingModeInput -= onCycleMode;
+
             if (indicator != null) Destroy(indicator.gameObject);
+            animController.SetSpectralState(0);
             cameraController.SwitchToCamera(CameraType.Shoulder);
             CursorManager.Instance.SetState(CursorState.Gameplay);
+            skillController.OnSkillEffectFinished();
+
         }
-        // --- FINAL EXECUTION ---
+
         if (confirmed)
         {
-            animController.SetSpectralState(3); // 3 = Play Confirm Cast
+            Debug.Log("TargetingRoutine: Target CONFIRMED. Playing state 3.");
+            animController.SetSpectralState(3);
             yield return new WaitForSeconds(confirmCastDuration);
+
             var cc = caster.GetComponent<CharacterController>();
             TeleportManager.Instance.ExecuteTeleport(cc, validTeleportPosition);
         }
+        else
+        {
+            Debug.Log("TargetingRoutine: Target NOT confirmed (cancelled).");
+        }
+        Debug.Log("TargetingRoutine: Coroutine finished.");
 
-        animController.SetSpectralState(0); // Final reset
+
+        //animController.SetSpectralState(0);
+        //cameraController.SwitchToCamera(CameraType.Shoulder);
+        //CursorManager.Instance.SetState(CursorState.Gameplay);
+        //skillController.OnSkillEffectFinished();
+        //if (indicator != null) Destroy(indicator.gameObject);
+
+
     }
 
+
     // This new coroutine ONLY handles the raycasting and indicator updates.
-    private IEnumerator UpdateIndicatorRoutine(GameObject caster, TargetingIndicator indicator, Action<Vector3> onValidPositionFound)
+    private IEnumerator UpdateIndicatorRoutine(GameObject caster, TargetingIndicator indicator, Func<TargetingMode> getCurrentMode, Action<Vector3> onValidPositionFound)
     {
         var cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-        Transform casterEyes = caster.GetComponent<CameraController>().transform;
-        var playerInput = caster.GetComponent<PlayerInputHandler>(); // Needed for cycle mode
-        TargetingMode currentMode = TargetingMode.High;
-
-        Action<float> onCycleMode = (scrollValue) => {
-            if (scrollValue > 0) currentMode = TargetingMode.High;
-            else if (scrollValue < 0) currentMode = TargetingMode.Low;
-        };
-        playerInput.OnCycleTargetingModeInput += onCycleMode;
+        Transform casterEyes = caster.GetComponent<CameraController>().transform;                            
 
         while (true)
         {
+            TargetingMode currentMode = getCurrentMode();
             Camera activeCamera = cinemachineBrain.OutputCamera;
             Ray ray = activeCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 

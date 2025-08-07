@@ -67,7 +67,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             CursorManager.Instance.OnStateChanged += HandleCursorStateChanged;
             // Set the initial state
-            
+            HandleCursorStateChanged(CursorState.Gameplay);
         }
         SwitchActionMap("Player");
     }
