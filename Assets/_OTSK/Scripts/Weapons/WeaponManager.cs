@@ -16,6 +16,20 @@ public class WeaponManager : MonoBehaviour
     private GameObject _mainHandInstance;
     private GameObject _offHandInstance;
 
+    private GameObject _currentWeaponObject;
+    private PlayerAnimationController _animController;
+    private Coroutine _switchWeaponCoroutine;
+
+
+    private void Awake()
+    {
+        _animController = GetComponentInParent<PlayerAnimationController>();
+    }
+
+
+
+
+
     // This is the public method that PlayerCombat will call.
     public void EquipNewWeapon(WeaponSO weapon)
     {

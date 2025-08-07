@@ -12,7 +12,10 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [TextArea]
     public string weaponDescription;
 
-    
+    [Header("Sheathing & Animations")]
+    public SheathSocket sheathSocket;
+    public string equipTriggerName;
+    public string unequipTriggerName;
 
     [Header("Visuals & Sockets")]
     public GameObject mainHandPrefab; // The 3D model prefab to spawn.
