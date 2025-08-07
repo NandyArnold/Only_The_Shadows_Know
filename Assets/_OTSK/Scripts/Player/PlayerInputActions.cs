@@ -1613,7 +1613,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e4228463-4313-4891-b8cb-355a84a9626e"",
-                    ""path"": ""<Keyboard>/o"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

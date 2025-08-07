@@ -17,6 +17,20 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
 
     public static bool IsRiftActive => _riftPosition.HasValue;
 
+    static TariaksuqsRiftEffectSO()
+    {
+        SkillExecutor.OnSkillConfirmed += HandleGlobalSkillConfirmed;
+    }
+
+    private static void HandleGlobalSkillConfirmed(SkillSO confirmedSkill)
+    {
+        // If our rift is active AND the skill that was just used is Spectral Shift...
+        if (IsRiftActive && confirmedSkill.skillID == SkillIdentifier.SpectralShift)
+        {
+            // ...cancel the rift.
+            CancelRift();
+        }
+    }
     public override void Activate(GameObject caster)
     {
         if (_riftPosition == null) // If no rift is placed...
@@ -61,4 +75,5 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     // These are not used for this instant-cast skill
     public override IEnumerator StartChannel(GameObject caster) { yield break; }
     public override void StopChannel(GameObject caster) { }
+
 }

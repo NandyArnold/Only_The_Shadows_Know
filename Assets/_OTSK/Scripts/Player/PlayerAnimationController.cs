@@ -23,6 +23,8 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int isAimingHash = Animator.StringToHash("IsAiming");
     private readonly int weaponTypeHash = Animator.StringToHash("WeaponType");
 
+    private readonly int spectralStateHash = Animator.StringToHash("SpectralState");
+
 
 
     // --- WEAPON ANIMATION ---
@@ -104,5 +106,10 @@ public class PlayerAnimationController : MonoBehaviour
     {
         animator.SetInteger(weaponTypeHash, type);
     }
- 
+
+    public void SetSpectralState(int state)
+    {
+        animator.SetInteger(spectralStateHash, state);
+    }
+
 }

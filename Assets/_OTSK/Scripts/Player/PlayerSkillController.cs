@@ -25,11 +25,12 @@ public class PlayerSkillController : MonoBehaviour
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
         if (_playerMovement == null) _playerMovement = GetComponent<PlayerMovement>();
+        InitializeSkills();
     }
 
     private void Start()
     {
-        InitializeSkills();
+        //InitializeSkills();
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnCombatStart += HandleCombatStart;
@@ -123,16 +124,25 @@ public class PlayerSkillController : MonoBehaviour
         {
             case CastMode.Instant:
             case CastMode.Targeted:
+                // FIX: Targeted skills use the grace period, not the permanent channel lock.
                 SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
-                SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+                // The skill effect itself runs a long coroutine, but the controller is free after activation.
+                skill.skillEffectData.Activate(this.gameObject);
                 StartCoroutine(SkillActivationGracePeriod());
+
+                //SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
+                //SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
+                //StartCoroutine(SkillActivationGracePeriod());
+                //_channeledSkill = skill; // Use _channeledSkill to block other actions
+                //                         // The PlayerSkillController now runs the entire targeting routine itself.
+                //_channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
+
                 break;
             case CastMode.Channel:
                 if (skill.lockMovementWhileCasting)
                 {
                     _playerMovement.SetMovementLock(true);
                 }
-                _channeledSkill = skill;
                 _channeledSkill = skill;
                 _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
                 _manaDrainCoroutine = StartCoroutine(DrainManaOverTime(skill));
@@ -144,13 +154,10 @@ public class PlayerSkillController : MonoBehaviour
     {
         if (_channeledSkill != null && skillIndex < _equippedSkills.Count && _equippedSkills[skillIndex] == _channeledSkill)
         {
+            if (_channeledSkill.lockMovementWhileCasting) _playerMovement.SetMovementLock(false);
             _channeledSkill.skillEffectData.StopChannel(this.gameObject);
             if (_manaDrainCoroutine != null) StopCoroutine(_manaDrainCoroutine);
             if (_channelingCoroutine != null) StopCoroutine(_channelingCoroutine);
-            if (_channeledSkill.lockMovementWhileCasting)
-            {
-                _playerMovement.SetMovementLock(false);
-            }
             _channeledSkill = null;
             _isActivatingASkill = false; // Release the lock
         }

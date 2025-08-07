@@ -21,4 +21,6 @@ MonoBehaviour:
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 375
+  startCastDuration: 0.5
+  confirmCastDuration: 0.5
   maxPlayerTeleportRange: 15
