@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 247562328}
   - component: {fileID: 247562327}
   m_Layer: 0
-  m_Name: ObjectiveText
+  m_Name: Objective_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2300,7 +2300,7 @@ GameObject:
   - component: {fileID: 981573617}
   - component: {fileID: 981573616}
   m_Layer: 0
-  m_Name: Panel
+  m_Name: Objective_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3676,10 +3676,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac9e28b0b129ce4c8165c9ebbe3c9d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minLoadTime: 4
+  minLoadTime: 3
   loadingSceneName: LoadingScene
-  fadeDuration: 1.5
-  postLoadBlackScreenDuration: 2
+  fadeDuration: 1.8
+  postLoadBlackScreenDuration: 3
 --- !u!4 &1837955055
 Transform:
   m_ObjectHideFlags: 0
