@@ -31,6 +31,8 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int scryingCastTriggerHash = Animator.StringToHash("Scrying_Cast");
 
 
+
+
     // --- WEAPON ANIMATION ---
     private IWeaponAnimation _currentWeaponAnimation;
 

@@ -2748,11 +2748,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4b760165ed5f4442b39956ba4296552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handSocketR: {fileID: 1869571380571909251}
-  handSocketL: {fileID: 7422512713992560123}
-  backSocket: {fileID: 1627628729614435409}
-  hipSocketL: {fileID: 1563276738803428886}
-  hipSocketR: {fileID: 8494100446243109166}
+  _handSocketR: {fileID: 1869571380571909251}
+  _handSocketL: {fileID: 7422512713992560123}
+  _backSocket: {fileID: 1627628729614435409}
+  _hipSocketL: {fileID: 1563276738803428886}
+  _hipSocketR: {fileID: 8494100446243109166}
 --- !u!114 &6023620784964649685
 MonoBehaviour:
   m_ObjectHideFlags: 0

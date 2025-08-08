@@ -8,11 +8,11 @@ using System.Collections.Generic;
 public class WeaponManager : MonoBehaviour
 {
     [Header("Socket Transforms")]
-    [SerializeField] private Transform handSocketR;
-    [SerializeField] private Transform handSocketL;
-    [SerializeField] private Transform backSocket;
-    [SerializeField] private Transform hipSocketL;
-    [SerializeField] private Transform hipSocketR;
+    [SerializeField] private Transform _handSocketR;
+    [SerializeField] private Transform _handSocketL;
+    [SerializeField] private Transform _backSocket;
+    [SerializeField] private Transform _hipSocketL;
+    [SerializeField] private Transform _hipSocketR;
 
     //private GameObject _mainHandInstance;
     //private GameObject _offHandInstance;
@@ -24,15 +24,32 @@ public class WeaponManager : MonoBehaviour
     private PlayerAnimationController _animController;
     private Coroutine _switchWeaponCoroutine;
     private WeaponSO _currentlyEquippedWeapon;
+   
 
     private void Awake()
     {
         _animController = GetComponentInParent<PlayerAnimationController>();
+        if (_animController == null)
+        {
+            Debug.LogError("[WeaponManager] Awake: FAILED to find PlayerAnimationController.", this.gameObject);
+        }
+        else
+        {
+            Debug.Log("[WeaponManager] Awake: Successfully found PlayerAnimationController.", this.gameObject);
+        }
+        
     }
 
     // Called by PlayerCombat to give this manager the necessary data
-    public void Initialize(List<WeaponSO> availableWeapons, WeaponSO defaultWeapon)
+    public void Initialize(Transform handR, Transform handL, Transform back, Transform hipL, Transform hipR, List<WeaponSO> availableWeapons)
     {
+       
+
+        _handSocketR = handR;
+        _handSocketL = handL;
+        _backSocket = back;
+        _hipSocketL = hipL;
+        _hipSocketR = hipR;
         // Pre-spawn all weapons and place them in their sheath sockets
         foreach (var weapon in availableWeapons)
         {
@@ -40,7 +57,12 @@ public class WeaponManager : MonoBehaviour
         }
 
         // Equip the default weapon
-        EquipNewWeapon(defaultWeapon);
+        if (availableWeapons != null && availableWeapons.Count > 0)
+        {
+            EquipNewWeapon(availableWeapons[0]);
+           
+        }
+        
     }
 
  
@@ -48,6 +70,7 @@ public class WeaponManager : MonoBehaviour
 
     public void EquipNewWeapon(WeaponSO newWeapon)
     {
+       
         if (_switchWeaponCoroutine != null) StopCoroutine(_switchWeaponCoroutine);
         _switchWeaponCoroutine = StartCoroutine(SwitchWeaponRoutine(_currentlyEquippedWeapon, newWeapon));
         _currentlyEquippedWeapon = newWeapon;
@@ -55,11 +78,12 @@ public class WeaponManager : MonoBehaviour
 
     private IEnumerator SwitchWeaponRoutine(WeaponSO oldWeapon, WeaponSO newWeapon)
     {
-        // 1. UNEQUIP the old weapon
+        
         if (oldWeapon != null)
         {
             if (!string.IsNullOrEmpty(oldWeapon.unequipTriggerName))
             {
+                
                 _animController.PlayAnimationTrigger(oldWeapon.unequipTriggerName);
                 yield return new WaitForSeconds(oldWeapon.unequipDuration);
             }
@@ -140,52 +164,21 @@ public class WeaponManager : MonoBehaviour
     {
         switch (socket)
         {
-            case SheathSocket.Hip_L: return hipSocketL;
-            case SheathSocket.Hip_R: return hipSocketR;
-            case SheathSocket.Back: return backSocket;
+            case SheathSocket.Hip_L: return _hipSocketL;
+            case SheathSocket.Hip_R: return _hipSocketR;
+            case SheathSocket.Back: return _backSocket;
             default: return null;
         }
     }
 
     private Transform GetSocketTransform(EquipSocket socket)
     {
-        return (socket == EquipSocket.Right_Hand) ? handSocketR : handSocketL;
+        return (socket == EquipSocket.Right_Hand) ? _handSocketR : _handSocketL;
     }
+  
 }
 
 
 
-    // This is the public method that PlayerCombat will call.
-    //public void EquipNewWeapon(WeaponSO weapon)
-    //{
-    //    if (_mainHandInstance != null) Destroy(_mainHandInstance);
-    //    if (_offHandInstance != null) Destroy(_offHandInstance);
 
-    //    // Spawn and attach the main-hand weapon using its specific socket.
-    //    if (weapon.mainHandPrefab != null)
-    //    {
-    //        Transform socket = GetSocket(weapon.mainHandEquipSocket);
-    //        _mainHandInstance = Instantiate(weapon.mainHandPrefab, socket);
-    //    }
-
-    //    // Spawn and attach the off-hand weapon using its specific socket.
-    //    if (weapon.offHandWeaponPrefab != null)
-    //    {
-    //        Transform offHandSocket = GetSocket(weapon.offHandEquipSocket);
-    //        _offHandInstance = Instantiate(weapon.offHandWeaponPrefab, offHandSocket);
-    //    }
-    //}
-
-    //private Transform GetSocket(SocketType socketType)
-    //{
-    //    switch (socketType)
-    //    {
-    //        case SocketType.Hand_R: return handSocketR;
-    //        case SocketType.Hand_L: return handSocketL;
-    //        case SocketType.Back: return backSocket;
-    //        case SocketType.Hip_L: return hipSocketL;
-    //        case SocketType.Hip_R: return hipSocketR;
-    //        default: return null;
-    //    }
-    //}
 

@@ -74,18 +74,8 @@ public class PlayerCombat : MonoBehaviour
 
         playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
 
-        //We initialize the WeaponManager in Start to ensure all other Awake methods have run.
-        //if (availableWeapons != null && availableWeapons.Count > 0)
-        //{
-        //    // Tell the manager about all our weapons and which one is the default.
-        //    weaponManager.Initialize(availableWeapons, availableWeapons[0]);
-        //    // Also set this script's current weapon data immediately.
-        //    _currentWeapon = availableWeapons[0];
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("No available weapons assigned in PlayerCombat!", this);
-        //}
+       
+
 
         if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
         {
@@ -131,14 +121,38 @@ public class PlayerCombat : MonoBehaviour
 
     private void Start()
     {
-        //// NEW: We initialize the WeaponManager in Start to ensure all other Awake methods have run.
-        if (availableWeapons != null && availableWeapons.Count > 0)
+        //// We initialize the WeaponManager in Start to ensure all other Awake methods have run.
+        if (weaponManager != null && availableWeapons != null && availableWeapons.Count > 0)
         {
-            // Tell the manager about all our weapons and which one is the default
-            weaponManager.Initialize(availableWeapons, availableWeapons[0]);
-            // Also set the player's current weapon data
+            // Tell the manager about all our weapons and which one is the default.
+            weaponManager.Initialize(handSocketR, handSocketL, backSocket, hipSocketL, hipSocketR, availableWeapons);
+
+            // Also set this script's current weapon data.
             _currentWeapon = availableWeapons[0];
         }
+        
+        //EnableInputs();
+
+        //// 3. Set the initial weapon for THIS script.
+        // weaponManager.Initialize(handSocketR, handSocketL, backSocket, hipSocketL, hipSocketR, availableWeapons);
+        //if (availableWeapons != null && availableWeapons.Count > 0)
+        //{
+        //    _currentWeapon = availableWeapons[0];
+        //}
+
+
+        //if (availableWeapons != null && availableWeapons.Count > 0)
+        //{
+        //    // Tell the manager about all our weapons and which one is the default
+        //    weaponManager.Initialize(availableWeapons, availableWeapons[0]);
+        //    // Also set the player's current weapon data
+        //    _currentWeapon = availableWeapons[0];
+        //}
+    }
+
+    private void OnDestroy()
+    {
+        //DisableInputs();
     }
 
     public void SwitchWeaponByIndex(int index)
@@ -302,5 +316,34 @@ public class PlayerCombat : MonoBehaviour
     public Coroutine RunSkillCoroutine(IEnumerator routine)
     {
         return StartCoroutine(routine);
+    }
+
+    private void EnableInputs()
+    {
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnPrimaryAttackInput += HandlePrimaryAttack;
+            playerInputHandler.OnSecondaryAttackInput += HandleSecondaryAttack;
+            playerInputHandler.OnSecondaryAttackPressed += HandleSecondaryAttackPress;
+            playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
+            playerInputHandler.OnTertiaryAttackInput += HandleTertiaryAttack;
+            playerInputHandler.OnWeapon1Input += HandleWeapon1Switch;
+            playerInputHandler.OnWeapon2Input += HandleWeapon2Switch;
+            playerInputHandler.OnWeapon3Input += HandleWeapon3Switch;
+        }
+    }
+    private void DisableInputs()
+    {
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnPrimaryAttackInput -= HandlePrimaryAttack;
+            playerInputHandler.OnSecondaryAttackInput -= HandleSecondaryAttack;
+            playerInputHandler.OnSecondaryAttackPressed -= HandleSecondaryAttackPress;
+            playerInputHandler.OnSecondaryAttackReleased -= HandleSecondaryAttackRelease;
+            playerInputHandler.OnTertiaryAttackInput -= HandleTertiaryAttack;
+            playerInputHandler.OnWeapon1Input -= HandleWeapon1Switch;
+            playerInputHandler.OnWeapon2Input -= HandleWeapon2Switch;
+            playerInputHandler.OnWeapon3Input -= HandleWeapon3Switch;
+        }
     }
 }

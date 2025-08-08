@@ -18,8 +18,13 @@ public class DaggerSO : WeaponSO
     // Primary Attack (LMB) - Always a standard slash.
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-        combatController.PlayerAnimationController.TriggerPrimaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+        if ((combatController.GetComponent<DaggerAnimation>() != null))
+        {
+            combatController.GetComponent<DaggerAnimation>().PlayPrimaryAttack();
+            //combatController.PlayerAnimationController.TriggerPrimaryAttack();
+            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+            
+        }
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketL.position, attackRange, hittableLayers);
         if (hits.Any())
@@ -84,7 +89,17 @@ public class DaggerSO : WeaponSO
         }
         else
         {
-            combatController.PlayerAnimationController.TriggerSecondaryAttack();
+           
+
+
+            if(combatController.GetComponent<DaggerAnimation>() != null)
+            {
+                    combatController.GetComponent<DaggerAnimation>().PlaySecondaryAttack();
+
+
+                    //combatController.PlayerAnimationController.TriggerSecondaryAttack();
+
+            }
         }    
     }
 }
