@@ -132,7 +132,8 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             Destroy(_statusBarInstance);
         }
-
+        // 1. Play the death animation immediately.
+        _animController.PlayDeathAnimation();
         // 1. Disable all intelligence and movement
         _ai.enabled = false;
         _navigator.enabled = false;

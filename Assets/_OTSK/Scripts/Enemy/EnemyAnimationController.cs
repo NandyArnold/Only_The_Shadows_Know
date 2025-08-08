@@ -8,7 +8,7 @@ public class EnemyAnimationController : MonoBehaviour
     private Animator _animator;
 
     // Parameter Hashes
-    private readonly int dieTriggerHash = Animator.StringToHash("Die");
+    private readonly int deathTriggerHash = Animator.StringToHash("DeathTrigger");
     private readonly int speedHash = Animator.StringToHash("Speed");
     private readonly int combatStateHash = Animator.StringToHash("CombatState");
     private readonly int primaryAttackTriggerHash = Animator.StringToHash("PrimaryAttack");
@@ -37,7 +37,7 @@ public class EnemyAnimationController : MonoBehaviour
 
     public void PlayDeathAnimation()
     {
-        _animator.SetTrigger(dieTriggerHash);
+        _animator.SetTrigger(deathTriggerHash);
     }
 
     public void PlayPrimaryAttackAnimation()
