@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/_OTSK/Scenes/BootstrapScene.unity
     guid: 3a5fba7aff3701941ac0faaa80a422df
   - enabled: 1
-    path: Assets/_OTSK/Scenes/LoadingScreen.unity
+    path: Assets/_OTSK/Scenes/LoadingScene.unity
     guid: f1b0d80ca30ef464eb0a0c871a63ce91
   - enabled: 1
     path: Assets/_OTSK/Scenes/MainMenu.unity

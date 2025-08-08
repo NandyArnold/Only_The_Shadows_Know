@@ -9,6 +9,13 @@ public class SceneLoader : MonoBehaviour
 
     public SceneDataSO CurrentSceneData { get; private set; }
     public event Action<SceneDataSO> OnSceneLoaded;
+
+    [Header("Loading Settings")]
+    [SerializeField] private float minLoadTime = 2.0f;
+
+
+    public event Action OnSceneLoadStart;
+    public event Action OnSceneLoadEnd;
     //public event Action<string> OnSceneUnloaded;
 
     private SceneDataSO _sceneDataToLoad;
@@ -29,49 +36,56 @@ public class SceneLoader : MonoBehaviour
     {
         if (CurrentSceneData != null)
         {
-            LoadSceneAsync(CurrentSceneData);
+            LoadScene(CurrentSceneData, CurrentSceneData.defaultSpawnPointTag, true);
         }
     }
 
-    public void LoadSceneAsync(SceneDataSO sceneData, string spawnPointTag = "")
+    public void LoadScene(SceneDataSO sceneData, string spawnPointTag, bool showLoadingScreen = true)
     {
-        // Guard Clause: If we are already loading a scene, ignore this new request.
-        if (_isLoading)
+        if (_isLoading) return;
+        _isLoading = true;
+
+        // Tell the PlayerSpawner where to spawn in the next scene
+        if (PlayerSpawner.Instance != null)
         {
-            Debug.LogWarning($"SceneLoader is already loading a scene. Ignoring request to load {sceneData.sceneName}.");
-            return;
+            PlayerSpawner.Instance.SetNextSpawnPoint(spawnPointTag);
         }
 
-        _isLoading = true;
-        GameManager.Instance.UpdateGameState(GameState.Loading);
         _sceneDataToLoad = sceneData;
-        StartCoroutine(LoadSceneCoroutine(sceneData.sceneName, spawnPointTag));
+        StartCoroutine(LoadSceneCoroutine(sceneData.sceneName, spawnPointTag, showLoadingScreen));
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName, string spawnPointTag)
+    private IEnumerator LoadSceneCoroutine(string sceneName, string spawnPointTag, bool showLoadingScreen)
     {
         try
         {
-            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-            operation.allowSceneActivation = false;
+            // Tell the PlayerSpawner where to spawn in the next scene.
+            if (PlayerSpawner.Instance != null)
+            {
+                PlayerSpawner.Instance.SetNextSpawnPoint(spawnPointTag);
+            }
 
+            if (showLoadingScreen)
+            {
+                OnSceneLoadStart?.Invoke();
+                yield return new WaitForSecondsRealtime(0.1f);
+            }
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
             while (!operation.isDone)
             {
-                if (operation.progress >= 0.9f)
-                {
-                    operation.allowSceneActivation = true;
-                }
                 yield return null;
             }
 
-            CurrentSceneData = _sceneDataToLoad;
-            OnSceneLoaded?.Invoke(CurrentSceneData);
+            OnSceneLoaded?.Invoke(_sceneDataToLoad);
         }
         finally
         {
-            // This 'finally' block ensures that _isLoading is always reset to false,
-            // even if an error occurs during loading.
             _isLoading = false;
+            if (showLoadingScreen)
+            {
+                OnSceneLoadEnd?.Invoke();
+            }
         }
     }
 }

@@ -4,7 +4,16 @@ using UnityEngine.UI; // Required for Button component
 public class SceneTransitionButton : MonoBehaviour
 {
     public Button button; // Assign this in Inspector
-    public SceneDataSO targetSceneData;
+    [Header("Scene Settings")]
+    [SerializeField] private SceneDataSO targetSceneData;
+
+    [Header("Spawning")]
+    [Tooltip("The tag of the spawn point to use in the next scene (e.g., 'InitialSpawn').")]
+    [SerializeField] private string targetSpawnPointTag;
+
+    [Header("Loading Screen")]
+    [Tooltip("Check this to show the loading screen during this transition.")]
+    [SerializeField] private bool showLoadingScreen = true;
 
     private void Awake()
     {
@@ -28,7 +37,7 @@ public class SceneTransitionButton : MonoBehaviour
         {
             PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
 
-            SceneLoader.Instance.LoadSceneAsync(targetSceneData);
+            SceneLoader.Instance.LoadScene(targetSceneData, targetSpawnPointTag, showLoadingScreen);
         }
         else
         {

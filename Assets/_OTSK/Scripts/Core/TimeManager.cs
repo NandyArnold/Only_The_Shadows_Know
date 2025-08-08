@@ -16,6 +16,21 @@ public class TimeManager : MonoBehaviour
         _defaultFixedDeltaTime = Time.fixedDeltaTime;
     }
 
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+        }
+    }
+    private void Start()
+    {
+        // Subscribe to the GameManager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+        }
+    }
     public void DoTimeScale(float targetScale, float duration)
     {
         if (_timeScaleCoroutine != null)
@@ -60,5 +75,17 @@ public class TimeManager : MonoBehaviour
         // Ensure the final value is set correctly.
         Time.timeScale = targetScale;
         Time.fixedDeltaTime = _defaultFixedDeltaTime * targetScale;
+    }
+    private void HandleGameStateChanged(GameState newState)
+    {
+        // If the new state is Gameplay, reset time. Otherwise, pause it.
+        if (newState == GameState.Gameplay)
+        {
+            ResetTimeScale();
+        }
+        else
+        {
+            SetTimeScale(0f); // Pause
+        }
     }
 }

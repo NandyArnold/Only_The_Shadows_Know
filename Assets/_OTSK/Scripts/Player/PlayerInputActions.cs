@@ -147,6 +147,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""DodgeRoll"",
+                    ""type"": ""Button"",
+                    ""id"": ""6b1d811f-0371-4431-947c-ff551a809183"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press,Tap"",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Previous"",
                     ""type"": ""Button"",
                     ""id"": ""2776c80d-3c14-4091-8c56-d04ced07a2b0"",
@@ -282,12 +291,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""DodgeRoll"",
+                    ""name"": ""Skill5"",
                     ""type"": ""Button"",
-                    ""id"": ""6b1d811f-0371-4431-947c-ff551a809183"",
+                    ""id"": ""dc6b6fd6-37af-44cc-8e10-f78cbf948a59"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""Press,Tap"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -309,9 +318,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Skill5"",
+                    ""name"": ""Pause"",
                     ""type"": ""Button"",
-                    ""id"": ""dc6b6fd6-37af-44cc-8e10-f78cbf948a59"",
+                    ""id"": ""7329456d-ffe0-47b9-a7eb-b97f60b8f70f"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -857,6 +866,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Skill5"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5cbb1e5a-d1a9-40f6-874c-ebf68807caca"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -958,6 +978,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""ToggleCursorMode"",
                     ""type"": ""Button"",
                     ""id"": ""d4dcd5a2-a46a-4d91-8c01-5d0fe86c25d5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Unpause"",
+                    ""type"": ""Button"",
+                    ""id"": ""e18b64aa-ecaa-4cc5-beba-f99df3a1e5c3"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1393,6 +1422,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleCursorMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2eb7cea1-8e71-44d8-bddc-7f527401e395"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1761,6 +1801,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_DodgeRoll = m_Player.FindAction("DodgeRoll", throwIfNotFound: true);
         m_Player_Previous = m_Player.FindAction("Previous", throwIfNotFound: true);
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
@@ -1776,10 +1817,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Skill2 = m_Player.FindAction("Skill2", throwIfNotFound: true);
         m_Player_Skill3 = m_Player.FindAction("Skill3", throwIfNotFound: true);
         m_Player_Skill4 = m_Player.FindAction("Skill4", throwIfNotFound: true);
-        m_Player_DodgeRoll = m_Player.FindAction("DodgeRoll", throwIfNotFound: true);
+        m_Player_Skill5 = m_Player.FindAction("Skill5", throwIfNotFound: true);
         m_Player_ShowObjective = m_Player.FindAction("ShowObjective", throwIfNotFound: true);
         m_Player_CancelAction = m_Player.FindAction("CancelAction", throwIfNotFound: true);
-        m_Player_Skill5 = m_Player.FindAction("Skill5", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1793,6 +1834,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_ToggleCursorMode = m_UI.FindAction("ToggleCursorMode", throwIfNotFound: true);
+        m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
         // EnemyDebug
         m_EnemyDebug = asset.FindActionMap("EnemyDebug", throwIfNotFound: true);
         m_EnemyDebug_Move = m_EnemyDebug.FindAction("Move", throwIfNotFound: true);
@@ -1896,6 +1938,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_DodgeRoll;
     private readonly InputAction m_Player_Previous;
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Run;
@@ -1911,10 +1954,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Skill2;
     private readonly InputAction m_Player_Skill3;
     private readonly InputAction m_Player_Skill4;
-    private readonly InputAction m_Player_DodgeRoll;
+    private readonly InputAction m_Player_Skill5;
     private readonly InputAction m_Player_ShowObjective;
     private readonly InputAction m_Player_CancelAction;
-    private readonly InputAction m_Player_Skill5;
+    private readonly InputAction m_Player_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1950,6 +1993,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/DodgeRoll".
+        /// </summary>
+        public InputAction @DodgeRoll => m_Wrapper.m_Player_DodgeRoll;
         /// <summary>
         /// Provides access to the underlying input action "Player/Previous".
         /// </summary>
@@ -2011,9 +2058,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Skill4 => m_Wrapper.m_Player_Skill4;
         /// <summary>
-        /// Provides access to the underlying input action "Player/DodgeRoll".
+        /// Provides access to the underlying input action "Player/Skill5".
         /// </summary>
-        public InputAction @DodgeRoll => m_Wrapper.m_Player_DodgeRoll;
+        public InputAction @Skill5 => m_Wrapper.m_Player_Skill5;
         /// <summary>
         /// Provides access to the underlying input action "Player/ShowObjective".
         /// </summary>
@@ -2023,9 +2070,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @CancelAction => m_Wrapper.m_Player_CancelAction;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Skill5".
+        /// Provides access to the underlying input action "Player/Pause".
         /// </summary>
-        public InputAction @Skill5 => m_Wrapper.m_Player_Skill5;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2070,6 +2117,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @DodgeRoll.started += instance.OnDodgeRoll;
+            @DodgeRoll.performed += instance.OnDodgeRoll;
+            @DodgeRoll.canceled += instance.OnDodgeRoll;
             @Previous.started += instance.OnPrevious;
             @Previous.performed += instance.OnPrevious;
             @Previous.canceled += instance.OnPrevious;
@@ -2115,18 +2165,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Skill4.started += instance.OnSkill4;
             @Skill4.performed += instance.OnSkill4;
             @Skill4.canceled += instance.OnSkill4;
-            @DodgeRoll.started += instance.OnDodgeRoll;
-            @DodgeRoll.performed += instance.OnDodgeRoll;
-            @DodgeRoll.canceled += instance.OnDodgeRoll;
+            @Skill5.started += instance.OnSkill5;
+            @Skill5.performed += instance.OnSkill5;
+            @Skill5.canceled += instance.OnSkill5;
             @ShowObjective.started += instance.OnShowObjective;
             @ShowObjective.performed += instance.OnShowObjective;
             @ShowObjective.canceled += instance.OnShowObjective;
             @CancelAction.started += instance.OnCancelAction;
             @CancelAction.performed += instance.OnCancelAction;
             @CancelAction.canceled += instance.OnCancelAction;
-            @Skill5.started += instance.OnSkill5;
-            @Skill5.performed += instance.OnSkill5;
-            @Skill5.canceled += instance.OnSkill5;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -2156,6 +2206,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @DodgeRoll.started -= instance.OnDodgeRoll;
+            @DodgeRoll.performed -= instance.OnDodgeRoll;
+            @DodgeRoll.canceled -= instance.OnDodgeRoll;
             @Previous.started -= instance.OnPrevious;
             @Previous.performed -= instance.OnPrevious;
             @Previous.canceled -= instance.OnPrevious;
@@ -2201,18 +2254,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Skill4.started -= instance.OnSkill4;
             @Skill4.performed -= instance.OnSkill4;
             @Skill4.canceled -= instance.OnSkill4;
-            @DodgeRoll.started -= instance.OnDodgeRoll;
-            @DodgeRoll.performed -= instance.OnDodgeRoll;
-            @DodgeRoll.canceled -= instance.OnDodgeRoll;
+            @Skill5.started -= instance.OnSkill5;
+            @Skill5.performed -= instance.OnSkill5;
+            @Skill5.canceled -= instance.OnSkill5;
             @ShowObjective.started -= instance.OnShowObjective;
             @ShowObjective.performed -= instance.OnShowObjective;
             @ShowObjective.canceled -= instance.OnShowObjective;
             @CancelAction.started -= instance.OnCancelAction;
             @CancelAction.performed -= instance.OnCancelAction;
             @CancelAction.canceled -= instance.OnCancelAction;
-            @Skill5.started -= instance.OnSkill5;
-            @Skill5.performed -= instance.OnSkill5;
-            @Skill5.canceled -= instance.OnSkill5;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -2261,6 +2314,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_ToggleCursorMode;
+    private readonly InputAction m_UI_Unpause;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2316,6 +2370,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/ToggleCursorMode".
         /// </summary>
         public InputAction @ToggleCursorMode => m_Wrapper.m_UI_ToggleCursorMode;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Unpause".
+        /// </summary>
+        public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2375,6 +2433,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleCursorMode.started += instance.OnToggleCursorMode;
             @ToggleCursorMode.performed += instance.OnToggleCursorMode;
             @ToggleCursorMode.canceled += instance.OnToggleCursorMode;
+            @Unpause.started += instance.OnUnpause;
+            @Unpause.performed += instance.OnUnpause;
+            @Unpause.canceled += instance.OnUnpause;
         }
 
         /// <summary>
@@ -2419,6 +2480,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleCursorMode.started -= instance.OnToggleCursorMode;
             @ToggleCursorMode.performed -= instance.OnToggleCursorMode;
             @ToggleCursorMode.canceled -= instance.OnToggleCursorMode;
+            @Unpause.started -= instance.OnUnpause;
+            @Unpause.performed -= instance.OnUnpause;
+            @Unpause.canceled -= instance.OnUnpause;
         }
 
         /// <summary>
@@ -2847,6 +2911,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "DodgeRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDodgeRoll(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Previous" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -2952,12 +3023,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSkill4(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "DodgeRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Skill5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnDodgeRoll(InputAction.CallbackContext context);
+        void OnSkill5(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "ShowObjective" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -2973,12 +3044,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCancelAction(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Skill5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSkill5(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -3064,6 +3135,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleCursorMode(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Unpause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUnpause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EnemyDebug" which allows adding and removing callbacks.

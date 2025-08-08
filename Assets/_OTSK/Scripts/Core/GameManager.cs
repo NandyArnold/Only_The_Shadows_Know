@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public event Action<PlayerController> OnPlayerRegistered;
 
     private CameraManager _cameraManager;
+    private PlayerInputHandler _playerInputHandler;
 
     void Awake()
     {
@@ -39,12 +40,21 @@ public class GameManager : MonoBehaviour
         }
 
         // Load the very first scene
+        //if (initialScene != null)
+        //{
+        //    SceneLoader.Instance.LoadSceneAsync(initialScene);
+        //}
+    }
+    private void Start()
+    {
+        // Load the very first scene (Main Menu)
         if (initialScene != null)
         {
-            SceneLoader.Instance.LoadSceneAsync(initialScene);
+            // Call the updated method with all parameters.
+            // We don't need a spawn point tag for the menu, and no loading screen.
+            SceneLoader.Instance.LoadScene(initialScene, null, false);
         }
     }
-
     // This is the new central method for changing the game state.
     public void UpdateGameState(GameState newState)
     {
@@ -82,6 +92,10 @@ public class GameManager : MonoBehaviour
         {
             SceneLoader.Instance.OnSceneLoaded -= OnSceneWasLoaded;
         }
+        if (_playerInputHandler != null)
+        {
+            _playerInputHandler.OnPauseInput -= HandlePauseInput;
+        }
     }
 
     public void RegisterPlayer(PlayerController player)
@@ -101,6 +115,11 @@ public class GameManager : MonoBehaviour
         {
             _cameraManager.ConnectToPlayer(player);
         }
+        _playerInputHandler = player.GetComponent<PlayerInputHandler>();
+        if (_playerInputHandler != null)
+        {
+            _playerInputHandler.OnPauseInput += HandlePauseInput;
+        }
     }
 
     public void RegisterCameraManager(CameraManager camManager)
@@ -111,5 +130,17 @@ public class GameManager : MonoBehaviour
     public void RegisterAimTarget(Transform target)
     {
         AimTarget = target;
+    }
+    private void HandlePauseInput()
+    {
+        // This is a simple toggle.
+        if (CurrentState == GameState.Gameplay)
+        {
+            UpdateGameState(GameState.Menu);
+        }
+        else if (CurrentState == GameState.Menu)
+        {
+            UpdateGameState(GameState.Gameplay);
+        }
     }
 }

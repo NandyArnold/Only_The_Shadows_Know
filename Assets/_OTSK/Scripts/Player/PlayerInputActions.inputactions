@@ -61,6 +61,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "DodgeRoll",
+                    "type": "Button",
+                    "id": "6b1d811f-0371-4431-947c-ff551a809183",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press,Tap",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Previous",
                     "type": "Button",
                     "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0",
@@ -196,12 +205,12 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "DodgeRoll",
+                    "name": "Skill5",
                     "type": "Button",
-                    "id": "6b1d811f-0371-4431-947c-ff551a809183",
+                    "id": "dc6b6fd6-37af-44cc-8e10-f78cbf948a59",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Press,Tap",
+                    "interactions": "",
                     "initialStateCheck": false
                 },
                 {
@@ -223,9 +232,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill5",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "dc6b6fd6-37af-44cc-8e10-f78cbf948a59",
+                    "id": "7329456d-ffe0-47b9-a7eb-b97f60b8f70f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -771,6 +780,17 @@
                     "action": "Skill5",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5cbb1e5a-d1a9-40f6-874c-ebf68807caca",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -872,6 +892,15 @@
                     "name": "ToggleCursorMode",
                     "type": "Button",
                     "id": "d4dcd5a2-a46a-4d91-8c01-5d0fe86c25d5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Unpause",
+                    "type": "Button",
+                    "id": "e18b64aa-ecaa-4cc5-beba-f99df3a1e5c3",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1305,6 +1334,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleCursorMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2eb7cea1-8e71-44d8-bddc-7f527401e395",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Unpause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
