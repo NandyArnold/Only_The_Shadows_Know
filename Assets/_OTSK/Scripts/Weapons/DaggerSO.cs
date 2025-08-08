@@ -18,13 +18,13 @@ public class DaggerSO : WeaponSO
     // Primary Attack (LMB) - Always a standard slash.
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-        if ((combatController.GetComponent<DaggerAnimation>() != null))
-        {
-            combatController.GetComponent<DaggerAnimation>().PlayPrimaryAttack();
-            //combatController.PlayerAnimationController.TriggerPrimaryAttack();
-            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+        //if ((combatController.GetComponent<DaggerAnimation>() != null))
+        //{
+        //    //combatController.GetComponent<DaggerAnimation>().PlayPrimaryAttack();
             
-        }
+        //}
+            combatController.PlayerAnimationController.TriggerPrimaryAttack();
+            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketL.position, attackRange, hittableLayers);
         if (hits.Any())
@@ -65,8 +65,9 @@ public class DaggerSO : WeaponSO
                 {
                     if (enemyAI.CurrentState is PatrolState)
                     {
-                        Debug.Log("<color=red>FINISHER!</color> (on Unaware Enemy)");
-                        combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
+                        //Debug.Log("<color=red>FINISHER!</color> (on Unaware Enemy)");
+                        //combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
+                        combatController.PlayerAnimationController.TriggerDagger_Finisher();
                         enemyHealth.TakeDamage(finisherDamageProfile, combatController.gameObject);
                     }
                     else
@@ -81,7 +82,8 @@ public class DaggerSO : WeaponSO
                     Debug.Log("<color=red>FINISHER!</color> (on Test Dummy)");
                     if (finisherDamageProfile != null && finisherDamageProfile.Count > 0)
                     {
-                        combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
+                        //combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
+                        combatController.PlayerAnimationController.TriggerDagger_Finisher();
                         dummyHealth.TakeDamage(finisherDamageProfile[0].Value);
                     }
                 }
@@ -89,17 +91,12 @@ public class DaggerSO : WeaponSO
         }
         else
         {
-           
+                combatController.PlayerAnimationController.TriggerSecondaryAttack();
+            //if(combatController.GetComponent<DaggerAnimation>() != null)
+            //{
+            //        combatController.GetComponent<DaggerAnimation>().PlaySecondaryAttack();
 
-
-            if(combatController.GetComponent<DaggerAnimation>() != null)
-            {
-                    combatController.GetComponent<DaggerAnimation>().PlaySecondaryAttack();
-
-
-                    //combatController.PlayerAnimationController.TriggerSecondaryAttack();
-
-            }
+            //}
         }    
     }
 }

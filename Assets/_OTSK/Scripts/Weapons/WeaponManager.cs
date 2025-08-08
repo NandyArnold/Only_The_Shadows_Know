@@ -56,12 +56,12 @@ public class WeaponManager : MonoBehaviour
             InstantiateAndSheatheWeapon(weapon);
         }
 
-        // Equip the default weapon
-        if (availableWeapons != null && availableWeapons.Count > 0)
-        {
-            EquipNewWeapon(availableWeapons[0]);
+        //// Equip the default weapon
+        //if (availableWeapons != null && availableWeapons.Count > 0)
+        //{
+        //    EquipNewWeapon(availableWeapons[0]);
            
-        }
+        //}
         
     }
 

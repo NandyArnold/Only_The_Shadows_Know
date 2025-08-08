@@ -85,8 +85,15 @@ public class PlayerCombat : MonoBehaviour
             var rigBuilder = GetComponent<RigBuilder>();
             if (rigBuilder != null) rigBuilder.Build();
         }
+        if (_daggerAnimation != null)
+        {
+            Debug.Log("Dagger Animation found in PlayerCombat.");
+        }
+        else
+        {
+            Debug.LogError("Dagger Animation NOT found in PlayerCombat. Please assign it in the inspector.", this);
+        }
 
-      
     }
 
     private void OnEnable()
@@ -121,6 +128,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void Start()
     {
+        
         //// We initialize the WeaponManager in Start to ensure all other Awake methods have run.
         if (weaponManager != null && availableWeapons != null && availableWeapons.Count > 0)
         {
@@ -128,26 +136,26 @@ public class PlayerCombat : MonoBehaviour
             weaponManager.Initialize(handSocketR, handSocketL, backSocket, hipSocketL, hipSocketR, availableWeapons);
 
             // Also set this script's current weapon data.
-            _currentWeapon = availableWeapons[0];
+            //_currentWeapon = availableWeapons[0];
         }
-        
-        //EnableInputs();
 
-        //// 3. Set the initial weapon for THIS script.
-        // weaponManager.Initialize(handSocketR, handSocketL, backSocket, hipSocketL, hipSocketR, availableWeapons);
-        //if (availableWeapons != null && availableWeapons.Count > 0)
-        //{
-        //    _currentWeapon = availableWeapons[0];
-        //}
+        if (availableWeapons != null && availableWeapons.Count > 0)
+        {
+            // Switch to the first weapon in the list by default.
+            SwitchWeapon(availableWeapons[0]);
+        }
+        else
+        {
+            Debug.LogWarning("No available weapons found. Please assign at least one weapon in the inspector.", this);
+        }
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnCombatStart += EnableInputs;
+            CombatManager.Instance.OnCombatEnd += DisableInputs;
+        }
 
 
-        //if (availableWeapons != null && availableWeapons.Count > 0)
-        //{
-        //    // Tell the manager about all our weapons and which one is the default
-        //    weaponManager.Initialize(availableWeapons, availableWeapons[0]);
-        //    // Also set the player's current weapon data
-        //    _currentWeapon = availableWeapons[0];
-        //}
+
     }
 
     private void OnDestroy()

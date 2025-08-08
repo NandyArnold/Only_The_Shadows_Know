@@ -74,6 +74,18 @@ public class PlayerAnimationController : MonoBehaviour
         _currentWeaponAnimation?.PlayTertiaryAttack();
     }
 
+    public void TriggerDagger_Finisher()
+    {
+        if (_currentWeaponAnimation is DaggerAnimation daggerAnim)
+        {
+            daggerAnim.PlayFinisherAnimation();
+        }
+        else
+        {
+            Debug.LogWarning("Current weapon is not a DaggerAnimation, cannot play finisher.");
+        }
+    }
+
     // --- CORE LOCOMOTION METHODS (Kept) ---
 
     public void SetLocomotionInput(float moveX, float moveY, bool isCrouching, bool isRunning)
