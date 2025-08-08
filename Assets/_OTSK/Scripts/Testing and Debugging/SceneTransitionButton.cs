@@ -11,9 +11,7 @@ public class SceneTransitionButton : MonoBehaviour
     [Tooltip("The tag of the spawn point to use in the next scene (e.g., 'InitialSpawn').")]
     [SerializeField] private string targetSpawnPointTag;
 
-    [Header("Loading Screen")]
-    [Tooltip("Check this to show the loading screen during this transition.")]
-    [SerializeField] private bool showLoadingScreen = true;
+   
 
     private void Awake()
     {
@@ -37,7 +35,14 @@ public class SceneTransitionButton : MonoBehaviour
         {
             PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
 
-            SceneLoader.Instance.LoadScene(targetSceneData, targetSpawnPointTag, showLoadingScreen);
+            if (targetSceneData == null)
+            {
+                Debug.LogError("SceneTransitionButton: Target Scene Data is not assigned!", this.gameObject);
+                return;
+            }
+
+            // This now calls the correct, updated method on the SceneLoader.
+            SceneLoader.Instance.LoadScene(targetSceneData, targetSpawnPointTag);
         }
         else
         {

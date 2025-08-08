@@ -21,8 +21,8 @@ MonoBehaviour:
     scenePath: Assets/_OTSK/Scenes/BootstrapScene.unity
     savedColor: {r: 0, g: 0, b: 0, a: 0}
     isHeader: 0
-  - sceneName: LoadingScreen
-    scenePath: Assets/_OTSK/Scenes/LoadingScreen.unity
+  - sceneName: LoadingScene
+    scenePath: Assets/_OTSK/Scenes/LoadingScene.unity
     savedColor: {r: 0, g: 0, b: 0, a: 0}
     isHeader: 0
   - sceneName: MainMenu

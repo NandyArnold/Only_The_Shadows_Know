@@ -548,6 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 1784703276}
   targetSceneData: {fileID: 11400000, guid: c71fdb226d901144684b0bf7a315bd1d, type: 2}
+  targetSpawnPointTag: 
 --- !u!114 &1784703276
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,13 +9,22 @@ public class EnemyUIController : MonoBehaviour
 
     private Transform _cameraToFace;
 
-    private void Start()
-    {
-        _cameraToFace = Camera.main.transform;
-    }
+    
 
     private void LateUpdate()
     {
+        if (_cameraToFace == null)
+        {
+            if (Camera.main != null)
+            {
+                _cameraToFace = Camera.main.transform;
+            }
+            else
+            {
+                // If there is no main camera in the scene yet, we can't do anything.
+                return;
+            }
+        }
         // Make the canvas billboard towards the camera
         transform.LookAt(transform.position + _cameraToFace.rotation * Vector3.forward, _cameraToFace.rotation * Vector3.up);
     }

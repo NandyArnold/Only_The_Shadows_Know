@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         {
             // Call the updated method with all parameters.
             // We don't need a spawn point tag for the menu, and no loading screen.
-            SceneLoader.Instance.LoadScene(initialScene, null, false);
+            SceneLoader.Instance.LoadScene(initialScene, null);
         }
     }
     // This is the new central method for changing the game state.
