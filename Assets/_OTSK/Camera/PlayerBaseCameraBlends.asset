@@ -93,8 +93,8 @@ MonoBehaviour:
   - From: Player_ZoomAiming_CM
     To: Player_FocusedShot_CM
     Blend:
-      Style: 2
-      Time: 0.2
+      Style: 4
+      Time: 0.15
       CustomCurve:
         serializedVersion: 2
         m_Curve: []
@@ -104,8 +104,8 @@ MonoBehaviour:
   - From: Player_FocusedShot_CM
     To: Player_ZoomAiming_CM
     Blend:
-      Style: 3
-      Time: 0.1
+      Style: 2
+      Time: 0.5
       CustomCurve:
         serializedVersion: 2
         m_Curve: []

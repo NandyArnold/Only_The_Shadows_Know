@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 6f;
     [SerializeField] private float crouchSpeedMultiplier = 0.5f;
     [SerializeField] private float jumpHeight = 1.5f;
+    [SerializeField] private float runningJumpHeight = 2.5f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float aimSpeedMultiplier = 0.5f;
 
@@ -55,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
     private bool _isFocused;
     private bool _movementLocked = false;
+    private bool _isJumping = false;
 
     private Transform _cameraTransform;
 
@@ -157,6 +159,7 @@ public class PlayerMovement : MonoBehaviour
         if (!_wasGrounded && isGroundedNow)
         {
             playerHealthManaNoise.GenerateNoise(noiseSettings.landNoise);
+            _isJumping = false;
         }
 
         _isGrounded = isGroundedNow;
@@ -166,7 +169,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump()
     {
-        Debug.Log("<color=yellow>ACTION: Jump method called.</color>");
+        if (_isJumping)
+        {
+            Debug.Log("<color=red>JUMP BLOCKED: Already Jumping.</color>");
+            return;
+        }
 
         if (_isFocused)
         {
@@ -179,16 +186,23 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("<color=red>JUMP BLOCKED: Is Dodge Rolling.</color>");
             return;
         }
+       
 
-        
+
         // We check if the player is NOT grounded and return.
         if (!_isGrounded)
         {
             Debug.Log("<color=red>JUMP BLOCKED: Not Grounded.</color>");
             return;
         }
+        _isJumping = true;
+        Debug.Log("<color=yellow>ACTION: Jump method called.</color>");
+
+        // Choose which jump height to use based on the isRunning state
+        
 
         // If the checks above pass, we are clear to jump.
+        float currentJumpHeight = _isRunning ? runningJumpHeight : jumpHeight;
         float noiseToGenerate = _isRunning ? noiseSettings.jumpRunningNoise : noiseSettings.jumpNoise;
         playerHealthManaNoise.GenerateNoise(noiseToGenerate);
 
@@ -198,6 +212,7 @@ public class PlayerMovement : MonoBehaviour
             playerAnimationController.PlayRunningJumpAnimation();
         else
             playerAnimationController.PlayStandardJumpAnimation();
+        _isJumping = false; // Reset jumping state after initiating jump
 
     }
 
