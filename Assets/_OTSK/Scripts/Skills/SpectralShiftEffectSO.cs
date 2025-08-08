@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "FX_SpectralShift", menuName = "Only The Shadows Know/Skills/Effects/Spectral Shift Effect")]
 public class SpectralShiftEffectSO : SkillEffectSO
@@ -21,9 +22,12 @@ public class SpectralShiftEffectSO : SkillEffectSO
     [SerializeField] private float startCastDuration = 0.5f;
     [SerializeField] private float confirmCastDuration = 0.3f;
 
+   
+
     [Header("Skill Constraints")]
     [SerializeField] private float maxPlayerTeleportRange = 25f;
 
+   
     public override void Activate(GameObject caster)
     {
         Debug.Log($"SPECTRAL SHIFT ACTIVATED at frame {Time.frameCount}");
@@ -116,6 +120,10 @@ public class SpectralShiftEffectSO : SkillEffectSO
             animController.SetSpectralState(3);
             yield return new WaitForSeconds(confirmCastDuration);
 
+            caster.GetComponent<PlayerHealthManaNoise>().ConsumeMana(
+           caster.GetComponent<PlayerSkillController>().GetSkill(SkillIdentifier.SpectralShift).manaCost
+       );
+
             var cc = caster.GetComponent<CharacterController>();
             TeleportManager.Instance.ExecuteTeleport(cc, validTeleportPosition);
         }
@@ -199,5 +207,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
         // This part is unreachable but needed for the lambda to work in some contexts
         // playerInput.OnCycleTargetingModeInput -= onCycleMode;
     }
+
+  
 }
 

@@ -23,8 +23,8 @@ public class SkillSO : ScriptableObject
   
 
 
-    [Tooltip("For 'Instant' cast skills, should this lock the player's movement during the cast animation?")]
-    public bool lockMovementWhileCasting; // This is now clearly for Instant skills only.
+    [Tooltip("For 'Targeted' cast skills, should this lock the player's movement during the cast animation?")]
+    public bool lockMovementWhileCasting; // This is now clearly for Targeted skills only.
 
     [Header("Skill Behavior")]
     [Tooltip("The script that defines what this skill actually does.")]

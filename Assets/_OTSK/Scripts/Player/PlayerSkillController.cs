@@ -118,7 +118,11 @@ public class PlayerSkillController : MonoBehaviour
 
         // --- EXECUTION LOGIC IS NOW ONLY HERE ---
         _isActivatingASkill = true;
-        
+        if (skill.castMode != CastMode.Targeted)
+        {
+            playerHealthManaNoise.ConsumeMana(skill.manaCost);
+        }
+
         Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
 
         switch (skill.castMode)
@@ -131,18 +135,14 @@ public class PlayerSkillController : MonoBehaviour
 
             case CastMode.Targeted:
                 SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
+
                 // We use _channeledSkill as a lock to prevent other skills during targeting.
                 _channeledSkill = skill;
                 // The PlayerSkillController now runs the entire targeting routine.
                 _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
 
 
-                //SkillCooldownManager.Instance.StartCooldown(skill.skillID, skill.cooldown);
-                //SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
-                //StartCoroutine(SkillActivationGracePeriod());
-                //_channeledSkill = skill; // Use _channeledSkill to block other actions
-                //                         // The PlayerSkillController now runs the entire targeting routine itself.
-                //_channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject));
+      
 
                 break;
             case CastMode.Channel:
@@ -155,7 +155,7 @@ public class PlayerSkillController : MonoBehaviour
                 _manaDrainCoroutine = StartCoroutine(DrainManaOverTime(skill));
                 break;
         }
-        playerHealthManaNoise.ConsumeMana(skill.manaCost);
+        
     }
 
     private void HandleSkillCanceled(int skillIndex)
@@ -224,5 +224,9 @@ public class PlayerSkillController : MonoBehaviour
         _channelingCoroutine = null;
         _isActivatingASkill = false;
         if (_manaDrainCoroutine != null) StopCoroutine(_manaDrainCoroutine);
+    }
+    public SkillSO GetSkill(SkillIdentifier skillID)
+    {
+        return _equippedSkills.Find(s => s.skillID == skillID);
     }
 }

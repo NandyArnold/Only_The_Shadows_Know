@@ -8,7 +8,7 @@ public class HUDManager : MonoBehaviour
     public static HUDManager Instance { get; private set; } // Make it a singleton
 
     [Header("UI Panels")]
-    //[SerializeField] private GameObject playerHUD_Panel;
+    
     [SerializeField] private GameObject crosshairPanel;
 
     [Header("Stat Bar References")]
@@ -27,9 +27,11 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI aimingDebugText;
     [SerializeField] private TextMeshProUGUI focusedDebugText;
 
+    private CursorState _currentCursorState;
 
     private Coroutine _objectiveCoroutine;
     private PlayerCombat _playerCombatForDebug;
+    private GameObject _crosshairInstance;
 
     private void Awake()
     {
@@ -57,6 +59,11 @@ public class HUDManager : MonoBehaviour
             ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
         }
 
+        if (CursorManager.Instance != null)
+        {
+            CursorManager.Instance.OnStateChanged += HandleCursorStateChanged;
+        }
+
         if (objectiveText != null)
         {
             objectiveText.gameObject.SetActive(true);
@@ -66,6 +73,7 @@ public class HUDManager : MonoBehaviour
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
         if (noiseSlider != null) noiseSlider.gameObject.SetActive(false);
         if (crosshairPanel != null) crosshairPanel.SetActive(false);
+       
     }
 
     private void Update() 
@@ -90,6 +98,11 @@ public class HUDManager : MonoBehaviour
         {
             ObjectiveManager.Instance.OnCurrentObjectiveChanged -= HandleNewObjective;
             ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
+        }
+
+        if (CursorManager.Instance != null)
+        {
+            CursorManager.Instance.OnStateChanged -= HandleCursorStateChanged;
         }
     }
 
@@ -126,9 +139,9 @@ public class HUDManager : MonoBehaviour
             noiseSlider.gameObject.SetActive(true);
         }
 
-        if (crosshairPrefab != null && crosshairPanel != null)
+        if (crosshairPrefab != null && crosshairPanel != null && _crosshairInstance == null)
         {
-            Instantiate(crosshairPrefab, crosshairPanel.transform);
+            _crosshairInstance = Instantiate(crosshairPrefab, crosshairPanel.transform);
         }
     }
 
@@ -216,7 +229,19 @@ public class HUDManager : MonoBehaviour
             // Only show the gameplay HUD when the game is in the Gameplay state.
             crosshairPanel.SetActive(newState == GameState.Gameplay);
         }
+       
     }
+
+    private void HandleCursorStateChanged(CursorState newState)
+    {
+        if (_crosshairInstance != null)
+        {
+            // The crosshair should only be visible when the cursor state is Gameplay.
+            // It will be hidden during UI and Targeting.
+            _crosshairInstance.SetActive(newState == CursorState.Gameplay);
+        }
+    }
+
 
 
     private void UpdateHealthBar(float currentHealth, float maxHealth)
