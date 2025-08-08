@@ -118,7 +118,7 @@ public class PlayerSkillController : MonoBehaviour
 
         // --- EXECUTION LOGIC IS NOW ONLY HERE ---
         _isActivatingASkill = true;
-        playerHealthManaNoise.ConsumeMana(skill.manaCost);
+        
         Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
 
         switch (skill.castMode)
@@ -155,6 +155,7 @@ public class PlayerSkillController : MonoBehaviour
                 _manaDrainCoroutine = StartCoroutine(DrainManaOverTime(skill));
                 break;
         }
+        playerHealthManaNoise.ConsumeMana(skill.manaCost);
     }
 
     private void HandleSkillCanceled(int skillIndex)

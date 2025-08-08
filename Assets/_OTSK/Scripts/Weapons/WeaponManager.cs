@@ -126,13 +126,18 @@ public class WeaponManager : MonoBehaviour
         GameObject mainHandInstance = null;
         if (weapon.mainHandPrefab != null)
         {
-            mainHandInstance = Instantiate(weapon.mainHandPrefab, GetSocketTransform(weapon.mainHandSheathSocket));
+            // 1. Instantiate without a parent first.
+            mainHandInstance = Instantiate(weapon.mainHandPrefab);
+            // 2. Then parent it. ParentToSocket will correctly deactivate it if the socket is 'None'.
+            ParentToSocket(mainHandInstance, GetSocketTransform(weapon.mainHandSheathSocket));
         }
 
         GameObject offHandInstance = null;
         if (weapon.offHandPrefab != null)
         {
-            offHandInstance = Instantiate(weapon.offHandPrefab, GetSocketTransform(weapon.offHandSheathSocket));
+            offHandInstance = Instantiate(weapon.offHandPrefab);
+            ParentToSocket(offHandInstance, GetSocketTransform(weapon.offHandSheathSocket));
+
         }
 
         _weaponInstances.Add(weapon, (mainHandInstance, offHandInstance));
@@ -146,11 +151,6 @@ public class WeaponManager : MonoBehaviour
         {
             // Set the parent. The 'false' parameter ensures its position is adjusted correctly.
             weaponObject.transform.SetParent(socket, false);
-
-            // REMOVE these two lines, as they were overriding your prefab's transform.
-            // weaponObject.transform.localPosition = Vector3.zero;
-            // weaponObject.transform.localRotation = Quaternion.identity;
-
             weaponObject.SetActive(true);
         }
         else

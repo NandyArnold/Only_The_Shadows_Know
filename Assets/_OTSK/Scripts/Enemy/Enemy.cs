@@ -102,6 +102,12 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             CombatManager.Instance.UnregisterEnemyFromCombat(this);
         }
+       
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged -= _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+        }
     }
 
     private void Start()
@@ -123,6 +129,7 @@ public class Enemy : MonoBehaviour, ISaveable
             // Initialize the alert bar to zero
             _uiController.UpdateAlert(0, config.hearingThreshold);
         }
+    
     }
 
     private void HandleDeath()
@@ -144,7 +151,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _animController.PlayDeathAnimation();
 
         // 3. Start a timer to remove the body
-        StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
+        //StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
     }
 
     private IEnumerator CleanupBody(float delay)
