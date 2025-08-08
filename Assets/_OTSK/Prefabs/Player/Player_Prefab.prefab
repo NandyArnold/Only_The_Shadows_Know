@@ -2597,11 +2597,14 @@ MonoBehaviour:
   lookSensitivity: 20
   topClamp: 70
   bottomClamp: -30
+  _cameraSwitchDuration: 0
   targetingPitchMin: -18
   targetingPitchMax: 50
   fovPulseAmount: 160
   fovPulseHangTime: 0.1
   fovPulseDuration: 0.5
+  recoilShakeAmplitude: 0.5
+  recoilHangTime: 0.5
 --- !u!114 &629505888469661623
 MonoBehaviour:
   m_ObjectHideFlags: 0

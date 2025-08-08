@@ -102,6 +102,7 @@ public class PlayerCombat : MonoBehaviour
         {
             playerInputHandler.OnPrimaryAttackInput += HandlePrimaryAttack;
             playerInputHandler.OnSecondaryAttackInput += HandleSecondaryAttack;
+            
             playerInputHandler.OnSecondaryAttackPressed += HandleSecondaryAttackPress;
             playerInputHandler.OnSecondaryAttackReleased += HandleSecondaryAttackRelease;
             playerInputHandler.OnTertiaryAttackInput += HandleTertiaryAttack;
@@ -250,25 +251,35 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleSecondaryAttack()
     {
-        if (_currentWeapon == null || _currentWeapon is BowSO) return;
-        if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
+        if (_currentWeapon is BowSO && _isAiming)
+        {
+            // This is the toggle logic. It sets the focus state to the opposite of what it currently is.
+            SetFocusState(!_isFocused);
+        }
+        // Case 2: The weapon is a Dagger or Animancy (or any other standard melee/magic weapon).
+        else if (_currentWeapon is DaggerSO || _currentWeapon is AnimancySO)
+        {
+            // This is the standard attack logic.
+            if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
 
-        _currentWeapon.SecondaryAttack(this);
-        _lastAttackTime = Time.time;
+            _currentWeapon.SecondaryAttack(this);
+            _lastAttackTime = Time.time;
+        }
+
     }
 
     private void HandleSecondaryAttackPress()
     {
-        if (_currentWeapon is BowSO && _isAiming) SetFocusState(true);
+       
     }
 
     // This handler is for RELEASING A HOLD (for the Bow)
     private void HandleSecondaryAttackRelease()
     {
-        if (_currentWeapon is BowSO && _isAiming && _isFocused)
-        {
-            SetFocusState(false);
-        }
+        //if (_currentWeapon is BowSO && _isAiming && _isFocused)
+        //{
+        //    SetFocusState(false);
+        //}
     }
 
     private void HandleTertiaryAttack()

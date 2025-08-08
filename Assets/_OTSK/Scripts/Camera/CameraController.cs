@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float lookSensitivity = 1.0f;
     [SerializeField] private float topClamp = 70.0f;
     [SerializeField] private float bottomClamp = -30.0f;
+    [SerializeField] private float _cameraSwitchDuration = 0.25f; // Duration for camera switch animations
 
     [Header("Targeting Settings")] 
     [SerializeField] private float targetingPitchMin = 30f;
@@ -36,6 +37,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float fovPulseHangTime = 0.1f;
     [SerializeField] private float fovPulseDuration = 0.5f;
 
+    [Header("Focused Shot Settings")]
+    [SerializeField] private float recoilShakeAmplitude = 0.5f; // noise amplitude for the recoil effect
+    [SerializeField] private float recoilHangTime = 0.5f; // Duration of the recoil effect
+
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     private Vector2 _lookInput;
@@ -43,10 +48,10 @@ public class CameraController : MonoBehaviour
     private float _pitchAdjustInput;
 
     private CinemachineBrain _cinemachineBrain;
+    private Coroutine _recoilCoroutine;
 
 
 
-    
 
     private void OnEnable()
     {
@@ -124,8 +129,9 @@ public class CameraController : MonoBehaviour
         if (playerCombat != null)
         {
             playerCombat.OnFocusStateChanged += HandleFocusStateChanged;
-          
+            playerCombat.OnFocusedShotFired += HandleFocusedShotFired;
         }
+
 
         SetDefaultCameraState();
     }
@@ -200,7 +206,22 @@ public class CameraController : MonoBehaviour
             playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
     }
 
-    
+    private void OnDestroy()
+    {
+        // Unsubscribe from events to prevent memory leaks
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnLookInput -= SetLookInput;
+            playerInputHandler.OnAdjustPitchInput -= SetPitchAdjustInput;
+        }
+        if (playerCombat != null)
+        {
+            playerCombat.OnFocusStateChanged -= HandleFocusStateChanged;
+            playerCombat.OnFocusedShotFired -= HandleFocusedShotFired;
+        }
+    }
+
+
     private void LateUpdate()
     {
         ApplyCameraRotation();
@@ -217,27 +238,33 @@ public class CameraController : MonoBehaviour
 
     private void HandleFocusedShotFired()
     {
+        Debug.Log("Focused shot fired, applying recoil...");
         StartCoroutine(FocusedShotRecoilRoutine());
     }
 
     private IEnumerator FocusedShotRecoilRoutine()
     {
-        if (_cinemachineBrain == null) yield break;
+        // 1. Get the noise component from our dedicated RECOIL camera.
+        var noise = focusedShotCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+        if (noise == null)
+        {
+            Debug.LogError("Recoil failed: 'FocusedShotCamera' is missing the 'CinemachineBasicMultiChannelPerlin' component. Make sure 'Noise' is set up on it in the Inspector.");
+            yield break;
+        }
 
-        // 1. Get the blend time directly from the brain's settings.
-        float blendTime = _cinemachineBrain.DefaultBlend.Time;
+        // 2. Turn the shake ON by setting its amplitude.
+        noise.AmplitudeGain = recoilShakeAmplitude;
 
-        // 2. Switch to the recoil camera.
-        SwitchToCamera(CameraType.FocusedShot);
+        // 3. Switch to the recoil camera to start the visual kick-back.
+        SwitchToCamera(CameraType.FocusedShot,_cameraSwitchDuration);
 
-        // 3. Wait for the blend TO the recoil camera to complete.
-        yield return new WaitForSeconds(blendTime);
+        // 4. Wait for the desired duration of the recoil effect.
+        yield return new WaitForSeconds(recoilHangTime);
 
-        // 4. Wait for a short "hang time" in the recoil position.
-        //    You can make this a variable later if you want to tweak it.
-        yield return new WaitForSeconds(0.1f);
+        // 5. Turn the shake OFF by resetting its amplitude.
+        noise.AmplitudeGain = 0f;
 
-        // 5. After all waiting is done, switch back to the zoom camera.
+        // 6. Switch back to the standard zoom camera.
         SwitchToCamera(CameraType.Zoom);
     }
     private void SetLookInput(Vector2 input)
