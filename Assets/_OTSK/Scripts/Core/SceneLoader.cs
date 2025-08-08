@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
+using static UnityEngine.Rendering.HDROutputUtils;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class SceneLoader : MonoBehaviour
     [Header("Loading Settings")]
     [SerializeField] private float minLoadTime = 2.0f;
     [SerializeField] private string loadingSceneName = "LoadingScene";
+    [SerializeField] private float fadeDuration = 0.5f;
+
+    [Tooltip("How long the screen stays black AFTER the new scene is loaded but BEFORE fading in.")]
+    [SerializeField] private float postLoadBlackScreenDuration = 0.5f;
 
     public event Action OnSceneLoadStart;
     public event Action OnSceneLoadEnd;
@@ -32,13 +37,7 @@ public class SceneLoader : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void RestartCurrentScene()
-    {
-        if (_currentlyLoadedScene != null)
-        {
-            LoadScene(_currentlyLoadedScene, _currentlyLoadedScene.defaultSpawnPointTag);
-        }
-    }
+    
 
     public void LoadScene(SceneDataSO sceneData, string spawnPointTag = null)
     {
@@ -57,61 +56,73 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadSceneRoutine(SceneDataSO sceneToLoad)
     {
-        _isLoading = true;
-        float startTime = Time.realtimeSinceStartup;
+        // 1. Fade TO black
+        FadeCanvas.Instance.FadeIn(fadeDuration);
+        if (GameManager.Instance.Player != null)
+            GameManager.Instance.Player.GetComponent<PlayerInputHandler>().SwitchActionMap("Disabled");
+        yield return new WaitForSeconds(fadeDuration);
 
-        // --- PREPARE ---
-        // 1. Load the Loading Scene additively.
+        // 2. Load the Loading Scene
         yield return SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Additive);
 
-        // --- UNLOAD OLD SCENE ---
-        // 2. If there was a previous scene, start unloading it.
-        AsyncOperation unloadOperation = null;
-        // Only try to unload a scene if there IS a previously loaded scene.
+        // 3. Unload the OLD scene
         if (_currentlyLoadedScene != null)
         {
-            unloadOperation = SceneManager.UnloadSceneAsync(_currentlyLoadedScene.sceneName);
+            yield return SceneManager.UnloadSceneAsync(_currentlyLoadedScene.sceneName);
         }
 
+        // 4. Load the NEW scene in the background
+        float startTime = Time.realtimeSinceStartup;
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneToLoad.sceneName, LoadSceneMode.Additive);
+        operation.allowSceneActivation = false;
 
-        // --- LOAD NEW SCENE ---
-        // 3. Start loading the actual target scene in the background.
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneToLoad.sceneName, LoadSceneMode.Additive);
-        loadOperation.allowSceneActivation = false;
-
-        // 4. Wait for unloading and loading to complete.
-        while (unloadOperation != null && !unloadOperation.isDone) { yield return null; }
-        while (loadOperation.progress < 0.9f)
+        while (operation.progress < 0.9f)
         {
             if (LoadingScreenController.Instance != null)
-                LoadingScreenController.Instance.UpdateProgress(loadOperation.progress / 0.9f);
+                LoadingScreenController.Instance.UpdateProgress(operation.progress / 0.9f);
             yield return null;
         }
 
         if (LoadingScreenController.Instance != null)
             LoadingScreenController.Instance.UpdateProgress(1f);
 
-        // 5. Enforce the minimum load time.
+        // 5. Enforce minimum load time
         float elapsedTime = Time.realtimeSinceStartup - startTime;
         if (elapsedTime < minLoadTime)
         {
             yield return new WaitForSecondsRealtime(minLoadTime - elapsedTime);
         }
 
-        // 6. Activate the new scene.
-        loadOperation.allowSceneActivation = true;
-        // Wait for the new scene to be fully active
+        // 6. Activate the new scene and unload the loading scene
+        operation.allowSceneActivation = true;
         yield return new WaitUntil(() => SceneManager.GetSceneByName(sceneToLoad.sceneName).isLoaded);
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad.sceneName));
-
-        // 7. Unload the loading scene.
         yield return SceneManager.UnloadSceneAsync(loadingSceneName);
 
-        // --- COMPLETE ---
+        // --- FINALIZATION ---
         _currentlyLoadedScene = sceneToLoad;
-        OnSceneLoaded?.Invoke(_currentlyLoadedScene);
+        OnSceneLoaded?.Invoke(_currentlyLoadedScene); // This will spawn the player
+        yield return null; // Wait one frame to ensure the player has been spawned and initialized
+
+        // 7. THIS IS THE NEW DELAY: Hold the black screen for the specified duration.
+        if (postLoadBlackScreenDuration > 0)
+        {
+            yield return new WaitForSeconds(postLoadBlackScreenDuration);
+        }
+
+        // 8. Fade FROM black and re-enable input
+        FadeCanvas.Instance.FadeOut(fadeDuration);
+        if (GameManager.Instance.Player != null)
+            GameManager.Instance.Player.GetComponent<PlayerInputHandler>().SwitchActionMap("Player");
+
         _isLoading = false;
     }
 
-
+    public void RestartCurrentScene()
+    {
+        if (_currentlyLoadedScene != null)
+        {
+            LoadScene(_currentlyLoadedScene, _currentlyLoadedScene.defaultSpawnPointTag);
+        }
+    }
 }

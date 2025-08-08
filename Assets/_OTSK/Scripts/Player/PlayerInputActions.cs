@@ -1728,6 +1728,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Disabled"",
+            ""id"": ""e6511365-3e7b-4bb8-989a-5ea7249a6e38"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""3d276842-b8e2-42fe-b642-22bdd9ba09c8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""81991edf-898b-428f-bd38-9f8291790f57"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1849,6 +1877,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Targeting_Point = m_Targeting.FindAction("Point", throwIfNotFound: true);
         m_Targeting_CycleTargetingMode = m_Targeting.FindAction("CycleTargetingMode", throwIfNotFound: true);
         m_Targeting_AdjustPitch = m_Targeting.FindAction("AdjustPitch", throwIfNotFound: true);
+        // Disabled
+        m_Disabled = asset.FindActionMap("Disabled", throwIfNotFound: true);
+        m_Disabled_Newaction = m_Disabled.FindAction("New action", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1857,6 +1888,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_EnemyDebug.enabled, "This will cause a leak and performance issues, PlayerInputActions.EnemyDebug.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Targeting.enabled, "This will cause a leak and performance issues, PlayerInputActions.Targeting.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Disabled.enabled, "This will cause a leak and performance issues, PlayerInputActions.Disabled.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2796,6 +2828,102 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="TargetingActions" /> instance referencing this action map.
     /// </summary>
     public TargetingActions @Targeting => new TargetingActions(this);
+
+    // Disabled
+    private readonly InputActionMap m_Disabled;
+    private List<IDisabledActions> m_DisabledActionsCallbackInterfaces = new List<IDisabledActions>();
+    private readonly InputAction m_Disabled_Newaction;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Disabled".
+    /// </summary>
+    public struct DisabledActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public DisabledActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Disabled/Newaction".
+        /// </summary>
+        public InputAction @Newaction => m_Wrapper.m_Disabled_Newaction;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Disabled; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="DisabledActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(DisabledActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="DisabledActions" />
+        public void AddCallbacks(IDisabledActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DisabledActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DisabledActionsCallbackInterfaces.Add(instance);
+            @Newaction.started += instance.OnNewaction;
+            @Newaction.performed += instance.OnNewaction;
+            @Newaction.canceled += instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="DisabledActions" />
+        private void UnregisterCallbacks(IDisabledActions instance)
+        {
+            @Newaction.started -= instance.OnNewaction;
+            @Newaction.performed -= instance.OnNewaction;
+            @Newaction.canceled -= instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="DisabledActions.UnregisterCallbacks(IDisabledActions)" />.
+        /// </summary>
+        /// <seealso cref="DisabledActions.UnregisterCallbacks(IDisabledActions)" />
+        public void RemoveCallbacks(IDisabledActions instance)
+        {
+            if (m_Wrapper.m_DisabledActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="DisabledActions.AddCallbacks(IDisabledActions)" />
+        /// <seealso cref="DisabledActions.RemoveCallbacks(IDisabledActions)" />
+        /// <seealso cref="DisabledActions.UnregisterCallbacks(IDisabledActions)" />
+        public void SetCallbacks(IDisabledActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DisabledActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DisabledActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="DisabledActions" /> instance referencing this action map.
+    /// </summary>
+    public DisabledActions @Disabled => new DisabledActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -3228,5 +3356,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAdjustPitch(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Disabled" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="DisabledActions.AddCallbacks(IDisabledActions)" />
+    /// <seealso cref="DisabledActions.RemoveCallbacks(IDisabledActions)" />
+    public interface IDisabledActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNewaction(InputAction.CallbackContext context);
     }
 }

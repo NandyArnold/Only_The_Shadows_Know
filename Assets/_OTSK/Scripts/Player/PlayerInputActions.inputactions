@@ -1642,6 +1642,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Disabled",
+            "id": "e6511365-3e7b-4bb8-989a-5ea7249a6e38",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "3d276842-b8e2-42fe-b642-22bdd9ba09c8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "81991edf-898b-428f-bd38-9f8291790f57",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

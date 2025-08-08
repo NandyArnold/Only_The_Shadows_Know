@@ -42,6 +42,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         // This log includes the instance ID, so we can see WHO is spawning.
         //Debug.Log($"--- SPAWN PLAYER CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
+        if (GameManager.Instance.Player != null) return;
 
         if (sceneData.sceneType == SceneType.Menu) return;
 
