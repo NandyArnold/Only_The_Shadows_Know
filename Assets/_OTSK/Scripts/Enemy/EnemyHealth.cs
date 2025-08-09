@@ -5,10 +5,13 @@ using System.Collections.Generic;
 
 public class EnemyHealth : MonoBehaviour
 {
-    [SerializeField] private float maxHealth = 50f;
+    
     public float CurrentHealth => _currentHealth;
-    public float MaxHealth => maxHealth;
+    public float MaxHealth => _maxHealth;
+
     private float _currentHealth;
+    private float _maxHealth = 100f;
+
     private bool _isDead = false;
 
     // The new event that EnemyAI will listen to.
@@ -29,7 +32,11 @@ public class EnemyHealth : MonoBehaviour
         _resistances = GetComponent<EnemyResistances>();
 
     }
-
+    public void Initialize(EnemyConfigSO config)
+    {
+        _maxHealth = config.maxHealth;
+        _currentHealth = _maxHealth;
+    }
     // The TakeDamage method now requires an "attacker" so it can broadcast who did the damage.
     public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker)
     {
@@ -47,7 +54,7 @@ public class EnemyHealth : MonoBehaviour
 
         _currentHealth -= totalDamage;
         OnDamaged?.Invoke(attacker);
-        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
 
         Debug.Log($"<color=orange>{gameObject.name} took {totalDamage} total damage!</color>");
 
@@ -67,7 +74,7 @@ public class EnemyHealth : MonoBehaviour
     public void SetHealth(float healthValue)
     {
         _currentHealth = healthValue;
-        OnHealthChanged?.Invoke(_currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
         if (_currentHealth <= 0)
         {
             // If loaded health is zero, make sure the enemy is already dead.

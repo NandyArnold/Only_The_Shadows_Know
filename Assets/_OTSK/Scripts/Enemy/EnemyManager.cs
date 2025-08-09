@@ -11,6 +11,7 @@ public class EnemyManager : MonoBehaviour
 
     private void Awake()
     {
+        //Debug.Log($"--- ENEMY MANAGER INITIALIZED --- \nInstance ID: {GetInstanceID()} on GameObject: {gameObject.name}", this.gameObject);
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
     }
@@ -19,6 +20,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (!_activeEnemies.Contains(enemy))
         {
+            Debug.Log($"Registering enemy: {enemy.gameObject.name} with ID: {enemy.UniqueID}", this.gameObject);
             _activeEnemies.Add(enemy);
         }
     }

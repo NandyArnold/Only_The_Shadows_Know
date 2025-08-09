@@ -35,7 +35,7 @@ public class WeaponManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[WeaponManager] Awake: Successfully found PlayerAnimationController.", this.gameObject);
+            //Debug.Log("[WeaponManager] Awake: Successfully found PlayerAnimationController.", this.gameObject);
         }
         
     }

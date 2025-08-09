@@ -87,7 +87,7 @@ public class PlayerCombat : MonoBehaviour
         }
         if (_daggerAnimation != null)
         {
-            Debug.Log("Dagger Animation found in PlayerCombat.");
+            //Debug.Log("Dagger Animation found in PlayerCombat.");
         }
         else
         {

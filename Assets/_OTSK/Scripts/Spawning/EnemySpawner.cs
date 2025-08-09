@@ -34,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
     public void SpawnEnemy(SpawnData data)
     {
         ISpawnPoint spawnPoint = GlobalSpawnRegistry.Instance.GetSpawnPoint(data.spawnPointID);
-
+        //Debug.Log($"--- SPAWN PLAYER CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
         // --- THIS IS THE NEW FALLBACK LOGIC ---
         if (spawnPoint == null)
         {
@@ -50,9 +50,10 @@ public class EnemySpawner : MonoBehaviour
 
             SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
 
-            if (enemyInstance.TryGetComponent<EnemyAI>(out var enemyAI))
+            if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
-                enemyAI.Initialize(data.patrolRoute);
+                Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}' with patrol route '{data.patrolRoute?.name ?? "None"}'.");
+                enemy.Initialize(data.enemyToSpawn, data.patrolRoute);
             }
         }
         else
@@ -63,9 +64,10 @@ public class EnemySpawner : MonoBehaviour
 
             SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
 
-            if (enemyInstance.TryGetComponent<EnemyAI>(out var enemyAI))
+            if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
-                enemyAI.Initialize(data.patrolRoute);
+                Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
+                enemy.Initialize(data.enemyToSpawn, data.patrolRoute);
             }
         }
     }

@@ -8,35 +8,7 @@ public class EnemyAI : MonoBehaviour
     public EnemyConfigSO Config { get; private set; }
     public EnemyNavigator Navigator { get; private set; }
     public DetectionSystem Detector { get; private set; }
-    public Transform PlayerTarget
-    {
-        get
-        {
-            if (_playerTarget == null)
-            {
-                // First, try to get it from the manager (fastest way).
-                if (GameManager.Instance != null && GameManager.Instance.Player != null)
-                {
-                    _playerTarget = GameManager.Instance.Player.transform;
-                }
-                else
-                {
-                    // If that fails, find it by tag as a fallback.
-                    var playerObject = GameObject.FindGameObjectWithTag("Player");
-                    if (playerObject != null)
-                    {
-                        _playerTarget = playerObject.transform;
-                    }
-                    else
-                    {
-                        // This should now only appear if something is truly broken.
-                        Debug.LogError("EnemyAI: Could not find Player in scene!", this);
-                    }
-                }
-            }
-            return _playerTarget;
-        }
-    }
+    public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
     public EnemyAnimationController AnimController { get; private set; }
   
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
@@ -55,7 +27,7 @@ public class EnemyAI : MonoBehaviour
         // Get references for the states to use
         Config = GetComponent<Enemy>().Config;
         Navigator = GetComponent<EnemyNavigator>();
-        Detector = GetComponent<Enemy>().Detector;
+        Detector = GetComponent<DetectionSystem>();
         _health = GetComponent<EnemyHealth>();
         AnimController = GetComponent<EnemyAnimationController>();
 
@@ -77,6 +49,7 @@ public class EnemyAI : MonoBehaviour
 
         if (CombatManager.Instance != null)
         {
+           
             // CHANGE these to use named methods
             CombatManager.Instance.OnCombatStart += HandleAICombatStart;
             CombatManager.Instance.OnCombatEnd += HandleAICombatEnd;
@@ -103,8 +76,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public void Initialize(PatrolRouteSO route)
+    public void Initialize(EnemyConfigSO newConfig, PatrolRouteSO route)
     {
+        Config = newConfig;
         PatrolRoute = route;
     }
 
@@ -119,6 +93,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        //Debug.Log($"Current State: {_currentState?.GetType().Name ?? "None"}", this);
         // Run the current state's logic every frame.
         _currentState?.Execute(this);
     }
@@ -164,4 +139,14 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleAICombatStart() => AnimController.SetIsInCombat(true);
     private void HandleAICombatEnd() => AnimController.SetIsInCombat(false);
+
+    private Transform FindPlayerTarget()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        {
+            return GameManager.Instance.Player.transform;
+        }
+        var playerObject = GameObject.FindGameObjectWithTag("Player");
+        return playerObject != null ? playerObject.transform : null;
+    }
 }

@@ -7,6 +7,7 @@ public class PatrolState : EnemyAIState
 {
     private readonly PatrolRouteSO _patrolRoute;
     private Coroutine _patrolCoroutine;
+    private int _currentWaypointIndex = -1;
 
     public PatrolState(PatrolRouteSO route)
     {
@@ -15,9 +16,10 @@ public class PatrolState : EnemyAIState
 
     public override void Enter(EnemyAI enemyAI)
     {
+       
         Debug.Log("Entering Patrol State");
-        enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
-        enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+        //enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
+        //enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
 
         // Start the patrol behavior coroutine
         _patrolCoroutine = enemyAI.StartCoroutine(PatrolRoutine(enemyAI));
@@ -25,19 +27,23 @@ public class PatrolState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+    
         // The check for the player now transitions to Alert state.
-        if (enemyAI.Detector != null && enemyAI.Detector.CanSeePlayer())
+        if (enemyAI.Detector.CanSeePlayer())
         {
-            // When we see the player, we become alert and move to their position.
-            enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
-            enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
-            return;
-        }
-        // The Execute method now only needs to check for the player.
-        // The coroutine handles all movement and waiting logic.
-        if (enemyAI.Detector != null && enemyAI.Detector.CanSeePlayer())
-        {
-            enemyAI.TransitionToState(new CombatState());
+            float distanceToPlayer = Vector3.Distance(enemyAI.transform.position, enemyAI.PlayerTarget.position);
+
+            if (distanceToPlayer <= enemyAI.Config.combatEntryRange)
+            {
+                // If player is close, go straight to combat.
+                enemyAI.TransitionToState(new CombatState());
+            }
+            else
+            {
+                // If player is far, go to alert and investigate.
+                enemyAI.LastKnownPlayerPosition = enemyAI.PlayerTarget.position;
+                enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
+            }
         }
     }
 

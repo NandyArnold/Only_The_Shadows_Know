@@ -77,6 +77,7 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void OnEnable()
     {
+        //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
         EnemyManager.Instance.RegisterEnemy(this);
         _health.OnDied += HandleDeath; // Subscribe to the death event
     }
@@ -110,6 +111,28 @@ public class Enemy : MonoBehaviour, ISaveable
         }
     }
 
+    public void Initialize(EnemyConfigSO newConfig, PatrolRouteSO newPatrolRoute)
+    {
+        //Debug.Log($"[Enemy] Initializing Enemy: {gameObject.name} with config: {newConfig.name}");
+        this.config = newConfig;
+
+        // Pass the config data down to all the sub-components.
+        //Debug.Log($"[Enemy] Initializing _health components with config: {newConfig.name}");
+        _health.Initialize(newConfig);
+        //Debug.Log($"[Enemy] Initializing Detector components with config: {newConfig.name}");
+        Detector.Initialize(newConfig);
+        //Debug.Log($"[Enemy] Initializing EnemyAI components with config: {newConfig.name}");
+        _ai.Initialize(newConfig, newPatrolRoute);
+       
+       
+        // You can add initialization for other components here too
+        //_navigator = 
+        //_ai = 
+        //_animController =
+        //_collider =
+        //_uniqueID =
+
+    }
     private void Start()
     {
         _navigator.SetSpeed(config.patrolSpeed);

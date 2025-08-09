@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class DetectionSystem : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private EnemyConfigSO config;
+ 
     [Tooltip("The point from which the enemy 'sees'. Usually the head.")]
     [SerializeField] private Transform eyePoint;
 
@@ -17,15 +16,21 @@ public class DetectionSystem : MonoBehaviour
     public event Action<Vector3> OnSoundDetected;
     public event Action<float, float> OnSoundGaugeChanged;
 
+    private EnemyConfigSO config;
     private Transform _playerTransform;
     private float _soundGauge = 0f;
 
+    public void Initialize(EnemyConfigSO newConfig)
+    {
+        config = newConfig;
+    }
     private void Start()
     {
         // Find the player via the GameManager
         if (GameManager.Instance != null && GameManager.Instance.Player != null)
         {
             _playerTransform = GameManager.Instance.Player.transform;
+            //Debug.Log($"DetectionSystem: Player Transform found: {_playerTransform.name}");
         }
     }
 

@@ -69,7 +69,7 @@ public class CameraController : MonoBehaviour
 
     public void Initialize(CameraManager manager)
     {
-        Debug.Log("CameraController Initializing...");
+        //Debug.Log("CameraController Initializing...");
 
         // Get camera references from the manager
         shoulderCamera = manager.GetCamera(CameraType.Shoulder);
