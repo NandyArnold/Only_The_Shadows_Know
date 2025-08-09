@@ -23,6 +23,7 @@ public class EnemyConfigSO : ScriptableObject
 
     [Header("Detection")]
     public float visionRange = 15f; // Renamed from detectionRange
+
     [Range(0, 360)]
     public float detectionConeAngle = 90f;
     public float hearingRange = 20f;
@@ -33,7 +34,7 @@ public class EnemyConfigSO : ScriptableObject
     [Header("Combat Logic")]
     [Tooltip("If the enemy can't attack the player for this long while in combat, it sounds an alarm.")]
     public float cantAttackAlarmTime = 10f; 
-    [Tooltip("When damaged from stealth, does this enemy instantly know where the player is?")]
+    [Tooltip("Depending on in game events, does this enemy instantly know where the player is?")]
     public bool instantlyKnowsAttackerLocation = true;
     [Tooltip("When in combat, the distance from which it walks instead of running.")]
     public float walkCombatRange = 7f;

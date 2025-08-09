@@ -8,7 +8,17 @@ public class EnemyAI : MonoBehaviour
     public EnemyConfigSO Config { get; private set; }
     public EnemyNavigator Navigator { get; private set; }
     public DetectionSystem Detector { get; private set; }
-    public Transform PlayerTarget { get; private set; }
+    public Transform PlayerTarget
+    {
+        get
+        {
+            if (_playerTarget == null && GameManager.Instance != null && GameManager.Instance.Player != null)
+            {
+                _playerTarget = GameManager.Instance.Player.transform;
+            }
+            return _playerTarget;
+        }
+    }
     public EnemyAnimationController AnimController { get; private set; }
     public PatrolRouteSO PatrolRoute => patrolRoute; // NEW: Exposes the route for other states
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
@@ -20,6 +30,8 @@ public class EnemyAI : MonoBehaviour
     public EnemyAIState CurrentState => _currentState;
 
     private EnemyHealth _health;
+
+    private Transform _playerTarget;
 
     private void Awake()
     {
@@ -48,8 +60,9 @@ public class EnemyAI : MonoBehaviour
 
         if (CombatManager.Instance != null)
         {
-            CombatManager.Instance.OnCombatStart += () => AnimController.SetIsInCombat(true);
-            CombatManager.Instance.OnCombatEnd += () => AnimController.SetIsInCombat(false);
+            // CHANGE these to use named methods
+            CombatManager.Instance.OnCombatStart += HandleAICombatStart;
+            CombatManager.Instance.OnCombatEnd += HandleAICombatEnd;
         }
     }
 
@@ -66,10 +79,10 @@ public class EnemyAI : MonoBehaviour
             Detector.OnSoundDetected -= HandleSoundDetected;
         }
 
-        if (CombatManager.Instance != null)
         {
-            CombatManager.Instance.OnCombatStart -= () => AnimController.SetIsInCombat(true);
-            CombatManager.Instance.OnCombatEnd -= () => AnimController.SetIsInCombat(false);
+            // This will now correctly unsubscribe
+            CombatManager.Instance.OnCombatStart -= HandleAICombatStart;
+            CombatManager.Instance.OnCombatEnd -= HandleAICombatEnd;
         }
     }
 
@@ -78,11 +91,8 @@ public class EnemyAI : MonoBehaviour
         // The enemy always starts in the Patrol state.
         TransitionToState(new PatrolState(patrolRoute));
 
-        // Find the player
-        if (GameManager.Instance != null && GameManager.Instance.Player != null)
-        {
-            PlayerTarget = GameManager.Instance.Player.transform;
-        }
+        
+    
     }
 
     private void Update()
@@ -101,7 +111,8 @@ public class EnemyAI : MonoBehaviour
     // NEW: This method is called when the enemy is damaged.
     private void HandleDamage(GameObject attacker)
     {
-        LastKnownPlayerPosition = attacker.transform.position;
+        if (PlayerTarget == null) return;
+        LastKnownPlayerPosition = PlayerTarget.position;
 
         if (Config.instantlyKnowsAttackerLocation)
         {
@@ -128,4 +139,7 @@ public class EnemyAI : MonoBehaviour
             TransitionToState(new AlertState(soundPosition));
         }
     }
+
+    private void HandleAICombatStart() => AnimController.SetIsInCombat(true);
+    private void HandleAICombatEnd() => AnimController.SetIsInCombat(false);
 }

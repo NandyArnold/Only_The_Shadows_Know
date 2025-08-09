@@ -72,6 +72,7 @@ public class DaggerSO : WeaponSO
                     }
                     else
                     {
+                        combatController.PlayerAnimationController.TriggerSecondaryAttack();
                         Debug.Log("Enemy is alert. Performing a normal heavy slash.");
                         enemyHealth.TakeDamage(slashDamageProfile, combatController.gameObject);
                     }

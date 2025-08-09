@@ -75,6 +75,8 @@ public class PatrolState : EnemyAIState
             }
             // We've arrived. Tell the animator to STOP before we perform the wait action.
             enemyAI.AnimController.SetSpeed(0f);
+            yield return new WaitForSeconds(waypoint.waitTime);
+            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
             PatrolAction actionToPerform = waypoint.action;
 
 

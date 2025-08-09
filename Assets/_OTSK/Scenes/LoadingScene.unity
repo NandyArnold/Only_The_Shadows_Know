@@ -243,7 +243,8 @@ MonoBehaviour:
   progressBarImage: {fileID: 714735729}
   loadingText: {fileID: 1271264001}
   progressText: {fileID: 1848475552}
-  loadingTips: []
+  loadingTips:
+  - '"Commiting is life, commiting is love" - No one, probably'
   loadingTextFadeDuration: 1.5
 --- !u!4 &244607783
 Transform:
@@ -1464,7 +1465,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 2
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535

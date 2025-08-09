@@ -42,42 +42,71 @@ public class DetectionSystem : MonoBehaviour
 
     public bool CanSeePlayer()
     {
-        if (_playerTransform == null) return false;
-
+        if (_playerTransform == null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.Player != null)
+            {
+                _playerTransform = GameManager.Instance.Player.transform;
+            }
+            else
+            {
+                 Debug.LogWarning("DetectionSystem: Player Transform is not set. Cannot perform vision check.");
+                 return false;
+                
+            }
+        }
         if (_playerTransform.TryGetComponent<PlayerController>(out var playerController))
         {
             if (playerController.IsInEndwalkerState)
             {
-                // If the player is invisible, only Undead enemies can see them.
                 if (config.enemyType != EnemyType.Undead)
                 {
-                    return false; // Not Undead, so vision check fails immediately.
+                    return false;
                 }
             }
         }
+
+        Vector3 directionToPlayer = _playerTransform.position - eyePoint.position;
+        float distanceToPlayer = directionToPlayer.magnitude;
+
         // 1. Check if the player is within detection range.
-        float distanceToPlayer = Vector3.Distance(eyePoint.position, _playerTransform.position);
+
         if (distanceToPlayer > config.visionRange)
         {
+            //Debug.Log($"<color=orange>VISION FAILED:</color> Distance Check. Distance was {distanceToPlayer}, but range is {config.visionRange}.");
             return false;
+            
         }
 
-        // 2. Check if the player is within the vision cone angle.
-        Vector3 directionToPlayer = (_playerTransform.position - eyePoint.position).normalized;
-        if (Vector3.Angle(transform.forward, directionToPlayer) > config.detectionConeAngle / 2)
+        // 2. Check the angle on the horizontal (XZ) plane, ignoring height differences.
+        Vector3 forwardOnPlane = Vector3.ProjectOnPlane(eyePoint.forward, Vector3.up).normalized;
+        Vector3 directionOnPlane = Vector3.ProjectOnPlane(directionToPlayer, Vector3.up).normalized;
+      //-------- debuglog 
+        float horizontalAngle = Vector3.Angle(forwardOnPlane, directionOnPlane);
+
+        if (horizontalAngle > config.detectionConeAngle / 2)
+        {
+            //Debug.Log($"<color=orange>VISION FAILED:</color> Angle Check. Angle was {horizontalAngle}, but cone is {config.detectionConeAngle / 2}.");
+            return false;
+        }
+      //-----------
+        if (Vector3.Angle(forwardOnPlane, directionOnPlane) > config.detectionConeAngle / 2)
         {
             return false;
         }
 
-        // 3. Check if line of sight is blocked by an obstacle.
-        if (Physics.Raycast(eyePoint.position, directionToPlayer, distanceToPlayer, visionBlockingLayers))
+        // 3. Check if line of sight is blocked by an obstacle in full 3D.
+        // We aim for the player's center mass for a more reliable check.
+        Vector3 playerCenterMass = _playerTransform.position + Vector3.up * 1.5f;
+        if (Physics.Linecast(eyePoint.position, playerCenterMass, out RaycastHit hit, visionBlockingLayers))
         {
-            return false; // Something is blocking the view.
+            //Debug.Log($"<color=orange>VISION FAILED:</color> Line of sight blocked by '{hit.collider.name}'.");
+            return false;
         }
 
         // If all checks pass, the enemy can see the player.
-        // If all checks pass, draw a GREEN line and return true.
-        Debug.DrawRay(eyePoint.position, directionToPlayer.normalized * distanceToPlayer, Color.green);
+        //Debug.Log("<color=green>VISION SUCCESS:</color> Player is visible.");
+        Debug.DrawRay(eyePoint.position, directionToPlayer * distanceToPlayer, Color.green);
         return true;
     }
 
