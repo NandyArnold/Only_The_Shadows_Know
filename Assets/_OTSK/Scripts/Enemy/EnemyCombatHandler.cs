@@ -13,6 +13,6 @@ public class EnemyCombatHandler : MonoBehaviour
     public void PerformAttack()
     {
         _animController.PlayPrimaryAttackAnimation();
-        Debug.Log("Enemy Attacks!");
+        //Debug.Log("Enemy Attacks!");
     }
 }

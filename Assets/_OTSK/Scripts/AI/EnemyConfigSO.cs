@@ -17,6 +17,7 @@ public class EnemyConfigSO : ScriptableObject
     public float attackDamage = 10f;
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
+    public float attackAnimationDuration = 1.2f;
 
     [Header("Movement")]
     public float patrolSpeed = 2f;

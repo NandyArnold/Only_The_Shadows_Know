@@ -24,7 +24,7 @@ public class AlertState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        Debug.Log("Executing Alert State");
+        //Debug.Log("Executing Alert State");
         // If we get a visual on the player and are close enough, escalate to combat.
         if (enemyAI.Detector.CanSeePlayer() &&
             Vector3.Distance(enemyAI.transform.position, enemyAI.PlayerTarget.position) <= enemyAI.Config.combatEntryRange)
