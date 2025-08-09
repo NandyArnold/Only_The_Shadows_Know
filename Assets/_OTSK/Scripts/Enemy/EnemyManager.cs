@@ -55,4 +55,15 @@ public class EnemyManager : MonoBehaviour
         }
         return false;
     }
+    public void ReturnAllToPatrol()
+    {
+        // We iterate backwards because if an enemy is destroyed, it won't break the loop.
+        for (int i = _activeEnemies.Count - 1; i >= 0; i--)
+        {
+            if (_activeEnemies[i] != null && _activeEnemies[i].TryGetComponent<EnemyAI>(out var ai))
+            {
+                ai.ForceReturnToPatrol();
+            }
+        }
+    }
 }

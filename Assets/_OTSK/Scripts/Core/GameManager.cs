@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // ... (Singleton and DontDestroyOnLoad logic remains the same) ...
+        // ... (Singleton logic remains the same) ...
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -39,11 +39,7 @@ public class GameManager : MonoBehaviour
             SceneLoader.Instance.OnSceneLoaded += OnSceneWasLoaded;
         }
 
-        // Load the very first scene
-        //if (initialScene != null)
-        //{
-        //    SceneLoader.Instance.LoadSceneAsync(initialScene);
-        //}
+      
     }
     private void Start()
     {

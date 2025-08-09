@@ -2566,7 +2566,8 @@ MonoBehaviour:
   playerSkillController: {fileID: 6023620784964649685}
   playerCombat: {fileID: 7367054569523521278}
   cameraController: {fileID: 201230392791682701}
-  playerHealthManaNoise: {fileID: 6750015388211781664}
+  playerStats: {fileID: 6750015388211781664}
+  deathAnimationDuration: 2.5
 --- !u!114 &2210745878514288481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2621,7 +2622,7 @@ MonoBehaviour:
   playerAnimationController: {fileID: 7619512642376539503}
   playerInputHandler: {fileID: 2210745878514288481}
   playerCombat: {fileID: 7367054569523521278}
-  playerHealthManaNoise: {fileID: 6750015388211781664}
+  playerStats: {fileID: 6750015388211781664}
   groundCheckPoint: {fileID: 4313145350801755303}
   groundCheckRadius: 0.2
   groundCastDistance: 0.3
@@ -2632,6 +2633,7 @@ MonoBehaviour:
   runSpeed: 6
   crouchSpeedMultiplier: 0.5
   jumpHeight: 1.5
+  runningJumpHeight: 2.5
   gravity: -9.81
   aimSpeedMultiplier: 0.5
   normalHeight: 2
@@ -2656,7 +2658,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   maxMana: 100
-  maxNoise: 100
 --- !u!114 &7619512642376539503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2689,7 +2690,7 @@ MonoBehaviour:
   aimConstraint: {fileID: 606680434202663557}
   playerSkillController: {fileID: 6023620784964649685}
   noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
-  playerHealthManaNoise: {fileID: 6750015388211781664}
+  playerStats: {fileID: 6750015388211781664}
   firePoint: {fileID: 2862543130965560594}
   handSocketR: {fileID: 1869571380571909251}
   handSocketL: {fileID: 7422512713992560123}
@@ -2769,8 +2770,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerInputHandler: {fileID: 2210745878514288481}
-  playerHealthManaNoise: {fileID: 6750015388211781664}
-  _playerMovement: {fileID: 0}
+  playerStats: {fileID: 6750015388211781664}
+  _playerMovement: {fileID: 629505888469661623}
   skillRegistry: {fileID: 11400000, guid: 5cdffd3c250d9b74e93764dddddbd4dd, type: 2}
   equippedSkillIDs: 020000000100000003000000060000000700000004000000
 --- !u!114 &2990850092433171703

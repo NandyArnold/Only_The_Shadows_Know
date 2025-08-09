@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleDeath()
     {
-        if (_isDead) return;
+        if (_isDead) return; // Prevent multiple death triggers
         StartCoroutine(DeathRoutine());
     }
 
@@ -66,8 +66,13 @@ public class PlayerController : MonoBehaviour
     {
         _isDead = true;
 
+        //  Tell all enemies to stand down.
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.ReturnAllToPatrol();
+        }
         // Disable inputs
-        GetComponent<PlayerInputHandler>().SwitchActionMap("Disabled");
+        GetComponent<PlayerInputHandler>().SwitchActionMap("UI");
 
         // Play death animation
         GetComponent<PlayerAnimationController>().PlayDeathAnimation();

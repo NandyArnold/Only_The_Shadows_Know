@@ -79,9 +79,13 @@ public class TimeManager : MonoBehaviour
     private void HandleGameStateChanged(GameState newState)
     {
         // If the new state is Gameplay, reset time. Otherwise, pause it.
-        if (newState == GameState.Gameplay)
+        if (newState == GameState.Gameplay )
         {
             ResetTimeScale();
+        }
+        else if(newState == GameState.GameOver)
+        {
+            ResetTimeScale(); // Reset time scale on Game Over
         }
         else
         {

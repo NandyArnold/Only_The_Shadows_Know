@@ -41,6 +41,7 @@ public class CursorManager : MonoBehaviour
             case GameState.Menu:
             case GameState.Cutscene:
             case GameState.Loading:
+            case GameState.GameOver:
                 SetState(CursorState.UI);
                 break;
         }
