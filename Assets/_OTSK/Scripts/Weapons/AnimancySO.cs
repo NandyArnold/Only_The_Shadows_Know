@@ -27,7 +27,7 @@ public class AnimancySO : WeaponSO
     public override void PrimaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+        NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
         Transform firePoint = combatController.FirePoint;
         CinemachineBrain cinemachineBrain = combatController.Brain;
@@ -55,8 +55,8 @@ public class AnimancySO : WeaponSO
         if (Physics.Raycast(firePoint.position, fireDirection, out RaycastHit damageHit, rangedRange, hittableLayers))
         {
             endPoint = damageHit.point; // The beam should end exactly where the damage was dealt.
-                                        
-            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+
+            NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
             // Check if the hit object is a real enemy
             if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth) && damageHit.collider.TryGetComponent<Enemy>(out var enemy))
@@ -104,7 +104,7 @@ public class AnimancySO : WeaponSO
     public override void SecondaryAttack(PlayerCombat combatController)
     {
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+        NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, meleeRange, hittableLayers);
         if (hits.Any())

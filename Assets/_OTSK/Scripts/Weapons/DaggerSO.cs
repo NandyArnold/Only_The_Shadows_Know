@@ -23,8 +23,8 @@ public class DaggerSO : WeaponSO
         //    //combatController.GetComponent<DaggerAnimation>().PlayPrimaryAttack();
             
         //}
-            combatController.PlayerAnimationController.TriggerPrimaryAttack();
-            combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+        combatController.PlayerAnimationController.TriggerPrimaryAttack();
+        NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketL.position, attackRange, hittableLayers);
         if (hits.Any())
@@ -51,8 +51,8 @@ public class DaggerSO : WeaponSO
     // Secondary Attack (RMB) - A finisher if the enemy is unaware.
     public override void SecondaryAttack(PlayerCombat combatController)
     {
-        
-        combatController.HealthManaNoise.GenerateNoise(combatController.NoiseSettings.daggerAttackNoise);
+
+        NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
         Collider[] hits = Physics.OverlapSphere(combatController.HandSocketR.position, attackRange, hittableLayers);
         if (hits.Any())

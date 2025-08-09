@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The handler for camera control and rotation.")]
     [SerializeField] private CameraController cameraController;
     [Tooltip("The handler for player health, mana, and noise.")]
-    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    [SerializeField] private PlayerStats playerHealthManaNoise;
 
     public bool IsInEndwalkerState { get; private set; } = false;
 

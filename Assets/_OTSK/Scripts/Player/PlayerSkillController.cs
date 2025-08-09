@@ -6,7 +6,7 @@ public class PlayerSkillController : MonoBehaviour
 {
     [Header("Component References")]
     [SerializeField] private PlayerInputHandler playerInputHandler;
-    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    [SerializeField] private PlayerStats playerStats;
     [SerializeField ]private PlayerMovement _playerMovement;
 
     [Header("Skill Data")]
@@ -23,7 +23,7 @@ public class PlayerSkillController : MonoBehaviour
     private void Awake()
     {
         if (playerInputHandler == null) playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+        if (playerStats == null) playerStats = GetComponent<PlayerStats>();
         if (_playerMovement == null) _playerMovement = GetComponent<PlayerMovement>();
         InitializeSkills();
     }
@@ -108,7 +108,7 @@ public class PlayerSkillController : MonoBehaviour
         }
 
         if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID)) return;
-        if (playerHealthManaNoise.CurrentMana < skill.manaCost) return;
+        if (playerStats.CurrentMana < skill.manaCost) return;
 
         switch (skill.usageCondition)
         {
@@ -120,7 +120,7 @@ public class PlayerSkillController : MonoBehaviour
         _isActivatingASkill = true;
         if (skill.castMode != CastMode.Targeted)
         {
-            playerHealthManaNoise.ConsumeMana(skill.manaCost);
+            playerStats.ConsumeMana(skill.manaCost);
         }
 
         Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName}");
@@ -202,7 +202,7 @@ public class PlayerSkillController : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            if (!playerHealthManaNoise.ConsumeMana(skill.manaCostOverTime))
+            if (!playerStats.ConsumeMana(skill.manaCostOverTime))
             {
                 HandleSkillCanceled(System.Array.IndexOf(_equippedSkills.ToArray(), skill));
                 yield break;

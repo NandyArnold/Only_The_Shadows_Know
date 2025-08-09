@@ -123,16 +123,16 @@ public class HUDManager : MonoBehaviour
             inputHandler.OnShowObjectiveInput += HandleShowObjective;
         }
 
-        if (player.TryGetComponent<PlayerHealthManaNoise>(out var stats))
+        if (player.TryGetComponent<PlayerStats>(out var stats))
         {
             stats.OnHealthChanged += UpdateHealthBar;
             stats.OnManaChanged += UpdateManaBar;
-            stats.OnNoiseChanged += UpdateNoiseBar;
+           
 
             // Now we can safely get the initial values.
             UpdateHealthBar(stats.CurrentHealth, 100f);
             UpdateManaBar(stats.CurrentMana, 100f);
-            UpdateNoiseBar(stats.CurrentNoise, 100f);
+            
 
             healthSlider.gameObject.SetActive(true);
             manaSlider.gameObject.SetActive(true);

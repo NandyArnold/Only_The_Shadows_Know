@@ -120,7 +120,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
             animController.SetSpectralState(3);
             yield return new WaitForSeconds(confirmCastDuration);
 
-            caster.GetComponent<PlayerHealthManaNoise>().ConsumeMana(
+            caster.GetComponent<PlayerStats>().ConsumeMana(
            caster.GetComponent<PlayerSkillController>().GetSkill(SkillIdentifier.SpectralShift).manaCost
        );
 

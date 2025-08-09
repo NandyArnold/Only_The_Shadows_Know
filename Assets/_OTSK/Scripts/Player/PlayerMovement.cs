@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerCombat playerCombat;
-    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    [SerializeField] private PlayerStats playerStats;
 
     [Header("Ground Check Settings")]
     [SerializeField] private Transform groundCheckPoint;
@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         _cameraTransform = Camera.main.transform;
         _currentSpeed = walkSpeed;
         if (noiseSettings == null) Debug.LogError("NoiseSettingsSO not assigned on PlayerMovement!");
-        if (playerHealthManaNoise == null) playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+       
     }
 
     private void OnEnable()
@@ -158,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!_wasGrounded && isGroundedNow)
         {
-            playerHealthManaNoise.GenerateNoise(noiseSettings.landNoise);
+            NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
             _isJumping = false;
         }
 
@@ -204,14 +204,20 @@ public class PlayerMovement : MonoBehaviour
         // If the checks above pass, we are clear to jump.
         float currentJumpHeight = _isRunning ? runningJumpHeight : jumpHeight;
         float noiseToGenerate = _isRunning ? noiseSettings.jumpRunningNoise : noiseSettings.jumpNoise;
-        playerHealthManaNoise.GenerateNoise(noiseToGenerate);
+        
 
         _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         if (_isRunning)
+        {
             playerAnimationController.PlayRunningJumpAnimation();
+            NoiseManager.Instance.GenerateNoise(transform.position, noiseToGenerate, this.gameObject);
+        }
         else
+        {
             playerAnimationController.PlayStandardJumpAnimation();
+            NoiseManager.Instance.GenerateNoise(transform.position, noiseToGenerate, this.gameObject);
+        }
         _isJumping = false; // Reset jumping state after initiating jump
 
     }
@@ -232,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("<color=red>DODGE BLOCKED: Not Grounded.</color>");
             return;
         }
-        playerHealthManaNoise.GenerateNoise(noiseSettings.dodgeRollNoise);
+        NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.dodgeRollNoise, this.gameObject);
         StartCoroutine(DodgeRollCoroutine());
     }
 
@@ -360,17 +366,17 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Generate crouch-walk noise (e.g., 25 * 0.5 = 12.5 per second)
                 float crouchNoise = noiseSettings.walkNoise * noiseSettings.crouchNoiseModifier;
-                playerHealthManaNoise.GenerateNoise(crouchNoise * Time.deltaTime);
+                NoiseManager.Instance.GenerateNoise(transform.position, crouchNoise * Time.deltaTime, gameObject);
             }
             else if (_isRunning)
             {
                 // Generate run noise
-                playerHealthManaNoise.GenerateNoise(noiseSettings.runNoise * Time.deltaTime);
+                NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.runNoise * Time.deltaTime, gameObject);
             }
             else // Must be walking
             {
                 // Generate walk noise
-                playerHealthManaNoise.GenerateNoise(noiseSettings.walkNoise * Time.deltaTime);
+                NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.walkNoise * Time.deltaTime, gameObject);
             }
         }
     }

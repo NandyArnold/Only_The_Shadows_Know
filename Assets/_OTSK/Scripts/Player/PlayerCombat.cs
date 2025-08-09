@@ -16,7 +16,7 @@ public class PlayerCombat : MonoBehaviour
     public bool IsAiming => _isAiming;
     public WeaponSO CurrentWeapon => _currentWeapon;
     public NoiseSettingsSO NoiseSettings => noiseSettings;
-    public PlayerHealthManaNoise HealthManaNoise => playerHealthManaNoise;
+    public PlayerStats PlayerStats => playerStats;
     public Transform HandSocketR => handSocketR;
     public Transform HandSocketL => handSocketL;
 
@@ -30,7 +30,7 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Data References")]
     [SerializeField] private NoiseSettingsSO noiseSettings;
-    [SerializeField] private PlayerHealthManaNoise playerHealthManaNoise;
+    [SerializeField] private PlayerStats playerStats;
 
     [Header("Combat Points")]
     [SerializeField] private Transform firePoint;
@@ -72,7 +72,7 @@ public class PlayerCombat : MonoBehaviour
         ikRig = GetComponentInChildren<Rig>();
         Brain = Camera.main.GetComponent<CinemachineBrain>();
 
-        playerHealthManaNoise = GetComponent<PlayerHealthManaNoise>();
+        playerStats = GetComponent<PlayerStats>();
 
        
 

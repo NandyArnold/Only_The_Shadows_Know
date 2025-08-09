@@ -90,7 +90,7 @@ public class SaveLoadManager : MonoBehaviour
         var player = GameManager.Instance.Player;
         if (player == null) return;
 
-        var stats = player.GetComponent<PlayerHealthManaNoise>();
+        var stats = player.GetComponent<PlayerStats>();
 
         // Convert Unity types to ESave's savable types
         _currentGameState.playerData.position = player.transform.position.ToSavable();
@@ -112,7 +112,7 @@ public class SaveLoadManager : MonoBehaviour
         player.transform.rotation = _currentGameState.playerData.rotation.quaternionValue;
 
         controller.enabled = true;
-        var stats = player.GetComponent<PlayerHealthManaNoise>();
+        var stats = player.GetComponent<PlayerStats>();
         stats.RestoreStats(_currentGameState.playerData.currentHealth, _currentGameState.playerData.currentMana);
     }
 
