@@ -44,4 +44,15 @@ public class EnemyManager : MonoBehaviour
             enemy.Detector?.OnSoundHeard(sourcePosition, intensity);
         }
     }
+    public bool IsAnyEnemyAlerted()
+    {
+        foreach (var enemy in _activeEnemies)
+        {
+            if (enemy.GetComponent<EnemyAI>().CurrentState is AlertState)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -14,7 +14,7 @@ public class HUDManager : MonoBehaviour
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider manaSlider;
-    [SerializeField] private Slider noiseSlider;
+  
 
     [Header("Objective UI")]
     [SerializeField] private TextMeshProUGUI objectiveText;
@@ -71,7 +71,7 @@ public class HUDManager : MonoBehaviour
         }
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
-        if (noiseSlider != null) noiseSlider.gameObject.SetActive(false);
+      
         if (crosshairPanel != null) crosshairPanel.SetActive(false);
        
     }
@@ -136,7 +136,7 @@ public class HUDManager : MonoBehaviour
 
             healthSlider.gameObject.SetActive(true);
             manaSlider.gameObject.SetActive(true);
-            noiseSlider.gameObject.SetActive(true);
+         
         }
 
         if (crosshairPrefab != null && crosshairPanel != null && _crosshairInstance == null)
@@ -254,9 +254,6 @@ public class HUDManager : MonoBehaviour
         if (manaSlider != null) manaSlider.value = currentMana / maxMana;
     }
 
-    private void UpdateNoiseBar(float currentNoise, float maxNoise)
-    {
-        if (noiseSlider != null) noiseSlider.value = currentNoise / maxNoise;
-    }
+  
 
 }
