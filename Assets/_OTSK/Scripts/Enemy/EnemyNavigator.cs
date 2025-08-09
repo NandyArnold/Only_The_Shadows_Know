@@ -25,6 +25,11 @@ public class EnemyNavigator : MonoBehaviour
 
     public void Stop()
     {
-        _agent.ResetPath();
+        _agent.isStopped =true;
+    }
+
+    public void Resume()
+    {
+        _agent.isStopped = false;
     }
 }

@@ -55,8 +55,9 @@ public class PatrolState : EnemyAIState
     {
         if (_patrolRoute == null || _patrolRoute.waypoints.Count == 0)
         {
+            enemyAI.AnimController.SetSpeed(0f);
             Debug.LogWarning("Patrol route is empty, patrol state will do nothing.");
-            yield break; // Exit the coroutine if there's no path.
+            yield break;
         }
 
         int currentWaypointIndex = 0;
@@ -64,28 +65,36 @@ public class PatrolState : EnemyAIState
         {
             PatrolWaypoint waypoint = _patrolRoute.waypoints[currentWaypointIndex];
 
+            // 1. Tell the agent it's time to move again.
+            enemyAI.Navigator.Resume();
+            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+
             // Move to the waypoint.
             enemyAI.Navigator.MoveTo(waypoint.position);
-            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
 
             // Wait until we've reached the destination.
             while (Vector3.Distance(enemyAI.transform.position, waypoint.position) > 1.5f)
             {
                 yield return null; // Wait for the next frame
             }
-            // We've arrived. Tell the animator to STOP before we perform the wait action.
-            enemyAI.AnimController.SetSpeed(0f);
-            yield return new WaitForSeconds(waypoint.waitTime);
-            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+            // 2. We've arrived. Tell the agent to stop completely.
+            enemyAI.Navigator.Stop();
+            enemyAI.AnimController.SetSpeed(0f); // Enter Idle state
+
+
+            //yield return new WaitForSeconds(waypoint.waitTime);
+
             PatrolAction actionToPerform = waypoint.action;
+
+            //enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);   // hmm, maybe this was the problem
 
 
             if (waypoint.randomizeAction)
             {
-                // Get all possible enum values and pick a random one.
-                var allActions = Enum.GetValues(typeof(PatrolAction));
+                var allActions = System.Enum.GetValues(typeof(PatrolAction));
                 actionToPerform = (PatrolAction)allActions.GetValue(UnityEngine.Random.Range(0, allActions.Length));
             }
+
 
             switch (actionToPerform)
             {
@@ -95,6 +104,7 @@ public class PatrolState : EnemyAIState
                     break;
                 case PatrolAction.WaitAndLook:
                     Debug.Log("Waiting and Looking...");
+                    // TODO // Implement the "look around" behavior here.
                     yield return new WaitForSeconds(waypoint.waitTime);
                     break;
                 case PatrolAction.Continue:
