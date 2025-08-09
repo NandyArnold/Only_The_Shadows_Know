@@ -1,4 +1,5 @@
 // SceneDataSO.cs
+using System.Collections.Generic;
 using UnityEngine;
 
 // Define the different types of scenes we can have.
@@ -26,8 +27,11 @@ public class SceneDataSO : ScriptableObject
     [Tooltip("Optional: Lore or tip text for loading screens.")]
     public string description;
 
-    [Header("Level Logic")] // You can add a header for organization
+    [Header("Level Logic")] 
     public LevelObjectiveChainSO objectiveChain;
     public string defaultSpawnPointTag = "InitialSpawn";
+
+    [Header("Enemy Spawning")]
+    public List<SpawnData> enemyInitialSpawns;
 
 }

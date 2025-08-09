@@ -5,6 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyConfig_", menuName = "Only The Shadows Know/Enemy Configuration")]
 public class EnemyConfigSO : ScriptableObject
 {
+    [Header("Prefab")]
+    public GameObject enemyPrefab;
+
     [Header("Enemy Info")]
     public EnemyType enemyType;
     public string displayName;

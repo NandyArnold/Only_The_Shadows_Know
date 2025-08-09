@@ -12,19 +12,36 @@ public class EnemyAI : MonoBehaviour
     {
         get
         {
-            if (_playerTarget == null && GameManager.Instance != null && GameManager.Instance.Player != null)
+            if (_playerTarget == null)
             {
-                _playerTarget = GameManager.Instance.Player.transform;
+                // First, try to get it from the manager (fastest way).
+                if (GameManager.Instance != null && GameManager.Instance.Player != null)
+                {
+                    _playerTarget = GameManager.Instance.Player.transform;
+                }
+                else
+                {
+                    // If that fails, find it by tag as a fallback.
+                    var playerObject = GameObject.FindGameObjectWithTag("Player");
+                    if (playerObject != null)
+                    {
+                        _playerTarget = playerObject.transform;
+                    }
+                    else
+                    {
+                        // This should now only appear if something is truly broken.
+                        Debug.LogError("EnemyAI: Could not find Player in scene!", this);
+                    }
+                }
             }
             return _playerTarget;
         }
     }
     public EnemyAnimationController AnimController { get; private set; }
-    public PatrolRouteSO PatrolRoute => patrolRoute; // NEW: Exposes the route for other states
+  
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
-    [Header("AI Data")]
-    [SerializeField] private PatrolRouteSO patrolRoute;
+    public PatrolRouteSO PatrolRoute { get; private set; }
 
     private EnemyAIState _currentState;
     public EnemyAIState CurrentState => _currentState;
@@ -86,13 +103,18 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    public void Initialize(PatrolRouteSO route)
+    {
+        PatrolRoute = route;
+    }
+
     private void Start()
     {
         // The enemy always starts in the Patrol state.
-        TransitionToState(new PatrolState(patrolRoute));
+        TransitionToState(new PatrolState(PatrolRoute));
 
-        
-    
+
+
     }
 
     private void Update()
@@ -127,7 +149,7 @@ public class EnemyAI : MonoBehaviour
     // NEW: This public method can be called by external systems (like CombatManager or a skill)
     public void ForceReturnToPatrol()
     {
-        TransitionToState(new PatrolState(patrolRoute));
+        TransitionToState(new PatrolState(PatrolRoute));
     }
 
     private void HandleSoundDetected(Vector3 soundPosition)

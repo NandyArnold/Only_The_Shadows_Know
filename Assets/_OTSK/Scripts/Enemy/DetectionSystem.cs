@@ -46,6 +46,7 @@ public class DetectionSystem : MonoBehaviour
         {
             if (GameManager.Instance != null && GameManager.Instance.Player != null)
             {
+                Debug.LogWarning("DetectionSystem: Player Transform was null, but GameManager found the player. Updating reference.");
                 _playerTransform = GameManager.Instance.Player.transform;
             }
             else

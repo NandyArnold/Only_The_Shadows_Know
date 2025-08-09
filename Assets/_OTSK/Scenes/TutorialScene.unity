@@ -5378,6 +5378,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1741608741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1741608743}
+  - component: {fileID: 1741608744}
+  m_Layer: 6
+  m_Name: Guard_PatrolA_SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1741608743
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1741608741}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -27.53, y: 1.36, z: -21.65}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1741608744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1741608741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPointID: Guard_PatrolA
 --- !u!1 &1748351054
 GameObject:
   m_ObjectHideFlags: 0
@@ -7014,6 +7059,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight_Patrol_Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3313542892861222217, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.86
@@ -7840,6 +7889,7 @@ SceneRoots:
   - {fileID: 1254408165}
   - {fileID: 2026692114}
   - {fileID: 2119770060307582572}
+  - {fileID: 1741608743}
   - {fileID: 1879965530}
   - {fileID: 1378631851}
   - {fileID: 12628965}
