@@ -157,6 +157,10 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void HandleDeath()
     {
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.UnregisterEnemyFromCombat(this);
+        }
         //  Destroy the status bar immediately.
         if (_statusBarInstance != null)
         {

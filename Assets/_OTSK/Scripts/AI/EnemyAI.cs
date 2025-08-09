@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour
     public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
     public EnemyAnimationController AnimController { get; private set; }
   
+    public EnemyCombatHandler CombatHandler { get; private set; } 
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
     public PatrolRouteSO PatrolRoute { get; private set; }
@@ -30,7 +31,7 @@ public class EnemyAI : MonoBehaviour
         Detector = GetComponent<DetectionSystem>();
         _health = GetComponent<EnemyHealth>();
         AnimController = GetComponent<EnemyAnimationController>();
-
+        CombatHandler = GetComponent<EnemyCombatHandler>();
 
     }
 
