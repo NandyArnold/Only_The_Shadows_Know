@@ -1,5 +1,5 @@
 // PlayerController.cs
-
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -21,10 +21,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerCombat playerCombat;
     [Tooltip("The handler for camera control and rotation.")]
     [SerializeField] private CameraController cameraController;
-    [Tooltip("The handler for player health, mana, and noise.")]
-    [SerializeField] private PlayerStats playerHealthManaNoise;
+    [Tooltip("The handler for player health and mana.")]
+    [SerializeField] private PlayerStats playerStats;
+
+    [Header("Death Settings")] 
+    [SerializeField] private float deathAnimationDuration = 2.5f;
 
     public bool IsInEndwalkerState { get; private set; } = false;
+    private PlayerStats _playerStats;
+    private bool _isDead = false;
 
     void Awake()
     {
@@ -38,7 +43,42 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("PlayerController could not find GameManager.Instance to register with!", this);
         }
+        _playerStats = GetComponent<PlayerStats>();
     }
+
+    private void OnEnable()
+    {
+        if (_playerStats != null) _playerStats.OnDied += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        if (_playerStats != null) _playerStats.OnDied -= HandleDeath;
+    }
+
+    private void HandleDeath()
+    {
+        if (_isDead) return;
+        StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        _isDead = true;
+
+        // Disable inputs
+        GetComponent<PlayerInputHandler>().SwitchActionMap("Disabled");
+
+        // Play death animation
+        GetComponent<PlayerAnimationController>().PlayDeathAnimation();
+
+        // Wait for the animation to play
+        yield return new WaitForSeconds(deathAnimationDuration);
+
+        // Trigger the Game Over state
+        GameManager.Instance.UpdateGameState(GameState.GameOver);
+    }
+
 
     public void SetEndwalkerState(bool isActive)
     {

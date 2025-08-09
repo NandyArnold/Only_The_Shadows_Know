@@ -9,5 +9,7 @@ public enum GameState
     // For when a cinematic is playing and UI/Player Input should be disabled.
     Cutscene,
     // For when the game is transitioning between scenes.
-    Loading
+    Loading,
+    // For when the game is in a state where the player has lost, such as after dying.
+    GameOver
 }

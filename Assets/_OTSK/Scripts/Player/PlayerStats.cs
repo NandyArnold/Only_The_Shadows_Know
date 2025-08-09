@@ -20,7 +20,8 @@ public class PlayerStats : MonoBehaviour
     // --- Public Properties ---
     public float CurrentHealth { get; private set; }
     public float CurrentMana { get; private set; }
-    
+    public float MaxHealth => maxHealth;
+
     //public float CurrentNoise => _currentNoiseLevel;
 
     // --- Public Events ---
@@ -28,26 +29,33 @@ public class PlayerStats : MonoBehaviour
     public event Action<float, float> OnHealthChanged;
     public event Action<float, float> OnManaChanged;
     public event Action OnDamaged;
+    public event Action OnDied;
+
+    private PlayerAnimationController _animController;
     private void Awake()
     {
        
         CurrentHealth = maxHealth;
         CurrentMana = maxMana;
-      
+        _animController = GetComponent<PlayerAnimationController>();
+
     }
 
     // --- Public Methods for Modifying Stats ---
 
     public void TakeDamage(float amount)
     {
+        if (CurrentHealth <= 0) return; // Don't take damage if already dead
+
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
-        OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-        OnDamaged?.Invoke(); // Announce that we took damage
+        OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        OnDamaged?.Invoke();
+        _animController?.PlayTakeDamageAnimation(); // Trigger damage animation
+
 
         if (CurrentHealth <= 0)
         {
-            // We will add death logic here in the next step
-            Debug.Log("Player has died.");
+            OnDied?.Invoke(); // Announce that the player has died
         }
     }
 
