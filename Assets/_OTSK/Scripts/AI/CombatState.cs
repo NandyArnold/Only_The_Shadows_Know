@@ -9,6 +9,7 @@ public class CombatState : EnemyAIState
         Debug.Log("Entering Combat State");
         //Pass a reference to the enemy.
         CombatManager.Instance.RegisterEnemyInCombat(enemyAI.GetComponent<Enemy>());
+        enemyAI.Navigator.Resume();
 
         enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
         enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
@@ -66,5 +67,9 @@ public class CombatState : EnemyAIState
     public override void Exit(EnemyAI enemyAI)
     {
         Debug.Log("Exiting Combat State");
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.UnregisterEnemyFromCombat(enemyAI.GetComponent<Enemy>());
+        }
     }
 }
