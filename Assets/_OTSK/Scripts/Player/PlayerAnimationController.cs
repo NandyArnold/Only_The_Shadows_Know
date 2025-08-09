@@ -30,8 +30,9 @@ public class PlayerAnimationController : MonoBehaviour
 
     private readonly int scryingCastTriggerHash = Animator.StringToHash("Scrying_Cast");
 
+    private readonly int takeDamageTriggerHash = Animator.StringToHash("TakeDamageTrigger");
 
-
+    private PlayerStats _playerStats;
 
     // --- WEAPON ANIMATION ---
     private IWeaponAnimation _currentWeaponAnimation;
@@ -42,6 +43,20 @@ public class PlayerAnimationController : MonoBehaviour
             animator = GetComponent<Animator>();
     }
 
+    private void OnEnable()
+    {
+        if (_playerStats != null)
+        {
+            _playerStats.OnDamaged += PlayTakeDamageAnimation;
+        }
+    }
+    private void OnDisable()
+    {
+        if (_playerStats != null)
+        {
+            _playerStats.OnDamaged -= PlayTakeDamageAnimation;
+        }
+    }
     // PlayerCombat will call this when a weapon is equipped.
     public void SetWeaponAnimation(IWeaponAnimation weaponAnimation)
     {
@@ -150,5 +165,9 @@ public class PlayerAnimationController : MonoBehaviour
     public void PlayScryingCastAnimation()
     {
         animator.SetTrigger(scryingCastTriggerHash);
+    }
+    public void PlayTakeDamageAnimation()
+    {
+        animator.SetTrigger(takeDamageTriggerHash);
     }
 }

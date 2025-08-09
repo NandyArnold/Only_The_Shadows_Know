@@ -27,7 +27,7 @@ public class PlayerStats : MonoBehaviour
 
     public event Action<float, float> OnHealthChanged;
     public event Action<float, float> OnManaChanged;
-   
+    public event Action OnDamaged;
     private void Awake()
     {
        
@@ -40,14 +40,14 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        CurrentHealth = Mathf.Clamp(CurrentHealth - amount, 0, maxHealth);
+        CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-
-        Debug.Log($"Player took {amount} damage. Current Health: {CurrentHealth}");
+        OnDamaged?.Invoke(); // Announce that we took damage
 
         if (CurrentHealth <= 0)
         {
-            HandleDeath();
+            // We will add death logic here in the next step
+            Debug.Log("Player has died.");
         }
     }
 
