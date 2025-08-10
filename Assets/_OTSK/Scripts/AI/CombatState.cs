@@ -41,37 +41,41 @@ public class CombatState : EnemyAIState
                 // --- CHASING LOGIC ---
                 enemyAI.Navigator.Resume();
 
-                if (distanceToPlayer <= enemyAI.Config.walkCombatRange)
+                if (distanceToPlayer <= enemyAI.Config.attackRange)
                 {
+                    // If we are in attack range, stop and prepare to attack.
+                    enemyAI.Navigator.Stop();
+                    enemyAI.AnimController.SetSpeed(0); // Play combat idle
+                }
+                else if (distanceToPlayer <= enemyAI.Config.walkCombatRange)
+                {
+                    // If we are close, walk.
                     enemyAI.Navigator.SetSpeed(enemyAI.Config.walkCombatSpeed);
                     enemyAI.AnimController.SetSpeed(enemyAI.Config.walkCombatSpeed);
+                    enemyAI.Navigator.MoveTo(enemyAI.PlayerTarget.position);
                 }
                 else
                 {
+                    // If we are far, run.
                     enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
                     enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
+                    enemyAI.Navigator.MoveTo(enemyAI.PlayerTarget.position);
                 }
-                enemyAI.Navigator.MoveTo(enemyAI.PlayerTarget.position);
 
-                // If we get in attack range AND our main cooldown is ready, switch to Attacking.
+                // If we are in attack range AND our cooldown is ready, switch to the Attacking sub-state.
                 if (distanceToPlayer <= enemyAI.Config.attackRange && _attackCooldownTimer <= 0f)
                 {
                     _subState = CombatSubState.Attacking;
-
-                    // Stop moving and perform the attack ONE TIME.
-                    enemyAI.Navigator.Stop();
-                    enemyAI.AnimController.SetSpeed(0);
-                    enemyAI.CombatHandler.PerformAttack();
-
-                    // Set the animation timer.
+                    // Set the animation timer and perform the attack.
                     _attackAnimationTimer = enemyAI.Config.attackAnimationDuration;
+                    enemyAI.CombatHandler.PerformAttack();
                 }
                 break;
 
             case CombatSubState.Attacking:
                 // --- ATTACKING LOGIC ---
-                // We are now "stuck" in this state, frozen in place,
-                // while the animation plays. We just count down the timer.
+                // We are now "stuck" in this state, frozen in place, while the animation plays.
+                // We just count down the animation timer.
                 _attackAnimationTimer -= Time.deltaTime;
                 if (_attackAnimationTimer <= 0f)
                 {
@@ -81,6 +85,7 @@ public class CombatState : EnemyAIState
                 }
                 break;
         }
+
 
         // This is the check to exit the ENTIRE combat state.
         if (distanceToPlayer > enemyAI.Config.combatLockRange)
