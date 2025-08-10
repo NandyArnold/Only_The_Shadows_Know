@@ -33,6 +33,10 @@ public class PlayerStats : MonoBehaviour
 
     private PlayerAnimationController _animController;
     private PlayerController _playerController;
+    private Invulnerability _invulnerability;
+
+
+
     private void Awake()
     {
        
@@ -40,13 +44,19 @@ public class PlayerStats : MonoBehaviour
         CurrentMana = maxMana;
         _animController = GetComponent<PlayerAnimationController>();
         _playerController = GetComponent<PlayerController>();
-
+        _invulnerability = GetComponent<Invulnerability>();
     }
 
     // --- Public Methods for Modifying Stats ---
 
     public void TakeDamage(float amount)
     {
+        if (_invulnerability != null && _invulnerability.IsInvulnerable)
+        {
+            OnDamaged?.Invoke(); // We still fire the event so animations can play
+            _animController?.PlayTakeDamageAnimation();
+            return; // No damage is taken
+        }
         if (CurrentHealth <= 0) return; // Don't take damage if already dead
 
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);

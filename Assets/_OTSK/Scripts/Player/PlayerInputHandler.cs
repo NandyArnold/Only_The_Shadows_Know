@@ -18,6 +18,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnSecondaryAttackReleased;  // For ending a hold (Bow)
     public event Action OnTertiaryAttackInput;    // For Animancy or other special attacks
 
+    public event Action OnToggleInvulnerabilityInput;
+
     public event Action OnWeapon1Input;
     public event Action OnWeapon2Input;
     public event Action OnWeapon3Input;
@@ -45,6 +47,7 @@ public class PlayerInputHandler : MonoBehaviour
     private InputActionMap _uiMap;
     private InputActionMap _targetingMap;
     private InputActionMap _disabledMap;
+
     private bool _isCrouchToggleActive = false;
 
 
@@ -57,7 +60,7 @@ public class PlayerInputHandler : MonoBehaviour
         _uiMap = _inputActions.asset.FindActionMap("UI");
         _targetingMap = _inputActions.asset.FindActionMap("Targeting");
         _disabledMap = _inputActions.asset.FindActionMap("Disabled");
-
+ 
 
         SetupInputCallbacks();
     }
@@ -174,6 +177,8 @@ public class PlayerInputHandler : MonoBehaviour
 
         _inputActions.Player.Pause.performed += ctx => OnPauseInput?.Invoke();
         _inputActions.UI.Unpause.performed += ctx => OnPauseInput?.Invoke();
+
+        _inputActions.Player.Invulnerability.performed += ctx => OnToggleInvulnerabilityInput?.Invoke();
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)

@@ -26,17 +26,23 @@ public class HUDManager : MonoBehaviour
     [Header("Debug UI")]
     [SerializeField] private TextMeshProUGUI aimingDebugText;
     [SerializeField] private TextMeshProUGUI focusedDebugText;
+    [SerializeField] private TextMeshProUGUI invulnerabilityText;
 
     private CursorState _currentCursorState;
+    private GameObject _crosshairInstance;
 
     private Coroutine _objectiveCoroutine;
+
     private PlayerCombat _playerCombatForDebug;
-    private GameObject _crosshairInstance;
+    private Invulnerability _invulnerability;
+
 
     private void Awake()
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
+
+        
     }
 
     
@@ -73,15 +79,31 @@ public class HUDManager : MonoBehaviour
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
       
         if (crosshairPanel != null) crosshairPanel.SetActive(false);
-       
+
+        
+
+
     }
 
     private void Update() 
     { 
         if (_playerCombatForDebug != null) 
         { 
-            aimingDebugText.text = $"isAiming: {_playerCombatForDebug.IsAiming}"; focusedDebugText.text = $"isFocused: {_playerCombatForDebug.IsFocused}";
-        } 
+            aimingDebugText.text = $"isAiming: {_playerCombatForDebug.IsAiming}";
+            focusedDebugText.text = $"isFocused: {_playerCombatForDebug.IsFocused}";
+        }
+
+        if (_invulnerability != null)
+        {
+            
+            // This is the correct call
+            invulnerabilityText.text = $"Invulnerable: {_invulnerability.IsInvulnerable}";
+        }
+        else
+        {
+            invulnerabilityText.text = "Invulnerable: N/A";
+        }
+
     }
 
     private void OnDestroy()
@@ -108,6 +130,7 @@ public class HUDManager : MonoBehaviour
 
     private void HandlePlayerRegistered(PlayerController player)
     {
+        _invulnerability = player.GetComponent<Invulnerability>();
         // Now that we have a valid player, we can get its components and subscribe to events.
         StartCoroutine(InitializePlayerHUDCoroutine(player));
     }

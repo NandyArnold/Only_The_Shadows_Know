@@ -19,8 +19,8 @@ public class SceneLoader : MonoBehaviour
     [Tooltip("How long the screen stays black AFTER the new scene is loaded but BEFORE fading in.")]
     [SerializeField] private float postLoadBlackScreenDuration = 0.5f;
 
-    public event Action OnSceneLoadStart;
-    public event Action OnSceneLoadEnd;
+    //public event Action OnSceneLoadStart;
+    //public event Action OnSceneLoadEnd;
     //public event Action<string> OnSceneUnloaded;
 
     private SceneDataSO _currentlyLoadedScene;

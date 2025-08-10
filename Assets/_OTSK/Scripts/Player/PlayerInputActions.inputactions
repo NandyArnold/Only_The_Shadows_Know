@@ -239,6 +239,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Invulnerability",
+                    "type": "Button",
+                    "id": "a71f8822-4aae-47a1-b585-699a9575ab46",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -789,6 +798,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "24b6fd1e-b498-4b65-963c-407259e9c5fe",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Invulnerability",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -325,6 +325,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Invulnerability"",
+                    ""type"": ""Button"",
+                    ""id"": ""a71f8822-4aae-47a1-b585-699a9575ab46"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -875,6 +884,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""24b6fd1e-b498-4b65-963c-407259e9c5fe"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Invulnerability"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1849,6 +1869,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_ShowObjective = m_Player.FindAction("ShowObjective", throwIfNotFound: true);
         m_Player_CancelAction = m_Player.FindAction("CancelAction", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_Invulnerability = m_Player.FindAction("Invulnerability", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1990,6 +2011,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ShowObjective;
     private readonly InputAction m_Player_CancelAction;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_Invulnerability;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2106,6 +2128,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Invulnerability".
+        /// </summary>
+        public InputAction @Invulnerability => m_Wrapper.m_Player_Invulnerability;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2209,6 +2235,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @Invulnerability.started += instance.OnInvulnerability;
+            @Invulnerability.performed += instance.OnInvulnerability;
+            @Invulnerability.canceled += instance.OnInvulnerability;
         }
 
         /// <summary>
@@ -2298,6 +2327,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @Invulnerability.started -= instance.OnInvulnerability;
+            @Invulnerability.performed -= instance.OnInvulnerability;
+            @Invulnerability.canceled -= instance.OnInvulnerability;
         }
 
         /// <summary>
@@ -3178,6 +3210,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Invulnerability" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInvulnerability(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

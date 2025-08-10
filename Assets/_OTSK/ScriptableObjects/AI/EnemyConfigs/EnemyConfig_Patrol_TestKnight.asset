@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyType: 1
   displayName: Patrol Guard Tester
   maxHealth: 100
-  attackDamage: 1
+  attackDamage: 50
   attackRange: 2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
