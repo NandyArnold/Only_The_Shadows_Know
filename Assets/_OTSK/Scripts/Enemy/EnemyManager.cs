@@ -76,4 +76,17 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
+
+    public void ResetAllEnemies()
+    {
+        foreach (var enemy in _activeEnemies)
+        {
+            if (enemy != null && enemy.TryGetComponent<EnemyAI>(out var ai))
+            {
+                // Re-enable their senses and force them to patrol.
+                enemy.Detector.enabled = true;
+                ai.ForceReturnToPatrol();
+            }
+        }
+    }
 }

@@ -149,6 +149,11 @@ public class GameManager : MonoBehaviour
         // 3. Tell the PlayerStats to revive (reset health and animation)
         Player.GetComponent<PlayerStats>().Revive();
 
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.ResetAllEnemies();
+        }
+
         // 4. Set the game state back to Gameplay
         UpdateGameState(GameState.Gameplay);
     }

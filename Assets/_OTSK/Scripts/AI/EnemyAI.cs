@@ -26,7 +26,7 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         // Get references for the states to use
-        Config = GetComponent<Enemy>().Config;
+        //Config = GetComponent<Enemy>().Config;
         Navigator = GetComponent<EnemyNavigator>();
         Detector = GetComponent<DetectionSystem>();
         _health = GetComponent<EnemyHealth>();
@@ -69,7 +69,7 @@ public class EnemyAI : MonoBehaviour
         {
             Detector.OnSoundDetected -= HandleSoundDetected;
         }
-
+        if (CombatManager.Instance != null)
         {
             // This will now correctly unsubscribe
             CombatManager.Instance.OnCombatStart -= HandleAICombatStart;

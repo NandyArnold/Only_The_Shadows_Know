@@ -34,6 +34,7 @@ public class EnemyConfigSO : ScriptableObject
     public float hearingThreshold = 50f;
     public float combatEntryRange = 10f;
     public float combatLockRange = 30f;
+    public float alertInvestigateTime = 5f;
 
     [Header("Combat Logic")]
     [Tooltip("If the enemy can't attack the player for this long while in combat, it sounds an alarm.")]

@@ -95,11 +95,7 @@ public class DetectionSystem : MonoBehaviour
             //Debug.Log($"<color=orange>VISION FAILED:</color> Angle Check. Angle was {horizontalAngle}, but cone is {config.detectionConeAngle / 2}.");
             return false;
         }
-      //-----------
-        if (Vector3.Angle(forwardOnPlane, directionOnPlane) > config.detectionConeAngle / 2)
-        {
-            return false;
-        }
+      
 
         // 3. Check if line of sight is blocked by an obstacle in full 3D.
         // We aim for the player's center mass for a more reliable check.

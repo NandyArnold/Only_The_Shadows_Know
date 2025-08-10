@@ -24,29 +24,30 @@ public class AlertState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        //Debug.Log("Executing Alert State");
-        // If we get a visual on the player and are close enough, escalate to combat.
-        if (enemyAI.Detector.CanSeePlayer() &&
-            Vector3.Distance(enemyAI.transform.position, enemyAI.PlayerTarget.position) <= enemyAI.Config.combatEntryRange)
+        // First, check if we can see a LIVE player.
+        // The PlayerTarget property will be null if the player is dead.
+        if (enemyAI.PlayerTarget != null && enemyAI.Detector.CanSeePlayer())
         {
+            // If we see a live player, escalate to combat.
             enemyAI.TransitionToState(new CombatState());
             return;
         }
 
-        // Check if we've arrived at the alert spot.
+        // If we've reached the investigation spot, wait there.
         if (Vector3.Distance(enemyAI.transform.position, _alertLocation) < 1.5f)
         {
             enemyAI.Navigator.Stop();
             enemyAI.AnimController.SetSpeed(0f);
-            _timer += Time.deltaTime;
 
-            // If we've waited long enough and found nothing, go back to patrolling.
-            if (_timer > _investigateDuration)
+            // Wait for a few seconds before giving up.
+            _timer += Time.deltaTime;
+            if (_timer >= enemyAI.Config.alertInvestigateTime) // We'll add this variable next
             {
                 enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
             }
         }
     }
+    
 
     public override void Exit(EnemyAI enemyAI)
     {
