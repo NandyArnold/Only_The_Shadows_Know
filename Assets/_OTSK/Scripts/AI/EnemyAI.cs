@@ -1,6 +1,7 @@
 // EnemyAI.cs - COMPLETE & CORRECTED
 
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -125,6 +126,11 @@ public class EnemyAI : MonoBehaviour
     // NEW: This public method can be called by external systems (like CombatManager or a skill)
     public void ForceReturnToPatrol()
     {
+        if (CurrentState is PatrolState)
+        {
+            return;
+        }
+        Navigator.Resume();
         TransitionToState(new PatrolState(PatrolRoute));
     }
 

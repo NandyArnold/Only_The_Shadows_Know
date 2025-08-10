@@ -8,7 +8,7 @@ public class PatrolState : EnemyAIState
     private readonly PatrolRouteSO _patrolRoute;
     private Coroutine _patrolCoroutine;
     private int _currentWaypointIndex = -1;
-
+    private float _gracePeriodTimer;
     public PatrolState(PatrolRouteSO route)
     {
         _patrolRoute = route;
@@ -16,24 +16,30 @@ public class PatrolState : EnemyAIState
 
     public override void Enter(EnemyAI enemyAI)
     {
-       
         Debug.Log("Entering Patrol State");
-        //enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
-        //enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+        _gracePeriodTimer = 0.5f;
 
-        // Start the patrol behavior coroutine
         _patrolCoroutine = enemyAI.StartCoroutine(PatrolRoutine(enemyAI));
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
-    
-        // The check for the player now transitions to Alert state.
-        if (enemyAI.Detector.CanSeePlayer())
+        if(_patrolRoute == null )
         {
+            Debug.LogWarning("Patrol route is null, cannot execute patrol state.");
+        }
+        if (_gracePeriodTimer > 0)
+        {
+            _gracePeriodTimer -= Time.deltaTime;
+            return; // Do nothing else until the grace period is over.
+        }
+        // The check for the player now transitions to Alert state.
+        if (enemyAI.PlayerTarget != null && enemyAI.Detector.CanSeePlayer())
+        {
+            
             float distanceToPlayer = Vector3.Distance(enemyAI.transform.position, enemyAI.PlayerTarget.position);
 
-            if (distanceToPlayer <= enemyAI.Config.combatEntryRange)
+            if (distanceToPlayer <= enemyAI.Config.combatEntryRange && enemyAI.PlayerTarget != null)
             {
                 // If player is close, go straight to combat.
                 enemyAI.TransitionToState(new CombatState());
@@ -66,59 +72,48 @@ public class PatrolState : EnemyAIState
             yield break;
         }
 
-        int currentWaypointIndex = 0;
+        _currentWaypointIndex = -1;
         while (true)
         {
-            PatrolWaypoint waypoint = _patrolRoute.waypoints[currentWaypointIndex];
-
-            // 1. Tell the agent it's time to move again.
-            enemyAI.Navigator.Resume();
-            enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
-
-            // Move to the waypoint.
-            enemyAI.Navigator.MoveTo(waypoint.position);
-
-            // Wait until we've reached the destination.
-            while (Vector3.Distance(enemyAI.transform.position, waypoint.position) > 1.5f)
+            while (true)
             {
-                yield return null; // Wait for the next frame
+                // 1. CHOOSE NEXT WAYPOINT
+                _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
+                PatrolWaypoint waypoint = _patrolRoute.waypoints[_currentWaypointIndex];
+
+                // 2. START MOVING
+                enemyAI.Navigator.Resume();
+                enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
+                enemyAI.Navigator.MoveTo(waypoint.position);
+
+                // 3. WAIT TO ARRIVE (Using the reliable check)
+                yield return new WaitUntil(() => enemyAI.Navigator.HasReachedDestination);
+
+                // 4. ARRIVED: STOP AND WAIT
+                enemyAI.Navigator.Stop();
+                enemyAI.AnimController.SetSpeed(0f); // Enter Idle state
+
+                PatrolAction actionToPerform = waypoint.action;
+                if (waypoint.randomizeAction)
+                {
+                    var allActions = System.Enum.GetValues(typeof(PatrolAction));
+                    actionToPerform = (PatrolAction)allActions.GetValue(UnityEngine.Random.Range(0, allActions.Length));
+                }
+
+                switch (actionToPerform)
+                {
+                    case PatrolAction.Wait:
+                        yield return new WaitForSeconds(waypoint.waitTime);
+                        break;
+                    case PatrolAction.WaitAndLook:
+                        // TODO: Implement look behavior
+                        yield return new WaitForSeconds(waypoint.waitTime);
+                        break;
+                    case PatrolAction.Continue:
+                        // Do nothing, will immediately loop to the next waypoint
+                        break;
+                }
             }
-            // 2. We've arrived. Tell the agent to stop completely.
-            enemyAI.Navigator.Stop();
-            enemyAI.AnimController.SetSpeed(0f); // Enter Idle state
-
-
-            //yield return new WaitForSeconds(waypoint.waitTime);
-
-            PatrolAction actionToPerform = waypoint.action;
-
-            //enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);   // hmm, maybe this was the problem
-
-
-            if (waypoint.randomizeAction)
-            {
-                var allActions = System.Enum.GetValues(typeof(PatrolAction));
-                actionToPerform = (PatrolAction)allActions.GetValue(UnityEngine.Random.Range(0, allActions.Length));
-            }
-
-
-            switch (actionToPerform)
-            {
-                case PatrolAction.Wait:
-                    Debug.Log("Waiting...");
-                    yield return new WaitForSeconds(waypoint.waitTime);
-                    break;
-                case PatrolAction.WaitAndLook:
-                    Debug.Log("Waiting and Looking...");
-                    // TODO // Implement the "look around" behavior here.
-                    yield return new WaitForSeconds(waypoint.waitTime);
-                    break;
-                case PatrolAction.Continue:
-                    Debug.Log("Continuing...");
-                    break;
-            }
-
-            currentWaypointIndex = (currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
         }
     }
 }

@@ -23,6 +23,22 @@ public class CombatManager : MonoBehaviour
     // UPDATED: Now takes the enemy that started the fight.
     public void RegisterEnemyInCombat(Enemy enemy)
     {
+        //// --- STACK TRACE DEBUG TOOL ---
+        //var stackTrace = new System.Diagnostics.StackTrace();
+        //string callChain = "CALL STACK:\n";
+        //// We loop up to 5 frames, or as many as exist in the stack.
+        //// We start at i = 1 to skip the current method itself.
+        //for (int i = 1; i < stackTrace.FrameCount && i < 6; i++)
+        //{
+        //    var frame = stackTrace.GetFrame(i);
+        //    var method = frame.GetMethod();
+        //    // Add an arrow and the "ClassName.MethodName" to our string.
+        //    callChain += $"--> {method.DeclaringType.Name}.{method.Name}\n";
+        //}
+        //Debug.Log(callChain);
+        //// --- END DEBUG TOOL ---
+
+
         if (!_enemiesInCombat.Contains(enemy))
         {
             _enemiesInCombat.Add(enemy);

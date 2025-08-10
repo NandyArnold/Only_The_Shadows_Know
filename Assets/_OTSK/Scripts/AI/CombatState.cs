@@ -11,6 +11,18 @@ public class CombatState : EnemyAIState
     private float _attackAnimationTimer;
     public override void Enter(EnemyAI enemyAI)
     {
+        // --- STACK TRACE DEBUG TOOL ---
+        var stackTrace = new System.Diagnostics.StackTrace();
+        string callChain = "<color=yellow>CombatState.Enter CALL STACK:</color>\n";
+        for (int i = 1; i < stackTrace.FrameCount && i < 6; i++)
+        {
+            var frame = stackTrace.GetFrame(i);
+            var method = frame.GetMethod();
+            callChain += $"--> {method.DeclaringType.Name}.{method.Name}\n";
+        }
+        Debug.Log(callChain);
+        // --- END DEBUG TOOL ---
+
         CombatManager.Instance.RegisterEnemyInCombat(enemyAI.GetComponent<Enemy>());
         enemyAI.Navigator.Resume();
         enemyAI.AnimController.SetIsInCombat(true);

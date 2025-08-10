@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
         //  Tell all enemies to stand down.
         if (EnemyManager.Instance != null)
         {
-            EnemyManager.Instance.ReturnAllToPatrol();
+            EnemyManager.Instance.OnPlayerDeath();
         }
         // Disable inputs
         GetComponent<PlayerInputHandler>().SwitchActionMap("UI");

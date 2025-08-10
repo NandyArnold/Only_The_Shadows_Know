@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class EnemyNavigator : MonoBehaviour
 {
     private NavMeshAgent _agent;
-
+    public bool HasReachedDestination => !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -31,5 +31,13 @@ public class EnemyNavigator : MonoBehaviour
     public void Resume()
     {
         _agent.isStopped = false;
+    }
+
+    public void ResetPath()
+    {
+        if (_agent.hasPath)
+        {
+            _agent.ResetPath();
+        }
     }
 }

@@ -89,4 +89,39 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
+    public void OnPlayerDeath()
+    {
+        // Tell all enemies to stand down completely.
+        foreach (var enemy in _activeEnemies)
+        {
+            if (enemy != null)
+            {
+                // Disable their ability to see or hear.
+                if (enemy.Detector != null)
+                {
+                    enemy.Detector.enabled = false;
+                }
+
+                // Force their AI to a non-aggressive state.
+                if (enemy.TryGetComponent<EnemyAI>(out var ai))
+                {
+                    ai.ForceReturnToPatrol();
+                }
+            }
+        }
+    }
+
+    //  Called by the GameManager when the player respawns.
+    public void OnPlayerRespawn()
+    {
+        // Tell all enemies to wake back up.
+        foreach (var enemy in _activeEnemies)
+        {
+            if (enemy != null && enemy.Detector != null)
+            {
+                // Re-enable their senses.
+                enemy.Detector.enabled = true;
+            }
+        }
+    }
 }

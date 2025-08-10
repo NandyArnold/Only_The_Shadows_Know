@@ -171,7 +171,7 @@ public class Enemy : MonoBehaviour, ISaveable
         // 1. Disable all intelligence and movement
         _ai.enabled = false;
         _navigator.enabled = false;
-        GetComponent<NavMeshAgent>().enabled = false;
+        _navigator.Stop();
         _collider.enabled = false;
 
         // 2. Play the death animation
@@ -185,5 +185,21 @@ public class Enemy : MonoBehaviour, ISaveable
     {
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
+    }
+
+    public void HandlePlayerDeath()
+    {
+        // Disable senses
+        //if (Detector != null) Detector.enabled = false;
+
+        // Force AI to a safe state
+        //if (_ai != null) _ai.ForceReturnToPatrol();
+    }
+
+    // NEW: This is also called by the EnemyManager
+    public void HandlePlayerRespawn()
+    {
+        // Re-enable senses
+        //if (Detector != null) Detector.enabled = true;
     }
 }

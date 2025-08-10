@@ -154,7 +154,12 @@ public class GameManager : MonoBehaviour
             EnemyManager.Instance.ResetAllEnemies();
         }
 
-        // 4. Set the game state back to Gameplay
+        // 4. Tell the EnemyManager to wake up all enemies.
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.OnPlayerRespawn();
+        }
+        // 5. Set the game state back to Gameplay
         UpdateGameState(GameState.Gameplay);
     }
 }

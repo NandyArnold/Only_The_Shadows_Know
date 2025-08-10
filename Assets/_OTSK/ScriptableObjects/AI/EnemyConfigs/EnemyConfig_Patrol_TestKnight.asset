@@ -30,6 +30,7 @@ MonoBehaviour:
   hearingThreshold: 50
   combatEntryRange: 10
   combatLockRange: 30
+  alertInvestigateTime: 5
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 3
