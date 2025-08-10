@@ -7,6 +7,7 @@ public class GameOverScreen : MonoBehaviour
     [SerializeField] private Button respawnButton;
     [SerializeField] private Button loadButton;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private SceneDataSO mainMenuSceneData;
     [SerializeField] private Button exitButton;
 
     private void Awake()
@@ -30,20 +31,23 @@ public class GameOverScreen : MonoBehaviour
     private void OnRespawnClicked()
     {
         Debug.Log("Respawn button clicked...");
+        gameObject.SetActive(false);
         // We will add the logic for this when we build the CheckpointManager
     }
 
     private void OnLoadClicked()
     {
+        Time.timeScale = 1f;
         Debug.Log("Load button clicked...");
+        gameObject.SetActive(false);
         SaveLoadManager.Instance.LoadGame();
     }
 
     private void OnMainMenuClicked()
     {
         Debug.Log("Main Menu button clicked...");
-        // You'll need a SceneDataSO asset for your MainMenu scene
-         //SceneLoader.Instance.LoadScene(mainMenuSceneData); 
+        
+        SceneLoader.Instance.LoadScene(mainMenuSceneData);
     }
 
     private void OnExitClicked()

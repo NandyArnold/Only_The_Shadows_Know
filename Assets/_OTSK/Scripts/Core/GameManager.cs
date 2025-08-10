@@ -2,6 +2,7 @@
 
 using System;
 using UnityEngine;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,24 +32,19 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-       
-
-        // Subscribe to the SceneLoader event
-        if (SceneLoader.Instance != null)
-        {
-            SceneLoader.Instance.OnSceneLoaded += OnSceneWasLoaded;
-        }
-
-      
+    
     }
-    private void Start()
+    private IEnumerator Start()
     {
-        // Load the very first scene (Main Menu)
-        if (initialScene != null)
+        // Wait for the end of the very first frame.
+        // This gives all other managers a chance to run their Awake() and Start() methods
+        // and subscribe to any necessary events.
+        yield return null;
+
+        // Now it is safe to load the initial scene.
+        if (initialScene != null && SceneLoader.Instance != null)
         {
-            // Call the updated method with all parameters.
-            // We don't need a spawn point tag for the menu, and no loading screen.
-            SceneLoader.Instance.LoadScene(initialScene, null);
+            SceneLoader.Instance.LoadScene(initialScene, initialScene.defaultSpawnPointTag);
         }
     }
     // This is the new central method for changing the game state.
@@ -58,36 +54,13 @@ public class GameManager : MonoBehaviour
 
         CurrentState = newState;
         OnGameStateChanged?.Invoke(newState);
-        //Debug.Log($"Game State changed to: {newState}");
+        Debug.Log($"Game State changed to: {newState}");
     }
 
-    private void OnSceneWasLoaded(SceneDataSO sceneData)
-    {
-        // When a new scene is loaded, update the game state accordingly.
-        switch (sceneData.sceneType)
-        {
-            case SceneType.Menu:
-                UpdateGameState(GameState.Menu);
-                break;
-            case SceneType.Gameplay:
-                UpdateGameState(GameState.Gameplay);
-                break;
-                // The Loading state is handled by the SceneLoader itself.
-        }
-        Debug.Log($"GameManager: Scene '{sceneData.sceneName}' was loaded.");
-        if (sceneData.objectiveChain != null)
-        {
-            ObjectiveManager.Instance.InitializeObjective(sceneData.objectiveChain);
-        }
-       
-    }
 
     private void OnDestroy()
     {
-        if (SceneLoader.Instance != null)
-        {
-            SceneLoader.Instance.OnSceneLoaded -= OnSceneWasLoaded;
-        }
+      
         if (_playerInputHandler != null)
         {
             _playerInputHandler.OnPauseInput -= HandlePauseInput;
@@ -127,16 +100,33 @@ public class GameManager : MonoBehaviour
     {
         AimTarget = target;
     }
+   
+
     private void HandlePauseInput()
     {
-        // This is a simple toggle.
         if (CurrentState == GameState.Gameplay)
         {
             UpdateGameState(GameState.Menu);
         }
         else if (CurrentState == GameState.Menu)
         {
-            UpdateGameState(GameState.Gameplay);
+            // Instead of calling UpdateGameState directly, we start a coroutine.
+            StartCoroutine(UnpauseRoutine());
+        }
+    }
+    private IEnumerator UnpauseRoutine()
+    {
+        // 1. Tell the system to go back to Gameplay. This will hide the menu UI.
+        UpdateGameState(GameState.Gameplay);
+
+        // 2. Wait for the end of the frame. This gives the UI EventSystem time to release focus.
+        yield return new WaitForEndOfFrame();
+
+        // 3. Just to be safe, we re-apply the Gameplay cursor state one more time.
+        //    This "double tap" ensures the cursor locks and hides correctly.
+        if (CursorManager.Instance != null)
+        {
+            CursorManager.Instance.SetState(CursorState.Gameplay);
         }
     }
 }

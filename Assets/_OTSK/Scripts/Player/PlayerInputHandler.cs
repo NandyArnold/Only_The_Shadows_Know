@@ -44,6 +44,7 @@ public class PlayerInputHandler : MonoBehaviour
     private InputActionMap _playerMap;
     private InputActionMap _uiMap;
     private InputActionMap _targetingMap;
+    private InputActionMap _disabledMap;
     private bool _isCrouchToggleActive = false;
 
 
@@ -55,6 +56,7 @@ public class PlayerInputHandler : MonoBehaviour
         _playerMap = _inputActions.asset.FindActionMap("Player");
         _uiMap = _inputActions.asset.FindActionMap("UI");
         _targetingMap = _inputActions.asset.FindActionMap("Targeting");
+        _disabledMap = _inputActions.asset.FindActionMap("Disabled");
 
 
         SetupInputCallbacks();
@@ -69,7 +71,12 @@ public class PlayerInputHandler : MonoBehaviour
             // Set the initial state
             HandleCursorStateChanged(CursorState.Gameplay);
         }
-        SwitchActionMap("Player");
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+            // Set initial state
+            HandleGameStateChanged(GameManager.Instance.CurrentState);
+        }
     }
 
     private void OnDestroy()
@@ -78,8 +85,18 @@ public class PlayerInputHandler : MonoBehaviour
         {
             CursorManager.Instance.OnStateChanged -= HandleCursorStateChanged;
         }
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+        }
     }
-
+    private void HandleGameStateChanged(GameState newState)
+    {
+        if (newState == GameState.Loading)
+        {
+            SwitchActionMap("Disabled");
+        }
+    }
     private void HandleCursorStateChanged(CursorState newState)
     {
         switch (newState)
@@ -173,6 +190,7 @@ public class PlayerInputHandler : MonoBehaviour
         _playerMap.Disable();
         _uiMap.Disable();
         _targetingMap.Disable();
+        _disabledMap.Disable();
 
         // Enable the requested map
         switch (mapName)
@@ -185,6 +203,9 @@ public class PlayerInputHandler : MonoBehaviour
                 break;
             case "Targeting":
                 _targetingMap.Enable();
+                break;
+            case "Disabled": 
+                _disabledMap.Enable(); 
                 break;
         }
     }

@@ -32,12 +32,14 @@ public class PlayerStats : MonoBehaviour
     public event Action OnDied;
 
     private PlayerAnimationController _animController;
+    private PlayerController _playerController;
     private void Awake()
     {
        
         CurrentHealth = maxHealth;
         CurrentMana = maxMana;
         _animController = GetComponent<PlayerAnimationController>();
+        _playerController = GetComponent<PlayerController>();
 
     }
 
@@ -98,6 +100,14 @@ public class PlayerStats : MonoBehaviour
         CurrentMana = mana;
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         OnManaChanged?.Invoke(CurrentMana, maxMana);
+    }
+
+    public void Revive()
+    {
+        CurrentHealth = maxHealth;
+        OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+        _playerController.SetIsDead(false); // We need to add this method to PlayerController
+        _animController.PlayReviveAnimation(); // We need to add this method to PlayerAnimationController
     }
 
 }

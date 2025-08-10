@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     [Header("Death Settings")] 
     [SerializeField] private float deathAnimationDuration = 2.5f;
 
+    public bool IsDead => _isDead;
     public bool IsInEndwalkerState { get; private set; } = false;
     private PlayerStats _playerStats;
     private bool _isDead = false;
@@ -93,4 +94,5 @@ public class PlayerController : MonoBehaviour
     }
     // You can add public methods here later if other systems need to interact with the player,
     // for example: public void TeleportTo(Vector3 position) { ... }
+    public void SetIsDead(bool isDead) { _isDead = isDead; }
 }

@@ -60,9 +60,19 @@ public class EnemyManager : MonoBehaviour
         // We iterate backwards because if an enemy is destroyed, it won't break the loop.
         for (int i = _activeEnemies.Count - 1; i >= 0; i--)
         {
-            if (_activeEnemies[i] != null && _activeEnemies[i].TryGetComponent<EnemyAI>(out var ai))
+            if (_activeEnemies[i] != null)
             {
-                ai.ForceReturnToPatrol();
+                // Tell their AI to go back to an idle/patrol state
+                if (_activeEnemies[i].TryGetComponent<EnemyAI>(out var ai))
+                {
+                    ai.ForceReturnToPatrol();
+                }
+
+                // Also disable their ability to see or hear
+                if (_activeEnemies[i].TryGetComponent<DetectionSystem>(out var detector))
+                {
+                    detector.enabled = false;
+                }
             }
         }
     }

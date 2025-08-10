@@ -1,19 +1,21 @@
 // CursorManager.cs - FINAL SIMPLIFIED VERSION
 using System;
 using UnityEngine;
+using System.Collections;
 
 public class CursorManager : MonoBehaviour
 {
     public static CursorManager Instance { get; private set; }
 
     private CursorState _currentState;
+ 
     public event Action<CursorState> OnStateChanged;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     private void Start()
@@ -39,8 +41,12 @@ public class CursorManager : MonoBehaviour
                 SetState(CursorState.Gameplay);
                 break;
             case GameState.Menu:
+                SetState(CursorState.UI);
+                break;
             case GameState.Cutscene:
             case GameState.Loading:
+                SetState(CursorState.Loading);
+                break;
             case GameState.GameOver:
                 SetState(CursorState.UI);
                 break;
@@ -64,9 +70,15 @@ public class CursorManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Confined;
                 Cursor.visible = false;
                 break;
+            case CursorState.Loading:
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = false;
+                break;
         }
         OnStateChanged?.Invoke(_currentState);
     }
+
+  
 
     public void ToggleUIMode()
     {

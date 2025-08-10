@@ -3,13 +3,19 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using Esper.ESave; // Add the ESave namespace
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class SaveLoadManager : MonoBehaviour
 {
     public static SaveLoadManager Instance { get; private set; }
 
+    [Header("Data Registries")] 
+    [SerializeField] private SceneRegistrySO sceneRegistry;
+
     [Header("ESave Configuration")]
     [SerializeField] private SaveFileSetup saveFileSetup; // Assign this in the Inspector
+
 
     private SaveFile _saveFile;
     private GameStateData _currentGameState;
@@ -40,8 +46,13 @@ public class SaveLoadManager : MonoBehaviour
             Debug.LogError("Save file is not initialized!");
             return;
         }
-
         _currentGameState = new GameStateData();
+        // Add the current scene name to the save data
+        if (SceneLoader.Instance.CurrentlyLoadedScene != null)
+        {
+            _currentGameState.sceneID = SceneLoader.Instance.CurrentlyLoadedScene.sceneID;
+        }
+
 
         GatherPlayerData();
         GatherObjectiveData();
@@ -55,26 +66,52 @@ public class SaveLoadManager : MonoBehaviour
 
     public void LoadGame(string saveFileName = "save_slot_1")
     {
-        if (_saveFile == null)
+        if (_saveFile == null) return;
+        StartCoroutine(LoadGameRoutine(saveFileName));
+        
+    }
+
+    private IEnumerator LoadGameRoutine(string saveFileName)
+    {
+        if (!_saveFile.HasData(GameStateKey))
         {
-            Debug.LogError("Save file is not initialized!");
-            return;
+            Debug.LogWarning("Save file has no GameState data.");
+            yield break;
         }
 
-        if (_saveFile.HasData(GameStateKey))
-        {
-            _currentGameState = _saveFile.GetData<GameStateData>(GameStateKey);
+        // 1. Load the data from the file first.
+        _currentGameState = _saveFile.GetData<GameStateData>(GameStateKey);
 
-            RestorePlayerData();
-            RestoreObjectiveData();
-            RestoreWorldData();
-
-            Debug.Log($"<color=cyan>Game Loaded via ESave:</color> {saveFileName}");
-        }
-        else
+        // 2. Find the correct SceneDataSO using the saved ID from the registry.
+        var sceneDataToLoad = sceneRegistry.GetSceneData(_currentGameState.sceneID);
+        if (sceneDataToLoad == null)
         {
-            Debug.LogWarning($"Save file found, but no GameState data was present.");
+            Debug.LogError($"Could not find scene with ID '{_currentGameState.sceneID}' in the SceneRegistry!");
+            yield break;
         }
+
+        // 3. Tell the SceneLoader to start loading the scene.
+        //    We don't pass a spawn point tag because the save data will override the position.
+        SceneLoader.Instance.LoadScene(sceneDataToLoad);
+
+        // 4. Wait until the SceneLoader has finished its ENTIRE routine and a new player exists.
+        yield return new WaitUntil(() => GameManager.Instance.Player != null);
+
+        // 5. NOW that the new player exists in the new scene, it's safe to restore all data.
+        RestorePlayerData();
+        RestoreObjectiveData();
+        RestoreWorldData();
+
+        // 6. Connect the camera to the new player.
+        if (CameraManager.Instance != null)
+        {
+            CameraManager.Instance.ConnectToPlayer(GameManager.Instance.Player);
+        }
+
+        // 7. Revive the player to reset their animation state.
+        GameManager.Instance.Player.GetComponent<PlayerStats>().Revive();
+
+        Debug.Log($"<color=cyan>Game Loaded:</color> {saveFileName}");
     }
 
     private void GatherObjectiveData()

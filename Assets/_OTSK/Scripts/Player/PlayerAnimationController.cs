@@ -31,7 +31,8 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int scryingCastTriggerHash = Animator.StringToHash("Scrying_Cast");
 
     private readonly int takeDamageTriggerHash = Animator.StringToHash("TakeDamageTrigger");
-    private readonly int deathTriggerHash = Animator.StringToHash("DeathTrigger"); 
+    private readonly int deathTriggerHash = Animator.StringToHash("DeathTrigger");
+    private readonly int reviveTriggerHas = Animator.StringToHash("ReviveTrigger");
 
     private PlayerStats _playerStats;
 
@@ -174,5 +175,9 @@ public class PlayerAnimationController : MonoBehaviour
     public void PlayDeathAnimation()
     {
         animator.SetTrigger(deathTriggerHash);
+    }
+    public void PlayReviveAnimation()
+    { 
+        animator.SetTrigger(reviveTriggerHas); 
     }
 }

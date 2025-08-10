@@ -145,6 +145,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.Player != null)
         {
+            if (GameManager.Instance.Player.IsDead) return null;
             return GameManager.Instance.Player.transform;
         }
         var playerObject = GameObject.FindGameObjectWithTag("Player");

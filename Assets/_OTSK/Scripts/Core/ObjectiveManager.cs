@@ -26,6 +26,22 @@ public class ObjectiveManager : MonoBehaviour
         else Instance = this;
     }
 
+    private void OnEnable()
+    {
+        // Subscribe to the SceneLoader to know when a new scene is ready.
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.OnSceneLoaded += HandleSceneLoaded;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.OnSceneLoaded -= HandleSceneLoaded;
+        }
+    }
     public void RegisterTrigger(IObjectiveTrigger trigger)
     {
         if (!objectivesEnabled) return;
@@ -79,24 +95,25 @@ public class ObjectiveManager : MonoBehaviour
 
     public void CompleteCurrentObjective()
     {
-        if (!objectivesEnabled) return;
+        if (!objectivesEnabled || GetCurrentObjective() == null) return;
 
-        ObjectiveSO currentObjective = GetCurrentObjective();
-        if (currentObjective == null) return;
+        Debug.Log($"Objective Completed: {GetCurrentObjective().objectiveDescription}");
+        AdvanceToNextObjective();
+    }
 
-        OnObjectiveCompleted?.Invoke(currentObjective);
-        Debug.Log($"Objective Completed: {currentObjective.objectiveDescription}");
-
+    // This is now the single method for advancing the objective.
+    private void AdvanceToNextObjective()
+    {
         _currentObjectiveIndex++;
-
-        if (_currentObjectiveIndex >= _currentLevelObjectiveChain.objectives.Count)
+        if (_currentLevelObjectiveChain != null && _currentObjectiveIndex < _currentLevelObjectiveChain.objectives.Count)
         {
-            OnLevelCompleted?.Invoke();
-            Debug.Log($"All objectives for level {_currentLevelObjectiveChain.levelID} completed!");
+            OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
         }
         else
         {
-            OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
+            Debug.Log($"All objectives for level {_currentLevelObjectiveChain.levelID} completed!");
+            OnLevelCompleted?.Invoke();
+            OnCurrentObjectiveChanged?.Invoke(null);
         }
     }
 
@@ -113,5 +130,22 @@ public class ObjectiveManager : MonoBehaviour
     {
         _currentObjectiveIndex = state.currentObjectiveIndex;
         OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
+    }
+
+    private void HandleSceneLoaded(SceneDataSO sceneData)
+    {
+        if (sceneData.objectiveChain != null)
+        {
+            _currentLevelObjectiveChain = sceneData.objectiveChain;
+            _currentObjectiveIndex = -1; // Reset for the new chain
+            AdvanceToNextObjective(); // Start the first objective
+        }
+        else
+        {
+            // If the scene has no objectives (like the Main Menu), clear the state.
+            _currentLevelObjectiveChain = null;
+            _currentObjectiveIndex = -1;
+            OnCurrentObjectiveChanged?.Invoke(null);
+        }
     }
 }

@@ -10,6 +10,9 @@ public enum GameState
     Cutscene,
     // For when the game is transitioning between scenes.
     Loading,
+    // For when the game is saving data, such as player progress or world state.
+    Saving,
     // For when the game is in a state where the player has lost, such as after dying.
-    GameOver
+    GameOver,
+  
 }

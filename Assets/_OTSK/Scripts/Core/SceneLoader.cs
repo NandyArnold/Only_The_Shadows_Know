@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
-using static UnityEngine.Rendering.HDROutputUtils;
+
 
 public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance { get; private set; }
 
-    public SceneDataSO CurrentSceneData { get; private set; }
+    public SceneDataSO CurrentlyLoadedScene => _currentlyLoadedScene;
     public event Action<SceneDataSO> OnSceneLoaded;
 
     [Header("Loading Settings")]
@@ -42,8 +42,8 @@ public class SceneLoader : MonoBehaviour
     public void LoadScene(SceneDataSO sceneData, string spawnPointTag = null)
     {
         if (_isLoading) return;
-        
-        
+
+        GameManager.Instance.UpdateGameState(GameState.Loading);
 
         // Tell the PlayerSpawner where to spawn in the next scene
         if (PlayerSpawner.Instance != null)
@@ -58,8 +58,7 @@ public class SceneLoader : MonoBehaviour
     {
         // 1. Fade TO black
         FadeCanvas.Instance.FadeIn(fadeDuration);
-        if (GameManager.Instance.Player != null)
-            GameManager.Instance.Player.GetComponent<PlayerInputHandler>().SwitchActionMap("Disabled");
+        GameManager.Instance.UpdateGameState(GameState.Loading);
         yield return new WaitForSeconds(fadeDuration);
 
         // 2. Load the Loading Scene
@@ -68,12 +67,12 @@ public class SceneLoader : MonoBehaviour
         // 3. Unload the OLD scene
         if (_currentlyLoadedScene != null)
         {
-            yield return SceneManager.UnloadSceneAsync(_currentlyLoadedScene.sceneName);
+            yield return SceneManager.UnloadSceneAsync(_currentlyLoadedScene.SceneName);
         }
 
         // 4. Load the NEW scene in the background
         float startTime = Time.realtimeSinceStartup;
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneToLoad.sceneName, LoadSceneMode.Additive);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneToLoad.SceneName, LoadSceneMode.Additive);
         operation.allowSceneActivation = false;
 
         while (operation.progress < 0.9f)
@@ -95,25 +94,43 @@ public class SceneLoader : MonoBehaviour
 
         // 6. Activate the new scene and unload the loading scene
         operation.allowSceneActivation = true;
-        yield return new WaitUntil(() => SceneManager.GetSceneByName(sceneToLoad.sceneName).isLoaded);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad.sceneName));
+        yield return new WaitUntil(() => SceneManager.GetSceneByName(sceneToLoad.SceneName).isLoaded);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad.SceneName));
         yield return SceneManager.UnloadSceneAsync(loadingSceneName);
 
         // --- FINALIZATION ---
+        // The player will be spawned here, but the screen is still black.
         _currentlyLoadedScene = sceneToLoad;
-        OnSceneLoaded?.Invoke(_currentlyLoadedScene); // This will spawn the player
-        yield return null; // Wait one frame to ensure the player has been spawned and initialized
+        OnSceneLoaded?.Invoke(_currentlyLoadedScene);// This will spawn the player
 
-        // 7. THIS IS THE NEW DELAY: Hold the black screen for the specified duration.
+        yield return null; // Wait for the player to be spawned
+
+        //  NOW it is safe to perform the autosave.
+        if (AutosaveManager.Instance != null)
+        {
+            AutosaveManager.Instance.PerformAutosave(sceneToLoad);
+        }
+
+        // 7. Hold the black screen for the specified duration.
         if (postLoadBlackScreenDuration > 0)
         {
             yield return new WaitForSeconds(postLoadBlackScreenDuration);
         }
 
-        // 8. Fade FROM black and re-enable input
+        // 8. Fade FROM black.
         FadeCanvas.Instance.FadeOut(fadeDuration);
-        if (GameManager.Instance.Player != null)
-            GameManager.Instance.Player.GetComponent<PlayerInputHandler>().SwitchActionMap("Player");
+        yield return new WaitForSecondsRealtime(fadeDuration);
+
+        // 9. NOW, with the scene visible, update the game state to Gameplay.
+        switch (sceneToLoad.sceneType)
+        {
+            case SceneType.Menu:
+                GameManager.Instance.UpdateGameState(GameState.Menu);
+                break;
+            case SceneType.Gameplay:
+                GameManager.Instance.UpdateGameState(GameState.Gameplay);
+                break;
+        }
 
         _isLoading = false;
     }

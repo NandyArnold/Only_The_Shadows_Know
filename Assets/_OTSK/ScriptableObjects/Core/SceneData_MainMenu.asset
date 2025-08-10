@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be2df080e16e04f4798716cd10ec5d8a, type: 3}
   m_Name: SceneData_MainMenu
   m_EditorClassIdentifier: 
+  sceneID: MainMenu
+  sceneAsset: {fileID: 102900000, guid: a24821a9fae9c3a448fecefadbbde220, type: 3}
   sceneName: MainMenu
   sceneType: 1
-  displayName: 
+  displayName: MainMenu
   description: 
+  objectiveChain: {fileID: 0}
+  defaultSpawnPointTag: InitialSpawn
+  enemyInitialSpawns: []

@@ -79,17 +79,27 @@ public class TimeManager : MonoBehaviour
     private void HandleGameStateChanged(GameState newState)
     {
         // If the new state is Gameplay, reset time. Otherwise, pause it.
-        if (newState == GameState.Gameplay )
+        if (newState == GameState.Gameplay)
         {
+            // Always unpause when entering gameplay
             ResetTimeScale();
         }
-        else if(newState == GameState.GameOver)
+        else if (newState == GameState.GameOver)
         {
-            ResetTimeScale(); // Reset time scale on Game Over
+            // Pause time for cutscenes, loading screens, and game over
+            SetTimeScale(0.3f);
         }
-        else
+
+
+        else if (newState == GameState.Menu)
         {
-            SetTimeScale(0f); // Pause
+            // Only pause if we are entering the menu FROM a gameplay scene
+            if (SceneLoader.Instance.CurrentlyLoadedScene.sceneType == SceneType.Gameplay)
+            {
+                SetTimeScale(0f); // This is the in-game pause
+            }
+            // If the scene type is already Menu, we do nothing to the time scale.
         }
+       
     }
 }

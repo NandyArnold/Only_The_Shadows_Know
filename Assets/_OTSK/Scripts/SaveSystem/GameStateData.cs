@@ -4,6 +4,7 @@ public class GameStateData
     public PlayerStateData playerData;
     public ObjectiveStateData objectiveData;
     public WorldStateData worldData;
+    public string sceneID;
 
     public GameStateData()
     {
