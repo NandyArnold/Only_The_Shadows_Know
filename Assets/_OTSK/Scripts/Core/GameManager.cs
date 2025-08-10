@@ -129,4 +129,27 @@ public class GameManager : MonoBehaviour
             CursorManager.Instance.SetState(CursorState.Gameplay);
         }
     }
+
+    public void RespawnPlayer()
+    {
+        if (Player == null) return;
+
+        // 1. Find the last checkpoint from the manager
+        var checkpointManager = CheckpointManager.Instance;
+        if (checkpointManager.LastCheckpointPosition == Vector3.zero)
+        {
+            Debug.LogError("No checkpoint found to respawn at!");
+            // Handle this case - maybe reload the level from the start?
+            return;
+        }
+
+        // 2. Tell the PlayerController to move to the checkpoint
+        Player.RespawnAt(checkpointManager.LastCheckpointPosition, checkpointManager.LastCheckpointRotation);
+
+        // 3. Tell the PlayerStats to revive (reset health and animation)
+        Player.GetComponent<PlayerStats>().Revive();
+
+        // 4. Set the game state back to Gameplay
+        UpdateGameState(GameState.Gameplay);
+    }
 }

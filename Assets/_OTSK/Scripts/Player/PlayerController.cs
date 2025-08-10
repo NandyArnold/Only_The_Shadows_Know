@@ -57,6 +57,20 @@ public class PlayerController : MonoBehaviour
         if (_playerStats != null) _playerStats.OnDied -= HandleDeath;
     }
 
+    public void RespawnAt(Vector3 position, Quaternion rotation)
+    {
+        // Temporarily disable the character controller to move the player
+        var cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+
+        transform.position = position;
+        transform.rotation = rotation;
+
+        if (cc != null) cc.enabled = true;
+
+        // Reset the dead state
+        _isDead = false;
+    }
     private void HandleDeath()
     {
         if (_isDead) return; // Prevent multiple death triggers
@@ -84,6 +98,8 @@ public class PlayerController : MonoBehaviour
         // Trigger the Game Over state
         GameManager.Instance.UpdateGameState(GameState.GameOver);
     }
+
+
 
 
     public void SetEndwalkerState(bool isActive)

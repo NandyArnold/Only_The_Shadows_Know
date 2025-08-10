@@ -30,9 +30,16 @@ public class GameOverScreen : MonoBehaviour
 
     private void OnRespawnClicked()
     {
+        Time.timeScale = 1f;
         Debug.Log("Respawn button clicked...");
+
+        // Hide the panel immediately
         gameObject.SetActive(false);
-        // We will add the logic for this when we build the CheckpointManager
+
+        
+
+        // Tell the GameManager to start the respawn process
+        GameManager.Instance.RespawnPlayer();
     }
 
     private void OnLoadClicked()
@@ -40,7 +47,8 @@ public class GameOverScreen : MonoBehaviour
         Time.timeScale = 1f;
         Debug.Log("Load button clicked...");
         gameObject.SetActive(false);
-        SaveLoadManager.Instance.LoadGame();
+        //SaveLoadManager.Instance.LoadGame();
+        SaveLoadManager.Instance.LoadGame("autosave");
     }
 
     private void OnMainMenuClicked()

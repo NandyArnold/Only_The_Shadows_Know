@@ -60,6 +60,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Transform _cameraTransform;
 
+    private Invulnerability _invulnerability;
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -69,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
         _cameraTransform = Camera.main.transform;
         _currentSpeed = walkSpeed;
         if (noiseSettings == null) Debug.LogError("NoiseSettingsSO not assigned on PlayerMovement!");
-       
+        _invulnerability = GetComponent<Invulnerability>();
     }
 
     private void OnEnable()
@@ -326,24 +328,31 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator DodgeRollCoroutine()
     {
-        _isDodgeRolling = true;
-        playerAnimationController.PlayDodgeRollAnimation();
-
-        float startTime = Time.time;
-        Vector3 rollDirection = _moveInput.magnitude > 0.1f
-            ? (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized
-            : transform.forward;
-
-        rollDirection.y = 0;
-        rollDirection = rollDirection.normalized;
-
-        while (Time.time < startTime + dodgeRollDuration)
+        try
         {
-            characterController.Move(rollDirection * dodgeRollSpeed * Time.deltaTime);
-            yield return null;
-        }
+            if (_invulnerability != null) _invulnerability.IsInvulnerable = true;
+            _isDodgeRolling = true;
+            playerAnimationController.PlayDodgeRollAnimation();
 
-        _isDodgeRolling = false;
+            float startTime = Time.time;
+            Vector3 rollDirection = _moveInput.magnitude > 0.1f
+                ? (transform.forward * _moveInput.y + transform.right * _moveInput.x).normalized
+                : transform.forward;
+
+            rollDirection.y = 0;
+            rollDirection = rollDirection.normalized;
+
+            while (Time.time < startTime + dodgeRollDuration)
+            {
+                characterController.Move(rollDirection * dodgeRollSpeed * Time.deltaTime);
+                yield return null;
+            }
+        }
+        finally
+        {
+            if (_invulnerability != null) _invulnerability.IsInvulnerable = false;
+            _isDodgeRolling = false;    
+        }
     }
 
     private void OnDrawGizmosSelected()
