@@ -5,11 +5,14 @@ using System;
 
 public class PatrolState : EnemyAIState
 {
-    private readonly PatrolRouteSO _patrolRoute;
+    private  PatrolRoute _patrolRoute;
     private Coroutine _patrolCoroutine;
     private int _currentWaypointIndex = -1;
     private float _gracePeriodTimer;
-    public PatrolState(PatrolRouteSO route)
+
+
+
+    public PatrolState(PatrolRoute route) // Change type from PatrolRouteSO
     {
         _patrolRoute = route;
     }
@@ -72,14 +75,15 @@ public class PatrolState : EnemyAIState
             yield break;
         }
 
-        _currentWaypointIndex = -1;
+        int _currentWaypointIndex = -1;
         while (true)
         {
             while (true)
             {
                 // 1. CHOOSE NEXT WAYPOINT
                 _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
-                PatrolWaypoint waypoint = _patrolRoute.waypoints[_currentWaypointIndex];
+                Transform waypointTransform = _patrolRoute.waypoints[_currentWaypointIndex];
+
 
                 // 2. START MOVING
                 enemyAI.Navigator.Resume();

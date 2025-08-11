@@ -1,33 +1,48 @@
+// In PatrolRouteManager.cs - FINAL VERSION
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PatrolRouteManager : MonoBehaviour
 {
     public static PatrolRouteManager Instance { get; private set; }
 
-    [SerializeField] private List<PatrolRouteSO> patrolRoutes;
+    // It no longer needs a serialized list here.
+    private readonly Dictionary<string, PatrolRoute> _patrolRoutes = new Dictionary<string, PatrolRoute>();
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
+        if (Instance != null && Instance != this) Destroy(this);
         else Instance = this;
     }
 
-    public PatrolRouteSO GetRoute(int index)
+    public void RegisterRoute(PatrolRoute route)
     {
-        if (patrolRoutes == null || index < 0 || index >= patrolRoutes.Count)
+        if (route == null || string.IsNullOrEmpty(route.routeID)) return;
+
+        if (!_patrolRoutes.ContainsKey(route.routeID))
         {
-            return null;
+            _patrolRoutes.Add(route.routeID, route);
         }
-        return patrolRoutes[index];
     }
 
-    public PatrolRouteSO GetRandomRoute()
+    public void UnregisterRoute(PatrolRoute route)
     {
-        if (patrolRoutes == null || patrolRoutes.Count == 0)
+        if (route != null && _patrolRoutes.ContainsKey(route.routeID))
         {
-            return null;
+            _patrolRoutes.Remove(route.routeID);
         }
-        return patrolRoutes[Random.Range(0, patrolRoutes.Count)];
+    }
+
+    public PatrolRoute GetRoute(string id)
+    {
+        _patrolRoutes.TryGetValue(id, out PatrolRoute route);
+        return route;
+    }
+
+    public PatrolRoute GetRandomRoute()
+    {
+        if (_patrolRoutes.Count == 0) return null;
+        return _patrolRoutes.Values.ElementAt(Random.Range(0, _patrolRoutes.Count));
     }
 }

@@ -4,5 +4,5 @@ public class SpawnData
 {
     public EnemyConfigSO enemyToSpawn;
     public string spawnPointID;
-    public PatrolRouteSO patrolRoute;
+    public string patrolRouteID;
 }

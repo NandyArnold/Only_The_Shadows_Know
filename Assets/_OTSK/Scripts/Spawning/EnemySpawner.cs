@@ -7,6 +7,12 @@ public class EnemySpawner : MonoBehaviour
 {
     public static EnemySpawner Instance { get; private set; }
 
+    [Header("Spawn Settings")]
+    [SerializeField] private GameObject enemyPrefab;
+    [Tooltip("The index of the route from the PatrolRouteManager to assign. Use -1 for a random route.")]
+    [SerializeField]
+    private int patrolRouteIndex = 0;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -43,6 +49,12 @@ public class EnemySpawner : MonoBehaviour
             spawnPoint = Object.FindFirstObjectByType<EnemySpawnPoint>();
         }
 
+        PatrolRoute routeToAssign = null;
+        if (!string.IsNullOrEmpty(data.patrolRouteID))
+        {
+            routeToAssign = PatrolRouteManager.Instance.GetRoute(data.patrolRouteID);
+        }
+
         if (spawnPoint != null)
         {
             // If we found a spawn point (either by ID or fallback), spawn the enemy there.
@@ -53,7 +65,7 @@ public class EnemySpawner : MonoBehaviour
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
                 Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}' with patrol route '{data.patrolRoute?.name ?? "None"}'.");
-                enemy.Initialize(data.enemyToSpawn, data.patrolRoute);
+                enemy.Initialize(data.enemyToSpawn, data.patrolRouteID);
             }
         }
         else

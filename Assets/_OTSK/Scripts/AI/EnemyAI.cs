@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     public EnemyCombatHandler CombatHandler { get; private set; } 
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
-    public PatrolRouteSO PatrolRoute { get; private set; }
+    public PatrolRoute PatrolRoute { get; private set; }
 
     private EnemyAIState _currentState;
     public EnemyAIState CurrentState => _currentState;
@@ -81,7 +81,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public void Initialize(EnemyConfigSO newConfig, PatrolRouteSO route)
+    public void Initialize(EnemyConfigSO newConfig, PatrolRoute route)
     {
         Config = newConfig;
         PatrolRoute = route;
