@@ -20,7 +20,7 @@ public class PlayerDebug : MonoBehaviour
     {
         if (_inputHandler != null)
         {
-            Debug.Log("[PlayerDebug] Subscribing to OnToggleInvulnerabilityInput event.");
+            //Debug.Log("[PlayerDebug] Subscribing to OnToggleInvulnerabilityInput event.");
             _inputHandler.OnToggleInvulnerabilityInput += ToggleInvulnerability;
         }
     }

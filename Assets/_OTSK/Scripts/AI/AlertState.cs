@@ -24,6 +24,7 @@ public class AlertState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.Detector.enabled) return;
         // First, check if we can see a LIVE player.
         // The PlayerTarget property will be null if the player is dead.
         if (enemyAI.PlayerTarget != null && enemyAI.Detector.CanSeePlayer())

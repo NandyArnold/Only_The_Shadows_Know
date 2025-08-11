@@ -7,15 +7,20 @@ public class ScenePatrolData : MonoBehaviour
     [Tooltip("A list of all patrol routes that exist in this specific scene.")]
     [SerializeField] private List<PatrolRoute> routesInThisScene;
 
-    private void OnEnable()
+    private void Start()
     {
-        // When this scene loads, register all of its routes with the central manager.
         if (PatrolRouteManager.Instance != null)
         {
             foreach (var route in routesInThisScene)
             {
                 PatrolRouteManager.Instance.RegisterRoute(route);
             }
+            // After registering all routes, signal that the manager is ready for this scene.
+            PatrolRouteManager.Instance.SetIsReady(true);
+        }
+        else
+        {
+            Debug.LogError("ScenePatrolData could not find PatrolRouteManager.Instance!", this);
         }
     }
 
@@ -28,6 +33,7 @@ public class ScenePatrolData : MonoBehaviour
             {
                 PatrolRouteManager.Instance.UnregisterRoute(route);
             }
+            PatrolRouteManager.Instance.SignalRoutesReady();
         }
     }
 }

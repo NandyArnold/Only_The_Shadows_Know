@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawnPoint : MonoBehaviour, ISpawnPoint
@@ -10,14 +11,16 @@ public class EnemySpawnPoint : MonoBehaviour, ISpawnPoint
     public string SpawnPointTag => spawnPointID;
     public Transform SpawnTransform => transform;
 
-    private void OnEnable()
+
+    private void Start()
     {
-        GlobalSpawnRegistry.Instance?.RegisterSpawnPoint(this);
+        GlobalSpawnRegistry.Instance.RegisterSpawnPoint(this);
+        Debug.Log(0);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        GlobalSpawnRegistry.Instance?.UnregisterSpawnPoint(this);
+        GlobalSpawnRegistry.Instance.UnregisterSpawnPoint(this);
     }
 
     private void OnDrawGizmos()

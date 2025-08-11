@@ -4691,19 +4691,20 @@ GameObject:
   - component: {fileID: 1837955062}
   - component: {fileID: 1837955063}
   - component: {fileID: 1837955064}
-  - component: {fileID: 1837955066}
-  - component: {fileID: 1837955065}
-  - component: {fileID: 1837955067}
+  - component: {fileID: 1837955070}
   - component: {fileID: 1837955069}
   - component: {fileID: 1837955068}
-  - component: {fileID: 1837955070}
   - component: {fileID: 1837955071}
   - component: {fileID: 1837955072}
-  - component: {fileID: 1837955073}
   - component: {fileID: 1837955074}
   - component: {fileID: 1837955075}
-  - component: {fileID: 1837955076}
+  - component: {fileID: 1837955073}
   - component: {fileID: 1837955077}
+  - component: {fileID: 1837955078}
+  - component: {fileID: 1837955066}
+  - component: {fileID: 1837955076}
+  - component: {fileID: 1837955065}
+  - component: {fileID: 1837955067}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -5006,8 +5007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffb21165c62b4af4bbc177ce58c6309f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 0}
-  patrolRouteIndex: 0
+  _currentSceneData: {fileID: 0}
 --- !u!114 &1837955074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5055,6 +5055,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 891227112da45c24eae188956d572be8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1837955078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30f6af6d266b3dc4abbb4cf274c95659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1891975900

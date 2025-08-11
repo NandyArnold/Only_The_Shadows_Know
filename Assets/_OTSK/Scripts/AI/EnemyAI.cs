@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     // Public properties for states to access components
-    public EnemyConfigSO Config { get; private set; }
+    public EnemyConfigSO Config { get; set; }
     public EnemyNavigator Navigator { get; private set; }
     public DetectionSystem Detector { get; private set; }
     public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     public EnemyCombatHandler CombatHandler { get; private set; } 
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
-    public PatrolRoute PatrolRoute { get; private set; }
+    public PatrolRoute PatrolRoute { get; set; }
 
     private EnemyAIState _currentState;
     public EnemyAIState CurrentState => _currentState;
@@ -52,13 +52,6 @@ public class EnemyAI : MonoBehaviour
             Detector.OnSoundDetected += HandleSoundDetected;
         }
 
-        if (CombatManager.Instance != null)
-        {
-           
-            // CHANGE these to use named methods
-            CombatManager.Instance.OnCombatStart += HandleAICombatStart;
-            CombatManager.Instance.OnCombatEnd += HandleAICombatEnd;
-        }
     }
 
     // NEW: Unsubscribe from events when the object is disabled.
@@ -73,19 +66,10 @@ public class EnemyAI : MonoBehaviour
         {
             Detector.OnSoundDetected -= HandleSoundDetected;
         }
-        if (CombatManager.Instance != null)
-        {
-            // This will now correctly unsubscribe
-            CombatManager.Instance.OnCombatStart -= HandleAICombatStart;
-            CombatManager.Instance.OnCombatEnd -= HandleAICombatEnd;
-        }
+       
     }
 
-    public void Initialize(EnemyConfigSO newConfig, PatrolRoute route)
-    {
-        Config = newConfig;
-        PatrolRoute = route;
-    }
+  
 
     private void Start()
     {
@@ -150,8 +134,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void HandleAICombatStart() => AnimController.SetIsInCombat(true);
-    private void HandleAICombatEnd() => AnimController.SetIsInCombat(false);
+    
 
     private Transform FindPlayerTarget()
     {

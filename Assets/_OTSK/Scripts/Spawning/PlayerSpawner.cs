@@ -52,7 +52,6 @@ public class PlayerSpawner : MonoBehaviour
     private IEnumerator SpawnPlayerRoutine(SceneDataSO sceneData)
     {
         // ... (This coroutine logic is likely fine, but we leave it for completeness)
-        GlobalSpawnRegistry.Instance.ClearRegistry();
         yield return new WaitForEndOfFrame();
 
         string tagToUse = _nextSpawnPointTag;
@@ -65,7 +64,7 @@ public class PlayerSpawner : MonoBehaviour
 
         if (spawnPoint == null)
         {
-            Debug.LogWarning($"Spawn point '{tagToUse}' not found! Using first available as fallback.", this.gameObject);
+            //Debug.LogWarning($"Spawn point '{tagToUse}' not found! Using first available as fallback.", this.gameObject);
             spawnPoint = Object.FindFirstObjectByType<PlayerSpawnPoint>();
         }
 

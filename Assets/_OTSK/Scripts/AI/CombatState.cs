@@ -29,6 +29,7 @@ public class CombatState : EnemyAIState
         _attackCooldownTimer = 0f; // Reset attack timer so they can attack immediately
 
         // We always start by chasing the player.
+        enemyAI.AnimController.SetIsInCombat(true);
         _subState = CombatSubState.Chasing;
     }
 
@@ -109,6 +110,7 @@ public class CombatState : EnemyAIState
 
     public override void Exit(EnemyAI enemyAI)
     {
+        enemyAI.AnimController.SetIsInCombat(false);
         Debug.Log("Exiting Combat State");
         enemyAI.AnimController.SetIsInCombat(false);
         if (CombatManager.Instance != null)

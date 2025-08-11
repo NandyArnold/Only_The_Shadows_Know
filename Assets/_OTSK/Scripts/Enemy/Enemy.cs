@@ -13,10 +13,16 @@ public class Enemy : MonoBehaviour, ISaveable
     [System.Serializable]
     private struct EnemySaveData
     {
-        public Vector3 position;
-        public Quaternion rotation;
+        // For Position
+        public float posX, posY, posZ;
+        // For Rotation
+        public float rotX, rotY, rotZ, rotW;
+        // For Health
         public float currentHealth;
     }
+    // --- ISaveable Implementation ---
+    public string UniqueID => _uniqueID.ID;
+
     // --- Component References 
     [Header("Data")] [Tooltip("The enemy's configuration data, including stats and behavior.")]
     [SerializeField] private EnemyConfigSO config;
@@ -38,24 +44,32 @@ public class Enemy : MonoBehaviour, ISaveable
     private GameObject _statusBarInstance;
 
 
-    // --- ISaveable Implementation ---
-    public string UniqueID => _uniqueID.ID;
+
 
     public object CaptureState()
     {
         return new EnemySaveData
         {
-            position = transform.position,
-            rotation = transform.rotation,
-            currentHealth = _health.CurrentHealth // We need to add this property to EnemyHealth
+            posX = transform.position.x,
+            posY = transform.position.y,
+            posZ = transform.position.z,
+
+            rotX = transform.rotation.x,
+            rotY = transform.rotation.y,
+            rotZ = transform.rotation.z,
+            rotW = transform.rotation.w,
+
+            currentHealth = _health.CurrentHealth
         };
     }
 
     public void RestoreState(object state)
     {
         var saveData = (EnemySaveData)state;
-        transform.position = saveData.position;
-        transform.rotation = saveData.rotation;
+
+        transform.position = new Vector3(saveData.posX, saveData.posY, saveData.posZ);
+        transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
+
         _health.SetHealth(saveData.currentHealth);
     }
     private void Awake()
@@ -124,7 +138,8 @@ public class Enemy : MonoBehaviour, ISaveable
         //Debug.Log($"[Enemy] Initializing Detector components with config: {newConfig.name}");
         Detector.Initialize(newConfig);
         //Debug.Log($"[Enemy] Initializing EnemyAI components with config: {newConfig.name}");
-        _ai.Initialize(newConfig, newPatrolRoute);
+        _ai.Config = newConfig;
+        _ai.PatrolRoute = newPatrolRoute;
 
         _ai.StartAI();
       
