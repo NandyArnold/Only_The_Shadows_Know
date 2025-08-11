@@ -55,23 +55,27 @@ public class EnemySpawner : MonoBehaviour
             routeToAssign = PatrolRouteManager.Instance.GetRoute(data.patrolRouteID);
         }
 
+
         if (spawnPoint != null)
         {
             // If we found a spawn point (either by ID or fallback), spawn the enemy there.
-            GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, spawnPoint.SpawnTransform.position, spawnPoint.SpawnTransform.rotation);
+            GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, spawnPoint.SpawnTransform.position, 
+                                        spawnPoint.SpawnTransform.rotation);
 
             SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
 
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
-                Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}' with patrol route '{data.patrolRoute?.name ?? "None"}'.");
-                enemy.Initialize(data.enemyToSpawn, data.patrolRouteID);
+                Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}'" +
+                    $" with patrol route '{routeToAssign?.name ?? "None"}'.");
+                enemy.Initialize(data.enemyToSpawn, routeToAssign);
             }
         }
         else
         {
             // If there are NO enemy spawn points in the entire scene, spawn at the world origin.
-            Debug.LogError($"No enemy spawn points found in the scene! Spawning enemy '{data.enemyToSpawn.displayName}' at world origin.");
+            Debug.LogError($"No enemy spawn points found in the scene! Spawning enemy '{data.enemyToSpawn.displayName}'" +
+                $" at world origin.");
             GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, Vector3.zero, Quaternion.identity);
 
             SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
@@ -79,7 +83,7 @@ public class EnemySpawner : MonoBehaviour
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
                 Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
-                enemy.Initialize(data.enemyToSpawn, data.patrolRoute);
+                enemy.Initialize(data.enemyToSpawn, routeToAssign);
             }
         }
     }

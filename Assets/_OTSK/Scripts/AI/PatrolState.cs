@@ -7,13 +7,13 @@ public class PatrolState : EnemyAIState
 {
     private  PatrolRoute _patrolRoute;
     private Coroutine _patrolCoroutine;
-    private int _currentWaypointIndex = -1;
+   
     private float _gracePeriodTimer;
+ 
 
 
-
-    public PatrolState(PatrolRoute route) // Change type from PatrolRouteSO
-    {
+    public PatrolState(PatrolRoute route)
+    { 
         _patrolRoute = route;
     }
 
@@ -76,19 +76,18 @@ public class PatrolState : EnemyAIState
         }
 
         int _currentWaypointIndex = -1;
-        while (true)
-        {
+        
             while (true)
             {
                 // 1. CHOOSE NEXT WAYPOINT
                 _currentWaypointIndex = (_currentWaypointIndex + 1) % _patrolRoute.waypoints.Count;
-                Transform waypointTransform = _patrolRoute.waypoints[_currentWaypointIndex];
+                PatrolWaypoint waypoint = _patrolRoute.waypoints[_currentWaypointIndex];
 
 
                 // 2. START MOVING
                 enemyAI.Navigator.Resume();
                 enemyAI.AnimController.SetSpeed(enemyAI.Config.patrolSpeed);
-                enemyAI.Navigator.MoveTo(waypoint.position);
+                enemyAI.Navigator.MoveTo(waypoint.transform.position);
 
                 // 3. WAIT TO ARRIVE (Using the reliable check)
                 yield return new WaitUntil(() => enemyAI.Navigator.HasReachedDestination);
@@ -119,5 +118,4 @@ public class PatrolState : EnemyAIState
                 }
             }
         }
-    }
 }

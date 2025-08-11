@@ -89,12 +89,14 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        // The enemy always starts in the Patrol state.
-        TransitionToState(new PatrolState(PatrolRoute));
-
-
-
+       
     }
+
+    public void StartAI()
+    {
+        TransitionToState(new PatrolState(PatrolRoute));
+    }
+
 
     private void Update()
     {

@@ -614,6 +614,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 72793721}
+  - component: {fileID: 72793722}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -636,6 +637,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 225382323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &72793722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72793720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe06bffb2e92b794b819c3c253816aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitTime: 2
+  action: 0
+  randomizeAction: 0
 --- !u!1 &82398465
 GameObject:
   m_ObjectHideFlags: 0
@@ -1164,7 +1180,7 @@ GameObject:
   - component: {fileID: 225382323}
   - component: {fileID: 225382322}
   m_Layer: 0
-  m_Name: PatrolA
+  m_Name: Patrol_PathA
   m_TagString: Untagged
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1184,9 +1200,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   routeID: GuardPathA
   waypoints:
-  - {fileID: 72793721}
-  - {fileID: 1738363133}
-  - {fileID: 2094196890}
+  - {fileID: 72793722}
+  - {fileID: 1738363134}
+  - {fileID: 2094196891}
 --- !u!4 &225382323
 Transform:
   m_ObjectHideFlags: 0
@@ -5662,8 +5678,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: _PatrolRouteManager_Tutorial
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2420808685563011357, guid: a9ece54b0ade9ea49b2029771915398c, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6206,6 +6221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1738363133}
+  - component: {fileID: 1738363134}
   m_Layer: 0
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -6228,6 +6244,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 225382323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1738363134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738363132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe06bffb2e92b794b819c3c253816aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitTime: 2
+  action: 0
+  randomizeAction: 0
 --- !u!1 &1741608741
 GameObject:
   m_ObjectHideFlags: 0
@@ -7530,6 +7561,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094196890}
+  - component: {fileID: 2094196891}
   m_Layer: 0
   m_Name: GameObject (2)
   m_TagString: Untagged
@@ -7552,6 +7584,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 225382323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2094196891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094196889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe06bffb2e92b794b819c3c253816aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitTime: 2
+  action: 0
+  randomizeAction: 0
 --- !u!1 &2094883944
 GameObject:
   m_ObjectHideFlags: 0
@@ -8769,6 +8816,7 @@ SceneRoots:
   - {fileID: 2934092206656791909}
   - {fileID: 1424636241}
   - {fileID: 61168504}
+  - {fileID: 225382323}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1254408165}
@@ -8779,4 +8827,3 @@ SceneRoots:
   - {fileID: 1378631851}
   - {fileID: 819158692}
   - {fileID: 3856416286813433109}
-  - {fileID: 225382323}

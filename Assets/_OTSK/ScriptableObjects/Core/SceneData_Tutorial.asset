@@ -23,4 +23,4 @@ MonoBehaviour:
   enemyInitialSpawns:
   - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
     spawnPointID: Guard_PatrolA
-    patrolRoute: {fileID: 11400000, guid: 98c4f8b692838294f8f8e012415fc3ab, type: 2}
+    patrolRouteID: GuardPathA

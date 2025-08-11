@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 70081826903554991, guid: 6b387ad64ba08c74a9643770d141f500, type: 3}
       propertyPath: m_Name
-      value: _PatrolRouteManager
+      value: _PatrolRouteManager Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2993688904444095342, guid: 6b387ad64ba08c74a9643770d141f500, type: 3}
       propertyPath: m_LocalPosition.x

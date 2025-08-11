@@ -113,7 +113,7 @@ public class Enemy : MonoBehaviour, ISaveable
         }
     }
 
-    public void Initialize(EnemyConfigSO newConfig, PatrolRouteSO newPatrolRoute)
+    public void Initialize(EnemyConfigSO newConfig, PatrolRoute newPatrolRoute)
     {
         //Debug.Log($"[Enemy] Initializing Enemy: {gameObject.name} with config: {newConfig.name}");
         this.config = newConfig;
@@ -125,14 +125,9 @@ public class Enemy : MonoBehaviour, ISaveable
         Detector.Initialize(newConfig);
         //Debug.Log($"[Enemy] Initializing EnemyAI components with config: {newConfig.name}");
         _ai.Initialize(newConfig, newPatrolRoute);
-       
-       
-        // You can add initialization for other components here too
-        //_navigator = 
-        //_ai = 
-        //_animController =
-        //_collider =
-        //_uniqueID =
+
+        _ai.StartAI();
+      
 
     }
     private void Start()
@@ -140,7 +135,7 @@ public class Enemy : MonoBehaviour, ISaveable
         //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
         EnemyManager.Instance.RegisterEnemy(this);
 
-        _navigator.SetSpeed(config.patrolSpeed);
+        //_navigator.SetSpeed(config.patrolSpeed);
 
         //Instantiate and set up the status bar
         if (statusBarPrefab != null)

@@ -14,6 +14,7 @@ public class PatrolWaypoint : MonoBehaviour
 }
 
 // You will also need to make sure this enum is in its own file, e.g., PatrolAction.cs
+
 public enum PatrolAction
 {
     Wait,
