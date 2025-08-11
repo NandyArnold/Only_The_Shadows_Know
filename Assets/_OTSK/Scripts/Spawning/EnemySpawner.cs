@@ -7,11 +7,9 @@ public class EnemySpawner : MonoBehaviour
 {
     public static EnemySpawner Instance { get; private set; }
 
-    [Header("Spawn Settings")]
-    [SerializeField] private GameObject enemyPrefab;
+  
     [Tooltip("The index of the route from the PatrolRouteManager to assign. Use -1 for a random route.")]
-    [SerializeField]
-    private int patrolRouteIndex = 0;
+   
 
     private void Awake()
     {
