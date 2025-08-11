@@ -7,7 +7,7 @@ public class DetectionSystem : MonoBehaviour
  
     [Tooltip("The point from which the enemy 'sees'. Usually the head.")]
     [SerializeField] private Transform eyePoint;
-    [SerializeField] private GameObject alertVFXPrefab;
+    
 
     [Header("Settings")]
     

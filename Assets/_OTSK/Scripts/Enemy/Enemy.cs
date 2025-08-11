@@ -77,8 +77,7 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void OnEnable()
     {
-        //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
-        EnemyManager.Instance.RegisterEnemy(this);
+        
         _health.OnDied += HandleDeath; // Subscribe to the death event
     }
 
@@ -138,6 +137,9 @@ public class Enemy : MonoBehaviour, ISaveable
     }
     private void Start()
     {
+        //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
+        EnemyManager.Instance.RegisterEnemy(this);
+
         _navigator.SetSpeed(config.patrolSpeed);
 
         //Instantiate and set up the status bar

@@ -1,15 +1,19 @@
 using System;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class UniqueID : MonoBehaviour
 {
-    [SerializeField]
-    private string id;
-    public string ID => id;
+    [SerializeField] // Make the ID visible in the Inspector
+    private string _id;
+    public string ID => _id;
 
-    [ContextMenu("Generate new Unique ID")]
-    private void GenerateId()
+    private void Awake()
     {
-        id = Guid.NewGuid().ToString();
+        // Generate the ID if it doesn't already have one (for scene objects)
+        if (string.IsNullOrEmpty(_id))
+        {
+            _id = Guid.NewGuid().ToString();
+        }
     }
 }
