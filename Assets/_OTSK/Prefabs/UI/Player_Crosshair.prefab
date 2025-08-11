@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3167440620011827770}
   - component: {fileID: 1058065718298867277}
   m_Layer: 5
-  m_Name: Crosshair
+  m_Name: Player_Crosshair
   m_TagString: TargetingCrosshair
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

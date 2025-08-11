@@ -103,11 +103,14 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             CombatManager.Instance.UnregisterEnemyFromCombat(this);
         }
-       
         if (_uiController != null)
         {
             _health.OnHealthChanged -= _uiController.UpdateHealth;
             Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+            }
         }
     }
 
@@ -140,16 +143,21 @@ public class Enemy : MonoBehaviour, ISaveable
         //Instantiate and set up the status bar
         if (statusBarPrefab != null)
         {
-            GameObject statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
-            _uiController = statusBarInstance.GetComponent<EnemyUIController>();
+            _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
+            _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
 
-            // Connect the health bar to the health changed event
+            // Connect the standard events
             _health.OnHealthChanged += _uiController.UpdateHealth;
-            _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
-
-            //  Connect the sound gauge to the alert bar
             Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
-            // Initialize the alert bar to zero
+
+            if (_ai != null)
+            {
+                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
+                _uiController.HandleAIStateChanged(_ai.CurrentState);
+            }
+
+            // Initialize the health bar and alert bar to zero 
+            _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
             _uiController.UpdateAlert(0, config.hearingThreshold);
         }
     

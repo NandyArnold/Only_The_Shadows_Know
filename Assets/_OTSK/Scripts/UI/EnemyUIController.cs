@@ -4,12 +4,18 @@ using UnityEngine.UI;
 
 public class EnemyUIController : MonoBehaviour
 {
+    [Header("UI References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider alertSlider;
 
+
+    [Header("VFX")]
+    [Tooltip("Drag the child Alert_VFX GameObject here.")]
+    [SerializeField] private GameObject alertVFXObject;
+
+
     private Transform _cameraToFace;
 
-    
 
     private void LateUpdate()
     {
@@ -39,5 +45,26 @@ public class EnemyUIController : MonoBehaviour
     {
         alertSlider.gameObject.SetActive(current > 0); // Only show if there is some alert level
         alertSlider.value = current / max;
+    }
+
+    public void HandleAIStateChanged(EnemyAIState newState)
+    {
+        // The health bar should be visible in Alert and Combat states.
+        bool showHealth = (newState is AlertState || newState is CombatState);
+        healthSlider.gameObject.SetActive(showHealth);
+
+        // The alert bar should be hidden when in the Combat state.
+
+
+        // --- NEW VFX LOGIC ---
+        // The VFX should only be active when the AI is in the AlertState.
+        bool showAlertUI = !(newState is CombatState);
+        alertSlider.gameObject.SetActive(showAlertUI);
+
+        bool shouldShowAlertVFX = (newState is AlertState);
+        if (alertVFXObject != null)
+        {
+            alertVFXObject.SetActive(shouldShowAlertVFX);
+        }
     }
 }

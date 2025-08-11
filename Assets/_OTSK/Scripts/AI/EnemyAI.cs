@@ -1,5 +1,6 @@
 // EnemyAI.cs - COMPLETE & CORRECTED
 
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,6 +24,8 @@ public class EnemyAI : MonoBehaviour
     private EnemyHealth _health;
 
     private Transform _playerTarget;
+
+    public event Action<EnemyAIState> OnStateChanged;
 
     private void Awake()
     {
@@ -105,6 +108,7 @@ public class EnemyAI : MonoBehaviour
         _currentState?.Exit(this);
         _currentState = newState;
         _currentState.Enter(this);
+        OnStateChanged?.Invoke(_currentState);
     }
 
     // NEW: This method is called when the enemy is damaged.

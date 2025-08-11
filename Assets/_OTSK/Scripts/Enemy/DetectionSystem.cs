@@ -7,6 +7,7 @@ public class DetectionSystem : MonoBehaviour
  
     [Tooltip("The point from which the enemy 'sees'. Usually the head.")]
     [SerializeField] private Transform eyePoint;
+    [SerializeField] private GameObject alertVFXPrefab;
 
     [Header("Settings")]
     
@@ -17,8 +18,15 @@ public class DetectionSystem : MonoBehaviour
     public event Action<float, float> OnSoundGaugeChanged;
 
     private EnemyConfigSO config;
+    private EnemyAI _enemyAI;
     private Transform _playerTransform;
+
     private float _soundGauge = 0f;
+
+    private void Awake()
+    {
+        _enemyAI = GetComponent<EnemyAI>(); 
+    }
 
     public void Initialize(EnemyConfigSO newConfig)
     {
@@ -36,6 +44,15 @@ public class DetectionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (_enemyAI.CurrentState is AlertState)
+        {
+            return;
+        }
+
+        if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState)
+        {
+            return;
+        }
         // Decay the sound gauge over time
         if (_soundGauge > 0)
         {
@@ -112,6 +129,30 @@ public class DetectionSystem : MonoBehaviour
         return true;
     }
 
+ 
+   // NEW: This method is called by the EnemyManager.
+    public void OnSoundHeard(Vector3 soundPosition, float intensity)
+    {
+        // Check if the sound is within hearing range and loud enough.
+        float distanceToSound = Vector3.Distance(transform.position, soundPosition);
+        if (distanceToSound > config.hearingRange) return;
+
+        // Add the noise intensity to the gauge
+        _soundGauge += intensity;
+        OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
+        //Debug.Log($"Enemy heard sound. Gauge is now at: {_soundGauge} / {config.hearingThreshold}");
+
+        // If the gauge is full, fire the event
+        if (_soundGauge >= config.hearingThreshold)
+        {
+          
+
+            OnSoundDetected?.Invoke(soundPosition);
+            _soundGauge = config.hearingThreshold; // Clamp to full instead of resetting
+            OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (config == null) return;
@@ -134,28 +175,6 @@ public class DetectionSystem : MonoBehaviour
         // Draw the cone lines
         Gizmos.DrawLine(eyePoint.position, eyePoint.position + leftRayDirection * config.visionRange);
         Gizmos.DrawLine(eyePoint.position, eyePoint.position + rightRayDirection * config.visionRange);
-    }
-
-
-    // NEW: This method is called by the EnemyManager.
-    public void OnSoundHeard(Vector3 soundPosition, float intensity)
-    {
-        // Check if the sound is within hearing range and loud enough.
-        float distanceToSound = Vector3.Distance(transform.position, soundPosition);
-        if (distanceToSound > config.hearingRange) return;
-
-        // Add the noise intensity to the gauge
-        _soundGauge += intensity;
-        OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
-        //Debug.Log($"Enemy heard sound. Gauge is now at: {_soundGauge} / {config.hearingThreshold}");
-
-        // If the gauge is full, fire the event
-        if (_soundGauge >= config.hearingThreshold)
-        {
-            OnSoundDetected?.Invoke(soundPosition);
-            _soundGauge = 0f; // Reset the gauge after being alerted
-            OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
-        }
     }
 
 }

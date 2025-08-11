@@ -40,8 +40,17 @@ public class EnemyManager : MonoBehaviour
             // Don't let enemies hear themselves.
             if (enemy.gameObject == sourceObject) continue;
 
-            // Tell each enemy's detector about the sound.
-            enemy.Detector?.OnSoundHeard(sourcePosition, intensity);
+            // Check if the enemy is alive before broadcasting the sound.
+            if (enemy.GetComponent<EnemyHealth>().CurrentHealth <= 0)
+            {
+                continue; // Skip this dead enemy
+            }
+
+            // Tell each living enemy's detector about the sound.
+            if (enemy.Detector != null)
+            {
+                enemy.Detector.OnSoundHeard(sourcePosition, intensity);
+            }
         }
     }
     public bool IsAnyEnemyAlerted()
