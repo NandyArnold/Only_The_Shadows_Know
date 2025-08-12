@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour, ISaveable
     private UniqueID _uniqueID;
     private EnemyUIController _uiController;
     private GameObject _statusBarInstance;
-
+    private PatrolRoute _patrolRoute;
 
 
 
@@ -81,6 +81,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _animController = GetComponent<EnemyAnimationController>();
         _collider = GetComponent<CapsuleCollider>();
         _uniqueID = GetComponent<UniqueID>();
+        _patrolRoute = GetComponent<PatrolRoute>();
 
         statusBarAnchor = transform.Find("StatusBarAnchor");
         if (statusBarAnchor == null)

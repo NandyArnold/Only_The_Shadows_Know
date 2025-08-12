@@ -31,7 +31,7 @@ public class ObjectiveManager : MonoBehaviour
         // Subscribe to the SceneLoader to know when a new scene is ready.
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoaded += HandleSceneLoaded;
+            SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
         }
     }
 
@@ -39,7 +39,7 @@ public class ObjectiveManager : MonoBehaviour
     {
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoaded -= HandleSceneLoaded;
+            SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
         }
     }
     public void RegisterTrigger(IObjectiveTrigger trigger)

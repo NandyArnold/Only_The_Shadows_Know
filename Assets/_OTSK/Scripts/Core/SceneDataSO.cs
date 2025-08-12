@@ -48,6 +48,7 @@ public class SceneDataSO : ScriptableObject
     [Header("Enemy Spawning")]
     public List<SpawnData> enemyInitialSpawns; // Renamed for clarity
 
+   
     // This special Unity method runs in the Editor whenever you change a value.
     private void OnValidate()
     {

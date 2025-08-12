@@ -22,26 +22,33 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneLoader.Instance.OnSceneLoaded += HandleSceneLoaded;
-        
+        if (SceneLoader.Instance == null) return;
+        // Keep this to know WHICH scene to spawn for
+        SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
+        // Subscribe to the NEW event to know WHEN to spawn
+        SceneLoader.Instance.OnNewSceneReady += SpawnInitialEnemies;
     }
 
     private void OnDisable()
     {
-        SceneLoader.Instance.OnSceneLoaded -= HandleSceneLoaded;
-        
+        if (SceneLoader.Instance == null) return;
+        SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
+        SceneLoader.Instance.OnNewSceneReady -= SpawnInitialEnemies;
     }
 
     // This is called by the SceneLoader when a new scene is ready.
     private void HandleSceneLoaded(SceneDataSO sceneData)
     {
-        Debug.Log($"<color=cyan>EnemySpawner: Scene '{sceneData.sceneID}' loaded. Initializing spawner.</color>", this.gameObject);
-        // Wait one frame to ensure all spawn points have registered themselves.
-        StartCoroutine(SpawnInitialEnemies(sceneData));
+        _currentSceneData = sceneData;
+        //Debug.Log($"<color=cyan>EnemySpawner: Scene '{sceneData.sceneID}' loaded. Initializing spawner.</color>", this.gameObject);
+        //// Wait one frame to ensure all spawn points have registered themselves.
+        //StartCoroutine(SpawnInitialEnemies(sceneData));
     }
 
     public void SpawnEnemy(SpawnData data)
     {
+
+
         var stackTrace = new System.Diagnostics.StackTrace(); string callChain = "CALL STACK:\n";
         // We loop up to 5 frames, or as many as exist in the stack. 
         // We start at i = 1 to skip the current method itself.
@@ -99,23 +106,36 @@ public class EnemySpawner : MonoBehaviour
             }
         }
     }
-    private IEnumerator SpawnInitialEnemies(SceneDataSO sceneData)
+    private void SpawnInitialEnemies()
     {
-        Debug.Log($"<color=cyan>EnemySpawner: Starting initial enemy spawn for scene '{sceneData.sceneID}'</color>");
+        if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
 
-        yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
+        Debug.Log("<color=green>All systems ready. Spawning enemies...</color>");
 
-        Debug.Log("++++++ PATROL_____GLOBAL REGISTRY");
-
-        yield return new WaitUntil(() => GlobalSpawnRegistry.Instance != null && GlobalSpawnRegistry.Instance.IsReady);
-
-        Debug.Log($"<color=cyan>EnemySpawner: All systems ready. Spawning initial enemies.</color>", this.gameObject);
-        if (sceneData.enemyInitialSpawns == null) yield break;
-        foreach (var spawnData in sceneData.enemyInitialSpawns)
+        foreach (var spawnData in _currentSceneData.enemyInitialSpawns)
         {
             SpawnEnemy(spawnData);
         }
     }
+
+    //private IEnumerator SpawnInitialEnemies(SceneDataSO sceneData)
+    //{
+    //    Debug.Log($"<color=cyan>EnemySpawner: Starting initial enemy spawn for scene '{sceneData.sceneID}'</color>");
+
+    //    yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
+
+    //    Debug.Log("++++++ PATROL_____GLOBAL REGISTRY");
+
+    //    yield return new WaitUntil(() => GlobalSpawnRegistry.Instance != null && GlobalSpawnRegistry.Instance.IsReady);
+
+    //    Debug.Log($"<color=cyan>EnemySpawner: All systems ready. Spawning initial enemies.</color>", this.gameObject);
+    //    if (sceneData == null || sceneData.enemyInitialSpawns == null) yield break;
+
+    //    foreach (var spawnData in sceneData.enemyInitialSpawns)
+    //    {
+    //        SpawnEnemy(spawnData);
+    //    }
+    //}
 
     // This is the core spawning method.
 }

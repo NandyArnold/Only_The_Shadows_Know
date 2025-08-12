@@ -78,7 +78,7 @@ public class EnemyAI : MonoBehaviour
 
     public void StartAI()
     {
-        TransitionToState(new PatrolState(PatrolRoute));
+        TransitionToState(new SpawnState());
     }
 
 

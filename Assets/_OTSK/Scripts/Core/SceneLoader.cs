@@ -10,6 +10,8 @@ public class SceneLoader : MonoBehaviour
 
     public SceneDataSO CurrentlyLoadedScene => _currentlyLoadedScene;
     public event Action<SceneDataSO> OnSceneLoaded;
+    public event Action<SceneDataSO> OnSceneLoadCompleted;
+    public event Action OnNewSceneReady;
 
     [Header("Loading Settings")]
     [SerializeField] private float minLoadTime = 2.0f;
@@ -101,9 +103,16 @@ public class SceneLoader : MonoBehaviour
         // --- FINALIZATION ---
         // The player will be spawned here, but the screen is still black.
         _currentlyLoadedScene = sceneToLoad;
-        OnSceneLoaded?.Invoke(_currentlyLoadedScene);// This will spawn the player
 
-        yield return null; // Wait for the player to be spawned
+        //  Announce that the scene is loaded. Managers like ObjectiveManager will react to this.
+        OnSceneLoadCompleted?.Invoke(_currentlyLoadedScene);// This will spawn the player
+
+        //  Wait for the end of the frame. This gives everything in the new scene
+        //    (like spawn points and patrol data) a chance to run their Start() methods.
+        yield return new WaitForEndOfFrame();
+
+        // 3. NOW, announce that the scene is truly "ready" for spawning.
+        OnNewSceneReady?.Invoke();
 
         //  NOW it is safe to perform the autosave.
         if (AutosaveManager.Instance != null)
