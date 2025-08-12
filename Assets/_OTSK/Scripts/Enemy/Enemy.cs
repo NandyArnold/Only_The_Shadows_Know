@@ -198,6 +198,7 @@ public class Enemy : MonoBehaviour, ISaveable
         // 2. Play the death animation
         _animController.PlayDeathAnimation();
 
+        gameObject.tag = "DeadBody";
         // 3. Start a timer to remove the body
         //StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
     }

@@ -8,6 +8,7 @@ TagManager:
   - TargetingCrosshair
   - TestingDummy
   - AimTarget
+  - DeadBody
   layers:
   - Default
   - TransparentFX
