@@ -16,19 +16,19 @@ public class AimTargetController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
-    {
-        // It's safer to get the brain in Start, after all Awakes have run.
-        if (Camera.main != null)
-        {
-            _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-        }
+    //private void Start()
+    //{
+    //    // It's safer to get the brain in Start, after all Awakes have run.
+    //    if (Camera.main != null)
+    //    {
+    //        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
+    //    }
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterAimTarget(transform);
-        }
-    }
+    //    if (GameManager.Instance != null)
+    //    {
+    //        GameManager.Instance.RegisterAimTarget(transform);
+    //    }
+    //}
 
     private void OnDestroy()
     {
@@ -44,16 +44,24 @@ public class AimTargetController : MonoBehaviour
         this.enabled = (newState == GameState.Gameplay);
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (_cinemachineBrain == null) return;
+        if (_cinemachineBrain == null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.Player != null)
+            {
+                // Ask the PlayerCombat script for its brain
+                _cinemachineBrain = GameManager.Instance.Player.GetComponent<PlayerCombat>().Brain;
+            }
 
-        // Get the truly active camera from the brain.
+            // If we still can't find it, exit to prevent errors.
+            if (_cinemachineBrain == null) return;
+        }
+
         Camera activeCamera = _cinemachineBrain.OutputCamera;
         if (activeCamera == null) return;
 
-        // --- THIS IS THE FIX ---
-        // Create a ray directly from the camera's position, pointing forward.
+        // The raycast logic is now guaranteed to use the correct camera.
         Ray ray = new Ray(activeCamera.transform.position, activeCamera.transform.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask))

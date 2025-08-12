@@ -151,14 +151,14 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_Offset: {x: 0, y: 45, z: 0}
+    m_MinLimit: -45
+    m_MaxLimit: 45
     m_AimAxis: 4
     m_UpAxis: 2
     m_WorldUpType: 0
     m_WorldUpObject: {fileID: 0}
-    m_WorldUpAxis: 2
+    m_WorldUpAxis: 4
     m_MaintainOffset: 0
     m_ConstrainedAxes:
       x: 1
@@ -2706,8 +2706,6 @@ MonoBehaviour:
   playerInputHandler: {fileID: 2210745878514288481}
   playerAnimationController: {fileID: 7619512642376539503}
   weaponManager: {fileID: 8374650582106030362}
-  ikRig: {fileID: 7800078291248785385}
-  aimConstraint: {fileID: 606680434202663557}
   playerSkillController: {fileID: 6023620784964649685}
   noiseSettings: {fileID: 11400000, guid: f3056c7a4cb0557438bbed346ff74ffc, type: 2}
   playerStats: {fileID: 6750015388211781664}
