@@ -12,8 +12,8 @@ public class EnemyAI : MonoBehaviour
     public DetectionSystem Detector { get; private set; }
     public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
     public EnemyAnimationController AnimController { get; private set; }
-  
-    public EnemyCombatHandler CombatHandler { get; private set; } 
+
+    public EnemyCombatHandler CombatHandler { get; private set; }
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
     public PatrolRoute PatrolRoute { get; set; }
@@ -46,7 +46,7 @@ public class EnemyAI : MonoBehaviour
         {
             _health.OnDamaged += HandleDamage;
         }
-        
+
         if (Detector != null)
         {
             Detector.OnSoundDetected += HandleSoundDetected;
@@ -62,20 +62,20 @@ public class EnemyAI : MonoBehaviour
         {
             _health.OnDamaged -= HandleDamage;
         }
-        
+
         if (Detector != null)
         {
             Detector.OnSoundDetected -= HandleSoundDetected;
             Detector.OnDeadBodySpotted -= HandleDeadBodySpotted;
         }
-       
+
     }
 
-  
+
 
     private void Start()
     {
-       
+
     }
 
     public void StartAI()
@@ -136,7 +136,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    
+
 
     private Transform FindPlayerTarget()
     {
@@ -162,3 +162,4 @@ public class EnemyAI : MonoBehaviour
         // Transition to the new AlarmState
         TransitionToState(new AlarmState());
     }
+}

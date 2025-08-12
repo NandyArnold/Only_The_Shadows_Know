@@ -9,6 +9,7 @@ TagManager:
   - TestingDummy
   - AimTarget
   - DeadBody
+  - AlarmPanel
   layers:
   - Default
   - TransparentFX
