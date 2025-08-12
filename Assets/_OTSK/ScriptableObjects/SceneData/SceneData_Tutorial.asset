@@ -21,9 +21,14 @@ MonoBehaviour:
   objectiveChain: {fileID: 11400000, guid: c9c9e3cbc38ccb3499cbda9924dabe80, type: 2}
   defaultSpawnPointTag: InitialSpawn
   enemyInitialSpawns:
-  - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-    spawnPointID: Guard_PatrolA
-    patrolRouteID: GuardPathA
-  - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-    spawnPointID: Guard_PatrolB
-    patrolRouteID: GuardPathB
+  - groupName: TestingKnights
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_PatrolA
+      patrolRouteID: GuardPathA
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_PatrolB
+      patrolRouteID: GuardPathB
+  - groupName: 
+    spawns: []
+  enemyEventSpawns: []

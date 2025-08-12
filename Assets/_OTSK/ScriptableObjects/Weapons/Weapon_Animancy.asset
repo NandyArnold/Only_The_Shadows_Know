@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7366d5c9761d17d48bcba9e0dd7c6ecb, type: 3}
   m_Name: Weapon_Animancy
   m_EditorClassIdentifier: 
+  lineOfSightBlockingLayers:
+    serializedVersion: 2
+    m_Bits: 641
   weaponName: 
   usesAimIK: 1
   weaponDescription: 

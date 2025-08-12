@@ -7,7 +7,7 @@ public class DetectionSystem : MonoBehaviour
  
     [Tooltip("The point from which the enemy 'sees'. Usually the head.")]
     [SerializeField] private Transform eyePoint;
-    
+    public Transform EyePoint => eyePoint;
 
     [Header("Settings")]
     
@@ -133,6 +133,8 @@ public class DetectionSystem : MonoBehaviour
    // NEW: This method is called by the EnemyManager.
     public void OnSoundHeard(Vector3 soundPosition, float intensity)
     {
+        // Don't accumulate sound if we are already fully alerted or in combat
+        if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState) return;
         // Check if the sound is within hearing range and loud enough.
         float distanceToSound = Vector3.Distance(transform.position, soundPosition);
         if (distanceToSound > config.hearingRange) return;

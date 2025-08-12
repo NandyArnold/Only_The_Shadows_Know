@@ -22,6 +22,8 @@ public class EnemyHealth : MonoBehaviour
     private EnemyResistances _resistances;
     private EnemyConfigSO _config;
 
+    private bool _isSilentKill = false;
+
     private void Awake()
     {
         _config = GetComponent<Enemy>().Config;
@@ -41,6 +43,8 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker, bool isSilentKill = false)
     {
         if (_isDead) return;
+
+        _isSilentKill = isSilentKill;
 
         float totalDamage = 0;
         // Loop through each piece of damage in the attack
@@ -67,6 +71,11 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
+        if (!_isSilentKill && NoiseManager.Instance != null)
+        {
+            NoiseManager.Instance.GenerateNoise(transform.position, _config.deathSoundIntensity, gameObject);
+        }
+
         Debug.Log($"{gameObject.name} has been defeated.");
         OnDied?.Invoke();
     }

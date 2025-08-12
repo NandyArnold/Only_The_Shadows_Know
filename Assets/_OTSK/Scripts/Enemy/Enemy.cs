@@ -1,8 +1,8 @@
 // Enemy.cs - UPGRADED to handle death
 using System.Collections;
-using System.Xml;
+
 using UnityEngine;
-using UnityEngine.AI;
+
 
 // We add [RequireComponent] to ensure a UniqueID is always present.
 [RequireComponent(typeof(UniqueID))]

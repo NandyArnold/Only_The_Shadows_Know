@@ -133,4 +133,9 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
+
+    public List<Enemy> GetActiveEnemies()
+    {
+        return _activeEnemies;
+    }
 }
