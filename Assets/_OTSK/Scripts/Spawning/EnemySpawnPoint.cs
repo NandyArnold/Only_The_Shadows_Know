@@ -15,7 +15,7 @@ public class EnemySpawnPoint : MonoBehaviour, ISpawnPoint
     private void Start()
     {
         GlobalSpawnRegistry.Instance.RegisterSpawnPoint(this);
-        Debug.Log(0);
+      
     }
 
     private void OnDestroy()

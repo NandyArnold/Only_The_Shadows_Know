@@ -1,26 +1,29 @@
 using UnityEngine;
 using Unity.Cinemachine;
+
 public class AimTargetController : MonoBehaviour
 {
     [SerializeField] private LayerMask aimLayerMask;
     private CinemachineBrain _cinemachineBrain;
-    private MeshRenderer _renderer; // Optional: for a visual debug marker
 
     private void Awake()
     {
-        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-        _renderer = GetComponent<MeshRenderer>();
-
         // Subscribe to game state changes
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
         }
+        DontDestroyOnLoad(gameObject);
     }
+
     private void Start()
     {
-        _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-        // ADD THIS LINE: Register with the GameManager
+        // It's safer to get the brain in Start, after all Awakes have run.
+        if (Camera.main != null)
+        {
+            _cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
+        }
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterAimTarget(transform);
@@ -35,25 +38,31 @@ public class AimTargetController : MonoBehaviour
         }
     }
 
-    // This will now control whether the script is active
     private void HandleGameStateChanged(GameState newState)
     {
-        // Only enable the aim target when in active gameplay
-        bool shouldBeActive = (newState == GameState.Gameplay);
-        if (_renderer != null) _renderer.enabled = shouldBeActive; // Hide debug marker if we have one
-        this.enabled = shouldBeActive; // Enable/disable this script's Update method
+        // Only enable this script's Update method during active gameplay.
+        this.enabled = (newState == GameState.Gameplay);
     }
 
     void Update()
     {
         if (_cinemachineBrain == null) return;
 
-        // Get the truly active camera from the brain
+        // Get the truly active camera from the brain.
         Camera activeCamera = _cinemachineBrain.OutputCamera;
-        Ray ray = activeCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
+        if (activeCamera == null) return;
+
+        // --- THIS IS THE FIX ---
+        // Create a ray directly from the camera's position, pointing forward.
+        Ray ray = new Ray(activeCamera.transform.position, activeCamera.transform.forward);
+
         if (Physics.Raycast(ray, out RaycastHit hit, 999f, aimLayerMask))
+        {
             transform.position = hit.point;
+        }
         else
+        {
             transform.position = ray.GetPoint(100f);
+        }
     }
 }

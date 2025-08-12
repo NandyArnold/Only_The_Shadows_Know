@@ -14,7 +14,7 @@ public class GlobalSpawnRegistry : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("Duplicate GlobalSpawnRegistry found. Destroying...", this.gameObject);
+            //Debug.LogWarning("Duplicate GlobalSpawnRegistry found. Destroying...", this.gameObject);
             Destroy(this.gameObject);
             return;
         }

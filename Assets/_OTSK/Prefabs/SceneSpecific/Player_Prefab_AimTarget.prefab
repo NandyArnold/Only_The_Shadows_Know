@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4722432172371083558}
   m_Layer: 0
   m_Name: Player_Prefab_AimTarget
-  m_TagString: Untagged
+  m_TagString: AimTarget
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

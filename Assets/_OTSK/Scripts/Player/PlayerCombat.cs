@@ -24,8 +24,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private WeaponManager weaponManager;
-    [SerializeField] private Rig ikRig;
-    [SerializeField] private MultiAimConstraint aimConstraint;
+  
     [SerializeField] private PlayerSkillController playerSkillController;
 
     [Header("Data References")]
@@ -55,6 +54,7 @@ public class PlayerCombat : MonoBehaviour
     private AnimancyAnimation _animancyAnimation;
     private bool _isAiming = false;
     private bool _isFocused = false;
+     private Rig ikRig;
     private Coroutine _rigWeightCoroutine;
     private float _lastAttackTime;
 
@@ -77,14 +77,7 @@ public class PlayerCombat : MonoBehaviour
        
 
 
-        if (GameManager.Instance != null && GameManager.Instance.AimTarget != null)
-        {
-            var sourceList = new WeightedTransformArray();
-            sourceList.Add(new WeightedTransform(GameManager.Instance.AimTarget, 1f));
-            if (aimConstraint != null) { aimConstraint.data.sourceObjects = sourceList; }
-            var rigBuilder = GetComponent<RigBuilder>();
-            if (rigBuilder != null) rigBuilder.Build();
-        }
+      
         if (_daggerAnimation != null)
         {
             //Debug.Log("Dagger Animation found in PlayerCombat.");

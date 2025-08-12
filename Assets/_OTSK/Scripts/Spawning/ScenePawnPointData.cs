@@ -10,7 +10,7 @@ public class SceneSpawnPointData : MonoBehaviour
         // In Start, we can be sure all spawn points in this scene have run their OnEnable.
         if (GlobalSpawnRegistry.Instance != null)
         {
-            Debug.Log("SceneSpawnPointData", this.gameObject);
+            //Debug.Log("SceneSpawnPointData", this.gameObject);
             GlobalSpawnRegistry.Instance.SetIsReady(true);
         }
     }

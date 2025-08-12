@@ -13,15 +13,23 @@ public class ArrowProjectile : MonoBehaviour
     private List<DamageInstance> _damageProfile; // Will be given its data by the BowSO
     private float _initialSpeed;                 // Will be given its data by the BowSO
     private bool _isReadyToFire = false;
-
+    private TrailRenderer _trailRenderer;
     private void Awake()
     {
         
         _rb = GetComponent<Rigidbody>();
         GetComponent<BoxCollider>().isTrigger = false;
         _rb.useGravity = true;
+        _trailRenderer = GetComponent<TrailRenderer>();
     }
-
+    private void OnEnable()
+    {
+        // Clear any old trail positions from the last time this object was used
+        if (_trailRenderer != null)
+        {
+            _trailRenderer.Clear();
+        }
+    }
     // This is the method the BowSO will call to give the arrow its stats.
     public void Initialize(GameObject owner, List<DamageInstance> damageProfile, float speed)
     {

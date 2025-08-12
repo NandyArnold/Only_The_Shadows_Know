@@ -29,8 +29,8 @@ MonoBehaviour:
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  arrowSpeed: 30
-  focusedArrowSpeed: 50
+  arrowSpeed: 50
+  focusedArrowSpeed: 100
   unfocusedSpreadRadius: 100
   unfocusedDamageProfile:
   - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}

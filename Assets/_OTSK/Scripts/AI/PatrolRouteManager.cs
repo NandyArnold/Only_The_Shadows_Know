@@ -26,7 +26,7 @@ public class PatrolRouteManager : MonoBehaviour
         IsReady = isReady;
         if (isReady)
         {
-            Debug.Log("<color=cyan>PatrolRouteManager is now READY.</color>");
+            //Debug.Log("<color=cyan>PatrolRouteManager is now READY.</color>");
         }
     }
 
