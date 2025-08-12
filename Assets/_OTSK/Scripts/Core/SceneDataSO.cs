@@ -46,9 +46,12 @@ public class SceneDataSO : ScriptableObject
     public string defaultSpawnPointTag = "InitialSpawn";
 
     [Header("Enemy Spawning")]
-    public List<SpawnData> enemyInitialSpawns; // Renamed for clarity
+    public List<SpawnGroup> enemyInitialSpawns; // Renamed for clarity
 
-   
+    [Tooltip("Groups of enemies that can be spawned by in-game events.")]
+    public List<SpawnGroup> enemyEventSpawns;
+
+
     // This special Unity method runs in the Editor whenever you change a value.
     private void OnValidate()
     {

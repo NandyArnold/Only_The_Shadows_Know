@@ -40,9 +40,7 @@ public class EnemySpawner : MonoBehaviour
     private void HandleSceneLoaded(SceneDataSO sceneData)
     {
         _currentSceneData = sceneData;
-        //Debug.Log($"<color=cyan>EnemySpawner: Scene '{sceneData.sceneID}' loaded. Initializing spawner.</color>", this.gameObject);
-        //// Wait one frame to ensure all spawn points have registered themselves.
-        //StartCoroutine(SpawnInitialEnemies(sceneData));
+       
     }
 
     public void SpawnEnemy(SpawnData data)
@@ -110,32 +108,50 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
 
-        Debug.Log("<color=green>All systems ready. Spawning enemies...</color>");
-
-        foreach (var spawnData in _currentSceneData.enemyInitialSpawns)
+        // Loop through each SPAWN GROUP in the list
+        foreach (var group in _currentSceneData.enemyInitialSpawns)
         {
-            SpawnEnemy(spawnData);
+            // Then, loop through each individual SPAWN DATA in that group
+            foreach (var spawnData in group.spawns)
+            {
+                SpawnEnemy(spawnData);
+            }
         }
     }
 
-    //private IEnumerator SpawnInitialEnemies(SceneDataSO sceneData)
+    public void TriggerSpawnGroup(string groupName)
+    {
+        if (_currentSceneData == null) return;
+
+        // Find the requested group in the event list
+        SpawnGroup groupToSpawn = _currentSceneData.enemyEventSpawns.Find(g => g.groupName == groupName);
+
+        if (groupToSpawn != null)
+        {
+            Debug.Log($"<color=green>Spawning event group: {groupName}</color>");
+            foreach (var spawnData in groupToSpawn.spawns)
+            {
+                SpawnEnemy(spawnData);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Could not find event spawn group with name: {groupName}");
+        }
+    }
+
+
+
+
+    //private void SpawnInitialEnemies()
     //{
-    //    Debug.Log($"<color=cyan>EnemySpawner: Starting initial enemy spawn for scene '{sceneData.sceneID}'</color>");
+    //    if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
 
-    //    yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
+    //    Debug.Log("<color=green>All systems ready. Spawning enemies...</color>");
 
-    //    Debug.Log("++++++ PATROL_____GLOBAL REGISTRY");
-
-    //    yield return new WaitUntil(() => GlobalSpawnRegistry.Instance != null && GlobalSpawnRegistry.Instance.IsReady);
-
-    //    Debug.Log($"<color=cyan>EnemySpawner: All systems ready. Spawning initial enemies.</color>", this.gameObject);
-    //    if (sceneData == null || sceneData.enemyInitialSpawns == null) yield break;
-
-    //    foreach (var spawnData in sceneData.enemyInitialSpawns)
+    //    foreach (var spawnData in _currentSceneData.enemyInitialSpawns)
     //    {
     //        SpawnEnemy(spawnData);
     //    }
     //}
-
-    // This is the core spawning method.
 }

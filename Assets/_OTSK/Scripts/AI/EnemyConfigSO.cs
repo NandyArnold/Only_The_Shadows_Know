@@ -26,7 +26,8 @@ public class EnemyConfigSO : ScriptableObject
     public float chaseSpeed = 5f;
 
     [Header("Detection")]
-    public float visionRange = 15f; // Renamed from detectionRange
+    public float visionRange = 15f; 
+    public float deathSoundIntensity = 90f; // sound intensity when the enemy dies, used for detection
 
     [Range(0, 360)]
     public float detectionConeAngle = 90f;
