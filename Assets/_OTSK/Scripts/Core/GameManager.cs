@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public PlayerController Player { get; private set; }
-     public Transform AimTarget { get; private set; }
+    public AimTargetController AimTargetController { get; private set; }
+    public Transform AimTarget { get; private set; }
 
     [Header("Game Start Settings")]
     [SerializeField] private SceneDataSO initialScene;
@@ -96,11 +97,12 @@ public class GameManager : MonoBehaviour
         _cameraManager = camManager;
     }
 
-    public void RegisterAimTarget(Transform target)
+    public void RegisterAimTarget(AimTargetController controller)
     {
-        AimTarget = target;
+        AimTargetController = controller;
+        AimTarget = controller.transform; 
     }
-   
+
 
     private void HandlePauseInput()
     {

@@ -10,6 +10,7 @@ public class PlayerCombat : MonoBehaviour
 {
     // Public properties for other scripts to access
     public CinemachineBrain Brain { get; private set; }
+    public AimTargetController AimTargetController { get; private set; }
     public PlayerAnimationController PlayerAnimationController => playerAnimationController;
     public Transform FirePoint => firePoint;
     public bool IsFocused => _isFocused;
@@ -73,11 +74,15 @@ public class PlayerCombat : MonoBehaviour
         Brain = Camera.main.GetComponent<CinemachineBrain>();
 
         playerStats = GetComponent<PlayerStats>();
+        if (GameManager.Instance != null)
+        {
+            AimTargetController = GameManager.Instance.AimTargetController;
+        }
 
-       
 
 
-      
+
+
         if (_daggerAnimation != null)
         {
             //Debug.Log("Dagger Animation found in PlayerCombat.");
@@ -173,8 +178,7 @@ public class PlayerCombat : MonoBehaviour
         weaponManager.EquipNewWeapon(newWeapon);
 
         // Determine if the weapon uses the IK aiming rig.
-        bool usesAimIK = (newWeapon is BowSO);
-        UpdateRigWeight(usesAimIK);
+        UpdateRigWeight(newWeapon.usesAimIK);
 
         // --- SINGLE, CLEAN LOGIC BLOCK ---
         if (newWeapon is BowSO)
@@ -269,10 +273,7 @@ public class PlayerCombat : MonoBehaviour
     // This handler is for RELEASING A HOLD (for the Bow)
     private void HandleSecondaryAttackRelease()
     {
-        //if (_currentWeapon is BowSO && _isAiming && _isFocused)
-        //{
-        //    SetFocusState(false);
-        //}
+        
     }
 
     private void HandleTertiaryAttack()
@@ -290,9 +291,7 @@ public class PlayerCombat : MonoBehaviour
     private void HandleWeapon1Switch() => SwitchWeaponByIndex(0);
     private void HandleWeapon2Switch() => SwitchWeaponByIndex(1);
     private void HandleWeapon3Switch() => SwitchWeaponByIndex(2);
-    //private void HandleWeapon1Switch() => SwitchWeapon(availableWeapons[0]);
-    //private void HandleWeapon2Switch() => SwitchWeapon(availableWeapons[1]);
-    //private void HandleWeapon3Switch() => SwitchWeapon(availableWeapons[2]);
+    
     private void UpdateRigWeight(bool enable)
     {
         if (_rigWeightCoroutine != null)

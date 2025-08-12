@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Animancy
   m_EditorClassIdentifier: 
   weaponName: 
+  usesAimIK: 1
   weaponDescription: 
   timeBetweenAttacks: 1
   mainHandPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
@@ -26,11 +27,11 @@ MonoBehaviour:
   unequipTriggerName: Animancy_Unequip
   unequipDuration: 0.2
   beamVFXPrefab: {fileID: 7924996381254816273, guid: 311c01e33f8fe374783d0c98007ffa07, type: 3}
-  beamDuration: 0.15
+  beamDuration: 10
   rangedRange: 15
   aimLayerMask:
     serializedVersion: 2
-    m_Bits: 16119
+    m_Bits: 64
   rangedDamageProfile:
   - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     Value: 150

@@ -46,4 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimLayerMask:
     serializedVersion: 2
-    m_Bits: 16119
+    m_Bits: 16115
+  stableAimDistance: 100

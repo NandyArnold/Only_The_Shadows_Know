@@ -26,52 +26,39 @@ public class AnimancySO : WeaponSO
     // Ranged Soul Sever (LMB)
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-        combatController.PlayerAnimationController.TriggerPrimaryAttack();
-        NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
+         combatController.PlayerAnimationController.TriggerPrimaryAttack();
+         NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
-        Transform firePoint = combatController.FirePoint;
-        CinemachineBrain cinemachineBrain = combatController.Brain;
-        if (cinemachineBrain == null) return;
-
-        // Get the active camera
-        Camera activeCamera = cinemachineBrain.OutputCamera;
-
-        // 1. Find where the player is aiming at the center of the screen
-        Vector3 targetPoint;
-        Ray screenCenterRay = activeCamera.ScreenPointToRay(new Vector2(Screen.width / 2f, Screen.height / 2f));
-        if (Physics.Raycast(screenCenterRay, out RaycastHit screenHit, rangedRange, aimLayerMask))
+         Transform firePoint = combatController.FirePoint;
+         AimTargetController aimController = AimTargetController.Instance;
+     
+        
+        if (aimController == null)
         {
-            targetPoint = screenHit.point;
-        }
-        else
-        {
-            targetPoint = screenCenterRay.GetPoint(rangedRange);
+            Debug.LogError("AnimancySO could not find AimTargetController.Instance!");
+            return;
         }
 
-        Vector3 fireDirection = (targetPoint - firePoint.position).normalized;
-        Vector3 endPoint = firePoint.position + fireDirection * rangedRange;
+        Vector3 fireDirection = (aimController.transform.position - firePoint.position).normalized;
+        Vector3 endPoint = firePoint.position + fireDirection * rangedRange; // Default end point if we miss.
 
-        // 2. Perform the actual hitscan raycast from the fire point to deal damage
-        if (Physics.Raycast(firePoint.position, fireDirection, out RaycastHit damageHit, rangedRange, hittableLayers))
+        // 2. Check the AimTargetController for the ACTUAL gameplay hit.
+        if (aimController.HasHit)
         {
-            endPoint = damageHit.point; // The beam should end exactly where the damage was dealt.
+            // The beam should visually stop at the gameplay hit point.
+            endPoint = aimController.CurrentHit.point;
 
-            NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
-
-            // Check if the hit object is a real enemy
-            if (damageHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth) && damageHit.collider.TryGetComponent<Enemy>(out var enemy))
+            // Try to apply damage to the object we hit.
+            if (aimController.CurrentHit.collider.TryGetComponent<EnemyHealth>(out var enemyHealth) &&
+                aimController.CurrentHit.collider.TryGetComponent<Enemy>(out var enemy))
             {
-                // 1. Apply the standard ranged damage
                 enemyHealth.TakeDamage(rangedDamageProfile, combatController.gameObject);
-                
-                // 2. Check for and apply additional execution damage
                 if (vulnerableToExecution.Contains(enemy.Config.enemyType))
                 {
                     enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
                 }
             }
-            // Check if the hit object is a test dummy
-            else if (damageHit.collider.TryGetComponent<DamageableDummy>(out var dummyHealth))
+            else if (aimController.CurrentHit.collider.TryGetComponent<DamageableDummy>(out var dummyHealth))
             {
                 if (rangedDamageProfile != null && rangedDamageProfile.Count > 0)
                 {
@@ -80,7 +67,8 @@ public class AnimancySO : WeaponSO
             }
         }
 
-        // 3. Spawn the visual beam effect and set its world positions
+
+        // 4. Spawn the visual beam effect and set its world positions
         if (beamVFXPrefab != null)
         {
             // We spawn it at the fire point, but its rotation doesn't matter now.

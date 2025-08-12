@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Bow
   m_EditorClassIdentifier: 
   weaponName: 
+  usesAimIK: 1
   weaponDescription: 
   timeBetweenAttacks: 1
   mainHandPrefab: {fileID: 1060976829573102914, guid: a60d3deeddd758c479919e004c982f26, type: 3}

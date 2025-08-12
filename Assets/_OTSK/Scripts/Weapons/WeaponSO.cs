@@ -6,6 +6,7 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
 {
     [Header("Weapon Info")]
     public string weaponName;
+    public bool usesAimIK;
     public string weaponDescription;
 
     [Header("Combat Stats")]
