@@ -34,7 +34,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
         
     }
 
-    public override IEnumerator StartChannel(GameObject caster)
+    public override IEnumerator StartChannel(GameObject caster, object target = null)
     {
         return TargetingRoutine(caster);
     }

@@ -17,6 +17,10 @@ public class DeathZoneEffectSO : SkillEffectSO
     [Header("Damage Profile")]
     [SerializeField] private List<DamageInstance> damageProfile;
 
+
+    public float MaxTargetingRange => maxTargetingRange;
+    public LayerMask TargetLayers => targetLayers;
+
     // Runtime variables
     private GameObject _vfxInstance;
     private EnemyHealth _targetEnemyHealth;
@@ -24,10 +28,18 @@ public class DeathZoneEffectSO : SkillEffectSO
     // This skill is channeled, so Activate() is not used.
     public override void Activate(GameObject caster) { }
 
-    public override IEnumerator StartChannel(GameObject caster)
+    public override IEnumerator StartChannel(GameObject caster, object targetPayload)
     {
         // 1. Find a Target
-        _targetEnemyHealth = FindClosestTarget(caster);
+        Enemy target = targetPayload as Enemy;
+        if (target == null)
+        {
+            Debug.LogError("Death Zone was started without a valid Enemy target!");
+            caster.GetComponent<PlayerSkillController>().OnSkillEffectFinished();
+            yield break;
+        }
+
+        _targetEnemyHealth = target.GetComponent<EnemyHealth>();
 
         if (_targetEnemyHealth == null)
         {
@@ -52,15 +64,32 @@ public class DeathZoneEffectSO : SkillEffectSO
                 }
             }
 
-            // 4. Wait for the channel to complete
-            yield return new WaitForSeconds(channelDuration);
-
-            // 5. Execute the Finisher
-            if (_targetEnemyHealth != null && Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) <= maxTargetingRange)
+            float channelTimer = 0f;
+        while (channelTimer < channelDuration)
+        {
+            // Check if the target is still valid every frame
+            if (_targetEnemyHealth == null || Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) > maxTargetingRange)
             {
-                Debug.Log($"<color=purple>Death Zone Finisher</color> on {_targetEnemyHealth.name}!");
-                _targetEnemyHealth.TakeDamage(damageProfile, caster);
+                Debug.Log("Death Zone cancelled: Target moved out of range.");
+                yield break; // Exit the coroutine, the finally block will handle cleanup
             }
+
+            // Check for line of sight every frame
+            Transform playerEyes = caster.GetComponent<CameraController>().transform;
+            Vector3 enemyCenter = _targetEnemyHealth.transform.position + Vector3.up;
+            if (Physics.Linecast(playerEyes.position, enemyCenter, caster.GetComponent<PlayerCombat>().CurrentWeapon.LineOfSightBlockingLayers))
+            {
+                Debug.Log("Death Zone cancelled: Line of sight broken.");
+                yield break; // Exit the coroutine
+            }
+
+            channelTimer += Time.deltaTime;
+            yield return null;
+        }
+        
+        // If the loop completes, execute the finisher
+        Debug.Log($"<color=purple>Death Zone Finisher</color> on {_targetEnemyHealth.name}!");
+        _targetEnemyHealth.TakeDamage(damageProfile, caster, true); // Pass 'true' for silent kill
         }
         finally
         {

@@ -20,7 +20,7 @@ public class ScryingEffectSO : SkillEffectSO
     }
 
     // This is called by the "toggle-on" logic for Targeted skills
-    public override IEnumerator StartChannel(GameObject caster)
+    public override IEnumerator StartChannel(GameObject caster, object target = null)
     {
         var movementController = caster.GetComponent<PlayerMovement>();
         var animController = caster.GetComponent<PlayerAnimationController>();

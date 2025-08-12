@@ -38,7 +38,7 @@ public class EnemyHealth : MonoBehaviour
         _currentHealth = _maxHealth;
     }
     // The TakeDamage method now requires an "attacker" so it can broadcast who did the damage.
-    public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker)
+    public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker, bool isSilentKill = false)
     {
         if (_isDead) return;
 

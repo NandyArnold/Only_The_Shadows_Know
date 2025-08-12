@@ -7,6 +7,7 @@ public class EnemyUIController : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider alertSlider;
+    [SerializeField] private GameObject deathZoneMark;
 
 
     [Header("VFX")]
@@ -65,6 +66,13 @@ public class EnemyUIController : MonoBehaviour
         if (alertVFXObject != null)
         {
             alertVFXObject.SetActive(shouldShowAlertVFX);
+        }
+    }
+    public void SetDeathZoneMarkActive(bool isActive)
+    {
+        if (deathZoneMark != null)
+        {
+            deathZoneMark.SetActive(isActive);
         }
     }
 }

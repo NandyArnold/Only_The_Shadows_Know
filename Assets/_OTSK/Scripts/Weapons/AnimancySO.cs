@@ -13,6 +13,7 @@ public class AnimancySO : WeaponSO
     [SerializeField] private LayerMask aimLayerMask;
     [SerializeField] private List<DamageInstance> rangedDamageProfile;
 
+
     [Header("Melee Attack (RMB)")]
     [SerializeField] private float meleeRange = 2f;
     [SerializeField] private LayerMask hittableLayers;
@@ -119,5 +120,47 @@ public class AnimancySO : WeaponSO
                 }
             }
         }
+    }
+
+    public Enemy FindClosestTarget(GameObject caster)
+    {
+        // We can get the targeting parameters from the DeathZone skill itself.
+        // This is a bit of a workaround, but keeps the data in one place.
+        var deathZoneSkill = caster.GetComponent<PlayerSkillController>().GetSkill(SkillIdentifier.DeathZone);
+        if (deathZoneSkill == null || !(deathZoneSkill.skillEffectData is DeathZoneEffectSO deathZoneEffect))
+        {
+            return null; // Can't find the skill data
+        }
+        
+        float maxRange = deathZoneEffect.MaxTargetingRange;
+        LayerMask targetLayers = deathZoneEffect.TargetLayers;
+        
+        Collider[] hits = Physics.OverlapSphere(caster.transform.position, maxRange, targetLayers);
+
+        Enemy closestEnemy = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<EnemyHealth>(out var enemyHealth) && enemyHealth.CurrentHealth > 0)
+            {
+                // NEW: Line of Sight Check
+                // We check from the player's eyes to the enemy's center
+                Transform playerEyes = caster.GetComponent<CameraController>().transform;
+                Vector3 enemyCenter = hit.transform.position + Vector3.up; // A simple offset
+
+                if (!Physics.Linecast(playerEyes.position, enemyCenter, lineOfSightBlockingLayers))
+                {
+                    // If the linecast is NOT blocked, this is a valid target.
+                    float distance = Vector3.Distance(caster.transform.position, hit.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestEnemy = hit.GetComponent<Enemy>();
+                    }
+                }
+            }
+        }
+        return closestEnemy;
     }
 }

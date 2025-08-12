@@ -4,6 +4,11 @@ using UnityEngine;
 
 public abstract class WeaponSO : ScriptableObject, IWeapon
 {
+
+    [Header("Targeting Settings")] 
+    [SerializeField] public LayerMask lineOfSightBlockingLayers;
+    public LayerMask LineOfSightBlockingLayers => lineOfSightBlockingLayers;
+
     [Header("Weapon Info")]
     public string weaponName;
     public bool usesAimIK;
@@ -26,7 +31,7 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     public float equipDuration = 0.5f;
     [Space]
     public string unequipTriggerName;
-    public float unequipDuration = 0.5f; // NEW
+    public float unequipDuration = 0.5f; 
    
 
     // Damage profiles are defined in the specific weapon scripts (DaggerSO, BowSO, etc.)

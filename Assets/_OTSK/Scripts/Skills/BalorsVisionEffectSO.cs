@@ -30,7 +30,7 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override void Activate(GameObject caster) { }
 
-    public override IEnumerator StartChannel(GameObject caster)
+    public override IEnumerator StartChannel(GameObject caster, object target = null)
     {
         var cameraController = caster.GetComponent<CameraController>();
         if (cameraController != null)

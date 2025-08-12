@@ -122,7 +122,7 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     }
 
     // These are not used for this instant-cast skill
-    public override IEnumerator StartChannel(GameObject caster) { yield break; }
+    public override IEnumerator StartChannel(GameObject caster, object target = null) { yield break; }
     public override void StopChannel(GameObject caster) { }
 
 }

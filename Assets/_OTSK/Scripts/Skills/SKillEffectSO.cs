@@ -11,7 +11,7 @@ public abstract class SkillEffectSO : ScriptableObject
     // The main method that gets called to activate the skill's logic.
     // We pass the "caster" so the effect knows who is performing the skill.
     public abstract void Activate(GameObject caster);
-    public virtual IEnumerator StartChannel(GameObject caster)
+    public virtual IEnumerator StartChannel(GameObject caster, object target=null)
     {
         yield break;
     }

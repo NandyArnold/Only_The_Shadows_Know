@@ -58,6 +58,7 @@ public class PlayerCombat : MonoBehaviour
      private Rig ikRig;
     private Coroutine _rigWeightCoroutine;
     private float _lastAttackTime;
+    private Enemy _potentialDeathZoneTarget;
 
     private void Awake()
     {
@@ -156,6 +157,22 @@ public class PlayerCombat : MonoBehaviour
 
 
     }
+
+    private void Update()
+    {
+        // NEW: This block will handle the continuous target searching
+        if (_currentWeapon is AnimancySO animancyWeapon)
+        {
+            UpdateDeathZoneTargeting(animancyWeapon);
+        }
+        else if (_potentialDeathZoneTarget != null)
+        {
+            // If we switch away from Animancy, clear the old target
+            _potentialDeathZoneTarget.GetComponentInChildren<EnemyUIController>()?.SetDeathZoneMarkActive(false);
+            _potentialDeathZoneTarget = null;
+        }
+    }
+
 
     private void OnDestroy()
     {
@@ -278,12 +295,23 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleTertiaryAttack()
     {
+        // Check if the currently equipped weapon is Animancy
         if (_currentWeapon is AnimancySO)
         {
-            // First, trigger the animation
-            playerAnimationController.TriggerTertiaryAttack();
-            // Then, activate the skill
-            playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone);
+            // Ask this script's own method if there's a valid target
+            Enemy target = GetPotentialDeathZoneTarget();
+            if (target != null)
+            {
+                // If there is a target, play the animation...
+                playerAnimationController.TriggerTertiaryAttack();
+                // ...and tell the PlayerSkillController to activate the skill on that target.
+                playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone, target);
+            }
+            else
+            {
+                // No valid target, so do nothing.
+                Debug.Log("Death Zone: No valid target in range.");
+            }
         }
     }
 
@@ -356,5 +384,33 @@ public class PlayerCombat : MonoBehaviour
             playerInputHandler.OnWeapon2Input -= HandleWeapon2Switch;
             playerInputHandler.OnWeapon3Input -= HandleWeapon3Switch;
         }
+    }
+
+    private void UpdateDeathZoneTargeting(AnimancySO animancyWeapon)
+    {
+        Enemy newTarget = animancyWeapon.FindClosestTarget(this.gameObject);
+
+        // If the target has changed (or is new/lost)
+        if (newTarget != _potentialDeathZoneTarget)
+        {
+            // Turn off the mark on the old target
+            if (_potentialDeathZoneTarget != null)
+            {
+                _potentialDeathZoneTarget.GetComponentInChildren<EnemyUIController>()?.SetDeathZoneMarkActive(false);
+            }
+
+            // Turn on the mark on the new target
+            if (newTarget != null)
+            {
+                newTarget.GetComponentInChildren<EnemyUIController>()?.SetDeathZoneMarkActive(true);
+            }
+
+            _potentialDeathZoneTarget = newTarget;
+        }
+    }
+
+    public Enemy GetPotentialDeathZoneTarget()
+    {
+        return _potentialDeathZoneTarget;
     }
 }

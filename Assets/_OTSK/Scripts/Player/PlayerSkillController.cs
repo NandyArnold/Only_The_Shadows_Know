@@ -158,6 +158,30 @@ public class PlayerSkillController : MonoBehaviour
         
     }
 
+    public void TryActivateSkill(SkillIdentifier skillID, Enemy target)
+    {
+        if (_isActivatingASkill || _channeledSkill != null) return;
+
+        SkillSO skill = GetSkill(skillID);
+        if (skill == null) return;
+
+        if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID)) return;
+        if (playerStats.CurrentMana < skill.manaCost) return;
+
+        // We don't need all the other checks because this is only for Death Zone for now
+
+        _isActivatingASkill = true;
+        if (skill.castMode != CastMode.Targeted)
+        {
+            playerStats.ConsumeMana(skill.manaCost);
+        }
+
+        Debug.Log($"<color=green>SKILL ACTIVATED:</color> {skill.skillName} on target {target.name}");
+
+        _channeledSkill = skill;
+        // We now pass the target object to the coroutine
+        _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject, target));
+    }
     private void HandleSkillCanceled(int skillIndex)
     {
         if (_channeledSkill != null && skillIndex < _equippedSkills.Count && _equippedSkills[skillIndex] == _channeledSkill)
@@ -229,4 +253,5 @@ public class PlayerSkillController : MonoBehaviour
     {
         return _equippedSkills.Find(s => s.skillID == skillID);
     }
+   
 }
