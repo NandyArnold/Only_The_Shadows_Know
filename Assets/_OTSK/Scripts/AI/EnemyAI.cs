@@ -50,6 +50,7 @@ public class EnemyAI : MonoBehaviour
         if (Detector != null)
         {
             Detector.OnSoundDetected += HandleSoundDetected;
+            Detector.OnDeadBodySpotted += HandleDeadBodySpotted;
         }
 
     }
@@ -65,6 +66,7 @@ public class EnemyAI : MonoBehaviour
         if (Detector != null)
         {
             Detector.OnSoundDetected -= HandleSoundDetected;
+            Detector.OnDeadBodySpotted -= HandleDeadBodySpotted;
         }
        
     }
@@ -146,4 +148,17 @@ public class EnemyAI : MonoBehaviour
         var playerObject = GameObject.FindGameObjectWithTag("Player");
         return playerObject != null ? playerObject.transform : null;
     }
-}
+
+    private void HandleDeadBodySpotted(Transform bodyTransform)
+    {
+        // Don't react if we are already in combat or raising an alarm.
+        if (CurrentState is CombatState || CurrentState is AlarmState) return;
+
+        Debug.Log($"<color=red>{gameObject.name} has spotted a dead body! Sounding the alarm!</color>");
+
+        // Store the body's position in case there are no alarm panels
+        LastKnownPlayerPosition = bodyTransform.position;
+
+        // Transition to the new AlarmState
+        TransitionToState(new AlarmState());
+    }

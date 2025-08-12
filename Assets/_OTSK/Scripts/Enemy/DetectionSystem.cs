@@ -16,6 +16,7 @@ public class DetectionSystem : MonoBehaviour
 
     public event Action<Vector3> OnSoundDetected;
     public event Action<float, float> OnSoundGaugeChanged;
+    public event Action<Transform> OnDeadBodySpotted;
 
     private EnemyConfigSO config;
     private EnemyAI _enemyAI;
@@ -59,6 +60,7 @@ public class DetectionSystem : MonoBehaviour
             _soundGauge = Mathf.Max(0, _soundGauge - noiseDecayRate * Time.deltaTime);
             OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
         }
+        ScanForDeadBodies();
     }
 
 
@@ -154,6 +156,36 @@ public class DetectionSystem : MonoBehaviour
             OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
         }
     }
+
+    private void ScanForDeadBodies()
+    {
+        // Failsafe check
+        if (config == null) return;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, config.visionRange);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("DeadBody"))
+            {
+                // We found a dead body. Now check if we can actually see it.
+                Vector3 directionToBody = hit.transform.position - eyePoint.position;
+
+                // Angle Check
+                if (Vector3.Angle(eyePoint.forward, directionToBody) < config.detectionConeAngle / 2)
+                {
+                    // Line of Sight Check
+                    if (!Physics.Linecast(eyePoint.position, hit.transform.position + Vector3.up, visionBlockingLayers))
+                    {
+                        // We can see the dead body!
+                        OnDeadBodySpotted?.Invoke(hit.transform);
+                        // We only need to spot one body at a time.
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
 
     private void OnDrawGizmosSelected()
     {
