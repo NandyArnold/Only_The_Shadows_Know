@@ -37,14 +37,9 @@ public class EnemyManager : MonoBehaviour
     {
         foreach (var enemy in _activeEnemies)
         {
+            if (enemy == null) continue;
             // Don't let enemies hear themselves.
             if (enemy.gameObject == sourceObject) continue;
-
-            // Check if the enemy is alive before broadcasting the sound.
-            if (enemy.GetComponent<EnemyHealth>().CurrentHealth <= 0)
-            {
-                continue; // Skip this dead enemy
-            }
 
             // Tell each living enemy's detector about the sound.
             if (enemy.Detector != null)

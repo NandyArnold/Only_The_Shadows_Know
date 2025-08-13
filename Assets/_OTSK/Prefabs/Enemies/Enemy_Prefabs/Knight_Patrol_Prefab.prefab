@@ -59,7 +59,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb668c3e52a5aa41bf1a10654d40249, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patrolRoute: {fileID: 11400000, guid: 55bc86ccf7c563345ac4f1aeacade1fa, type: 2}
 --- !u!114 &5956318383310151033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,7 +109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3946e679204659449bb52e5aa8a8019b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
 --- !u!195 &718789064457985924
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -157,11 +155,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5b474575ceaac49bb962a346eb80c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
   eyePoint: {fileID: 8598703289818991878}
   visionBlockingLayers:
     serializedVersion: 2
-    m_Bits: 209
+    m_Bits: 145
   noiseDecayRate: 10
 --- !u!95 &3446622411678235474
 Animator:
@@ -221,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 55a27da6-d1a6-4343-9289-e520d5f5d3d8
+  _id: 
 --- !u!114 &6345878136775759085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,9 +245,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resistances:
-  - damageType: {fileID: 11400000, guid: e9c3382cf53885342ab1ca03733d3728, type: 2}
+  - damageType: {fileID: 0}
     multiplier: 0.5
-  - damageType: {fileID: 11400000, guid: 0ad1ec77c0287b048ad67b2577558aa1, type: 2}
+  - damageType: {fileID: 0}
     multiplier: 2
 --- !u!1 &2080416359781553335
 GameObject:

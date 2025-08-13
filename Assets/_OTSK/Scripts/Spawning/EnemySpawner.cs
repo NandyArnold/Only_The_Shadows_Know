@@ -85,7 +85,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}'" +
                     $" with patrol route '{routeToAssign?.name ?? "None"}'.");
-                enemy.Initialize(data.enemyToSpawn, routeToAssign);
+                enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
             }
         }
         else
@@ -100,7 +100,7 @@ public class EnemySpawner : MonoBehaviour
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
                 Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
-                enemy.Initialize(data.enemyToSpawn, routeToAssign);
+                enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
             }
         }
     }

@@ -13,6 +13,8 @@ public class EnemyAI : MonoBehaviour
     public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
     public EnemyAnimationController AnimController { get; private set; }
 
+    public InitialAIState InitialState { get; set; }
+   
     public EnemyCombatHandler CombatHandler { get; private set; }
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
@@ -151,15 +153,12 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleDeadBodySpotted(Transform bodyTransform)
     {
-        // Don't react if we are already in combat or raising an alarm.
+        // We should react to a dead body unless we are already in full combat or already raising an alarm.
         if (CurrentState is CombatState || CurrentState is AlarmState) return;
 
+        // If we are in Patrol OR Alert, we should escalate to the AlarmState.
         Debug.Log($"<color=red>{gameObject.name} has spotted a dead body! Sounding the alarm!</color>");
-
-        // Store the body's position in case there are no alarm panels
-        LastKnownPlayerPosition = bodyTransform.position;
-
-        // Transition to the new AlarmState
+        LastKnownPlayerPosition = bodyTransform.position; // Store the body's location
         TransitionToState(new AlarmState());
     }
 }

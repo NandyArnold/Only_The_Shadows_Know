@@ -16,13 +16,18 @@ public class SpawnState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        // Wait for the timer to finish
         _timer += Time.deltaTime;
         if (_timer >= _spawnWaitTime)
         {
-            Debug.Log("Spawn State complete, transitioning to Patrol State");
-            // After the wait, transition to the normal patrol state.
-            enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
+            // Check which state we should transition to.
+            if (enemyAI.InitialState == InitialAIState.Guard)
+            {
+                enemyAI.TransitionToState(new GuardState());
+            }
+            else // Default to Patrol
+            {
+                enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
+            }
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 
 using UnityEngine;
+using UnityEngine.AI;
 
 
 // We add [RequireComponent] to ensure a UniqueID is always present.
@@ -98,10 +99,7 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void OnDisable()
     {
-        if (EnemyManager.Instance != null)
-        {
-            EnemyManager.Instance.UnregisterEnemy(this);
-        }
+        
         _health.OnDied -= HandleDeath; // Unsubscribe
     }
 
@@ -128,7 +126,7 @@ public class Enemy : MonoBehaviour, ISaveable
         }
     }
 
-    public void Initialize(EnemyConfigSO newConfig, PatrolRoute newPatrolRoute)
+    public void Initialize(EnemyConfigSO newConfig, PatrolRoute newPatrolRoute, InitialAIState initialState)
     {
         //Debug.Log($"[Enemy] Initializing Enemy: {gameObject.name} with config: {newConfig.name}");
         this.config = newConfig;
@@ -141,6 +139,7 @@ public class Enemy : MonoBehaviour, ISaveable
         //Debug.Log($"[Enemy] Initializing EnemyAI components with config: {newConfig.name}");
         _ai.Config = newConfig;
         _ai.PatrolRoute = newPatrolRoute;
+        _ai.InitialState = initialState;
 
         _ai.StartAI();
       
@@ -182,6 +181,11 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             CombatManager.Instance.UnregisterEnemyFromCombat(this);
         }
+
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.UnregisterEnemy(this);
+        }
         //  Destroy the status bar immediately.
         if (_statusBarInstance != null)
         {
@@ -191,9 +195,10 @@ public class Enemy : MonoBehaviour, ISaveable
         _animController.PlayDeathAnimation();
         // 1. Disable all intelligence and movement
         _ai.enabled = false;
-        _navigator.enabled = false;
         _navigator.Stop();
-        _collider.enabled = false;
+        //GetComponent<NavMeshAgent>().enabled = false;
+        _navigator.enabled = false;
+        //_collider.enabled = false;
 
         // 2. Play the death animation
         _animController.PlayDeathAnimation();

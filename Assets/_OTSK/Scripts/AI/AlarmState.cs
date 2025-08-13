@@ -25,6 +25,7 @@ public class AlarmState : EnemyAIState
         }
 
         // 2. Start running towards it
+        enemyAI.Navigator.Resume();
         _subState = SubState.RunningToPanel;
         enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
         enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);

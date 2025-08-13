@@ -45,22 +45,19 @@ public class DetectionSystem : MonoBehaviour
 
     private void Update()
     {
-        if (_enemyAI.CurrentState is AlertState)
-        {
-            return;
-        }
-
-        if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState)
-        {
-            return;
-        }
-        // Decay the sound gauge over time
-        if (_soundGauge > 0)
+        bool shouldDecaySound = !(_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState);
+        if (shouldDecaySound && _soundGauge > 0)
         {
             _soundGauge = Mathf.Max(0, _soundGauge - noiseDecayRate * Time.deltaTime);
             OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
         }
-        ScanForDeadBodies();
+
+        // The scan for dead bodies should ALWAYS run.
+        if (ScanForDeadBodies(out Transform body))
+        {
+            // If we find one, fire the event. The EnemyAI will decide what to do.
+            OnDeadBodySpotted?.Invoke(body);
+        }
     }
 
 
@@ -157,33 +154,41 @@ public class DetectionSystem : MonoBehaviour
         }
     }
 
-    private void ScanForDeadBodies()
+    public bool ScanForDeadBodies(out Transform bodyTransform)
     {
-        // Failsafe check
-        if (config == null) return;
+        bodyTransform = null;
+        if (config == null) return false;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, config.visionRange);
         foreach (var hit in hits)
         {
             if (hit.CompareTag("DeadBody"))
             {
-                // We found a dead body. Now check if we can actually see it.
+                //Debug.Log($"<color=cyan>[ScanForDeadBodies]</color> Found a collider with the 'DeadBody' tag: {hit.gameObject.name}");
                 Vector3 directionToBody = hit.transform.position - eyePoint.position;
-
-                // Angle Check
-                if (Vector3.Angle(eyePoint.forward, directionToBody) < config.detectionConeAngle / 2)
+                //  ANGLE CHECK
+                float angleToBody = Vector3.Angle(eyePoint.forward, directionToBody);
+                if (angleToBody < config.detectionConeAngle / 2)
                 {
-                    // Line of Sight Check
+                    //  LINE OF SIGHT CHECK
                     if (!Physics.Linecast(eyePoint.position, hit.transform.position + Vector3.up, visionBlockingLayers))
                     {
-                        // We can see the dead body!
-                        OnDeadBodySpotted?.Invoke(hit.transform);
-                        // We only need to spot one body at a time.
-                        return;
+                        //Debug.Log("<color=green>[ScanForDeadBodies] SUCCESS:</color> Dead body is in range, in angle, and has line of sight.");
+                        bodyTransform = hit.transform;
+                        return true; // We can see the dead body!
                     }
+                    else
+                    {
+                        //Debug.LogWarning($"<color=orange>[ScanForDeadBodies] FAILED:</color> Line of sight to dead body '{hit.gameObject.name}' is blocked.");
+                    }
+                }
+                else
+                {
+                    //Debug.LogWarning($"<color=orange>[ScanForDeadBodies] FAILED:</color> Angle Check. Angle to body was {angleToBody}, but cone is {config.detectionConeAngle / 2}.");
                 }
             }
         }
+        return false; // Found nothing
     }
 
 

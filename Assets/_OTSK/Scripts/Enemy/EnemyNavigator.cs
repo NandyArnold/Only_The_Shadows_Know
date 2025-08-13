@@ -8,6 +8,7 @@ public class EnemyNavigator : MonoBehaviour
 {
     private NavMeshAgent _agent;
     public bool HasReachedDestination => !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -39,5 +40,13 @@ public class EnemyNavigator : MonoBehaviour
         {
             _agent.ResetPath();
         }
+    }
+    public void SetStoppingDistance(float distance)
+    {
+        _agent.stoppingDistance = distance;
+    }
+    public bool CalculatePath(Vector3 target, NavMeshPath path)
+    {
+        return _agent.CalculatePath(target, path);
     }
 }
