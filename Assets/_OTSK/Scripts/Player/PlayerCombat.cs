@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Unity.Cinemachine;
-using System.Net.Sockets;
+
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -60,6 +60,8 @@ public class PlayerCombat : MonoBehaviour
     private float _lastAttackTime;
     private Enemy _potentialDeathZoneTarget;
 
+    private ChargeManager _chargeManager;
+
     private void Awake()
     {
         // Get component references
@@ -80,10 +82,6 @@ public class PlayerCombat : MonoBehaviour
             AimTargetController = GameManager.Instance.AimTargetController;
         }
 
-
-
-
-
         if (_daggerAnimation != null)
         {
             //Debug.Log("Dagger Animation found in PlayerCombat.");
@@ -92,6 +90,7 @@ public class PlayerCombat : MonoBehaviour
         {
             Debug.LogError("Dagger Animation NOT found in PlayerCombat. Please assign it in the inspector.", this);
         }
+        _chargeManager = GetComponent<ChargeManager>();
 
     }
 
@@ -148,6 +147,16 @@ public class PlayerCombat : MonoBehaviour
         {
             Debug.LogWarning("No available weapons found. Please assign at least one weapon in the inspector.", this);
         }
+
+        // Give the player their starting charges for all available weapons
+        foreach (var weapon in availableWeapons)
+        {
+            if (weapon is BowSO bow && bow.ammoType != null)
+            {
+                _chargeManager.AddCharges(bow.ammoType, bow.ammoType.startingCharges);
+            }
+        }
+
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnCombatStart += EnableInputs;
@@ -237,7 +246,20 @@ public class PlayerCombat : MonoBehaviour
         if (_currentWeapon == null) return;
         if (Time.time < _lastAttackTime + _currentWeapon.timeBetweenAttacks) return;
 
-        // This is now simple. It just tells the weapon to perform its primary attack.
+        // If the current weapon is a bow, check for ammo first.
+        if (_currentWeapon is BowSO bow)
+        {
+            if (!_chargeManager.HasCharges(bow.ammoType))
+            {
+                Debug.Log("Out of arrows!");
+                // Optionally play an "empty click" sound here.
+                return; // Stop the attack
+            }
+            // If we have ammo, consume one charge before firing.
+            _chargeManager.ConsumeCharge(bow.ammoType);
+        }
+
+        // It just tells the weapon to perform its primary attack.
         // The weapon itself will figure out if it's a focused shot or not.
         if (_currentWeapon is BowSO && _isFocused)
         {

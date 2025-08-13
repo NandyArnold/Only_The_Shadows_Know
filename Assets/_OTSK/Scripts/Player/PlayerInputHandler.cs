@@ -27,6 +27,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnTertiaryAttackInput;    // For Animancy or other special attacks
 
     public event Action OnToggleInvulnerabilityInput;
+    public event Action OnToggleInfiniteChargesInput;
 
     public event Action OnWeapon1Input;
     public event Action OnWeapon2Input;
@@ -191,6 +192,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.UI.Unpause.performed += ctx => OnPauseInput?.Invoke();
 
         _inputActions.Player.Invulnerability.performed += ctx => OnToggleInvulnerabilityInput?.Invoke();
+        _inputActions.Player.ToggleInfiniteCharges.performed += ctx => OnToggleInfiniteChargesInput?.Invoke(); 
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)

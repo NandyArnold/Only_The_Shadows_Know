@@ -23,6 +23,9 @@ public class HUDManager : MonoBehaviour
 
     [SerializeField] private GameObject crosshairPrefab;
 
+    [Header("Charge/Ammo UI")] 
+    [SerializeField] private TextMeshProUGUI chargeCountText;
+
     [Header("Debug UI")]
     [SerializeField] private TextMeshProUGUI aimingDebugText;
     [SerializeField] private TextMeshProUGUI focusedDebugText;
@@ -35,6 +38,7 @@ public class HUDManager : MonoBehaviour
 
     private PlayerCombat _playerCombatForDebug;
     private Invulnerability _invulnerability;
+    private ChargeManager _chargeManager;
 
 
     private void Awake()
@@ -162,6 +166,24 @@ public class HUDManager : MonoBehaviour
          
         }
 
+        // 1. Get the ChargeManager and subscribe to its events
+        if (player.TryGetComponent<ChargeManager>(out _chargeManager))
+        {
+            _chargeManager.OnChargeCountChanged += UpdateChargeCount;
+        }
+
+        // 2. Also listen for weapon switches to update the display
+        if (player.TryGetComponent<PlayerCombat>(out var combat))
+        {
+            combat.OnWeaponSwitched += HandleWeaponSwitched;
+        }
+
+        // 3. Ensure the charge count text is hidden by default
+        if (chargeCountText != null)
+        {
+            chargeCountText.gameObject.SetActive(false);
+        }
+
         if (crosshairPrefab != null && crosshairPanel != null && _crosshairInstance == null)
         {
             _crosshairInstance = Instantiate(crosshairPrefab, crosshairPanel.transform);
@@ -277,6 +299,27 @@ public class HUDManager : MonoBehaviour
         if (manaSlider != null) manaSlider.value = currentMana / maxMana;
     }
 
-  
+    private void HandleWeaponSwitched(WeaponSO newWeapon)
+    {
+        if (newWeapon is BowSO bow && bow.ammoType != null)
+        {
+            chargeCountText.gameObject.SetActive(true);
+            UpdateChargeCount(bow.ammoType, _chargeManager.GetChargeCount(bow.ammoType));
+        }
+        else
+        {
+            // Hide the ammo count for weapons that don't use it
+            chargeCountText.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateChargeCount(ChargeableItemSO item, int count)
+    {
+        // This check ensures we are only updating for the currently equipped weapon's ammo
+        if (GameManager.Instance.Player.GetComponent<PlayerCombat>().CurrentWeapon is BowSO bow && bow.ammoType == item)
+        {
+            chargeCountText.text = $"Arrows: {count}";
+        }
+    }
 
 }

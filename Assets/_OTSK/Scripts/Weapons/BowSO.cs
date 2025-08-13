@@ -8,6 +8,7 @@ public class BowSO : WeaponSO
     [Header("Bow Specifics")]
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private LayerMask aimLayerMask;
+    public ChargeableItemSO ammoType;
 
     [Header("Combat Stats")]
     [SerializeField] private float arrowSpeed = 30f;

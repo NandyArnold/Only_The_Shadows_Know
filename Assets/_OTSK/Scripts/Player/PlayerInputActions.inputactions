@@ -248,6 +248,15 @@
                     "processors": "",
                     "interactions": "MultiTap(tapTime=0.5,tapDelay=0.5)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleInfiniteCharges",
+                    "type": "Button",
+                    "id": "3d053fce-1bd2-49de-91a0-8523b633bf4b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -809,6 +818,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Dodge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "760ce3cb-a611-49e4-a021-8387fd5fe60a",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleInfiniteCharges",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2837a247227dc3542b6f2892944c7f2a, type: 3}
   m_Name: Weapon_Bow
   m_EditorClassIdentifier: 
+  lineOfSightBlockingLayers:
+    serializedVersion: 2
+    m_Bits: 0
   weaponName: 
   usesAimIK: 1
   weaponDescription: 
@@ -30,6 +33,7 @@ MonoBehaviour:
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  ammoType: {fileID: 11400000, guid: 8b76f17334b8a6f4ea450c6f372630dd, type: 2}
   arrowSpeed: 50
   focusedArrowSpeed: 100
   unfocusedSpreadRadius: 100

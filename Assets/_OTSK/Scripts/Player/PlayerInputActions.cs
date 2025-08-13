@@ -334,6 +334,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""MultiTap(tapTime=0.5,tapDelay=0.5)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleInfiniteCharges"",
+                    ""type"": ""Button"",
+                    ""id"": ""3d053fce-1bd2-49de-91a0-8523b633bf4b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -895,6 +904,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Dodge"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""760ce3cb-a611-49e4-a021-8387fd5fe60a"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleInfiniteCharges"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1870,6 +1890,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Invulnerability = m_Player.FindAction("Invulnerability", throwIfNotFound: true);
         m_Player_Dodge = m_Player.FindAction("Dodge", throwIfNotFound: true);
+        m_Player_ToggleInfiniteCharges = m_Player.FindAction("ToggleInfiniteCharges", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -2012,6 +2033,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Invulnerability;
     private readonly InputAction m_Player_Dodge;
+    private readonly InputAction m_Player_ToggleInfiniteCharges;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2132,6 +2154,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Dodge => m_Wrapper.m_Player_Dodge;
         /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleInfiniteCharges".
+        /// </summary>
+        public InputAction @ToggleInfiniteCharges => m_Wrapper.m_Player_ToggleInfiniteCharges;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2238,6 +2264,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dodge.started += instance.OnDodge;
             @Dodge.performed += instance.OnDodge;
             @Dodge.canceled += instance.OnDodge;
+            @ToggleInfiniteCharges.started += instance.OnToggleInfiniteCharges;
+            @ToggleInfiniteCharges.performed += instance.OnToggleInfiniteCharges;
+            @ToggleInfiniteCharges.canceled += instance.OnToggleInfiniteCharges;
         }
 
         /// <summary>
@@ -2330,6 +2359,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dodge.started -= instance.OnDodge;
             @Dodge.performed -= instance.OnDodge;
             @Dodge.canceled -= instance.OnDodge;
+            @ToggleInfiniteCharges.started -= instance.OnToggleInfiniteCharges;
+            @ToggleInfiniteCharges.performed -= instance.OnToggleInfiniteCharges;
+            @ToggleInfiniteCharges.canceled -= instance.OnToggleInfiniteCharges;
         }
 
         /// <summary>
@@ -3217,6 +3249,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDodge(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleInfiniteCharges" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleInfiniteCharges(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

@@ -26,12 +26,13 @@ MonoBehaviour:
   chaseSpeed: 5
   visionRange: 15
   deathSoundIntensity: 90
+  alertInvestigateTime: 5
+  lookAroundAnimationDuration: 4
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50
   combatEntryRange: 10
   combatLockRange: 30
-  alertInvestigateTime: 5
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 3

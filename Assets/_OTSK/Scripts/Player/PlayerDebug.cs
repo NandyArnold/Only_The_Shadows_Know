@@ -4,6 +4,9 @@ public class PlayerDebug : MonoBehaviour
 {
     private PlayerInputHandler _inputHandler;
     private Invulnerability _invulnerability;
+    private ChargeManager _chargeManager;
+
+    private bool _isInfiniteChargesActive = false;
 
     private void Awake()
     {
@@ -14,6 +17,7 @@ public class PlayerDebug : MonoBehaviour
             Debug.LogError("PlayerDebug: Could not find PlayerInputHandler component!");
         if (_invulnerability == null)
             Debug.LogError("PlayerDebug: Could not find Invulnerability component!");
+        _chargeManager = GetComponent<ChargeManager>();
     }
 
     private void OnEnable()
@@ -22,6 +26,7 @@ public class PlayerDebug : MonoBehaviour
         {
             //Debug.Log("[PlayerDebug] Subscribing to OnToggleInvulnerabilityInput event.");
             _inputHandler.OnToggleInvulnerabilityInput += ToggleInvulnerability;
+            _inputHandler.OnToggleInfiniteChargesInput += ToggleInfiniteCharges;
         }
     }
 
@@ -30,15 +35,28 @@ public class PlayerDebug : MonoBehaviour
         if (_inputHandler != null)
         {
             _inputHandler.OnToggleInvulnerabilityInput -= ToggleInvulnerability;
+            _inputHandler.OnToggleInfiniteChargesInput -= ToggleInfiniteCharges;
         }
     }
 
-    private void ToggleInvulnerability()
+    private void ToggleInvulnerability() // I Keybind
     {
         if (_invulnerability == null) return;
 
         _invulnerability.IsInvulnerable = !_invulnerability.IsInvulnerable;
 
         Debug.Log($"<color=cyan>[PlayerDebug] ToggleInvulnerability called! Player Invulnerability is now: {_invulnerability.IsInvulnerable}</color>");
+    }
+    private void ToggleInfiniteCharges() // K keybind
+    {
+        if (_chargeManager == null) return;
+
+        // Invert the current state
+        _isInfiniteChargesActive = !_isInfiniteChargesActive;
+
+        // Call the public method on the ChargeManager
+        _chargeManager.SetInfiniteCharges(_isInfiniteChargesActive);
+
+        Debug.Log($"<color=cyan>Player Infinite Charges set to: {_isInfiniteChargesActive}</color>");
     }
 }
