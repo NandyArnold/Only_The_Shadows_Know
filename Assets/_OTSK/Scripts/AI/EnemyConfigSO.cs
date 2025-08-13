@@ -29,13 +29,17 @@ public class EnemyConfigSO : ScriptableObject
     public float visionRange = 15f; 
     public float deathSoundIntensity = 90f; // sound intensity when the enemy dies, used for detection
 
+    [Header("Detection")]
+    public float alertInvestigateTime = 5f;
+    public float lookAroundAnimationDuration = 2.5f;
+
     [Range(0, 360)]
     public float detectionConeAngle = 90f;
     public float hearingRange = 20f;
     public float hearingThreshold = 50f;
     public float combatEntryRange = 10f;
     public float combatLockRange = 30f;
-    public float alertInvestigateTime = 5f;
+    
 
     [Header("Combat Logic")]
     [Tooltip("If the enemy can't attack the player for this long while in combat, it sounds an alarm.")]

@@ -12,6 +12,7 @@ public class EnemyAnimationController : MonoBehaviour
     private readonly int speedHash = Animator.StringToHash("Speed");
     private readonly int combatStateHash = Animator.StringToHash("CombatState");
     private readonly int primaryAttackTriggerHash = Animator.StringToHash("PrimaryAttack");
+    private readonly int lookAroundTriggerHash = Animator.StringToHash("LookAroundTrigger");
 
 
     private void Awake()
@@ -43,5 +44,10 @@ public class EnemyAnimationController : MonoBehaviour
     public void PlayPrimaryAttackAnimation()
     {
         _animator.SetTrigger(primaryAttackTriggerHash);
+    }
+
+    public void PlayLookAroundAnimation()
+    {
+        _animator.SetTrigger(lookAroundTriggerHash);
     }
 }
