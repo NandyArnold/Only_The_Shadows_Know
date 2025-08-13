@@ -3,12 +3,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using System.Collections;
+using UnityEngine.InputSystem.Interactions;
 
 public class PlayerInputHandler : MonoBehaviour
 {
     // --- Public Events for other scripts to subscribe to ---
     public event Action<Vector2> OnMoveInput;
+   
+    //public event Action OnJumpPressed; // For when the jump button is pressed down
+    //public event Action OnJumpReleased; // For when the jump button is released
     public event Action OnJumpInput;
+    public event Action OnDodgeInput;
+
+
     public event Action<bool> OnCrouchInput;
     public event Action<bool> OnRunInput;
 
@@ -31,7 +39,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action OnPauseInput;
 
-    public event Action OnDodgeRollInput;
+   
+    
 
     public event Action<float> OnCycleTargetingModeInput;
 
@@ -122,7 +131,9 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Move.performed += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
         _inputActions.Player.Move.canceled += ctx => OnMoveInput?.Invoke(Vector2.zero);
 
-        _inputActions.Player.Jump.performed += ctx => OnJumpInput?.Invoke();
+        //_inputActions.Player.Jump.started += ctx => OnJumpPressed?.Invoke();
+        //_inputActions.Player.Jump.canceled += ctx => OnJumpReleased?.Invoke();
+        _inputActions.Player.Jump.performed += HandleJumpInput;
 
         _inputActions.Player.Crouch.performed += ctx => {
             _isCrouchToggleActive = !_isCrouchToggleActive;
@@ -170,7 +181,8 @@ public class PlayerInputHandler : MonoBehaviour
 
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 
-        _inputActions.Player.DodgeRoll.performed += ctx => OnDodgeRollInput?.Invoke();
+        //_inputActions.Player.Dodge.performed += ctx => OnDodgeInput?.Invoke();
+
 
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
         _inputActions.Player.CancelAction.performed += ctx => EventManager.Instance.CancelActionInput();
@@ -186,6 +198,18 @@ public class PlayerInputHandler : MonoBehaviour
         if (CursorManager.Instance != null)
         {
             CursorManager.Instance?.ToggleUIMode();
+        }
+    }
+    private void HandleJumpInput(InputAction.CallbackContext context)
+    {
+        // Check which interaction triggered the action
+        if (context.interaction is MultiTapInteraction)
+        {
+            OnDodgeInput?.Invoke();
+        }
+        else // Default to a normal jump
+        {
+            OnJumpInput?.Invoke();
         }
     }
 
@@ -214,5 +238,7 @@ public class PlayerInputHandler : MonoBehaviour
                 break;
         }
     }
-  
+
+   
+
 }

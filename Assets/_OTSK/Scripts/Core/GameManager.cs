@@ -140,8 +140,11 @@ public class GameManager : MonoBehaviour
         var checkpointManager = CheckpointManager.Instance;
         if (checkpointManager.LastCheckpointPosition == Vector3.zero)
         {
-            Debug.LogError("No checkpoint found to respawn at!");
-            // Handle this case - maybe reload the level from the start?
+            Debug.Log("No checkpoint found. Loading last autosave to restart level.");
+            if (SaveLoadManager.Instance != null)
+            {
+                SaveLoadManager.Instance.LoadGame("autosave");
+            }
             return;
         }
 

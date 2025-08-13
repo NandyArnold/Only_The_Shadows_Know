@@ -2,6 +2,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public class EnemyAI : MonoBehaviour
@@ -104,6 +105,10 @@ public class EnemyAI : MonoBehaviour
     // NEW: This method is called when the enemy is damaged.
     private void HandleDamage(GameObject attacker)
     {
+        if (CurrentState is CombatState || CurrentState is AlertState || CurrentState is AlarmState)
+        {
+            return;
+        }
         if (PlayerTarget == null) return;
         LastKnownPlayerPosition = PlayerTarget.position;
 
@@ -118,14 +123,30 @@ public class EnemyAI : MonoBehaviour
     }
 
     // NEW: This public method can be called by external systems (like CombatManager or a skill)
-    public void ForceReturnToPatrol()
+    //public void ForceReturnToPatrol()
+    //{
+    //    if (CurrentState is PatrolState)
+    //    {
+    //        return;
+    //    }
+    //    Navigator.Resume();
+    //    TransitionToState(new PatrolState(PatrolRoute));
+    //}
+    public void ResetToInitialState()
     {
-        if (CurrentState is PatrolState)
+        // Re-enable the NavMeshAgent in case it was disabled (e.g., on death).
+        var agent = GetComponent<NavMeshAgent>();
+        if (agent != null) agent.enabled = true;
+
+        // Use the same logic as StartAI to choose the correct state.
+        if (PatrolRoute != null)
         {
-            return;
+            TransitionToState(new PatrolState(PatrolRoute));
         }
-        Navigator.Resume();
-        TransitionToState(new PatrolState(PatrolRoute));
+        else
+        {
+            TransitionToState(new GuardState());
+        }
     }
 
     private void HandleSoundDetected(Vector3 soundPosition)

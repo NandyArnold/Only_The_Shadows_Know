@@ -59,7 +59,7 @@ public class EnemyManager : MonoBehaviour
         }
         return false;
     }
-    public void ReturnAllToPatrol()
+    public void ReturnAllToInitialStatel()
     {
         // We iterate backwards because if an enemy is destroyed, it won't break the loop.
         for (int i = _activeEnemies.Count - 1; i >= 0; i--)
@@ -69,7 +69,7 @@ public class EnemyManager : MonoBehaviour
                 // Tell their AI to go back to an idle/patrol state
                 if (_activeEnemies[i].TryGetComponent<EnemyAI>(out var ai))
                 {
-                    ai.ForceReturnToPatrol();
+                    ai.ResetToInitialState();
                 }
 
                 // Also disable their ability to see or hear
@@ -89,7 +89,7 @@ public class EnemyManager : MonoBehaviour
             {
                 // Re-enable their senses and force them to patrol.
                 enemy.Detector.enabled = true;
-                ai.ForceReturnToPatrol();
+                ai.ResetToInitialState();
             }
         }
     }
@@ -109,7 +109,7 @@ public class EnemyManager : MonoBehaviour
                 // Force their AI to a non-aggressive state.
                 if (enemy.TryGetComponent<EnemyAI>(out var ai))
                 {
-                    ai.ForceReturnToPatrol();
+                    ai.ResetToInitialState();
                 }
             }
         }

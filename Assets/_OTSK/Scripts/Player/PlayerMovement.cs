@@ -57,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _isFocused;
     private bool _movementLocked = false;
     private bool _isJumping = false;
+    private bool _jumpInputBuffered = false;
+    private Coroutine _jumpBufferCoroutine;
 
     private Transform _cameraTransform;
 
@@ -79,29 +81,32 @@ public class PlayerMovement : MonoBehaviour
         if (playerInputHandler != null)
         {
             playerInputHandler.OnMoveInput -= SetMoveInput;
-            playerInputHandler.OnJumpInput -= Jump;
+          
             playerInputHandler.OnCrouchInput -= Crouch;
             playerInputHandler.OnRunInput -= SetRunningState;
+            playerInputHandler.OnJumpInput -= Jump;
+            playerInputHandler.OnDodgeInput -= PerformDodgeRoll;
 
-            playerInputHandler.OnDodgeRollInput -= HandleDodgeRoll;
 
             if (playerCombat != null)
             {
                 playerCombat.OnAimStateChanged -= HandleAimStateChanged;
-                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; // NEW: Unsubscribe
+                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; 
             }
 
             playerInputHandler.OnMoveInput += SetMoveInput;
+
             playerInputHandler.OnJumpInput += Jump;
+            playerInputHandler.OnDodgeInput += PerformDodgeRoll;
+
             playerInputHandler.OnCrouchInput += Crouch;
             playerInputHandler.OnRunInput += SetRunningState;
 
-            playerInputHandler.OnDodgeRollInput += HandleDodgeRoll;
 
             if (playerCombat != null)
             {
                 playerCombat.OnAimStateChanged += HandleAimStateChanged;
-                playerCombat.OnFocusStateChanged += HandleFocusStateChanged; // NEW: Subscribe
+                playerCombat.OnFocusStateChanged += HandleFocusStateChanged; 
             }
         }
     }
@@ -111,17 +116,19 @@ public class PlayerMovement : MonoBehaviour
         if (playerInputHandler != null)
         {
             playerInputHandler.OnMoveInput -= SetMoveInput;
+
             playerInputHandler.OnJumpInput -= Jump;
+            playerInputHandler.OnDodgeInput -= PerformDodgeRoll;
+
             playerInputHandler.OnCrouchInput -= Crouch;
             playerInputHandler.OnRunInput -= SetRunningState;
 
             if (playerCombat != null)
             {
                 playerCombat.OnAimStateChanged -= HandleAimStateChanged;
-                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; // NEW: Unsubscribe
+                playerCombat.OnFocusStateChanged -= HandleFocusStateChanged; 
             }
 
-            playerInputHandler.OnDodgeRollInput -= HandleDodgeRoll;
         }
     }
 
@@ -168,47 +175,27 @@ public class PlayerMovement : MonoBehaviour
         _wasGrounded = isGroundedNow;
 
     }
+    // This is now the entry point for a single-press jump
+
 
     public void Jump()
     {
-        if (_isJumping)
-        {
-            Debug.Log("<color=red>JUMP BLOCKED: Already Jumping.</color>");
-            return;
-        }
+        // All of your original guard clauses are here, making it safe.
+        if (_isJumping || _isFocused || _isDodgeRolling || !_isGrounded) return;
 
-        if (_isFocused)
-        {
-            Debug.Log("<color=red>JUMP BLOCKED: Is Focused.</color>");
-            return;
-        }
+        _isJumping = true; // Set the lock
 
-        if (_isDodgeRolling)
-        {
-            Debug.Log("<color=red>JUMP BLOCKED: Is Dodge Rolling.</color>");
-            return;
-        }
-       
-
-
-        // We check if the player is NOT grounded and return.
-        if (!_isGrounded)
-        {
-            Debug.Log("<color=red>JUMP BLOCKED: Not Grounded.</color>");
-            return;
-        }
-        _isJumping = true;
         Debug.Log("<color=yellow>ACTION: Jump method called.</color>");
 
         // Choose which jump height to use based on the isRunning state
-        
+
 
         // If the checks above pass, we are clear to jump.
         float currentJumpHeight = _isRunning ? runningJumpHeight : jumpHeight;
         float noiseToGenerate = _isRunning ? noiseSettings.jumpRunningNoise : noiseSettings.jumpNoise;
-        
 
-        _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+
+        _velocity.y = Mathf.Sqrt(currentJumpHeight * -2f * gravity);
 
         if (_isRunning)
         {
@@ -220,33 +207,25 @@ public class PlayerMovement : MonoBehaviour
             playerAnimationController.PlayStandardJumpAnimation();
             NoiseManager.Instance.GenerateNoise(transform.position, noiseToGenerate, this.gameObject);
         }
-        _isJumping = false; // Reset jumping state after initiating jump
-
+        //_isJumping = false; // Reset jumping state after initiating jump
     }
 
-    private void HandleDodgeRoll()
+    public void PerformDodgeRoll()
     {
-        Debug.Log("<color=yellow>ACTION: HandleDodgeRoll method called.</color>");
-        if (_isDodgeRolling)
-        {
-            Debug.Log("<color=red>DODGE BLOCKED: Already Dodge Rolling.</color>");
-            return;
-        }
+    
 
-        // --- THIS IS THE FIX ---
-        // We check if the player is NOT grounded and return.
-        if (!_isGrounded || _isDodgeRolling)
-        {
-            Debug.Log("<color=red>DODGE BLOCKED: Not Grounded.</color>");
-            return;
-        }
-        NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.dodgeRollNoise, this.gameObject);
+      
+        if (_isDodgeRolling || _isJumping || _isFocused || !_isGrounded) return;
+
+        NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.dodgeRollNoise, gameObject);
         StartCoroutine(DodgeRollCoroutine());
     }
 
-   
-
+  
     
+
+
+
     private void HandlePlayerRotation()
     {
         if (GameManager.Instance.CurrentState != GameState.Gameplay) return;

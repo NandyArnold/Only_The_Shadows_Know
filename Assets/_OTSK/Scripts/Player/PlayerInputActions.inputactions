@@ -57,23 +57,14 @@
                     "id": "f1ba0d36-48eb-4cd5-b651-1c94a6531f70",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Press",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "DodgeRoll",
-                    "type": "Button",
-                    "id": "6b1d811f-0371-4431-947c-ff551a809183",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "Press,Tap",
-                    "initialStateCheck": false
+                    "interactions": "MultiTap(tapTime=0.3,tapDelay=0.3),Tap(duration=0.5)",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Previous",
                     "type": "Button",
                     "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -247,6 +238,15 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Dodge",
+                    "type": "Button",
+                    "id": "3c32dcae-f125-4183-b587-4866a23a8bd1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "MultiTap(tapTime=0.5,tapDelay=0.5)",
                     "initialStateCheck": false
                 }
             ],
@@ -726,17 +726,6 @@
                 },
                 {
                     "name": "",
-                    "id": "76c71215-a438-42cc-af4f-bf4b11af473e",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DodgeRoll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "f254ab4b-6a76-4785-8f69-8df4c491de97",
                     "path": "<Keyboard>/j",
                     "interactions": "",
@@ -809,6 +798,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Invulnerability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db6494c7-eaf9-4c41-9cfa-79509bb275d1",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dodge",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

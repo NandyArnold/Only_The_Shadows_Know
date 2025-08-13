@@ -25,6 +25,7 @@ MonoBehaviour:
   walkCombatSpeed: 1.5
   chaseSpeed: 5
   visionRange: 15
+  deathSoundIntensity: 90
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50

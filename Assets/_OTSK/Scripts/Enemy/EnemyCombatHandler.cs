@@ -47,7 +47,7 @@ public class EnemyCombatHandler : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (weaponHitbox == null) return;
         Gizmos.color = Color.red;
