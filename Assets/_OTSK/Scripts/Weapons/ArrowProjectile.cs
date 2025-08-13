@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,13 +8,21 @@ public class ArrowProjectile : MonoBehaviour
 {
     [SerializeField] private float lifeTime = 5f;
 
+    [Header("Impact Settings")]
+    [SerializeField] private SurfaceAudioDataSO surfaceAudioData;
+    [SerializeField] private ImpactNoiseDataSO impactNoiseData;
+
     private Rigidbody _rb;
     private bool _hasHit = false;
     private GameObject _owner;
     private List<DamageInstance> _damageProfile; // Will be given its data by the BowSO
     private float _initialSpeed;                 // Will be given its data by the BowSO
+  
+
     private bool _isReadyToFire = false;
     private TrailRenderer _trailRenderer;
+
+   
     private void Awake()
     {
         
@@ -54,10 +63,30 @@ public class ArrowProjectile : MonoBehaviour
     {
         if (_hasHit) return;
         _hasHit = true;
+        //if (_rb.isKinematic) return;
 
+        // The very first thing we do on ANY collision is stop the arrow's physics.
         _rb.linearVelocity = Vector3.zero;
+        _rb.angularVelocity = Vector3.zero;
         _rb.isKinematic = true;
-        transform.SetParent(collision.transform);
+        transform.SetParent(collision.transform, true);
+        // ----------NOISE AND SOUND EFFECTS---------
+        SurfaceType surfaceType = SurfaceType.Default;
+        if (collision.collider.TryGetComponent<SurfaceIdentifier>(out var surface))
+        {
+            surfaceType = surface.surfaceType;
+        }
+
+        // Get the correct sound data
+        var soundData = surfaceAudioData.GetSound(surfaceType);
+        SoundEffectManager.Instance.PlaySoundAtPoint(soundData.audioClip, transform.position);
+
+        // Get the correct noise data and generate the in-game noise
+        float noiseIntensity = impactNoiseData.GetNoiseIntensity(surfaceType);
+        NoiseManager.Instance.GenerateNoise(transform.position, noiseIntensity, this.gameObject);
+
+        //-------------------------------------------
+
 
         if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
         {
@@ -67,5 +96,6 @@ public class ArrowProjectile : MonoBehaviour
                 enemyHealth.TakeDamage(_damageProfile, _owner);
             }
         }
+       
     }
 }

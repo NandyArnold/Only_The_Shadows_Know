@@ -18,9 +18,5 @@ public class NoiseDampeningZone : MonoBehaviour
     [Range(0f, 1f)]
     public float dampeningMultiplier = 0.5f;
 
-    private void Awake()
-    {
-        // Ensure the collider is a trigger so it doesn't physically block characters.
-        GetComponent<Collider>().isTrigger = true;
-    }
+   
 }

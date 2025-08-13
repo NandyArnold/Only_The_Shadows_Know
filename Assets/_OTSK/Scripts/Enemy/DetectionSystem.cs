@@ -21,12 +21,14 @@ public class DetectionSystem : MonoBehaviour
     private EnemyConfigSO config;
     private EnemyAI _enemyAI;
     private Transform _playerTransform;
+    private EnemyHealth _health;
 
     private float _soundGauge = 0f;
 
     private void Awake()
     {
-        _enemyAI = GetComponent<EnemyAI>(); 
+        _enemyAI = GetComponent<EnemyAI>();
+        _health = GetComponent<EnemyHealth>();
     }
 
     public void Initialize(EnemyConfigSO newConfig)
@@ -45,6 +47,8 @@ public class DetectionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (_health.IsDead) return;
+
         bool shouldDecaySound = !(_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState);
         if (shouldDecaySound && _soundGauge > 0)
         {
@@ -132,6 +136,7 @@ public class DetectionSystem : MonoBehaviour
    // NEW: This method is called by the EnemyManager.
     public void OnSoundHeard(Vector3 soundPosition, float intensity)
     {
+        //Debug.Log($"<color=cyan>{gameObject.name} heard a sound at {soundPosition} with intensity {intensity}</color>", this.gameObject);
         // Don't accumulate sound if we are already fully alerted or in combat
         if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState) return;
         // Check if the sound is within hearing range and loud enough.

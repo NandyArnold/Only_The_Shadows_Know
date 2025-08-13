@@ -9,6 +9,8 @@ public class EnemyHealth : MonoBehaviour
     public float CurrentHealth => _currentHealth;
     public float MaxHealth => _maxHealth;
 
+    public bool IsDead => _isDead;
+
     private float _currentHealth;
     private float _maxHealth = 100f;
 

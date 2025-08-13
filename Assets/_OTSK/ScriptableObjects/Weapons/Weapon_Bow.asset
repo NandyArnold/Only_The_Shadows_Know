@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineOfSightBlockingLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 705
   weaponName: 
   usesAimIK: 1
   weaponDescription: 
