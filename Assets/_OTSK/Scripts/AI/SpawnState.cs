@@ -31,5 +31,6 @@ public class SpawnState : EnemyAIState
         }
     }
 
+
     public override void Exit(EnemyAI enemyAI) { }
 }
