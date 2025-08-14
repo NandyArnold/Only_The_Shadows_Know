@@ -1,14 +1,17 @@
+using System.Collections; // Required for Coroutines
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections; // Required for Coroutines
+using DG.Tweening; // Ensure you have DOTween installed for the fade effects
 
 public class HUDManager : MonoBehaviour
 {
     public static HUDManager Instance { get; private set; } // Make it a singleton
 
     [Header("UI Panels")]
-    
+    [SerializeField] private GameObject playerHudPanel;
+   
+
     [SerializeField] private GameObject crosshairPanel;
     [Header("Weapon UI")] 
     [SerializeField] private Image weaponIconImage;
@@ -19,13 +22,15 @@ public class HUDManager : MonoBehaviour
   
 
     [Header("Objective UI")]
+    [SerializeField] private GameObject objectivePanel;
     [SerializeField] private TextMeshProUGUI objectiveText;
     [SerializeField] private float objectiveDisplayTime = 4f;
     [SerializeField] private float objectiveFadeTime = 0.5f;
 
     [SerializeField] private GameObject crosshairPrefab;
 
-    [Header("Charge/Ammo UI")] 
+    [Header("Charge/Ammo UI")]
+    [SerializeField] private GameObject chargePanel;
     [SerializeField] private TextMeshProUGUI chargeCountText;
 
     [Header("Debug UI")]
@@ -36,6 +41,7 @@ public class HUDManager : MonoBehaviour
     private CursorState _currentCursorState;
     private GameObject _crosshairInstance;
 
+    private CanvasGroup _objectivePanelCG;
     private Coroutine _objectiveCoroutine;
 
     private PlayerCombat _playerCombatForDebug;
@@ -76,11 +82,19 @@ public class HUDManager : MonoBehaviour
             CursorManager.Instance.OnStateChanged += HandleCursorStateChanged;
         }
 
-        if (objectiveText != null)
+        if (playerHudPanel != null)
         {
-            objectiveText.gameObject.SetActive(true);
-            objectiveText.alpha = 0; // Start fully transparent
+            playerHudPanel.SetActive(false); // Initially hide the player HUD
         }
+
+        if (objectivePanel != null)
+        {
+            _objectivePanelCG = objectivePanel.GetComponent<CanvasGroup>();
+            if (_objectivePanelCG != null) _objectivePanelCG.alpha = 0;
+        }
+
+
+        
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
       
@@ -199,25 +213,28 @@ public class HUDManager : MonoBehaviour
     {
         if (objectiveText == null) return;
 
-        if (_objectiveCoroutine != null)
+        if (gameObject.activeInHierarchy)
         {
-            StopCoroutine(_objectiveCoroutine);
-        }
+            if (_objectiveCoroutine != null)
+            {
+                StopCoroutine(_objectiveCoroutine);
+            }
 
-        if (newObjective != null)
-        {
-            _objectiveCoroutine = StartCoroutine(FadeObjectiveText(newObjective.objectiveDescription));
+            if (newObjective != null)
+            {
+                _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(newObjective.objectiveDescription));
+            }
         }
     }
 
-    private IEnumerator FadeObjectiveText(string text)
+    private IEnumerator ShowObjectiveCoroutine(string text)
     {
         // Fade Out (if it was already visible)
-        float startAlpha = objectiveText.alpha;
+        float startAlpha = _objectivePanelCG.alpha;
         float elapsedTime = 0f;
         while (elapsedTime < objectiveFadeTime)
         {
-            objectiveText.alpha = Mathf.Lerp(startAlpha, 0, elapsedTime / objectiveFadeTime);
+            _objectivePanelCG.alpha = Mathf.Lerp(startAlpha, 0, elapsedTime / objectiveFadeTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -227,25 +244,26 @@ public class HUDManager : MonoBehaviour
         elapsedTime = 0f;
         while (elapsedTime < objectiveFadeTime)
         {
-            objectiveText.alpha = Mathf.Lerp(0, 1, elapsedTime / objectiveFadeTime);
+            _objectivePanelCG.alpha = Mathf.Lerp(0, 1, elapsedTime / objectiveFadeTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        objectiveText.alpha = 1;
+        _objectivePanelCG.alpha = 1;
 
-        // Wait for a few seconds
-        yield return new WaitForSeconds(objectiveDisplayTime);
+        // Wait for the display time
+        yield return new WaitForSecondsRealtime(objectiveDisplayTime);
 
-        // Fade Out
+        // Fade Out again
         elapsedTime = 0f;
         while (elapsedTime < objectiveFadeTime)
         {
-            objectiveText.alpha = Mathf.Lerp(1, 0, elapsedTime / objectiveFadeTime);
+            _objectivePanelCG.alpha = Mathf.Lerp(1, 0, elapsedTime / objectiveFadeTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        objectiveText.alpha = 0;
+        _objectivePanelCG.alpha = 0;
     }
+    
 
     private void HandleLevelCompleted()
     {
@@ -253,7 +271,7 @@ public class HUDManager : MonoBehaviour
         {
             StopCoroutine(_objectiveCoroutine);
         }
-        _objectiveCoroutine = StartCoroutine(FadeObjectiveText("All Objectives Complete!"));
+        _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine("All Objectives Complete!"));
     }
 
     // --- (The rest of your HUDManager script is unchanged) ---
@@ -266,13 +284,25 @@ public class HUDManager : MonoBehaviour
         {
             // Re-run the same fade coroutine we already have
             if (_objectiveCoroutine != null) StopCoroutine(_objectiveCoroutine);
-            _objectiveCoroutine = StartCoroutine(FadeObjectiveText(currentObjective.objectiveDescription));
+            _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(currentObjective.objectiveDescription));
         }
     }
     public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }
 
     private void HandleGameStateChanged(GameState newState)
     {
+        if(objectivePanel != null)
+        {
+            // Show the objective panel only during Gameplay state
+            objectivePanel.SetActive(newState == GameState.Gameplay);
+        }
+        bool shouldBeActive = (newState == GameState.Gameplay ||  newState == GameState.Details);
+
+        if (playerHudPanel != null)
+        {
+            playerHudPanel.SetActive(shouldBeActive);
+        }
+
         if (crosshairPanel != null)
         {
             // Only show the gameplay HUD when the game is in the Gameplay state.
@@ -311,13 +341,13 @@ public class HUDManager : MonoBehaviour
         }
         if (newWeapon is BowSO bow && bow.ammoType != null)
         {
-            chargeCountText.gameObject.SetActive(true);
+            chargePanel.SetActive(true);
             UpdateChargeCount(bow.ammoType, _chargeManager.GetChargeCount(bow.ammoType));
         }
         else
         {
             // Hide the ammo count for weapons that don't use it
-            chargeCountText.gameObject.SetActive(false);
+            chargePanel.SetActive(false);
         }
     }
 

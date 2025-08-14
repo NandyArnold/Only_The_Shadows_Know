@@ -63,7 +63,7 @@ public class DaggerSO : WeaponSO
                 if (hit.TryGetComponent<EnemyHealth>(out var enemyHealth) &&
                     hit.TryGetComponent<EnemyAI>(out var enemyAI))
                 {
-                    if (enemyAI.CurrentState is PatrolState)
+                    if (enemyAI.CurrentState is PatrolState || enemyAI.CurrentState is GuardState)
                     {
                         //Debug.Log("<color=red>FINISHER!</color> (on Unaware Enemy)");
                         //combatController.GetComponent<DaggerAnimation>()?.PlayFinisherAnimation();
