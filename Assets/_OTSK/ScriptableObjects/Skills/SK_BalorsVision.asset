@@ -16,11 +16,13 @@ MonoBehaviour:
   skillType: 1
   skillName: Balors Vision
   icon: {fileID: 21300000, guid: 39ef6bdce8ac1184182549464863dba7, type: 3}
-  description: 
+  description: Expand your sense, slowing down time and detecting the nature of the
+    enemies in front of you. Can be used in combat
   manaCost: 10
   cooldown: 0
   manaCostOverTime: 5
   usageCondition: 0
   castMode: 2
+  keybindText: V
   lockMovementWhileCasting: 0
   skillEffectData: {fileID: 11400000, guid: 0040f0d90d9dfc94b8d50d5fc2ad331e, type: 2}

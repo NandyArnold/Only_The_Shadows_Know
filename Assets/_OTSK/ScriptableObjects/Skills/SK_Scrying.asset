@@ -16,11 +16,14 @@ MonoBehaviour:
   skillType: 1
   skillName: Scrying
   icon: {fileID: 21300000, guid: ca0b9bb570f71c84d94974ae01d55efc, type: 3}
-  description: 
+  description: Create a link with the sky, taking a snpashot of the area,detecting
+    where and what kind of enemies are in the area and finding a possible entry and
+    exit point for the mission. Can't be used in combat
   manaCost: 0
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
   castMode: 1
+  keybindText: E
   lockMovementWhileCasting: 1
   skillEffectData: {fileID: 11400000, guid: a0ea6bea56676af40827fc06346394b0, type: 2}

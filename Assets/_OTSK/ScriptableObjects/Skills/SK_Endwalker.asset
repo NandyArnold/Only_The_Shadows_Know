@@ -16,10 +16,14 @@ MonoBehaviour:
   skillType: 16
   skillName: Endwalker
   icon: {fileID: 21300000, guid: 0114ed7c70c56194c87ea648eb6577db, type: 3}
-  description: 
+  description: Step into the realm of death to hide or move past enemies. Careful
+    not staying too much as wandering souls will take over your body. Some enemies
+    like Undead can see in the  realm of death. Can't be used in combat
   manaCost: 50
   cooldown: 0
+  manaCostOverTime: 0
   usageCondition: 2
   castMode: 0
+  keybindText: R
   lockMovementWhileCasting: 0
   skillEffectData: {fileID: 11400000, guid: 2d9970762d6d76f4f8c6be3d22a2a4e6, type: 2}

@@ -16,9 +16,11 @@ MonoBehaviour:
   runNoise: 50
   jumpNoise: 30
   jumpRunningNoise: 60
-  landNoise: 60
+  landNoise: 0
   dodgeRollNoise: 35
   crouchNoiseModifier: 0.5
   daggerAttackNoise: 15
   bowFireNoise: 30
+  animancyRangedAttackNoise: 30
+  animancyMeleeAttackNoise: 30
   spectralShiftNoise: 70

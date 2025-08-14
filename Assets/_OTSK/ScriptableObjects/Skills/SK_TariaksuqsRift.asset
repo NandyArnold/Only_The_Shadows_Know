@@ -16,11 +16,13 @@ MonoBehaviour:
   skillType: 1
   skillName: Tarkiaksuqs Rift
   icon: {fileID: 21300000, guid: 8cf6d4dfa37f0b14ba5c131f76b3760e, type: 3}
-  description: 
+  description: Place down a rift to which you can teleport to, making a quick escape
+    as long as you are in range. Can't be used in combat.
   manaCost: 0
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
   castMode: 0
+  keybindText: T
   lockMovementWhileCasting: 0
   skillEffectData: {fileID: 11400000, guid: 2bdc48b054cca004ab5c85892b275d51, type: 2}

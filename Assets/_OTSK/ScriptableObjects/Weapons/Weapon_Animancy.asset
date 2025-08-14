@@ -15,9 +15,8 @@ MonoBehaviour:
   lineOfSightBlockingLayers:
     serializedVersion: 2
     m_Bits: 641
-  weaponName: 
+  weaponName: Animancy
   usesAimIK: 1
-  weaponDescription: 
   timeBetweenAttacks: 1
   mainHandPrefab: {fileID: 1837947540937857417, guid: 11ecc85debc21c04486140c8fdc2efa9, type: 3}
   mainHandEquipSocket: 0
@@ -29,6 +28,17 @@ MonoBehaviour:
   equipDuration: 0.2
   unequipTriggerName: Animancy_Unequip
   unequipDuration: 0.2
+  weaponDescription: Magic made for separating soul from body
+  primaryAttackName: Soul Sever (Ranged)
+  primaryAttackDescription: Fire off a beam of animancy type damge, attempting to
+    remove the soul from the Body. Highly effective against living beings
+  secondaryAttackName: Soul Sever (melee)
+  secondaryAttackDescription: Hit close enemy with animancy type damage, attempting
+    to remove the soul from the Body. Highly effective against living beings
+  tertiaryAttackName: Death Zone
+  tertiaryAttackDescription: Put unaware targets to eternal sleep, silently. This
+    skill does percentage damage .Can only be used on unaware targets, loss of line
+    of sight cancels it.
   beamVFXPrefab: {fileID: 7924996381254816273, guid: 311c01e33f8fe374783d0c98007ffa07, type: 3}
   beamDuration: 10
   rangedRange: 15

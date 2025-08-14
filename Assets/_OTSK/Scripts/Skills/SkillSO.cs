@@ -20,7 +20,10 @@ public class SkillSO : ScriptableObject
     public float manaCostOverTime;
     public SkillUsageCondition usageCondition;
     public CastMode castMode;
-  
+
+    [Header("UI Info")]
+    public string keybindText;
+
 
 
     [Tooltip("For 'Targeted' cast skills, should this lock the player's movement during the cast animation?")]

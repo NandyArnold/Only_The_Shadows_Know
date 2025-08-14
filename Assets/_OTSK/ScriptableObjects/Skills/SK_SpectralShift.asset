@@ -16,11 +16,13 @@ MonoBehaviour:
   skillType: 2
   skillName: Spectral Shift
   icon: {fileID: 21300000, guid: 818e2dc40f5ec964eb7017ab00376f7c, type: 3}
-  description: 
+  description: Teleport to designated area. Using this skill will cancel any Tariaksuqs's
+    rift that you placed down. Can't be used in combat
   manaCost: 10
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
   castMode: 1
+  keybindText: Q
   lockMovementWhileCasting: 1
   skillEffectData: {fileID: 11400000, guid: dfbd5e0cd6a23f44b8e436606f67e573, type: 2}

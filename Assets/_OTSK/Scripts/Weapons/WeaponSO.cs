@@ -12,7 +12,7 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [Header("Weapon Info")]
     public string weaponName;
     public bool usesAimIK;
-    public string weaponDescription;
+    
 
     [Header("Combat Stats")]
     public float timeBetweenAttacks = 0.5f;
@@ -31,8 +31,17 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     public float equipDuration = 0.5f;
     [Space]
     public string unequipTriggerName;
-    public float unequipDuration = 0.5f; 
-   
+    public float unequipDuration = 0.5f;
+
+    [Header("UI Info")]
+    public string weaponDescription;
+    public string primaryAttackName;
+    [TextArea] public string primaryAttackDescription;
+    public string secondaryAttackName;
+    [TextArea] public string secondaryAttackDescription;
+    public string tertiaryAttackName;
+    [TextArea] public string tertiaryAttackDescription;
+
 
     // Damage profiles are defined in the specific weapon scripts (DaggerSO, BowSO, etc.)
     public abstract void PrimaryAttack(PlayerCombat combatController);
