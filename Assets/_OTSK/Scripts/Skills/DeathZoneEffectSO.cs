@@ -17,6 +17,8 @@ public class DeathZoneEffectSO : SkillEffectSO
     [Header("Damage Profile")]
     [SerializeField] private List<DamageInstance> damageProfile;
 
+   
+
 
     public float MaxTargetingRange => maxTargetingRange;
     public LayerMask TargetLayers => targetLayers;
@@ -71,7 +73,8 @@ public class DeathZoneEffectSO : SkillEffectSO
             if (_targetEnemyHealth == null || Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) > maxTargetingRange)
             {
                 Debug.Log("Death Zone cancelled: Target moved out of range.");
-                yield break; // Exit the coroutine, the finally block will handle cleanup
+                    
+                    yield break; // Exit the coroutine, the finally block will handle cleanup
             }
 
             // Check for line of sight every frame
@@ -80,7 +83,8 @@ public class DeathZoneEffectSO : SkillEffectSO
             if (Physics.Linecast(playerEyes.position, enemyCenter, caster.GetComponent<PlayerCombat>().CurrentWeapon.LineOfSightBlockingLayers))
             {
                 Debug.Log("Death Zone cancelled: Line of sight broken.");
-                yield break; // Exit the coroutine
+                   
+                    yield break; // Exit the coroutine
             }
 
             channelTimer += Time.deltaTime;
@@ -107,6 +111,8 @@ public class DeathZoneEffectSO : SkillEffectSO
             Destroy(_vfxInstance);
         }
         _targetEnemyHealth = null;
+        caster.GetComponent<PlayerAnimationController>().CancelCurrentAnimation();
+
         Debug.Log("Stopped channeling Death Zone.");
     }
 

@@ -34,6 +34,8 @@ public class PlayerAnimationController : MonoBehaviour
     private readonly int deathTriggerHash = Animator.StringToHash("DeathTrigger");
     private readonly int reviveTriggerHas = Animator.StringToHash("ReviveTrigger");
 
+    private readonly int cancelAnimationTriggerHash = Animator.StringToHash("CancelAnimationTrigger");
+
     private PlayerStats _playerStats;
 
     // --- WEAPON ANIMATION ---
@@ -179,5 +181,9 @@ public class PlayerAnimationController : MonoBehaviour
     public void PlayReviveAnimation()
     { 
         animator.SetTrigger(reviveTriggerHas); 
+    }
+    public void CancelCurrentAnimation()
+    {
+        animator.SetTrigger(cancelAnimationTriggerHash);
     }
 }
