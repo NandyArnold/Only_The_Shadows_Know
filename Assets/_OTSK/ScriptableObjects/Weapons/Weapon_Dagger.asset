@@ -15,7 +15,7 @@ MonoBehaviour:
   lineOfSightBlockingLayers:
     serializedVersion: 2
     m_Bits: 0
-  weaponName: Dagger
+  weaponName: Ze'ra's Kiss
   usesAimIK: 0
   timeBetweenAttacks: 0.5
   mainHandPrefab: {fileID: 6145625656122818527, guid: d4d12e97cda7a4444ae3a762f962d3bb, type: 3}
@@ -28,7 +28,8 @@ MonoBehaviour:
   equipDuration: 0.2
   unequipTriggerName: Dagger_Unequip
   unequipDuration: 0.2
-  weaponDescription: Ze'ras' Kiss
+  weaponDescription: A pair of daggers speciffically tailored to assassinations,
+    even when they don't happen on the first try
   primaryAttackName: Lingering Stab
   primaryAttackDescription: Stab the enemy, doing initial physical damage and applying
     a physical bleed and a necrotic curse. Some enemyes might have resistances or

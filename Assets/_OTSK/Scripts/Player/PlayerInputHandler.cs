@@ -157,6 +157,11 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Weapon2.performed += ctx => OnWeapon2Input?.Invoke();
         _inputActions.Player.Weapon3.performed += ctx => OnWeapon3Input?.Invoke();
 
+        // Can switch weapons in UI mode as well
+        _inputActions.UI.Weapon1.performed += ctx => OnWeapon1Input?.Invoke();
+        _inputActions.UI.Weapon2.performed += ctx => OnWeapon2Input?.Invoke();
+        _inputActions.UI.Weapon3.performed += ctx => OnWeapon3Input?.Invoke();
+
         _inputActions.Player.Look.performed += ctx => OnLookInput?.Invoke(ctx.ReadValue<Vector2>());
         _inputActions.Player.Look.canceled += ctx => OnLookInput?.Invoke(Vector2.zero);
 

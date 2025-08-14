@@ -8316,7 +8316,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2026692114}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: CM_Camera_Collections
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8730,6 +8730,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_Targeting_CM
       objectReference: {fileID: 0}
+    - target: {fileID: 7698281211784630684, guid: f4677951c07d94a40ba25169ad87df12, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8746,6 +8750,10 @@ PrefabInstance:
     - target: {fileID: 5288837815645273704, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
       propertyPath: m_Name
       value: Player_ThirdPerson_CM
+      objectReference: {fileID: 0}
+    - target: {fileID: 5288837815645273704, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 9044627523184294926, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8803,6 +8811,10 @@ PrefabInstance:
     - target: {fileID: 1798363640297826779, guid: c4957649237a60147a242dac5bd01df3, type: 3}
       propertyPath: m_Name
       value: Player_ZoomAiming_CM
+      objectReference: {fileID: 0}
+    - target: {fileID: 1798363640297826779, guid: c4957649237a60147a242dac5bd01df3, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 3217216785787034008, guid: c4957649237a60147a242dac5bd01df3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8962,6 +8974,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_Scrying_CM
       objectReference: {fileID: 0}
+    - target: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9112,6 +9128,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_BalorsVision_CM
       objectReference: {fileID: 0}
+    - target: {fileID: 6011210265560162321, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9185,6 +9205,10 @@ PrefabInstance:
     - target: {fileID: 847035177414848494, guid: f70f8aa7873b9d04990f12e50cd97b27, type: 3}
       propertyPath: m_Name
       value: Player_FocusedShot_CM
+      objectReference: {fileID: 0}
+    - target: {fileID: 847035177414848494, guid: f70f8aa7873b9d04990f12e50cd97b27, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1004556563443704280, guid: f70f8aa7873b9d04990f12e50cd97b27, type: 3}
       propertyPath: m_LocalPosition.x

@@ -29,10 +29,10 @@ MonoBehaviour:
   unequipTriggerName: Animancy_Unequip
   unequipDuration: 0.2
   weaponDescription: Magic made for separating soul from body
-  primaryAttackName: Soul Sever (Ranged)
+  primaryAttackName: Soul Sever (R)
   primaryAttackDescription: Fire off a beam of animancy type damge, attempting to
     remove the soul from the Body. Highly effective against living beings
-  secondaryAttackName: Soul Sever (melee)
+  secondaryAttackName: Soul Sever (M)
   secondaryAttackDescription: Hit close enemy with animancy type damage, attempting
     to remove the soul from the Body. Highly effective against living beings
   tertiaryAttackName: Death Zone

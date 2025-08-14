@@ -15,6 +15,12 @@ public class TooltipManager : MonoBehaviour
     [SerializeField] private Button lmbButton;
     [SerializeField] private Button rmbButton;
     [SerializeField] private Button mmbButton;
+    [Header("Weapon Tooltip References")]
+    [SerializeField] private GameObject weaponAttackTooltipPanel;
+    [SerializeField] private TextMeshProUGUI attackNameText;
+    [SerializeField] private TextMeshProUGUI attackDescriptionText;
+
+    private WeaponSO _currentWeaponForTooltip;
 
     private PlayerInputHandler _playerInputHandler;
     private PlayerCombat _playerCombat;
@@ -94,6 +100,7 @@ public class TooltipManager : MonoBehaviour
 
     private void HandleWeaponSwitched(WeaponSO newWeapon)
     {
+        _currentWeaponForTooltip = newWeapon;
         if (newWeapon == null) return;
 
         // Update the main text fields
@@ -111,5 +118,39 @@ public class TooltipManager : MonoBehaviour
         {
             mmbButton.GetComponentInChildren<TextMeshProUGUI>().text = newWeapon.tertiaryAttackName;
         }
+    }
+    public void ShowWeaponAttackTooltip(int attackIndex)
+    {
+        if (_currentWeaponForTooltip == null) return;
+
+        string nameToShow = "";
+        string descriptionToShow = "";
+
+        // Get the correct name and description based on the button index
+        if (attackIndex == 0) // LMB
+        {
+            nameToShow = _currentWeaponForTooltip.primaryAttackName;
+            descriptionToShow = _currentWeaponForTooltip.primaryAttackDescription;
+        }
+        else if (attackIndex == 1) // RMB
+        {
+            nameToShow = _currentWeaponForTooltip.secondaryAttackName;
+            descriptionToShow = _currentWeaponForTooltip.secondaryAttackDescription;
+        }
+        else if (attackIndex == 2) // MMB
+        {
+            nameToShow = _currentWeaponForTooltip.tertiaryAttackName;
+            descriptionToShow = _currentWeaponForTooltip.tertiaryAttackDescription;
+        }
+
+        attackNameText.text = nameToShow;
+        attackDescriptionText.text = descriptionToShow;
+        weaponAttackTooltipPanel.SetActive(true);
+    }
+
+    // NEW: This method is called when the mouse leaves a button.
+    public void HideWeaponAttackTooltip()
+    {
+        weaponAttackTooltipPanel.SetActive(false);
     }
 }
