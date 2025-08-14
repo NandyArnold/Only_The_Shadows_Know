@@ -38,6 +38,7 @@ MonoBehaviour:
     off, otherwise perform a Lingering Stab.
   tertiaryAttackName: 
   tertiaryAttackDescription: 
+  weaponIcon: {fileID: 21300000, guid: 0bb1459ee9853284b8876379fef042ba, type: 3}
   attackRange: 2
   hittableLayers:
     serializedVersion: 2

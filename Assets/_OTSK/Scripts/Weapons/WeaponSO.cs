@@ -41,6 +41,7 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [TextArea] public string secondaryAttackDescription;
     public string tertiaryAttackName;
     [TextArea] public string tertiaryAttackDescription;
+    public Sprite weaponIcon;
 
 
     // Damage profiles are defined in the specific weapon scripts (DaggerSO, BowSO, etc.)

@@ -10,6 +10,8 @@ public class HUDManager : MonoBehaviour
     [Header("UI Panels")]
     
     [SerializeField] private GameObject crosshairPanel;
+    [Header("Weapon UI")] 
+    [SerializeField] private Image weaponIconImage;
 
     [Header("Stat Bar References")]
     [SerializeField] private Slider healthSlider;
@@ -301,6 +303,10 @@ public class HUDManager : MonoBehaviour
 
     private void HandleWeaponSwitched(WeaponSO newWeapon)
     {
+        if (weaponIconImage != null)
+        {
+            weaponIconImage.sprite = newWeapon.weaponIcon;
+        }
         if (newWeapon is BowSO bow && bow.ammoType != null)
         {
             chargeCountText.gameObject.SetActive(true);

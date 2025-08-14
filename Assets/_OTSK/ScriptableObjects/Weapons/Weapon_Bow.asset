@@ -38,6 +38,7 @@ MonoBehaviour:
     and fly faster.
   tertiaryAttackName: 
   tertiaryAttackDescription: 
+  weaponIcon: {fileID: 21300000, guid: 8c636f70961f5c14db69f086d8f2b7c2, type: 3}
   arrowPrefab: {fileID: 2748330518523898865, guid: faf148121ddae8d43ba5439f6723f77f, type: 3}
   aimLayerMask:
     serializedVersion: 2

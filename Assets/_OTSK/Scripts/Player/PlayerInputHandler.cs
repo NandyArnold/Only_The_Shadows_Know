@@ -49,6 +49,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnCancelInput;
 
     public event Action OnShowObjectiveInput;
+    public event Action OnToggleDetailsInput;
 
     public event Action<float> OnAdjustPitchInput;
 
@@ -162,6 +163,9 @@ public class PlayerInputHandler : MonoBehaviour
         // --- Toggle Input (Both Maps) ---
         _inputActions.Player.ToggleCursorMode.performed += HandleToggleInput;
         _inputActions.UI.ToggleCursorMode.performed += HandleToggleInput;
+
+        _inputActions.Player.ToggleDetails.performed += ctx => OnToggleDetailsInput?.Invoke();
+        _inputActions.UI.ToggleDetails.performed += ctx => OnToggleDetailsInput?.Invoke();
 
         // Callbacks for the Targeting Map
         _inputActions.Targeting.Confirm.performed += ctx => OnConfirmInput?.Invoke();

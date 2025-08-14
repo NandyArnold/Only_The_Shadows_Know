@@ -343,6 +343,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleDetails"",
+                    ""type"": ""Button"",
+                    ""id"": ""af3786e8-c3ba-48e0-b2f1-be9930b0b47c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -712,7 +721,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""cc1ee251-4965-4a3d-9b75-2d63416d78de"",
-                    ""path"": ""<Keyboard>/o"",
+                    ""path"": ""<Keyboard>/rightBracket"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -917,6 +926,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleInfiniteCharges"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d31ec8ba-21cd-4d95-bf73-3a5592bb0211"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleDetails"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1027,6 +1047,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Unpause"",
                     ""type"": ""Button"",
                     ""id"": ""e18b64aa-ecaa-4cc5-beba-f99df3a1e5c3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleDetails"",
+                    ""type"": ""Button"",
+                    ""id"": ""0aec6dd4-7921-4cad-ae2f-e10b70290fc6"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1455,7 +1484,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ca4805a2-0bf3-4179-85c9-ba14b8e4e544"",
-                    ""path"": ""<Keyboard>/o"",
+                    ""path"": ""<Keyboard>/rightBracket"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -1471,6 +1500,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7dbf2259-690e-4621-9fc5-40bc789a5c84"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleDetails"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1891,6 +1931,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Invulnerability = m_Player.FindAction("Invulnerability", throwIfNotFound: true);
         m_Player_Dodge = m_Player.FindAction("Dodge", throwIfNotFound: true);
         m_Player_ToggleInfiniteCharges = m_Player.FindAction("ToggleInfiniteCharges", throwIfNotFound: true);
+        m_Player_ToggleDetails = m_Player.FindAction("ToggleDetails", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1905,6 +1946,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_ToggleCursorMode = m_UI.FindAction("ToggleCursorMode", throwIfNotFound: true);
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
+        m_UI_ToggleDetails = m_UI.FindAction("ToggleDetails", throwIfNotFound: true);
         // EnemyDebug
         m_EnemyDebug = asset.FindActionMap("EnemyDebug", throwIfNotFound: true);
         m_EnemyDebug_Move = m_EnemyDebug.FindAction("Move", throwIfNotFound: true);
@@ -2034,6 +2076,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Invulnerability;
     private readonly InputAction m_Player_Dodge;
     private readonly InputAction m_Player_ToggleInfiniteCharges;
+    private readonly InputAction m_Player_ToggleDetails;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2158,6 +2201,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ToggleInfiniteCharges => m_Wrapper.m_Player_ToggleInfiniteCharges;
         /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleDetails".
+        /// </summary>
+        public InputAction @ToggleDetails => m_Wrapper.m_Player_ToggleDetails;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2267,6 +2314,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleInfiniteCharges.started += instance.OnToggleInfiniteCharges;
             @ToggleInfiniteCharges.performed += instance.OnToggleInfiniteCharges;
             @ToggleInfiniteCharges.canceled += instance.OnToggleInfiniteCharges;
+            @ToggleDetails.started += instance.OnToggleDetails;
+            @ToggleDetails.performed += instance.OnToggleDetails;
+            @ToggleDetails.canceled += instance.OnToggleDetails;
         }
 
         /// <summary>
@@ -2362,6 +2412,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleInfiniteCharges.started -= instance.OnToggleInfiniteCharges;
             @ToggleInfiniteCharges.performed -= instance.OnToggleInfiniteCharges;
             @ToggleInfiniteCharges.canceled -= instance.OnToggleInfiniteCharges;
+            @ToggleDetails.started -= instance.OnToggleDetails;
+            @ToggleDetails.performed -= instance.OnToggleDetails;
+            @ToggleDetails.canceled -= instance.OnToggleDetails;
         }
 
         /// <summary>
@@ -2411,6 +2464,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_ToggleCursorMode;
     private readonly InputAction m_UI_Unpause;
+    private readonly InputAction m_UI_ToggleDetails;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2470,6 +2524,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/Unpause".
         /// </summary>
         public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/ToggleDetails".
+        /// </summary>
+        public InputAction @ToggleDetails => m_Wrapper.m_UI_ToggleDetails;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2532,6 +2590,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Unpause.started += instance.OnUnpause;
             @Unpause.performed += instance.OnUnpause;
             @Unpause.canceled += instance.OnUnpause;
+            @ToggleDetails.started += instance.OnToggleDetails;
+            @ToggleDetails.performed += instance.OnToggleDetails;
+            @ToggleDetails.canceled += instance.OnToggleDetails;
         }
 
         /// <summary>
@@ -2579,6 +2640,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Unpause.started -= instance.OnUnpause;
             @Unpause.performed -= instance.OnUnpause;
             @Unpause.canceled -= instance.OnUnpause;
+            @ToggleDetails.started -= instance.OnToggleDetails;
+            @ToggleDetails.performed -= instance.OnToggleDetails;
+            @ToggleDetails.canceled -= instance.OnToggleDetails;
         }
 
         /// <summary>
@@ -3256,6 +3320,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleInfiniteCharges(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleDetails" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleDetails(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -3348,6 +3419,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnUnpause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleDetails" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleDetails(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EnemyDebug" which allows adding and removing callbacks.

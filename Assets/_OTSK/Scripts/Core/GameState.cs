@@ -14,5 +14,7 @@ public enum GameState
     Saving,
     // For when the game is in a state where the player has lost, such as after dying.
     GameOver,
-  
+    // For when the player is viewing detailed information about an item or character.
+    Details, 
+
 }

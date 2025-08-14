@@ -50,6 +50,9 @@ public class CursorManager : MonoBehaviour
             case GameState.GameOver:
                 SetState(CursorState.UI);
                 break;
+            case GameState.Details: 
+                SetState(CursorState.UI);
+                break;
         }
     }
 
