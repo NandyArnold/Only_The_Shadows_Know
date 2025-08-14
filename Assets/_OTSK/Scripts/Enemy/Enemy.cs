@@ -68,6 +68,20 @@ public class Enemy : MonoBehaviour, ISaveable
     {
         var saveData = (EnemySaveData)state;
 
+        if (_statusBarInstance == null && saveData.currentHealth > 0)
+        {
+            _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
+            _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
+
+            // Re-connect the standard events
+            _health.OnHealthChanged += _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
+            }
+        }
+
         transform.position = new Vector3(saveData.posX, saveData.posY, saveData.posZ);
         transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
 
@@ -186,6 +200,15 @@ public class Enemy : MonoBehaviour, ISaveable
         if (EnemyManager.Instance != null)
         {
             EnemyManager.Instance.UnregisterEnemy(this);
+        }
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged -= _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+            }
         }
         //  Destroy the status bar immediately.
         if (_statusBarInstance != null)

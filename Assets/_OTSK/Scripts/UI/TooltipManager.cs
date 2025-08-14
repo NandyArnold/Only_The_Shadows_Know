@@ -3,6 +3,16 @@ using System.Collections;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
+
+
+[System.Serializable]
+public class MovementAbilityInfo
+{
+    public string abilityName;
+    [TextArea] public string abilityDescription;
+}
+
 
 public class TooltipManager : MonoBehaviour
 {
@@ -33,6 +43,14 @@ public class TooltipManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI skillCastModeText;
     [SerializeField] private TextMeshProUGUI skillDescriptionText;
 
+
+    [Header("Movement UI")]
+    [SerializeField] private GameObject movementSlotPrefab;
+    [SerializeField] private Transform movementListParent;
+    [SerializeField] private List<MovementAbilityInfo> movementAbilities;
+    [SerializeField] private GameObject descriptionTooltipPanel;
+    [SerializeField] private TextMeshProUGUI descriptionNameText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
 
     private WeaponSO _currentWeaponForTooltip;
 
@@ -87,7 +105,7 @@ public class TooltipManager : MonoBehaviour
         _playerSkillController = player.GetComponent<PlayerSkillController>();
 
         PopulateSkillPanel();
-        //PopulateMovementPanel();
+        PopulateMovementPanel();
     }
 
     private void TogglePanel()
@@ -233,6 +251,46 @@ public class TooltipManager : MonoBehaviour
         entry.callback.AddListener((data) => action());
         // Add the new trigger entry to the list of triggers
         trigger.triggers.Add(entry);
+    }
+
+    private void PopulateMovementPanel()
+    {
+        if (movementSlotPrefab == null || movementListParent == null) return;
+
+        // Clear any old slots first
+        foreach (Transform child in movementListParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Create a new button for each ability in the list
+        foreach (var move in movementAbilities)
+        {
+            GameObject slotGO = Instantiate(movementSlotPrefab, movementListParent);
+            slotGO.GetComponentInChildren<TextMeshProUGUI>().text = move.abilityName;
+
+            // Add event triggers from code to handle hovering
+            EventTrigger trigger = slotGO.GetComponent<EventTrigger>();
+            AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => ShowDescriptionTooltip(move.abilityName, move.abilityDescription));
+            AddEventTrigger(trigger, EventTriggerType.PointerExit, HideDescriptionTooltip);
+        }
+    }
+
+    public void ShowDescriptionTooltip(string title, string description)
+    {
+        if (descriptionTooltipPanel == null) return;
+
+        descriptionNameText.text = title;
+        descriptionText.text = description;
+        descriptionTooltipPanel.SetActive(true);
+    }
+
+    // NEW: This method is called when you stop hovering.
+    public void HideDescriptionTooltip()
+    {
+        if (descriptionTooltipPanel == null) return;
+
+        descriptionTooltipPanel.SetActive(false);
     }
 
 }
