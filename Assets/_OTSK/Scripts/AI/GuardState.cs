@@ -16,7 +16,13 @@ public class GuardState : EnemyAIState
     }
 
     public override void Execute(EnemyAI enemyAI)
-    { 
+    {
+        if (!enemyAI.Navigator.HasReachedDestination)
+        {
+            return;
+        }
+
+
         // If we have arrived at our guard post, stop and go idle.
         if (enemyAI.Navigator.HasReachedDestination)
         {
@@ -40,5 +46,8 @@ public class GuardState : EnemyAIState
         }
     }
 
-    public override void Exit(EnemyAI enemyAI) { }
+    public override void Exit(EnemyAI enemyAI)
+    {
+        enemyAI.Navigator.Resume();
+    }
 }

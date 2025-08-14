@@ -139,6 +139,9 @@ public class EnemyAI : MonoBehaviour
         var agent = GetComponent<NavMeshAgent>();
         if (agent != null) agent.enabled = true;
 
+        var navigator = GetComponent<EnemyNavigator>();
+        if (navigator != null) navigator.enabled = true;
+
         // Use the same logic as StartAI to choose the correct state.
         if (PatrolRoute != null)
         {
@@ -171,6 +174,11 @@ public class EnemyAI : MonoBehaviour
         }
         var playerObject = GameObject.FindGameObjectWithTag("Player");
         return playerObject != null ? playerObject.transform : null;
+    }
+
+    public void ClearTarget()
+    {
+        _playerTarget = null;
     }
 
     private void HandleDeadBodySpotted(Transform bodyTransform)

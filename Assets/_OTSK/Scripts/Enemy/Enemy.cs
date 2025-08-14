@@ -217,8 +217,9 @@ public class Enemy : MonoBehaviour, ISaveable
 
     public void HandlePlayerDeath()
     {
-        //if (Detector != null) Detector.enabled = false;
-        //if (_ai != null) _ai.ResetToInitialState();
+        if (Detector != null) Detector.enabled = false;
+        _ai.ClearTarget();
+        if (_ai != null) _ai.ResetToInitialState();
     }
 
     // NEW: This is also called by the EnemyManager
