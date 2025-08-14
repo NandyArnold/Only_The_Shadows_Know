@@ -57,6 +57,14 @@ public class PlayerController : MonoBehaviour
         if (_playerStats != null) _playerStats.OnDied -= HandleDeath;
     }
 
+    private void Start()
+    {
+        // This is the perfect time to announce that the player is fully initialized.
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AnnouncePlayerReady();
+        }
+    }
     public void RespawnAt(Vector3 position, Quaternion rotation)
     {
         // Temporarily disable the character controller to move the player

@@ -180,6 +180,8 @@ public class HUDManager : MonoBehaviour
             combat.OnWeaponSwitched += HandleWeaponSwitched;
         }
 
+        HandleWeaponSwitched(combat.CurrentWeapon);
+
         // 3. Ensure the charge count text is hidden by default
         if (chargeCountText != null)
         {

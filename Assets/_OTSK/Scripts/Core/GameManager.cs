@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     // --- Game State Management ---
     public GameState CurrentState { get; private set; }
     public event Action<GameState> OnGameStateChanged;
-
+    public event Action OnPlayerReady;
 
     public event Action<PlayerController> OnPlayerRegistered;
 
@@ -166,5 +166,9 @@ public class GameManager : MonoBehaviour
         }
         // 5. Set the game state back to Gameplay
         UpdateGameState(GameState.Gameplay);
+    }
+    public void AnnouncePlayerReady()
+    {
+        OnPlayerReady?.Invoke();
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class TooltipManager : MonoBehaviour
 {
@@ -20,10 +21,24 @@ public class TooltipManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI attackNameText;
     [SerializeField] private TextMeshProUGUI attackDescriptionText;
 
+    [Header("Skill UI References")]
+    [SerializeField] private GameObject skillSlotPrefab;
+    [SerializeField] private Transform skillListParent;
+    [SerializeField] private GameObject skillDescriptionPanel;
+    [SerializeField] private TextMeshProUGUI skillNameText;
+    [SerializeField] private TextMeshProUGUI skillTypeText;
+    [SerializeField] private TextMeshProUGUI skillUsageCondotionsText; // This is the description text in the skill panel
+    [SerializeField] private TextMeshProUGUI skillManaCostText;
+    [SerializeField] private TextMeshProUGUI skillManaCostOverTimeText;
+    [SerializeField] private TextMeshProUGUI skillCastModeText;
+    [SerializeField] private TextMeshProUGUI skillDescriptionText;
+
+
     private WeaponSO _currentWeaponForTooltip;
 
     private PlayerInputHandler _playerInputHandler;
     private PlayerCombat _playerCombat;
+    private PlayerSkillController _playerSkillController;
 
     private bool _isPanelOpen = false;
 
@@ -37,35 +52,42 @@ public class TooltipManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnPlayerRegistered += HandlePlayerRegistered;
+        GameManager.Instance.OnPlayerReady += HandlePlayerReady;
         if (tooltipPanel != null) tooltipPanel.SetActive(false);
     }
 
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
-            GameManager.Instance.OnPlayerRegistered -= HandlePlayerRegistered;
+            GameManager.Instance.OnPlayerReady -= HandlePlayerReady;
 
         if (_playerInputHandler != null)
             _playerInputHandler.OnToggleDetailsInput -= TogglePanel;
     }
 
-    private void HandlePlayerRegistered(PlayerController player)
+    private void HandlePlayerReady()
     {
+        var player = GameManager.Instance.Player;
+        if (player == null) return;
+
+        // Now it is safe to get all components and populate the UI
         _playerInputHandler = player.GetComponent<PlayerInputHandler>();
         if (_playerInputHandler != null)
         {
             _playerInputHandler.OnToggleDetailsInput += TogglePanel;
         }
 
-        // NEW: Get the PlayerCombat component and subscribe to its event
         _playerCombat = player.GetComponent<PlayerCombat>();
         if (_playerCombat != null)
         {
             _playerCombat.OnWeaponSwitched += HandleWeaponSwitched;
-            // Update the UI with the initially equipped weapon
             HandleWeaponSwitched(_playerCombat.CurrentWeapon);
         }
+
+        _playerSkillController = player.GetComponent<PlayerSkillController>();
+
+        PopulateSkillPanel();
+        //PopulateMovementPanel();
     }
 
     private void TogglePanel()
@@ -153,4 +175,64 @@ public class TooltipManager : MonoBehaviour
     {
         weaponAttackTooltipPanel.SetActive(false);
     }
+
+    private void PopulateSkillPanel()
+    {
+        if (_playerSkillController == null || skillSlotPrefab == null) return;
+
+        foreach (Transform child in skillListParent) Destroy(child.gameObject);
+
+        foreach (var skill in _playerSkillController.GetEquippedSkills())
+        {
+            if (skill == null) continue;
+
+            // As you requested, we will not show DeathZone in the skills list.
+            if (skill.skillID == SkillIdentifier.DeathZone) continue;
+
+            GameObject slotGO = Instantiate(skillSlotPrefab, skillListParent);
+
+            // Get the helper script from the new instance
+            SkillSlotUI slotUI = slotGO.GetComponent<SkillSlotUI>();
+
+            // Use the references from the helper script to populate the UI
+            slotUI.skillIconImage.sprite = skill.icon;
+            slotUI.keybindText.text = skill.keybindText;
+
+            // Add event triggers from code to handle hover
+            EventTrigger trigger = slotGO.GetComponent<EventTrigger>() ?? slotGO.AddComponent<EventTrigger>();
+            AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => ShowSkillTooltip(skill));
+            AddEventTrigger(trigger, EventTriggerType.PointerExit, HideSkillTooltip);
+        }
+    }
+
+    
+    private void ShowSkillTooltip(SkillSO skill)
+    {
+        skillNameText.text =$"Name: { skill.skillName}";
+        skillTypeText.text = $"Type: {skill.skillType}";
+        skillUsageCondotionsText.text = $"Usage Condition: {skill.usageCondition}";
+        skillManaCostText.text = $"Mana Cost: {skill.manaCost}";
+        skillManaCostOverTimeText.text = $"Mana Cost Over Time: {skill.manaCostOverTime}";
+        skillCastModeText.text = $"Cast Mode: {skill.castMode}";
+        skillDescriptionText.text =$"Description: {skill.description}";
+
+        skillDescriptionPanel.SetActive(true);
+    }
+
+    // This method is called when you stop hovering
+    private void HideSkillTooltip()
+    {
+        skillDescriptionPanel.SetActive(false);
+    }
+
+    private void AddEventTrigger(EventTrigger trigger, EventTriggerType eventType, UnityEngine.Events.UnityAction action)
+    {
+        // Create a new event trigger entry
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = eventType };
+        // Add a listener to the trigger's callback
+        entry.callback.AddListener((data) => action());
+        // Add the new trigger entry to the list of triggers
+        trigger.triggers.Add(entry);
+    }
+
 }

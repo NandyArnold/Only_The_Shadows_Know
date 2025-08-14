@@ -253,5 +253,10 @@ public class PlayerSkillController : MonoBehaviour
     {
         return _equippedSkills.Find(s => s.skillID == skillID);
     }
-   
+
+
+    public List<SkillSO> GetEquippedSkills()
+    {
+        return _equippedSkills;
+    }
 }
