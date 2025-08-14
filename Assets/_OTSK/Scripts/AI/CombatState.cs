@@ -110,7 +110,7 @@ public class CombatState : EnemyAIState
 
     public override void Exit(EnemyAI enemyAI)
     {
-        enemyAI.AnimController.SetIsInCombat(false);
+        
         Debug.Log("Exiting Combat State");
         enemyAI.AnimController.SetIsInCombat(false);
         if (CombatManager.Instance != null)

@@ -14,6 +14,7 @@ public class EnemyAI : MonoBehaviour
     public Transform PlayerTarget => _playerTarget ??= FindPlayerTarget(); // Robust lazy-load
     public EnemyAnimationController AnimController { get; private set; }
 
+    public Vector3 SpawnPosition { get; set; }
     public InitialAIState InitialState { get; set; }
    
     public EnemyCombatHandler CombatHandler { get; private set; }
@@ -152,7 +153,7 @@ public class EnemyAI : MonoBehaviour
     private void HandleSoundDetected(Vector3 soundPosition)
     {
         // We only react to sound if we are peacefully patrolling.
-        if (_currentState is PatrolState)
+        if (_currentState is PatrolState || _currentState is GuardState)
         {
             Debug.Log("Heard a sound! Investigating...");
             TransitionToState(new AlertState(soundPosition));

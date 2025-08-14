@@ -140,6 +140,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _ai.Config = newConfig;
         _ai.PatrolRoute = newPatrolRoute;
         _ai.InitialState = initialState;
+        _ai.SpawnPosition = transform.position;
 
         _ai.StartAI();
       
@@ -216,11 +217,8 @@ public class Enemy : MonoBehaviour, ISaveable
 
     public void HandlePlayerDeath()
     {
-        // Disable senses
         //if (Detector != null) Detector.enabled = false;
-
-        // Force AI to a safe state
-        //if (_ai != null) _ai.ForceReturnToPatrol();
+        //if (_ai != null) _ai.ResetToInitialState();
     }
 
     // NEW: This is also called by the EnemyManager
