@@ -1,9 +1,26 @@
 fileFormatVersion: 2
 guid: 7adfed209f09234469becfd4a204f6c3
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318366
+  packageName: 3D_Game_Assets_Flora
+  packageVersion: 1.0.0
+  assetPath: Assets/3D_Game_Assets_Flora/Models/Maple/Model/Maple_1.fbx
+  uploadId: 751987
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stones_Min_3
+    second: {fileID: 2100000, guid: dd9a8174486807045b3b92d2df0f052b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: kl_St
+    second: {fileID: 2100000, guid: b54e81843303b0e4c8c017698f60ea15, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -105,10 +122,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 318366
-  packageName: 3D_Game_Assets_Flora
-  packageVersion: 1.0.0
-  assetPath: Assets/3D_Game_Assets_Flora/Models/Maple/Model/Maple_1.fbx
-  uploadId: 751987
