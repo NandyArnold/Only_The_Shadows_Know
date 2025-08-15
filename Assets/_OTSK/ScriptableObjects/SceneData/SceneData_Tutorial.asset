@@ -45,4 +45,10 @@ MonoBehaviour:
       spawnPointID: Guard_StaticB
       patrolRouteID: 
       initialState: 1
-  enemyEventSpawns: []
+  enemyEventSpawns:
+  - groupName: 
+    spawns:
+    - enemyToSpawn: {fileID: 0}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 0
