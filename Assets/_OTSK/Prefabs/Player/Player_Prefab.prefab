@@ -2651,7 +2651,7 @@ MonoBehaviour:
   groundCastDistance: 0.3
   groundLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 641
   walkSpeed: 3
   runSpeed: 6
   crouchSpeedMultiplier: 0.5

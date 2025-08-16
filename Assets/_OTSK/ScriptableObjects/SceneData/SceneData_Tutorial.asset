@@ -45,6 +45,100 @@ MonoBehaviour:
       spawnPointID: Guard_StaticB
       patrolRouteID: 
       initialState: 1
+  - groupName: TowerGuards
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tower1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tower2
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tower3
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tower4
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tower5
+      patrolRouteID: 
+      initialState: 1
+  - groupName: GateGuards
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Gate1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Gate2
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Gate3
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Gate4
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Gate1
+      patrolRouteID: Guard_PP_Gate
+      initialState: 0
+  - groupName: Houses
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_House1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_House2
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_House3
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_House4
+      patrolRouteID: 
+      initialState: 1
+  - groupName: CityCenter
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Center1
+      patrolRouteID: Guard_PPCenter
+      initialState: 0
+  - groupName: Tavern
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Tavern6
+      patrolRouteID: Guard_PP_Tavern1
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tavern1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tavern2
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tavern3
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tavern4
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Tavern5
+      patrolRouteID: 
+      initialState: 1
   enemyEventSpawns:
   - groupName: 
     spawns:
