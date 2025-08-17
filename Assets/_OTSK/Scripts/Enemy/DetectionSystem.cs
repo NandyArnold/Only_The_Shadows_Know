@@ -52,23 +52,26 @@ public class DetectionSystem : MonoBehaviour
     {
         if (_health.IsDead) return;
 
+        bool isInAggressiveState = (_enemyAI.CurrentState is AlertState ||
+                              _enemyAI.CurrentState is CombatState ||
+                              _enemyAI.CurrentState is AlarmState);
 
-        bool shouldDecaySound = !(_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState);
-        if (shouldDecaySound && _soundGauge > 0)
+        // 2. Use this single, clear boolean to control the sound decay.
+        if (!isInAggressiveState && _soundGauge > 0)
         {
-            // Use MoveTowards for a cleaner decay calculation.
             _soundGauge = Mathf.MoveTowards(_soundGauge, 0, noiseDecayRate * Time.deltaTime);
         }
 
-        // Always fire the event every frame to keep the UI perfectly synchronized.
-        // The EnemyUIController will handle showing/hiding the bar.
+        // The UI update is always sent to keep it synchronized.
         OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
 
-        // The scan for dead bodies should ALWAYS run.
-        if (ScanForDeadBodies(out Transform body))
+        // 3. Use the same boolean to control the dead body scan.
+        if (!isInAggressiveState)
         {
-            // If we find one, fire the event. The EnemyAI will decide what to do.
-            OnDeadBodySpotted?.Invoke(body);
+            if (ScanForDeadBodies(out Transform body))
+            {
+                OnDeadBodySpotted?.Invoke(body);
+            }
         }
     }
 
