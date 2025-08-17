@@ -36,6 +36,11 @@ public class AlarmState : EnemyAIState
 
             case AlarmType.SignalFromPosition:
                 _subState = SubState.SignalingHelp;
+                if (enemyAI.SummonCount >= enemyAI.Config.maxSummonCount)
+                {
+                    enemyAI.TransitionToState(new CombatState());
+                    return;
+                }
                 enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
                 break;
 
@@ -76,6 +81,10 @@ public class AlarmState : EnemyAIState
         float castDuration = 2f;
         while (castTimer < castDuration)
         {
+            if (enemyAI.GetComponent<EnemyHealth>().IsDead)
+            {
+                yield break; // Exit the coroutine immediately if dead
+            }
             castTimer += Time.deltaTime;
             float progress = castTimer / castDuration;
             enemyAI.ReportCastProgress(progress); // Broadcast progress
@@ -89,6 +98,8 @@ public class AlarmState : EnemyAIState
         {
             enemyAI.Config.alarmEventToRaise.Raise();
         }
+        enemyAI.IncrementSummonCount();
+       
 
         enemyAI.TransitionToState(new CombatState());
     }

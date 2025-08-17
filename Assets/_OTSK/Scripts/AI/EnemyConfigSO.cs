@@ -42,6 +42,9 @@ public class EnemyConfigSO : ScriptableObject
     public bool useTimeOutAlarm = false;
     [Tooltip("If the enemy is in combat for this long without winning, it raises an alarm.")]
     public float timeInCombatAlarmThreshold = 20f;
+    [Tooltip("The amount of times this enemy can trigger the alarm")]
+    public int maxSummonCount = 1;
+    
 
     [Range(0, 360)]
     public float detectionConeAngle = 90f;

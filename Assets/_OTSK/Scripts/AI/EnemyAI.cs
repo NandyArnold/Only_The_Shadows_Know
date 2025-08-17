@@ -18,10 +18,10 @@ public class EnemyAI : MonoBehaviour
     public InitialAIState InitialState { get; set; }
    
     public EnemyCombatHandler CombatHandler { get; private set; }
-    public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
+    public Vector3 LastKnownPlayerPosition { get; set; } //  Stores player position
 
     public PatrolRoute PatrolRoute { get; set; }
-    public int SummonCount { get; private set; } = 0; // Add this
+    public int SummonCount { get; private set; } = 0; 
 
     public void IncrementSummonCount() => SummonCount++;
 
@@ -47,7 +47,7 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    // NEW: Subscribe to events when the object is enabled.
+    //  Subscribe to events when the object is enabled.
     private void OnEnable()
     {
         if (_health != null)
@@ -63,7 +63,7 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    // NEW: Unsubscribe from events when the object is disabled.
+    //  Unsubscribe from events when the object is disabled.
     private void OnDisable()
     {
         if (_health != null)
@@ -107,7 +107,7 @@ public class EnemyAI : MonoBehaviour
         OnStateChanged?.Invoke(_currentState);
     }
 
-    // NEW: This method is called when the enemy is damaged.
+    // This method is called when the enemy is damaged.
     private void HandleDamage(GameObject attacker)
     {
         if (CurrentState is CombatState || CurrentState is AlertState || CurrentState is AlarmState)
@@ -189,4 +189,10 @@ public class EnemyAI : MonoBehaviour
         LastKnownPlayerPosition = bodyTransform.position; // Store the body's location
         TransitionToState(new AlarmState());
     }
+
+    public void ResetSummonCount()
+    {
+        SummonCount = 0;
+    }
+
 }

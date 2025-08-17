@@ -135,6 +135,10 @@ public class GameManager : MonoBehaviour
     public void RespawnPlayer()
     {
         if (Player == null) return;
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.DestroyAllSummonedEnemies();
+        }
 
         // 1. Find the last checkpoint from the manager
         var checkpointManager = CheckpointManager.Instance;

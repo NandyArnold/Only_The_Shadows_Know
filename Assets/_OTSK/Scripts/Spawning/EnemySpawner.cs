@@ -205,6 +205,8 @@ public class EnemySpawner : MonoBehaviour
         // Instantiate the enemy at the provided position and rotation
         GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, position, rotation);
 
+        enemyInstance.AddComponent<SummonedEnemy>();
+
         // Perform the rest of the initialization
         SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
         if (enemyInstance.TryGetComponent<Enemy>(out var enemy))

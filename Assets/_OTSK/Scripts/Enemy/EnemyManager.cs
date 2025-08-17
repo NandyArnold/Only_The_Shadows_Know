@@ -126,11 +126,31 @@ public class EnemyManager : MonoBehaviour
                 // Re-enable their senses.
                 enemy.Detector.enabled = true;
             }
+
+            if (enemy.TryGetComponent<EnemyAI>(out var ai))
+            {
+                ai.ResetSummonCount();
+            }
         }
     }
 
     public List<Enemy> GetActiveEnemies()
     {
         return _activeEnemies;
+    }
+
+    public void DestroyAllSummonedEnemies()
+    {
+        // Find all GameObjects in the scene with the SummonedEnemy component.
+        var summonedEnemies = FindObjectsByType<SummonedEnemy>(FindObjectsSortMode.None);
+        foreach (var summoned in summonedEnemies)
+        {
+            // Unregister and destroy them immediately.
+            if (summoned.TryGetComponent<Enemy>(out var enemy))
+            {
+                UnregisterEnemy(enemy);
+            }
+            Destroy(summoned.gameObject);
+        }
     }
 }

@@ -1,16 +1,21 @@
+// In SummonedEnemy.cs
 using UnityEngine;
 
 public class SummonedEnemy : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    //[SerializeField] private GameObject spawnVFX;
+    //[SerializeField] private AudioClip spawnSound;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //private void Start()
+    //{
+    //    // Play the spawn-in effects the moment this enemy is created.
+    //    if (spawnVFX != null)
+    //    {
+    //        Instantiate(spawnVFX, transform.position, transform.rotation);
+    //    }
+    //    if (spawnSound != null && SoundEffectManager.Instance != null)
+    //    {
+    //        SoundEffectManager.Instance.PlaySoundAtPoint(spawnSound, transform.position);
+    //    }
+    //}
 }
