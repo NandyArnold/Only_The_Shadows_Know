@@ -50,11 +50,11 @@ public class UIManager : MonoBehaviour
             gameOverPanel.SetActive(newState == GameState.GameOver);
         }
 
-        if (inGameMenuPanel != null)
-        {
-            // The in-game menu is our "pause" screen
-            inGameMenuPanel.SetActive(newState == GameState.Menu);
-        }
+        //if (inGameMenuPanel != null)
+        //{
+        //    // The in-game menu is our "pause" screen
+        //    inGameMenuPanel.SetActive(newState == GameState.Menu);
+        //}
 
     }
 }
