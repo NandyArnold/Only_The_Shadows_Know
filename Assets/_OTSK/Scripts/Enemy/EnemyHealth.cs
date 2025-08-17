@@ -17,9 +17,9 @@ public class EnemyHealth : MonoBehaviour
     private bool _isDead = false;
 
     // The new event that EnemyAI will listen to.
-    public event Action<GameObject> OnDamaged; // For AI logic
+    public event Action<GameObject, bool> OnDamaged; // For AI logic
     public event Action<float, float> OnHealthChanged; // For UI
-    public event Action OnDied;
+    public event Action<bool> OnDied;
 
     private EnemyResistances _resistances;
     private EnemyConfigSO _config;
@@ -59,7 +59,7 @@ public class EnemyHealth : MonoBehaviour
         }
 
         _currentHealth -= totalDamage;
-        OnDamaged?.Invoke(attacker);
+        OnDamaged?.Invoke(attacker, _isSilentKill);
         OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
 
         Debug.Log($"<color=orange>{gameObject.name} took {totalDamage} total damage!</color>");
@@ -73,13 +73,18 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
+        
+       
+
+        Debug.Log($"<color=cyan>[EnemyHealth]</color> Die() called. isSilentKill is: {_isSilentKill}");
+
         if (!_isSilentKill && NoiseManager.Instance != null)
         {
             NoiseManager.Instance.GenerateNoise(transform.position, _config.deathSoundIntensity, gameObject);
         }
 
         Debug.Log($"{gameObject.name} has been defeated.");
-        OnDied?.Invoke();
+        OnDied?.Invoke(_isSilentKill);
     }
 
     public void SetHealth(float healthValue)

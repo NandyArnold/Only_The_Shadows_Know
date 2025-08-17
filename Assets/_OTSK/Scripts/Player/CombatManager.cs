@@ -72,12 +72,17 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void ReportEnemyDeath(Enemy deadEnemy)
+    public void ReportEnemyDeath(Enemy deadEnemy, bool isSilentKill)
     {
+        Debug.Log($"<color=cyan>[CombatManager]</color> ReportEnemyDeath() called. isSilentKill is: {isSilentKill}");
         // First, unregister the enemy from the combat list.
         UnregisterEnemyFromCombat(deadEnemy);
 
         // Then, announce the death to any listeners (like other AIs).
-        OnEnemyDiedInCombat?.Invoke(deadEnemy);
+        if (!isSilentKill)
+        {
+            Debug.Log("<color=green>[CombatManager]</color> Kill was NOT silent. Firing OnEnemyDiedInCombat event.");
+            OnEnemyDiedInCombat?.Invoke(deadEnemy);
+        }
     }
 }

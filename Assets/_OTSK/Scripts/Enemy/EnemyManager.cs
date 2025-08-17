@@ -156,11 +156,19 @@ public class EnemyManager : MonoBehaviour
 
     public void AlertAlliesInRange(Transform alertSource, float radius)
     {
+        // We can get the player reference once.
+        var playerTransform = GameManager.Instance.Player.transform;
+        if (playerTransform == null) return;
+
         foreach (var enemy in _activeEnemies)
         {
-            if (Vector3.Distance(alertSource.position, enemy.transform.position) <= radius)
+            if (enemy != null && Vector3.Distance(alertSource.position, enemy.transform.position) <= radius)
             {
-                enemy.GetComponent<EnemyAI>().RespondToCallForHelp(GameManager.Instance.Player.transform);
+                // We use the existing RespondToCallForHelp to force them into combat.
+                if (enemy.TryGetComponent<EnemyAI>(out var ai))
+                {
+                    ai.RespondToCallForHelp(playerTransform);
+                }
             }
         }
     }

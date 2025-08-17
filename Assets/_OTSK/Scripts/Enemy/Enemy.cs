@@ -194,15 +194,16 @@ public class Enemy : MonoBehaviour, ISaveable
     
     }
 
-    private void HandleDeath()
+    private void HandleDeath(bool isSilentKill)
     {
+        Debug.Log($"<color=cyan>[Enemy]</color> HandleDeath() called. isSilentKill is: {isSilentKill}");
         bool wasInCombat = (_ai.CurrentState is CombatState);
 
         if (wasInCombat && CombatManager.Instance != null)
         {
-            CombatManager.Instance.ReportEnemyDeath(this);
+            // PASS the flag along to the CombatManager
+            CombatManager.Instance.ReportEnemyDeath(this, isSilentKill);
         }
-        // If we weren't in combat, we just unregister normally.
         else if (CombatManager.Instance != null)
         {
             CombatManager.Instance.UnregisterEnemyFromCombat(this);

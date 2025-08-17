@@ -64,7 +64,7 @@ public class AlarmState : EnemyAIState
             // Trigger the alarm and immediately go back to combat to defend the panel
             if (_targetPanel != null)
             {
-                _targetPanel.TriggerAlarm(enemyAI.gameObject);
+                _targetPanel.TriggerAlarm();
             }
             enemyAI.TransitionToState(new CombatState());
         }

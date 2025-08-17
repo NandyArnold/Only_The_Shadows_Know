@@ -23,7 +23,7 @@ MonoBehaviour:
   enemyInitialSpawns:
   - groupName: PatrolingKnights
     spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+    - enemyToSpawn: {fileID: 11400000, guid: 0b4b6862390314944ba81d8ecb0606ca, type: 2}
       spawnPointID: Guard_PatrolA
       patrolRouteID: GuardPathA
       initialState: 0

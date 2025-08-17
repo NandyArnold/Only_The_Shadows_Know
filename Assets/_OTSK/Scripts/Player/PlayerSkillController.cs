@@ -170,6 +170,10 @@ public class PlayerSkillController : MonoBehaviour
 
         // We don't need all the other checks because this is only for Death Zone for now
 
+        if (skill.lockMovementWhileCasting)
+        {
+            _playerMovement.SetMovementLock(true);
+        }
         _isActivatingASkill = true;
         if (skill.castMode != CastMode.Targeted)
         {

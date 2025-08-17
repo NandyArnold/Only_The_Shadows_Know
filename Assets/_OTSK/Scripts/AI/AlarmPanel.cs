@@ -4,7 +4,10 @@ using UnityEngine.Events;
 
 public class AlarmPanel : MonoBehaviour
 {
-    [Tooltip("The events that will fire when this panel is activated.")]
+    [Header("Alarm Settings")]
+    [Tooltip("The radius around this panel in which to alert other enemies.")]
+    [SerializeField] private float alertRadius = 25f;
+    [Tooltip("The optional Game Event to raise when this alarm is triggered.")]
     [SerializeField] private GameEvent eventToRaiseOnAlarm;
 
     private Destructible _health;
@@ -21,13 +24,23 @@ public class AlarmPanel : MonoBehaviour
         if (_health != null) _health.OnDied -= HandleDeath;
     }
 
-    public void TriggerAlarm(GameObject alerter)
+    public void TriggerAlarm()
     {
 
 
-        Debug.Log($"<color=red>ALARM TRIGGERED!</color> by {name}.");
+        Debug.Log($"<color=red>ALARM TRIGGERED!</color> by {name}. Alerting allies within {alertRadius}m.");
+
+        // 1. Alert nearby allies directly.
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.AlertAlliesInRange(transform, alertRadius);
+        }
+
+        // 2. Raise the GameEvent for other systems (like spawning).
         eventToRaiseOnAlarm?.Raise();
         // Optionally, disable the panel after one use
+
+
         this.enabled = false;
         // FUTURE LOGIC:
         // - Play a loud alarm sound that the NoiseManager can broadcast.

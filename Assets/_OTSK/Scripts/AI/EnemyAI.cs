@@ -119,13 +119,15 @@ public class EnemyAI : MonoBehaviour
     }
 
     // This method is called when the enemy is damaged.
-    private void HandleDamage(GameObject attacker)
+    private void HandleDamage(GameObject attacker, bool isSilentKill)
     {
+        if (isSilentKill) return;
         if (CurrentState is CombatState || CurrentState is AlertState || CurrentState is AlarmState)
         {
             return;
         }
         if (PlayerTarget == null) return;
+
         LastKnownPlayerPosition = PlayerTarget.position;
 
         if (Config.instantlyKnowsAttackerLocation)
