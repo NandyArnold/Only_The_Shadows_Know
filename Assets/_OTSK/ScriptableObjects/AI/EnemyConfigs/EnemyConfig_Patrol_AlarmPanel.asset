@@ -42,4 +42,4 @@ MonoBehaviour:
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
-  callForHelpRadius: 15
+  callForHelpRadius: 5

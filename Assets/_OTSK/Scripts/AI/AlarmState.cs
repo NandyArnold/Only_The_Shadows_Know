@@ -18,8 +18,10 @@ public class AlarmState : EnemyAIState
         {
             case AlarmType.GoToPanel:
                 _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
+                
                 if (_targetPanel != null)
                 {
+                    Debug.Log($" Found alarm panel: {_targetPanel.name}", enemyAI.gameObject);
                     _subState = SubState.RunningToPanel;
                     enemyAI.Navigator.Resume();
                     enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
@@ -28,9 +30,11 @@ public class AlarmState : EnemyAIState
                 }
                 else
                 {
-                    // No panel found, go back to combat to stay aggressive.
-                    Debug.LogWarning("No alarm panel found. Returning to combat.", enemyAI.gameObject);
-                    enemyAI.TransitionToState(new CombatState());
+                //No panel found.Instead of going to combat, we will
+                // transition to the AlertState to investigate the last known position
+                // (which HandleDeadBodySpotted correctly set to the body's location).
+                Debug.LogWarning("No alarm panel found. Investigating body instead.", enemyAI.gameObject);
+                    enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
                 }
                 break;
 
@@ -46,6 +50,7 @@ public class AlarmState : EnemyAIState
 
             case AlarmType.None:
             default:
+                Debug.Log("AlarmType is set to None. Cannot raise an alarm.", enemyAI.gameObject);
                 // This enemy can't raise an alarm, so it just goes back to combat.
                 enemyAI.TransitionToState(new CombatState());
                 break;
@@ -55,17 +60,26 @@ public class AlarmState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        // This logic is only for the "run to panel" type
-        if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
+        if (_subState == SubState.RunningToPanel || _subState == SubState.SignalingHelp)
         {
-            enemyAI.Navigator.Stop();
-            enemyAI.AnimController.SetSpeed(0);
-
-            // Trigger the alarm and immediately go back to combat to defend the panel
-            if (_targetPanel != null)
+            // The logic for what happens on arrival is still here.
+            if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
             {
-                _targetPanel.TriggerAlarm();
+                enemyAI.Navigator.Stop();
+                enemyAI.AnimController.SetSpeed(0);
+
+                if (_targetPanel != null)
+                {
+                    _targetPanel.TriggerAlarm();
+                }
+                enemyAI.TransitionToState(new CombatState());
             }
+            return; // Exit the method to prevent other checks from running.
+        }
+
+        // If we are not busy with an alarm action, the AI is free to check for threats.
+        if (enemyAI.PlayerTarget != null && enemyAI.Detector.CanSeePlayer())
+        {
             enemyAI.TransitionToState(new CombatState());
         }
     }

@@ -105,8 +105,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        //Debug.Log($"Current State: {_currentState?.GetType().Name ?? "None"}", this);
-        // Run the current state's logic every frame.
+        
+       
         _currentState?.Execute(this);
     }
 
@@ -195,13 +195,35 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleDeadBodySpotted(Transform bodyTransform)
     {
-        // We should react to a dead body unless we are already in full combat or already raising an alarm.
-        if (CurrentState is CombatState || CurrentState is AlarmState) return;
+        // If we are already in combat or raising an alarm, ignore this.
+        // This gives the AlarmState precedence and prevents the loop.
+        if (CurrentState is AlarmState) return;
 
-        // If we are in Patrol OR Alert, we should escalate to the AlarmState.
-        Debug.Log($"<color=red>{gameObject.name} has spotted a dead body! Sounding the alarm!</color>");
-        LastKnownPlayerPosition = bodyTransform.position; // Store the body's location
-        TransitionToState(new AlarmState());
+        // If we are in combat, we also ignore it for now.
+        if (CurrentState is CombatState) return;
+
+        // --- THIS IS THE FIX ---
+        // Read our config to decide what to do.
+        switch (Config.alarmType)
+        {
+            case AlarmType.GoToPanel:
+                Debug.Log($"<color=red>{name} has spotted a dead body! Going to alarm panel!</color>");
+                TransitionToState(new AlarmState());
+                break;
+            case AlarmType.SignalFromPosition:
+                // If we are capable of raising an alarm, transition to the AlarmState.
+                Debug.Log($"<color=red>{name} has spotted a dead body! Sounding the alarm!</color>");
+                LastKnownPlayerPosition = bodyTransform.position;
+                TransitionToState(new AlarmState());
+                break;
+
+            case AlarmType.None:
+            default:
+                // If we are not configured to raise an alarm, just investigate the body.
+                Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
+                TransitionToState(new AlertState(bodyTransform.position));
+                break;
+        }
     }
 
     public void ResetSummonCount()
