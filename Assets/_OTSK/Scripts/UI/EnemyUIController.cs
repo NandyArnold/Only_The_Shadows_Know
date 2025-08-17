@@ -18,6 +18,14 @@ public class EnemyUIController : MonoBehaviour
 
     private Transform _cameraToFace;
 
+    private void Awake()
+    {
+        // Ensure all bars are hidden by default when the UI is first created.
+        if (healthSlider != null) healthSlider.gameObject.SetActive(false);
+        if (alertSlider != null) alertSlider.gameObject.SetActive(false);
+        if (castBarSlider != null) castBarSlider.gameObject.SetActive(false);
+    }
+
 
     private void LateUpdate()
     {

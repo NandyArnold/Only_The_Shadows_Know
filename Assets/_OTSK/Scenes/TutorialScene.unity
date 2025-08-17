@@ -33409,33 +33409,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: AlarmPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 1521134539857699593, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.2074592
-      objectReference: {fileID: 0}
-    - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.2074592
-      objectReference: {fileID: 0}
-    - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.2074592
-      objectReference: {fileID: 0}
     - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 35.48
+      value: 24.4
       objectReference: {fileID: 0}
     - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 100.65
+      value: 99.91
       objectReference: {fileID: 0}
     - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 232.37
+      value: 95.9
       objectReference: {fileID: 0}
     - target: {fileID: 4690104045382179331, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
       propertyPath: m_LocalRotation.w

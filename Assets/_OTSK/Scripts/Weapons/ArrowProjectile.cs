@@ -96,6 +96,11 @@ public class ArrowProjectile : MonoBehaviour
                 enemyHealth.TakeDamage(_damageProfile, _owner);
             }
         }
-       
+        else if (collision.collider.TryGetComponent<Destructible>(out var destructible))
+        {
+            // Use the same damage profile the arrow was created with
+            destructible.TakeDamage(_damageProfile, _owner);
+        }
+
     }
 }

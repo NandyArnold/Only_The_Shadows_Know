@@ -28,7 +28,7 @@ MonoBehaviour:
   deathSoundIntensity: 90
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
-  alarmType: 0
+  alarmType: 1
   soundsAlarmOnAllyDeath: 0
   alarmEventToRaise: {fileID: 0}
   useTimeOutAlarm: 0

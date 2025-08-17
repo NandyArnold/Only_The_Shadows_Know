@@ -172,6 +172,7 @@ public class Enemy : MonoBehaviour, ISaveable
         if (statusBarPrefab != null)
         {
             _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
+            _statusBarInstance.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
 
             // Connect the standard events
@@ -185,9 +186,10 @@ public class Enemy : MonoBehaviour, ISaveable
                 _uiController.HandleAIStateChanged(_ai.CurrentState);
             }
 
-            // Initialize the health bar and alert bar to zero 
+            // After creating the UI, immediately tell it to update with the initial values.
             _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
-            _uiController.UpdateAlert(0, config.hearingThreshold);
+            // The initial sound gauge is 0, which will correctly hide the alert slider.
+            //_uiController.UpdateAlert(0, config.hearingThreshold);
         }
     
     }

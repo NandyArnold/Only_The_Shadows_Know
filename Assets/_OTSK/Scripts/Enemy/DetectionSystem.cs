@@ -45,18 +45,24 @@ public class DetectionSystem : MonoBehaviour
             _playerTransform = GameManager.Instance.Player.transform;
             //Debug.Log($"DetectionSystem: Player Transform found: {_playerTransform.name}");
         }
+        OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
     }
 
     private void Update()
     {
         if (_health.IsDead) return;
 
+
         bool shouldDecaySound = !(_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState);
         if (shouldDecaySound && _soundGauge > 0)
         {
-            _soundGauge = Mathf.Max(0, _soundGauge - noiseDecayRate * Time.deltaTime);
-            OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
+            // Use MoveTowards for a cleaner decay calculation.
+            _soundGauge = Mathf.MoveTowards(_soundGauge, 0, noiseDecayRate * Time.deltaTime);
         }
+
+        // Always fire the event every frame to keep the UI perfectly synchronized.
+        // The EnemyUIController will handle showing/hiding the bar.
+        OnSoundGaugeChanged?.Invoke(_soundGauge, config.hearingThreshold);
 
         // The scan for dead bodies should ALWAYS run.
         if (ScanForDeadBodies(out Transform body))

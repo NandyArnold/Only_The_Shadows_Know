@@ -38,10 +38,12 @@ public class UIManager : MonoBehaviour
     {
 
         bool showInGameMenu = (newState == GameState.Menu &&
-                           SceneLoader.Instance.CurrentlyLoadedScene.sceneType == SceneType.Gameplay);
-        inGameMenuPanel.SetActive(showInGameMenu);
-
-
+                          SceneLoader.Instance.CurrentlyLoadedScene != null &&
+                          SceneLoader.Instance.CurrentlyLoadedScene.sceneType == SceneType.Gameplay);
+        if (inGameMenuPanel != null)
+        {
+            inGameMenuPanel.SetActive(showInGameMenu);
+        }
 
         if (gameOverPanel != null)
         {

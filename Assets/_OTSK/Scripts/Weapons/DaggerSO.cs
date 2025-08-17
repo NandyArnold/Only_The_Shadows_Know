@@ -36,6 +36,11 @@ public class DaggerSO : WeaponSO
                 {
                     enemyHealth.TakeDamage(slashDamageProfile, combatController.gameObject);
                 }
+                // If it's NOT a real enemy, THEN check if it's a destructible object.
+                else if (hit.TryGetComponent<Destructible>(out var destructible))
+                {
+                    destructible.TakeDamage(slashDamageProfile, combatController.gameObject);
+                }
                 // If it's not a real enemy, THEN check if it's a test dummy.
                 else if (hit.TryGetComponent<DamageableDummy>(out var dummyHealth))
                 {
@@ -76,6 +81,12 @@ public class DaggerSO : WeaponSO
                         Debug.Log("Enemy is alert. Performing a normal heavy slash.");
                         enemyHealth.TakeDamage(slashDamageProfile, combatController.gameObject);
                     }
+                }
+                // If it's NOT a real enemy, THEN check if it's a destructible object.
+                else if (hit.TryGetComponent<Destructible>(out var destructible))
+                {
+                    combatController.PlayerAnimationController.TriggerSecondaryAttack();
+                    destructible.TakeDamage(slashDamageProfile, combatController.gameObject);
                 }
                 // If it's NOT a real enemy, THEN check if it's our special test dummy.
                 else if (hit.CompareTag("TestingDummy") && hit.TryGetComponent<DamageableDummy>(out var dummyHealth))

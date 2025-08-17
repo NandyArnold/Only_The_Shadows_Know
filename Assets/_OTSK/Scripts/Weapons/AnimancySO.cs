@@ -59,6 +59,10 @@ public class AnimancySO : WeaponSO
                     enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
                 }
             }
+            else if (aimController.CurrentHit.collider.TryGetComponent<Destructible>(out var destructible))
+            {
+                destructible.TakeDamage(rangedDamageProfile, combatController.gameObject);
+            }
             else if (aimController.CurrentHit.collider.TryGetComponent<DamageableDummy>(out var dummyHealth))
             {
                 if (rangedDamageProfile != null && rangedDamageProfile.Count > 0)
@@ -109,6 +113,11 @@ public class AnimancySO : WeaponSO
                     {
                         enemyHealth.TakeDamage(executionDamageProfile, combatController.gameObject);
                     }
+                }
+                // If it's NOT a real enemy, THEN check if it's a destructible object
+                else if (h.TryGetComponent<Destructible>(out var destructible))
+                {
+                    destructible.TakeDamage(meleeDamageProfile, combatController.gameObject);
                 }
                 // If not, check if it's a test dummy
                 else if (h.TryGetComponent<DamageableDummy>(out var dummyHealth))

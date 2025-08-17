@@ -18,9 +18,9 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 39ef6bdce8ac1184182549464863dba7, type: 3}
   description: Expand your sense, slowing down time and detecting the nature of the
     enemies in front of you. Can be used in combat
-  manaCost: 10
+  manaCost: 0
   cooldown: 0
-  manaCostOverTime: 5
+  manaCostOverTime: 0
   usageCondition: 0
   castMode: 2
   keybindText: V
