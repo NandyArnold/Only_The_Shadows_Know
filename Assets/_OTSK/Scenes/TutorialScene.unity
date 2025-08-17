@@ -1985,13 +1985,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97300985}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.36618656, z: -0, w: 0.93054146}
+  m_LocalPosition: {x: 49.28, y: 1.6399994, z: 159.78001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716168634}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 780884754}
+  m_LocalEulerAnglesHint: {x: 0, y: -42.961, z: 0}
 --- !u!114 &97300987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2004,7 +2004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: 
+  spawnPointID: Guard_StaticC
   isReinforcementPoint: 0
 --- !u!1 &101647325
 GameObject:
@@ -12376,12 +12376,10 @@ Transform:
   m_GameObject: {fileID: 716168633}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.6, y: 17.3, z: 295}
+  m_LocalPosition: {x: -8, y: 17.3, z: 261.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 97300986}
-  - {fileID: 819474164}
   - {fileID: 1422266323}
   - {fileID: 2013914598}
   - {fileID: 908095530}
@@ -13205,6 +13203,8 @@ Transform:
   - {fileID: 1294169459}
   - {fileID: 1993919391}
   - {fileID: 108660572}
+  - {fileID: 97300986}
+  - {fileID: 819474164}
   m_Father: {fileID: 86792266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &785332501
@@ -13784,13 +13784,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 819474163}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.29102212, z: -0, w: 0.9567163}
+  m_LocalPosition: {x: 51.45, y: 1.640007, z: 159.78001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716168634}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 780884754}
+  m_LocalEulerAnglesHint: {x: 0, y: -33.838, z: 0}
 --- !u!114 &819474165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13803,7 +13803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: 
+  spawnPointID: Guard_StaticD
   isReinforcementPoint: 0
 --- !u!1 &822728721
 GameObject:

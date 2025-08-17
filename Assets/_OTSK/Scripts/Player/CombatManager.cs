@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour
 
     public event Action OnCombatStart;
     public event Action OnCombatEnd;
+    public event Action<Enemy> OnEnemyDiedInCombat;
 
     private readonly List<Enemy> _enemiesInCombat = new List<Enemy>();
 
@@ -53,12 +54,13 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    // NEW: Called by an enemy when it is defeated.
+    //  Called by an enemy when it is defeated.
     public void UnregisterEnemyFromCombat(Enemy enemy)
     {
         if (_enemiesInCombat.Contains(enemy))
         {
             _enemiesInCombat.Remove(enemy);
+           
         }
 
         // If that was the LAST enemy, end the combat state.
@@ -68,5 +70,14 @@ public class CombatManager : MonoBehaviour
             OnCombatEnd?.Invoke();
             Debug.Log("<color=green>COMBAT ENDED</color>");
         }
+    }
+
+    public void ReportEnemyDeath(Enemy deadEnemy)
+    {
+        // First, unregister the enemy from the combat list.
+        UnregisterEnemyFromCombat(deadEnemy);
+
+        // Then, announce the death to any listeners (like other AIs).
+        OnEnemyDiedInCombat?.Invoke(deadEnemy);
     }
 }

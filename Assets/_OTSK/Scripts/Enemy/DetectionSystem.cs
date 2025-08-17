@@ -9,6 +9,8 @@ public class DetectionSystem : MonoBehaviour
     [SerializeField] private Transform eyePoint;
     public Transform EyePoint => eyePoint;
 
+    public LayerMask VisionBlockingLayers => visionBlockingLayers;
+
     [Header("Settings")]
     
     [SerializeField] private LayerMask visionBlockingLayers; //Layers that will block the enemy's line of sight (e.g., walls, obstacles).

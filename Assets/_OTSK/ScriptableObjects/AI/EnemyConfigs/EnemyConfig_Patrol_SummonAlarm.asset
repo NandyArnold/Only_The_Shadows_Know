@@ -29,9 +29,11 @@ MonoBehaviour:
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
   alarmType: 2
+  soundsAlarmOnAllyDeath: 1
   alarmEventToRaise: {fileID: 11400000, guid: a152ed73ceeda52429432d902748f6fd, type: 2}
   useTimeOutAlarm: 1
   timeInCombatAlarmThreshold: 5
+  maxSummonCount: 1
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50
@@ -40,3 +42,4 @@ MonoBehaviour:
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
+  callForHelpRadius: 15

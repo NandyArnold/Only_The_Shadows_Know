@@ -36,6 +36,27 @@ public class CombatState : EnemyAIState
         // We always start by chasing the player.
         enemyAI.AnimController.SetIsInCombat(true);
         _subState = CombatSubState.Chasing;
+
+        if (!enemyAI.HasCalledForHelp)
+        {
+            enemyAI.SetHasCalledForHelp(true); // You'll need to add this setter method to EnemyAI
+
+            Collider[] allies = Physics.OverlapSphere(enemyAI.transform.position, enemyAI.Config.callForHelpRadius);
+            foreach (var allyCollider in allies)
+            {
+                // Check if the ally is a different, living enemy with line of sight
+                if (allyCollider.TryGetComponent<EnemyAI>(out var allyAI) &&
+                    allyAI != enemyAI &&
+                    allyAI.GetComponent<EnemyHealth>().CurrentHealth > 0)
+                {
+                    if (!Physics.Linecast(enemyAI.Detector.EyePoint.position, allyAI.Detector.EyePoint.position, enemyAI.Detector.VisionBlockingLayers))
+                    {
+                        // If all checks pass, tell the ally to join the fight.
+                        allyAI.RespondToCallForHelp(enemyAI.PlayerTarget);
+                    }
+                }
+            }
+        }
     }
 
     public override void Execute(EnemyAI enemyAI)

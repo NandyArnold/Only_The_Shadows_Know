@@ -153,4 +153,15 @@ public class EnemyManager : MonoBehaviour
             Destroy(summoned.gameObject);
         }
     }
+
+    public void AlertAlliesInRange(Transform alertSource, float radius)
+    {
+        foreach (var enemy in _activeEnemies)
+        {
+            if (Vector3.Distance(alertSource.position, enemy.transform.position) <= radius)
+            {
+                enemy.GetComponent<EnemyAI>().RespondToCallForHelp(GameManager.Instance.Player.transform);
+            }
+        }
+    }
 }

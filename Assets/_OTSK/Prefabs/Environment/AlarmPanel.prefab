@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 1378872650170256827}
   - component: {fileID: 6084198837906305526}
   - component: {fileID: 788522881883531794}
+  - component: {fileID: -9089617920809105789}
+  - component: {fileID: 3451134294854655507}
   m_Layer: 0
   m_Name: AlarmPanel
   m_TagString: AlarmPanel
@@ -123,3 +125,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee17b4f9b119a34390c60db6b5ef008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnAlarmTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: cade13d37c3e2454aa69c0afe1627610, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &-9089617920809105789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521134539857699593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3946e679204659449bb52e5aa8a8019b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3451134294854655507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521134539857699593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f306fe50c9069884fb4103483cf7c883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaceType: 4

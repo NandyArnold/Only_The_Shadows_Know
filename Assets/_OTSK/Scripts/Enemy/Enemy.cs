@@ -194,7 +194,14 @@ public class Enemy : MonoBehaviour, ISaveable
 
     private void HandleDeath()
     {
-        if (CombatManager.Instance != null)
+        bool wasInCombat = (_ai.CurrentState is CombatState);
+
+        if (wasInCombat && CombatManager.Instance != null)
+        {
+            CombatManager.Instance.ReportEnemyDeath(this);
+        }
+        // If we weren't in combat, we just unregister normally.
+        else if (CombatManager.Instance != null)
         {
             CombatManager.Instance.UnregisterEnemyFromCombat(this);
         }
@@ -203,6 +210,7 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             EnemyManager.Instance.UnregisterEnemy(this);
         }
+       
         if (_uiController != null)
         {
             _health.OnHealthChanged -= _uiController.UpdateHealth;
@@ -242,9 +250,9 @@ public class Enemy : MonoBehaviour, ISaveable
 
     public void HandlePlayerDeath()
     {
-        if (Detector != null) Detector.enabled = false;
         _ai.ClearTarget();
         if (_ai != null) _ai.ResetToInitialState();
+        if (Detector != null) Detector.enabled = false;
     }
 
     // NEW: This is also called by the EnemyManager

@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ef402b7732a4b44a7f03beb45006a4, type: 3}
   m_Name: FX_BalorsVision
   m_EditorClassIdentifier: 
-  revealRadius: 15
+  revealRadius: 30
   revealTickRate: 0.5
   revealLayerMask:
     serializedVersion: 2
     m_Bits: 8256
   normalDuration: 3
   combatDuration: 1.5
+  normalTimeScale: 0.25
+  combatTimeScale: 0.75
+  transitionDuration: 0.5
+  timeScaleAmount: 0.25

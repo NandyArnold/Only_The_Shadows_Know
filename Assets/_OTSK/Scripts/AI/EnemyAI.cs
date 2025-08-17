@@ -21,9 +21,10 @@ public class EnemyAI : MonoBehaviour
     public Vector3 LastKnownPlayerPosition { get; set; } //  Stores player position
 
     public PatrolRoute PatrolRoute { get; set; }
-    public int SummonCount { get; private set; } = 0; 
+    public int SummonCount { get; private set; } = 0;
 
-    public void IncrementSummonCount() => SummonCount++;
+    public bool HasCalledForHelp => _hasCalledForHelp;
+   
 
     private EnemyAIState _currentState;
     public EnemyAIState CurrentState => _currentState;
@@ -34,6 +35,8 @@ public class EnemyAI : MonoBehaviour
 
     public event Action<EnemyAIState> OnStateChanged;
     public event Action<float> OnCastProgressChanged;
+
+    private bool _hasCalledForHelp = false;
 
     private void Awake()
     {
@@ -61,6 +64,11 @@ public class EnemyAI : MonoBehaviour
             Detector.OnDeadBodySpotted += HandleDeadBodySpotted;
         }
 
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnEnemyDiedInCombat += HandleAllyDiedInCombat; 
+        }
+
     }
 
     //  Unsubscribe from events when the object is disabled.
@@ -76,7 +84,10 @@ public class EnemyAI : MonoBehaviour
             Detector.OnSoundDetected -= HandleSoundDetected;
             Detector.OnDeadBodySpotted -= HandleDeadBodySpotted;
         }
-
+        if (CombatManager.Instance != null)
+        {
+            CombatManager.Instance.OnEnemyDiedInCombat -= HandleAllyDiedInCombat; 
+        }
     }
 
 
@@ -133,6 +144,7 @@ public class EnemyAI : MonoBehaviour
     }
     public void ResetToInitialState()
     {
+        _hasCalledForHelp = false;
         // Re-enable the NavMeshAgent in case it was disabled (e.g., on death).
         var agent = GetComponent<NavMeshAgent>();
         if (agent != null) agent.enabled = true;
@@ -193,6 +205,36 @@ public class EnemyAI : MonoBehaviour
     public void ResetSummonCount()
     {
         SummonCount = 0;
+    }
+
+    private void HandleAllyDiedInCombat(Enemy deadAlly)
+    {
+        // If we're already in combat/alarm, or if we're not configured to care, do nothing.
+        if (!Config.soundsAlarmOnAllyDeath || CurrentState is CombatState || CurrentState is AlarmState)
+        {
+            return;
+        }
+
+        // Check if the dead ally was close enough to matter.
+        if (Vector3.Distance(transform.position, deadAlly.transform.position) <= Config.visionRange)
+        {
+            Debug.Log($"<color=orange>{name} saw an ally die! Sounding the alarm!</color>");
+            TransitionToState(new AlarmState());
+        }
+    }
+
+    public void SetHasCalledForHelp(bool value) => _hasCalledForHelp = value;
+
+    public void IncrementSummonCount() => SummonCount++;
+
+    public void RespondToCallForHelp(Transform player)
+    {
+        // If we are already in an aggressive state, do nothing.
+        if (CurrentState is CombatState || CurrentState is AlertState || CurrentState is AlarmState) return;
+
+        Debug.Log($"<color=cyan>{name} is responding to a call for help!</color>");
+        LastKnownPlayerPosition = player.position;
+        TransitionToState(new CombatState());
     }
 
 }

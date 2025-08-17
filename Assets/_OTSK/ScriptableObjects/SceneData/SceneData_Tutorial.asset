@@ -37,12 +37,20 @@ MonoBehaviour:
       initialState: 0
   - groupName: StaticKnights
     spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: c3d39042ac59fcc40897d5cd81f268a0, type: 2}
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: Guard_StaticA
       patrolRouteID: 
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: Guard_StaticB
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_StaticC
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_StaticD
       patrolRouteID: 
       initialState: 1
   - groupName: TowerGuards

@@ -30,12 +30,15 @@ public class EnemyConfigSO : ScriptableObject
     public float visionRange = 15f; 
     public float deathSoundIntensity = 90f; // sound intensity when the enemy dies, used for detection
 
+
     [Header("Detection")]
     public float alertInvestigateTime = 5f;
     public float lookAroundAnimationDuration = 2.5f;
 
     [Header("Alarm Logic")] 
     public AlarmType alarmType = AlarmType.None;
+    [Tooltip("Should this enemy sound an alarm when an ally dies?")]
+    public bool soundsAlarmOnAllyDeath = false;
     [Tooltip("The Game Event to raise when this enemy successfully signals for help.")]
     public GameEvent alarmEventToRaise;
     [Tooltip("Should this enemy sound an alarm if combat lasts too long?")]
@@ -61,6 +64,8 @@ public class EnemyConfigSO : ScriptableObject
     public bool instantlyKnowsAttackerLocation = true;
     [Tooltip("When in combat, the distance from which it walks instead of running.")]
     public float walkCombatRange = 7f;
+    [Tooltip("The distance from which the enemy will drag other enemies in combat.")]
+    public float callForHelpRadius = 15f;
 
 
 }
