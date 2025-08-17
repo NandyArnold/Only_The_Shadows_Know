@@ -1,5 +1,6 @@
 public enum InitialAIState
 {
     Patrol,
-    Guard
+    Guard,
+    Combat
 }

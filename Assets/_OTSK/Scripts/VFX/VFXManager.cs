@@ -64,4 +64,15 @@ public class VFXManager : MonoBehaviour
         }
         return null;
     }
+
+    public void PlayInstaKillEffect()
+    {
+        Debug.Log("Playing InstaKill VFX" );
+        //GameObject instaKillVFX = GetRevealEffect(RevealableType.InstaKill, position);
+        //if (instaKillVFX != null)
+        //{
+        //    // Optionally, you can add a cleanup mechanism to destroy the effect after some time
+        //    Destroy(instaKillVFX, 2f); // Adjust duration as needed
+        //}
+    }
 }

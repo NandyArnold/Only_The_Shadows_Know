@@ -136,6 +136,7 @@ public class Enemy : MonoBehaviour, ISaveable
             if (_ai != null)
             {
                 _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+                _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
             }
         }
     }
@@ -180,6 +181,7 @@ public class Enemy : MonoBehaviour, ISaveable
             if (_ai != null)
             {
                 _ai.OnStateChanged += _uiController.HandleAIStateChanged;
+                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
                 _uiController.HandleAIStateChanged(_ai.CurrentState);
             }
 

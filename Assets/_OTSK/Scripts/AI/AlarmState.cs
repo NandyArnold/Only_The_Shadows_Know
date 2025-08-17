@@ -1,9 +1,10 @@
 // Create this new script, AlarmState.cs
 using UnityEngine;
+using System.Collections;
 
 public class AlarmState : EnemyAIState
 {
-    private enum SubState { FindingPanel, RunningToPanel, ActivatingAlarm }
+    private enum SubState { None, RunningToPanel, SignalingHelp }
     private SubState _subState;
 
     private AlarmPanel _targetPanel;
@@ -13,50 +14,85 @@ public class AlarmState : EnemyAIState
     {
         Debug.Log("Entering Alarm State");
 
-        // 1. Find the closest alarm panel
-        _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
-
-        if (_targetPanel == null)
+        switch (enemyAI.Config.alarmType)
         {
-            // If there's no alarm panel, just investigate the body instead.
-            Debug.LogWarning("No alarm panel found. Investigating body instead.");
-            enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
-            return;
-        }
+            case AlarmType.GoToPanel:
+                _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
+                if (_targetPanel != null)
+                {
+                    _subState = SubState.RunningToPanel;
+                    enemyAI.Navigator.Resume();
+                    enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
+                    enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
+                    enemyAI.Navigator.MoveTo(_targetPanel.transform.position);
+                }
+                else
+                {
+                    // No panel found, go back to combat to stay aggressive.
+                    Debug.LogWarning("No alarm panel found. Returning to combat.", enemyAI.gameObject);
+                    enemyAI.TransitionToState(new CombatState());
+                }
+                break;
 
-        // 2. Start running towards it
-        enemyAI.Navigator.Resume();
-        _subState = SubState.RunningToPanel;
-        enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
-        enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
-        enemyAI.Navigator.MoveTo(_targetPanel.transform.position);
+            case AlarmType.SignalFromPosition:
+                _subState = SubState.SignalingHelp;
+                enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
+                break;
+
+            case AlarmType.None:
+            default:
+                // This enemy can't raise an alarm, so it just goes back to combat.
+                enemyAI.TransitionToState(new CombatState());
+                break;
+        }
+       
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
-        if (_subState == SubState.RunningToPanel)
+        // This logic is only for the "run to panel" type
+        if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
         {
-            // If we've reached the panel, switch to the next sub-state
-            if (enemyAI.Navigator.HasReachedDestination)
+            enemyAI.Navigator.Stop();
+            enemyAI.AnimController.SetSpeed(0);
+
+            // Trigger the alarm and immediately go back to combat to defend the panel
+            if (_targetPanel != null)
             {
-                _subState = SubState.ActivatingAlarm;
-                enemyAI.Navigator.Stop();
-                enemyAI.AnimController.SetSpeed(0);
-                _timer = 2f; // Time it takes to "use" the panel
-            }
-        }
-        else if (_subState == SubState.ActivatingAlarm)
-        {
-            // Wait for the "use panel" animation/timer
-            _timer -= Time.deltaTime;
-            if (_timer <= 0f)
-            {
-                // Trigger the alarm and go into combat
                 _targetPanel.TriggerAlarm(enemyAI.gameObject);
-                enemyAI.TransitionToState(new CombatState());
             }
+            enemyAI.TransitionToState(new CombatState());
         }
     }
+
+    // This coroutine is for the "magical" alarm type
+    private IEnumerator SignalForHelpRoutine(EnemyAI enemyAI)
+    {
+        enemyAI.Navigator.Stop();
+        enemyAI.AnimController.SetSpeed(0);
+        // TODO: Play a "signaling" or "casting" animation here
+
+        float castTimer = 0f;
+        float castDuration = 2f;
+        while (castTimer < castDuration)
+        {
+            castTimer += Time.deltaTime;
+            float progress = castTimer / castDuration;
+            enemyAI.ReportCastProgress(progress); // Broadcast progress
+            yield return null;
+        }
+
+        // Hide the cast bar when finished
+        enemyAI.ReportCastProgress(0);
+
+        if (enemyAI.Config.alarmEventToRaise != null)
+        {
+            enemyAI.Config.alarmEventToRaise.Raise();
+        }
+
+        enemyAI.TransitionToState(new CombatState());
+    }
+
 
     public override void Exit(EnemyAI enemyAI) { }
 

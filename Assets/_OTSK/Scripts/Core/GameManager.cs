@@ -171,4 +171,13 @@ public class GameManager : MonoBehaviour
     {
         OnPlayerReady?.Invoke();
     }
+
+    public void InstakillPlayer()
+    {
+        if (Player != null && Player.GetComponent<PlayerStats>() != null)
+        {
+            // Deal a huge amount of damage that cannot be survived.
+            Player.GetComponent<PlayerStats>().TakeDamage(float.MaxValue);
+        }
+    }
 }

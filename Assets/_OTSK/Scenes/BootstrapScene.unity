@@ -10571,6 +10571,7 @@ GameObject:
   - component: {fileID: 1837955067}
   - component: {fileID: 1837955079}
   - component: {fileID: 1837955080}
+  - component: {fileID: 1837955081}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -10647,7 +10648,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerHudPanel: {fileID: 475810693}
-  objectivePanell: {fileID: 981573614}
   crosshairPanel: {fileID: 1154696275}
   weaponIconImage: {fileID: 231738006}
   healthSlider: {fileID: 1985777999}
@@ -10879,7 +10879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffb21165c62b4af4bbc177ce58c6309f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentSceneData: {fileID: 0}
+  reinforcementSpawnRadius: 8
+  reinforcementSearchRadius: 20
 --- !u!114 &1837955074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11028,6 +11029,75 @@ MonoBehaviour:
   descriptionTooltipPanel: {fileID: 524555616}
   descriptionNameText: {fileID: 1017999498}
   descriptionText: {fileID: 1253013477}
+--- !u!114 &1837955081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911bab9b0be6b604eb0eb6a031f1af50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventResponses:
+  - eventChannel: {fileID: 11400000, guid: a152ed73ceeda52429432d902748f6fd, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: AlarmSummons
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: d252d7abd853776438b91ef8e00052c0, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955056}
+          m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+          m_MethodName: InstakillPlayer
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1837955070}
+          m_TargetAssemblyTypeName: VFXManager, Assembly-CSharp
+          m_MethodName: PlayInstaKillEffect
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1837955079}
+          m_TargetAssemblyTypeName: SoundEffectManager, Assembly-CSharp
+          m_MethodName: PlayInstaKillSound
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1853120219
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ public class EnemyUIController : MonoBehaviour
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider alertSlider;
     [SerializeField] private GameObject deathZoneMark;
+    [SerializeField] private Slider castBarSlider;
 
 
     [Header("VFX")]
@@ -46,6 +47,12 @@ public class EnemyUIController : MonoBehaviour
     {
         alertSlider.gameObject.SetActive(current > 0); // Only show if there is some alert level
         alertSlider.value = current / max;
+    }
+    public void UpdateCastBar(float progress)
+    {
+        // Show the bar if progress is > 0, hide it otherwise
+        castBarSlider.gameObject.SetActive(progress > 0);
+        castBarSlider.value = progress;
     }
 
     public void HandleAIStateChanged(EnemyAIState newState)

@@ -1,23 +1,28 @@
 // The new EnemySpawner.cs
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemySpawner : MonoBehaviour
 {
     public static EnemySpawner Instance { get; private set; }
 
-  
-    [Tooltip("The index of the route from the PatrolRouteManager to assign. Use -1 for a random route.")]
-    [SerializeField]
-    
+
+    [Header("Reinforcement Settings")]
+    [Tooltip("How close to the player reinforcements should try to spawn.")]
+    [SerializeField] private float reinforcementSpawnRadius = 20f;
+    [Tooltip("How far from the player to search for pre-placed spawn points.")]
+    [SerializeField] private float reinforcementSearchRadius = 40f;
+
     private SceneDataSO _currentSceneData;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-        
+
     }
 
     private void OnEnable()
@@ -40,7 +45,7 @@ public class EnemySpawner : MonoBehaviour
     private void HandleSceneLoaded(SceneDataSO sceneData)
     {
         _currentSceneData = sceneData;
-       
+
     }
 
     public void SpawnEnemy(SpawnData data)
@@ -76,7 +81,7 @@ public class EnemySpawner : MonoBehaviour
         if (spawnPoint != null)
         {
             // If we found a spawn point (either by ID or fallback), spawn the enemy there.
-            GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, spawnPoint.SpawnTransform.position, 
+            GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, spawnPoint.SpawnTransform.position,
                                         spawnPoint.SpawnTransform.rotation);
 
             SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
@@ -121,37 +126,94 @@ public class EnemySpawner : MonoBehaviour
 
     public void TriggerSpawnGroup(string groupName)
     {
-        if (_currentSceneData == null) return;
-
-        // Find the requested group in the event list
+        if (_currentSceneData == null || GameManager.Instance.Player == null) return;
         SpawnGroup groupToSpawn = _currentSceneData.enemyEventSpawns.Find(g => g.groupName == groupName);
 
         if (groupToSpawn != null)
         {
-            Debug.Log($"<color=green>Spawning event group: {groupName}</color>");
             foreach (var spawnData in groupToSpawn.spawns)
             {
-                SpawnEnemy(spawnData);
+                // Find the best position and rotation for this reinforcement.
+                if (FindBestSpawnTransformForAmbush(GameManager.Instance.Player.transform.position, out Vector3 spawnPos, out Quaternion spawnRot))
+                {
+                    SpawnEnemyAt(spawnData, spawnPos, spawnRot);
+                }
+                else
+                {
+                    Debug.LogWarning($"Could not find any valid spawn location for group '{groupName}'.");
+                }
             }
         }
-        else
+    }
+    private bool FindBestSpawnTransformForAmbush(Vector3 searchOrigin, out Vector3 position, out Quaternion rotation)
+    {
+        // First, try to find pre-placed, off-screen spawn points nearby.
+        var allSpawnPoints = FindObjectsByType<EnemySpawnPoint>(FindObjectsSortMode.None);
+        var validPoints = allSpawnPoints
+         .Where(p => p.IsReinforcementPoint &&
+                     Vector3.Distance(searchOrigin, p.transform.position) <= reinforcementSearchRadius &&
+                     IsOffScreen(p.transform.position))
+         .OrderBy(p => Vector3.Distance(searchOrigin, p.transform.position))
+         .ToList();
+
+        if (validPoints.Any())
         {
-            Debug.LogWarning($"Could not find event spawn group with name: {groupName}");
+            position = validPoints.First().transform.position;
+            rotation = validPoints.First().transform.rotation;
+            return true;
+        }
+
+        // --- FALLBACK LOGIC ---
+        // If no pre-placed points are found, create a "virtual" one.
+        for (int i = 0; i < 10; i++) // Try 10 times to find a random spot
+        {
+            Vector2 randomDir = Random.insideUnitCircle.normalized * reinforcementSpawnRadius;
+            Vector3 randomPoint = searchOrigin + new Vector3(randomDir.x, 0, randomDir.y);
+
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            {
+                if (IsOffScreen(hit.position))
+                {
+                    position = hit.position;
+                    // Have the enemy spawn facing the player
+                    rotation = Quaternion.LookRotation(searchOrigin - hit.position);
+                    return true;
+                }
+            }
+        }
+
+        // If all else fails, report failure.
+        position = Vector3.zero;
+        rotation = Quaternion.identity;
+        return false;
+    }
+
+    private bool IsOffScreen(Vector3 position)
+    {
+        Vector3 screenPoint = Camera.main.WorldToViewportPoint(position);
+        return screenPoint.z < 0 || screenPoint.x < 0 || screenPoint.x > 1 || screenPoint.y < 0 || screenPoint.y > 1;
+    }
+
+    public void SpawnEnemyAt(SpawnData data, Vector3 position, Quaternion rotation)
+    {
+        PatrolRoute routeToAssign = null;
+        if (!string.IsNullOrEmpty(data.patrolRouteID))
+        {
+            routeToAssign = PatrolRouteManager.Instance.GetRoute(data.patrolRouteID);
+        }
+
+        // Instantiate the enemy at the provided position and rotation
+        GameObject enemyInstance = Instantiate(data.enemyToSpawn.enemyPrefab, position, rotation);
+
+        // Perform the rest of the initialization
+        SceneManager.MoveGameObjectToScene(enemyInstance, SceneManager.GetActiveScene());
+        if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
+        {
+            Debug.Log($"Spawning reinforcement '{data.enemyToSpawn.displayName}' with patrol route '{routeToAssign?.name ?? "None"}'.");
+            enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
         }
     }
 
 
 
-
-    //private void SpawnInitialEnemies()
-    //{
-    //    if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
-
-    //    Debug.Log("<color=green>All systems ready. Spawning enemies...</color>");
-
-    //    foreach (var spawnData in _currentSceneData.enemyInitialSpawns)
-    //    {
-    //        SpawnEnemy(spawnData);
-    //    }
-    //}
 }

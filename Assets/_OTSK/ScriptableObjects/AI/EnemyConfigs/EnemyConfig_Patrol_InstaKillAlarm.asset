@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
-  m_Name: EnemyConfig_Patrol_TestKnight
+  m_Name: EnemyConfig_Patrol_InstaKillAlarm
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
@@ -28,6 +28,8 @@ MonoBehaviour:
   deathSoundIntensity: 90
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
+  alarmType: 2
+  alarmEventToRaise: {fileID: 11400000, guid: d252d7abd853776438b91ef8e00052c0, type: 2}
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50
@@ -35,4 +37,4 @@ MonoBehaviour:
   combatLockRange: 30
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
-  walkCombatRange: 3
+  walkCombatRange: 5

@@ -17,4 +17,24 @@ public class SoundEffectManager : MonoBehaviour
         if (clip == null) return;
         AudioSource.PlayClipAtPoint(clip, position, volume);
     }
+
+    public void PlaySound(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null) return;
+        AudioSource.PlayClipAtPoint(clip, transform.position, volume);
+    }
+
+    public void PlayInstaKillSound()
+        {
+        AudioClip instaKillClip = Resources.Load<AudioClip>("Audio/InstaKillSound");
+        if (instaKillClip != null)
+        {
+            PlaySound(instaKillClip, 1f);
+        }
+        else
+        {
+            Debug.LogWarning("InstaKill sound clip not found!");
+        }
+    }
+
 }

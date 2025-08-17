@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
+  m_Name: EnemyConfig_Patrol_SummonAlarm
+  m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
+  enemyType: 1
+  displayName: Patrol Guard Tester
+  maxHealth: 100
+  attackDamage: 50
+  attackRange: 2
+  attackCooldown: 2.5
+  attackAnimationDuration: 1.2
+  patrolSpeed: 2
+  alertSpeed: 3.5
+  walkCombatSpeed: 1.5
+  chaseSpeed: 5
+  visionRange: 15
+  deathSoundIntensity: 90
+  alertInvestigateTime: 5
+  lookAroundAnimationDuration: 4
+  alarmType: 2
+  alarmEventToRaise: {fileID: 11400000, guid: a152ed73ceeda52429432d902748f6fd, type: 2}
+  useTimeOutAlarm: 1
+  timeInCombatAlarmThreshold: 5
+  detectionConeAngle: 90
+  hearingRange: 10
+  hearingThreshold: 50
+  combatEntryRange: 10
+  combatLockRange: 30
+  cantAttackAlarmTime: 10
+  instantlyKnowsAttackerLocation: 1
+  walkCombatRange: 5

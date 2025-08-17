@@ -9,6 +9,11 @@ public class CombatState : EnemyAIState
 
     private float _attackCooldownTimer;
     private float _attackAnimationTimer;
+
+    private float _timeInCombatTimer; // NEW: Timer for this new mechanic
+    private bool _hasTriggeredTimeoutAlarm = false; // NEW: Flag to prevent spamming the alarm
+
+
     public override void Enter(EnemyAI enemyAI)
     {
         // --- STACK TRACE DEBUG TOOL ---
@@ -39,6 +44,25 @@ public class CombatState : EnemyAIState
         {
             enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
             return;
+        }
+        // Increment the timer every frame we are in combat.
+        _timeInCombatTimer += Time.deltaTime;
+        // Check if the timer has exceeded the threshold.
+        if (enemyAI.Config.useTimeOutAlarm)
+        {
+            // If so, increment the timer every frame we are in combat.
+            _timeInCombatTimer += Time.deltaTime;
+
+            // Check if the timer has exceeded the threshold.
+            if (!_hasTriggeredTimeoutAlarm && _timeInCombatTimer >= enemyAI.Config.timeInCombatAlarmThreshold)
+            {
+                if (enemyAI.Config.alarmType != AlarmType.None)
+                {
+                    _hasTriggeredTimeoutAlarm = true;
+                    enemyAI.TransitionToState(new AlarmState());
+                    return; // Exit the Execute method for this frame
+                }
+            }
         }
 
         // Always face the player while in combat

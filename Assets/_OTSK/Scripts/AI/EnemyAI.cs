@@ -21,6 +21,9 @@ public class EnemyAI : MonoBehaviour
     public Vector3 LastKnownPlayerPosition { get; set; } // NEW: Stores player position
 
     public PatrolRoute PatrolRoute { get; set; }
+    public int SummonCount { get; private set; } = 0; // Add this
+
+    public void IncrementSummonCount() => SummonCount++;
 
     private EnemyAIState _currentState;
     public EnemyAIState CurrentState => _currentState;
@@ -30,6 +33,7 @@ public class EnemyAI : MonoBehaviour
     private Transform _playerTarget;
 
     public event Action<EnemyAIState> OnStateChanged;
+    public event Action<float> OnCastProgressChanged;
 
     private void Awake()
     {
@@ -123,16 +127,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // NEW: This public method can be called by external systems (like CombatManager or a skill)
-    //public void ForceReturnToPatrol()
-    //{
-    //    if (CurrentState is PatrolState)
-    //    {
-    //        return;
-    //    }
-    //    Navigator.Resume();
-    //    TransitionToState(new PatrolState(PatrolRoute));
-    //}
+    public void ReportCastProgress(float progress)
+    {
+        OnCastProgressChanged?.Invoke(progress);
+    }
     public void ResetToInitialState()
     {
         // Re-enable the NavMeshAgent in case it was disabled (e.g., on death).

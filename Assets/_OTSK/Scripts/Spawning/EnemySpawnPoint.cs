@@ -6,6 +6,8 @@ public class EnemySpawnPoint : MonoBehaviour, ISpawnPoint
     [SerializeField]
     [Tooltip("A unique ID for this spawn point (e.g., 'GuardSpawn_A', 'ArcherNest_1').")]
     private string spawnPointID;
+    [SerializeField] private bool isReinforcementPoint = false;
+    public bool IsReinforcementPoint => isReinforcementPoint;
 
     // This implements the ISpawnPoint interface
     public string SpawnPointTag => spawnPointID;

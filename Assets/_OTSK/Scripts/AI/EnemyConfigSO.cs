@@ -1,6 +1,7 @@
 // EnemyConfigSO.cs - UPGRADED
 
 using UnityEngine;
+using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "EnemyConfig_", menuName = "Only The Shadows Know/Enemy Configuration")]
 public class EnemyConfigSO : ScriptableObject
@@ -32,6 +33,15 @@ public class EnemyConfigSO : ScriptableObject
     [Header("Detection")]
     public float alertInvestigateTime = 5f;
     public float lookAroundAnimationDuration = 2.5f;
+
+    [Header("Alarm Logic")] 
+    public AlarmType alarmType = AlarmType.None;
+    [Tooltip("The Game Event to raise when this enemy successfully signals for help.")]
+    public GameEvent alarmEventToRaise;
+    [Tooltip("Should this enemy sound an alarm if combat lasts too long?")]
+    public bool useTimeOutAlarm = false;
+    [Tooltip("If the enemy is in combat for this long without winning, it raises an alarm.")]
+    public float timeInCombatAlarmThreshold = 20f;
 
     [Range(0, 360)]
     public float detectionConeAngle = 90f;
