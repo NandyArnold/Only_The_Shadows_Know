@@ -19,6 +19,13 @@ public class NoiseManager : MonoBehaviour
     public void GenerateNoise(Vector3 position, float intensity, GameObject sourceObject = null)
     {
         if (EnemyManager.Instance == null) return;
+        if (sourceObject != null && sourceObject.CompareTag("Player"))
+        {
+            if (GameManager.Instance.Player != null && GameManager.Instance.Player.IsInEndwalkerState)
+            {
+                return; // Player is invisible and silent, so no noise is generated.
+            }
+        }
 
         var activeEnemies = EnemyManager.Instance.GetActiveEnemies();
 

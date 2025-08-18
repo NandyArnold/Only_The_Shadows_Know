@@ -96,6 +96,13 @@ public class PlayerSkillController : MonoBehaviour
         SkillSO skill = _equippedSkills[skillIndex];
         if (skill == null) return;
 
+        if (skill.skillID == SkillIdentifier.Endwalker && CombatManager.Instance.IsPlayerInCombat)
+        {
+            Debug.Log("Cannot use Endwalker while in combat.");
+            // We could also play a "fail" sound effect here.
+            return; // Block the skill activation.
+        }
+
         if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingActive)
         {
             SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
