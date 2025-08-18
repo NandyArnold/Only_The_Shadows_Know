@@ -1,6 +1,7 @@
-// CombatState.cs - CORRECTED CHASE LOGIC
+
 
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CombatState : EnemyAIState
 {
@@ -12,6 +13,8 @@ public class CombatState : EnemyAIState
 
     private float _timeInCombatTimer; // NEW: Timer for this new mechanic
     private bool _hasTriggeredTimeoutAlarm = false; // NEW: Flag to prevent spamming the alarm
+
+    private float _pathRecheckTimer;
 
 
     public override void Enter(EnemyAI enemyAI)
@@ -35,6 +38,10 @@ public class CombatState : EnemyAIState
 
         // We always start by chasing the player.
         enemyAI.AnimController.SetIsInCombat(true);
+        enemyAI.Navigator.SetStoppingDistance(enemyAI.Config.attackRange);
+        // Turn OFF auto-braking for an aggressive charge.
+        enemyAI.Navigator.SetAutoBraking(false);
+
         _subState = CombatSubState.Chasing;
 
         if (!enemyAI.HasCalledForHelp)
@@ -57,10 +64,14 @@ public class CombatState : EnemyAIState
                 }
             }
         }
+        _pathRecheckTimer = 0f;
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
+        enemyAI.Navigator.SetStoppingDistance(0f);
+        enemyAI.Navigator.SetAutoBraking(true);
+
         if (enemyAI.PlayerTarget == null)
         {
             enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
@@ -96,8 +107,29 @@ public class CombatState : EnemyAIState
         switch (_subState)
         {
             case CombatSubState.Chasing:
+                _pathRecheckTimer -= Time.deltaTime;
+
+                if (_pathRecheckTimer <= 0f)
+                {
+                    // Reset the timer
+                    _pathRecheckTimer = 1f; // Check for a valid path once per second
+
+                    // Check if we can actually calculate a path to the player
+                    NavMeshPath path = new NavMeshPath();
+                    if (enemyAI.Navigator.CalculatePath(enemyAI.PlayerTarget.position, path) && path.status == NavMeshPathStatus.PathComplete)
+                    {
+                        // Path is valid, so continue chasing.
+                        enemyAI.Navigator.MoveTo(enemyAI.PlayerTarget.position);
+                        enemyAI.Navigator.Resume();
+                    }
+                    else
+                    {
+                        // Path is blocked or unreachable. Stop moving.
+                        enemyAI.Navigator.Stop();
+                    }
+                }
                 // --- CHASING LOGIC ---
-                enemyAI.Navigator.Resume();
+                //enemyAI.Navigator.Resume();
 
                 if (distanceToPlayer <= enemyAI.Config.attackRange)
                 {

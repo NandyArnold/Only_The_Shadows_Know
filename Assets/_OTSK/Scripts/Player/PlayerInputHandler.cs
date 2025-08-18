@@ -135,7 +135,8 @@ public class PlayerInputHandler : MonoBehaviour
 
         //_inputActions.Player.Jump.started += ctx => OnJumpPressed?.Invoke();
         //_inputActions.Player.Jump.canceled += ctx => OnJumpReleased?.Invoke();
-        _inputActions.Player.Jump.performed += HandleJumpInput;
+        //_inputActions.Player.Jump.performed += HandleJumpInput;
+        _inputActions.Player.Jump.performed += ctx => OnJumpInput?.Invoke();
 
         _inputActions.Player.Crouch.performed += ctx => {
             _isCrouchToggleActive = !_isCrouchToggleActive;
@@ -192,6 +193,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 
         //_inputActions.Player.Dodge.performed += ctx => OnDodgeInput?.Invoke();
+        _inputActions.Player.Dodge.performed += HandleDodgeInput;
 
 
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
@@ -211,17 +213,25 @@ public class PlayerInputHandler : MonoBehaviour
             CursorManager.Instance?.ToggleUIMode();
         }
     }
-    private void HandleJumpInput(InputAction.CallbackContext context)
+    private void HandleDodgeInput(InputAction.CallbackContext context)
     {
         // Check which interaction triggered the action
         if (context.interaction is MultiTapInteraction)
         {
-            OnDodgeInput?.Invoke();
+            OnJumpInput?.Invoke();
         }
         else // Default to a normal jump
         {
-            OnJumpInput?.Invoke();
+            OnDodgeInput?.Invoke();
         }
+        //if (context.interaction is MultiTapInteraction)
+        //{
+        //    OnDodgeInput?.Invoke();
+        //}
+        //else // Default to a normal jump
+        //{
+        //    OnJumpInput?.Invoke();
+        //}
     }
 
     public void SwitchActionMap(string mapName)

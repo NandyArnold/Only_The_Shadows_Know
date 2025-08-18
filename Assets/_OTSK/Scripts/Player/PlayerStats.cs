@@ -94,9 +94,9 @@ public class PlayerStats : MonoBehaviour
 
     public void RestoreMana(float amount)
     {
-        CurrentMana = Mathf.Clamp(CurrentMana + amount, 0, maxMana);
+        // Add the amount, but don't go over the maximum
+        CurrentMana = Mathf.Min(CurrentMana + amount, maxMana);
         OnManaChanged?.Invoke(CurrentMana, maxMana);
-        Debug.Log($"Player restored {amount} mana. Current Mana: {CurrentMana}");
     }
 
     private void HandleDeath()
@@ -118,6 +118,18 @@ public class PlayerStats : MonoBehaviour
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         _playerController.SetIsDead(false); // We need to add this method to PlayerController
         _animController.PlayReviveAnimation(); // We need to add this method to PlayerAnimationController
+    }
+
+    public void RestoreHealthToFull()
+    {
+        CurrentHealth = maxHealth;
+        OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+    }
+
+    public void RestoreManaToFull()
+    {
+        CurrentMana = maxMana;
+        OnManaChanged?.Invoke(CurrentMana, maxMana);
     }
 
 }

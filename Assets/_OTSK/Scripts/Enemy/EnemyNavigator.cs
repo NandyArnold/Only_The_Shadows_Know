@@ -45,6 +45,10 @@ public class EnemyNavigator : MonoBehaviour
     {
         _agent.stoppingDistance = distance;
     }
+    public void SetAutoBraking(bool isEnabled)
+    {
+        _agent.autoBraking = isEnabled;
+    }
     public bool CalculatePath(Vector3 target, NavMeshPath path)
     {
         return _agent.CalculatePath(target, path);

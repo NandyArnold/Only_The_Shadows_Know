@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 [RequireComponent(typeof(Collider))]
 public class Checkpoint : MonoBehaviour
@@ -18,6 +19,15 @@ public class Checkpoint : MonoBehaviour
             if (CheckpointManager.Instance != null)
             {
                 CheckpointManager.Instance.SetNewCheckpoint(transform);
+
+                // Now, restore the player's health and mana
+                if (other.TryGetComponent<PlayerStats>(out var playerStats))
+                {
+                    playerStats.RestoreHealthToFull();
+                    playerStats.RestoreManaToFull();
+
+                    // You can also play a "checkpoint activated" sound/VFX here
+                }
                 // Optionally, disable this checkpoint so it can't be triggered again.
                 gameObject.SetActive(false);
             }
