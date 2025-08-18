@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponHitbox: {fileID: 1310621771235349071}
-  hitboxSize: {x: 1.22, y: 0.27, z: 0.27}
+  hitboxSize: {x: 1.6, y: 0.5, z: 0.35}
   hittableLayers:
     serializedVersion: 2
     m_Bits: 256
