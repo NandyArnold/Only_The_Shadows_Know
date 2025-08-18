@@ -1,5 +1,6 @@
 // EnemyConfigSO.cs - UPGRADED
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,6 +12,7 @@ public class EnemyConfigSO : ScriptableObject
 
     [Header("Enemy Info")]
     public EnemyType enemyType;
+    public RevealableType revealableType;
     public string displayName;
 
     [Header("Core Stats")]
@@ -19,6 +21,8 @@ public class EnemyConfigSO : ScriptableObject
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
     public float attackAnimationDuration = 1.2f;
+    [Header("Resistances")] 
+    public List<ResistanceEntry> resistances;
 
     [Header("Movement")]
     public float patrolSpeed = 2f;

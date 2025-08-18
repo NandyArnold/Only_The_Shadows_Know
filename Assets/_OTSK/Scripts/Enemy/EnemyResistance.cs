@@ -4,14 +4,29 @@ using UnityEngine;
 
 public class EnemyResistances : MonoBehaviour
 {
-    [SerializeField] private List<ResistanceEntry> resistances;
+    private readonly Dictionary<DamageTypeSO, float> _multipliers = new Dictionary<DamageTypeSO, float>();
+
+    public void Initialize(EnemyConfigSO config)
+    {
+        _multipliers.Clear();
+        if (config.resistances == null) return;
+
+        foreach (var resistance in config.resistances)
+        {
+            if (resistance.damageType != null)
+            {
+                _multipliers[resistance.damageType] = resistance.multiplier;
+            }
+        }
+    }
 
     public float GetMultiplier(DamageTypeSO damageType)
     {
-        var entry = resistances.FirstOrDefault(r => r.damageType == damageType);
-        // If we find a specific resistance entry, return its multiplier.
-        // Otherwise, return 1 for normal damage.
-        return entry != null ? entry.multiplier : 1f;
+        if (_multipliers.TryGetValue(damageType, out float multiplier))
+        {
+            return multiplier;
+        }
+        return 1f; // Default to normal damage
     }
 }
 

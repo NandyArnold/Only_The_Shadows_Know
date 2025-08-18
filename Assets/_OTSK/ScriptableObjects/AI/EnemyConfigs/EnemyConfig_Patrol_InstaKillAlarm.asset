@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
+  revealableType: 5
   displayName: Patrol Guard Tester
   maxHealth: 100
   attackDamage: 50
   attackRange: 2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
+  resistances: []
   patrolSpeed: 2
   alertSpeed: 3.5
   walkCombatSpeed: 1.5
@@ -42,3 +44,4 @@ MonoBehaviour:
   cantAttackAlarmTime: 10
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
+  callForHelpRadius: 15

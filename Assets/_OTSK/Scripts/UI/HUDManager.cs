@@ -196,11 +196,6 @@ public class HUDManager : MonoBehaviour
 
         HandleWeaponSwitched(combat.CurrentWeapon);
 
-        // 3. Ensure the charge count text is hidden by default
-        if (chargeCountText != null)
-        {
-            chargeCountText.gameObject.SetActive(false);
-        }
 
         if (crosshairPrefab != null && crosshairPanel != null && _crosshairInstance == null)
         {

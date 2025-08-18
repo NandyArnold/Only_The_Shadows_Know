@@ -45,6 +45,9 @@ public class Enemy : MonoBehaviour, ISaveable
     private GameObject _statusBarInstance;
     private PatrolRoute _patrolRoute;
 
+    private EnemyResistances _resistances; 
+    private RevealableEntity _revealableEntity;
+
 
 
     public object CaptureState()
@@ -97,6 +100,8 @@ public class Enemy : MonoBehaviour, ISaveable
         _collider = GetComponent<CapsuleCollider>();
         _uniqueID = GetComponent<UniqueID>();
         _patrolRoute = GetComponent<PatrolRoute>();
+        _resistances = GetComponent<EnemyResistances>(); 
+        _revealableEntity = GetComponent<RevealableEntity>();
 
         statusBarAnchor = transform.Find("StatusBarAnchor");
         if (statusBarAnchor == null)
@@ -156,6 +161,8 @@ public class Enemy : MonoBehaviour, ISaveable
         _ai.PatrolRoute = newPatrolRoute;
         _ai.InitialState = initialState;
         _ai.SpawnPosition = transform.position;
+        _resistances.Initialize(newConfig); 
+        _revealableEntity.Initialize(newConfig);
 
         _ai.StartAI();
       

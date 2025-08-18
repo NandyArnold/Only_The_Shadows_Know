@@ -461,9 +461,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 0}
-    multiplier: 0
 --- !u!136 &20941578
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2584,13 +2581,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 121276202}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.19851017, z: -0, w: 0.98009884}
-  m_LocalPosition: {x: 29.2, y: 99.45, z: 152.3}
+  m_LocalRotation: {x: -0, y: 0.99433917, z: -0, w: 0.106252365}
+  m_LocalPosition: {x: 12.79, y: 101.15, z: 324.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 22.9, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 167.801, z: 0}
 --- !u!114 &121276204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4193,9 +4190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
-    multiplier: 0
 --- !u!136 &261621088
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4935,9 +4929,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 11400000, guid: d18aea837f3d939458876ee353196e1e, type: 2}
-    multiplier: 1.5
 --- !u!136 &286521185
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -17633,9 +17624,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
-    multiplier: 1
 --- !u!136 &1064603239
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -20351,11 +20339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
-    multiplier: 1
-  - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
-    multiplier: 1
 --- !u!136 &1252670259
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -22212,9 +22195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 0}
-    multiplier: 0
 --- !u!136 &1362537376
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -27484,9 +27464,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resistances:
-  - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
-    multiplier: 0.5
 --- !u!136 &1748351061
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -32898,8 +32875,28 @@ PrefabInstance:
       value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
-      propertyPath: AvoidObstacles.SmoothingTime
+      propertyPath: AvoidObstacles.Damping
+      value: 0.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: AvoidObstacles.CameraRadius
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: AvoidObstacles.MaximumEffort
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: AvoidObstacles.SmoothingTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: AvoidObstacles.DampingWhenOccluded
+      value: 1.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820436754899659212, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
+      propertyPath: AvoidObstacles.UseFollowTarget.Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9044627523184294926, guid: 21d50fa58333e814198a0a86d805888a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -33269,6 +33266,30 @@ PrefabInstance:
     - target: {fileID: 2350881260755888467, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.Damping
+      value: 0.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.CameraRadius
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.MaximumEffort
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.SmoothingTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.DampingWhenOccluded
+      value: 1.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583919876683197851, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
+      propertyPath: AvoidObstacles.UseFollowTarget.Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6011210265560162321, guid: d6792f7ce477b264191d4bb6ebb7fd17, type: 3}
       propertyPath: m_Name

@@ -85,13 +85,13 @@ public class BalorsVisionEffectSO : SkillEffectSO
             {
                 if (hit.TryGetComponent<RevealableEntity>(out var entity))
                 {
-                    if (entity.type != RevealableType.None)
+                    if (entity.Type != RevealableType.None)
                     {
                         foundEntities.Add(entity);
                         // If this is a NEW entity we haven't seen before, create a VFX for it.
                         if (!_activeVFX.ContainsKey(entity))
                         {
-                            GameObject vfxInstance = VFXManager.Instance.GetRevealEffect(entity.type, entity.transform.position);
+                            GameObject vfxInstance = VFXManager.Instance.GetRevealEffect(entity.Type, entity.transform.position);
                             if (vfxInstance != null)
                             {
                                 _activeVFX.Add(entity, vfxInstance);
