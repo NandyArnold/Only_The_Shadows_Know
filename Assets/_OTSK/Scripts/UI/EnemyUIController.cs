@@ -17,6 +17,7 @@ public class EnemyUIController : MonoBehaviour
 
 
     private Transform _cameraToFace;
+    private EnemyAIState _currentState;
 
     private void Awake()
     {
@@ -53,7 +54,9 @@ public class EnemyUIController : MonoBehaviour
 
     public void UpdateAlert(float current, float max)
     {
-        alertSlider.gameObject.SetActive(current > 0); // Only show if there is some alert level
+
+        bool shouldBeVisible = current > 0 && !(_currentState is CombatState);
+        alertSlider.gameObject.SetActive(shouldBeVisible);
         alertSlider.value = current / max;
     }
     public void UpdateCastBar(float progress)
@@ -65,12 +68,13 @@ public class EnemyUIController : MonoBehaviour
 
     public void HandleAIStateChanged(EnemyAIState newState)
     {
+        _currentState = newState;
         // The health bar should be visible in Alert and Combat states.
         bool showHealth = (newState is AlertState || newState is CombatState);
         healthSlider.gameObject.SetActive(showHealth);
 
         // The alert bar should be hidden when in the Combat state.
-
+        
 
         // --- NEW VFX LOGIC ---
         // The VFX should only be active when the AI is in the AlertState.
