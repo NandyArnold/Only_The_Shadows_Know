@@ -10833,13 +10833,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ae09cf72c5da44b84bb56824710aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  revealVFXMappings:
-  - type: 1
-    vfxPrefab: {fileID: 1157070160192592598, guid: 24f5234dcde427f4db88ad4f54f93b1e, type: 3}
-  - type: 0
-    vfxPrefab: {fileID: 4006852704607330979, guid: 5e7e7e5226a3c8a4396cb8abc69c6245, type: 3}
-  - type: 2
-    vfxPrefab: {fileID: 1063613071519003308, guid: e3dd49f0760906f48aac13fed2cc65f6, type: 3}
   riftPlaceVFXPrefab: {fileID: 3980101321277970685, guid: 553579bee0171d7418f0d2d45bb2a5cd, type: 3}
   riftTeleportVFXPrefab: {fileID: 3980101321277970685, guid: c905b20e33aae0a41bc68cc84f68d15f, type: 3}
   scryingCastVFXPrefab: {fileID: 8960210433693217950, guid: ab515fd6aff1c9046bbaf594d5cef0c8, type: 3}
