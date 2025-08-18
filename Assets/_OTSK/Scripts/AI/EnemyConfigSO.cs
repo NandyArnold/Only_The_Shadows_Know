@@ -13,6 +13,8 @@ public class EnemyConfigSO : ScriptableObject
     [Header("Enemy Info")]
     public EnemyType enemyType;
     public RevealableType revealableType;
+    [Tooltip("Optional: A special icon prefab to display over this enemy's head when revealed.")]
+    public GameObject revealIconPrefab;
     public string displayName;
 
     [Header("Core Stats")]

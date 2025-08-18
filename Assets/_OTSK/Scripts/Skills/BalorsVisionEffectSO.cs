@@ -62,6 +62,10 @@ public class BalorsVisionEffectSO : SkillEffectSO
         }
 
         float duration = CombatManager.Instance.IsPlayerInCombat ? combatDuration : normalDuration;
+        foreach (var entity in _activeVFX.Keys)
+        {
+            entity.GetComponentInChildren<EnemyUIController>()?.SetRevealIconActive(false);
+        }
         foreach (var vfxList in _activeVFX.Values)
         {
             foreach (var vfx in vfxList)
@@ -88,18 +92,14 @@ public class BalorsVisionEffectSO : SkillEffectSO
             {
                 if (hit.TryGetComponent<RevealableEntity>(out var entity))
                 {
-                    if (entity.Type != RevealableType.None)
+                    if (entity.Type != RevealableType.None && !_activeVFX.ContainsKey(entity))
                     {
-                        if (entity.Type != RevealableType.None && !_activeVFX.ContainsKey(entity))
-                        {
-                            // --- THIS IS THE FIX ---
-                            // Call the new CreateOutlineEffect method and store the returned LIST
-                            List<GameObject> vfxInstances = VFXManager.Instance.CreateOutlineEffect(entity);
-                            if (vfxInstances != null)
-                            {
-                                _activeVFX.Add(entity, vfxInstances);
-                            }
-                        }
+                        // Create the mesh outline
+                        List<GameObject> vfxInstances = VFXManager.Instance.CreateOutlineEffect(entity);
+                        if (vfxInstances != null) _activeVFX.Add(entity, vfxInstances);
+
+                        // NEW: Tell the UI to show its icon
+                        entity.GetComponentInChildren<EnemyUIController>()?.SetRevealIconActive(true);
                     }
                 }
             }

@@ -17,10 +17,11 @@ public class VFXManager : MonoBehaviour
     [SerializeField] private Material interactableRevealMaterial;
     [SerializeField] private Material bossRevealMaterial;
     [SerializeField] private Material casterRevealMaterial;
-    [SerializeField] private GameObject bossIconPrefab;
+    [SerializeField] private Transform worldMarkersCanvas;
+    //[SerializeField] private GameObject bossIconUIPrefab;
 
-    // We use a dictionary for fast lookups at runtime
-    private Dictionary<RevealableType, GameObject> _vfxDictionary;
+    //// We use a dictionary for fast lookups at runtime
+    //private Dictionary<RevealableType, GameObject> _vfxDictionary;
   
 
     private void Awake()
@@ -33,17 +34,17 @@ public class VFXManager : MonoBehaviour
     }
 
     // The method now takes a type to determine which VFX to play
-    public GameObject GetRevealEffect(RevealableType type, Vector3 position)
-    {
-        if (_vfxDictionary.TryGetValue(type, out GameObject prefabToSpawn))
-        {
-            if (prefabToSpawn != null)
-            {
-                return Instantiate(prefabToSpawn, position, Quaternion.identity);
-            }
-        }
-        return null;
-    }
+    //public GameObject GetRevealEffect(RevealableType type, Vector3 position)
+    //{
+    //    if (_vfxDictionary.TryGetValue(type, out GameObject prefabToSpawn))
+    //    {
+    //        if (prefabToSpawn != null)
+    //        {
+    //            return Instantiate(prefabToSpawn, position, Quaternion.identity);
+    //        }
+    //    }
+    //    return null;
+    //}
     public GameObject PlayRiftPlaceEffect(Vector3 position, Transform parent = null)
     {
         if (riftPlaceVFXPrefab != null)
@@ -123,13 +124,24 @@ public class VFXManager : MonoBehaviour
             outlineObjects.Add(outlineObject);
         }
 
-        // --- 3. Handle Boss Icons (unchanged) ---
-        if (entity.Type == RevealableType.Boss && bossIconPrefab != null)
-        {
-            Transform headSocket = entity.transform.Find("HeadSocket") ?? entity.transform;
-            GameObject iconInstance = Instantiate(bossIconPrefab, headSocket);
-            outlineObjects.Add(iconInstance);
-        }
+        // --- 3. Handle Boss Icons ---
+        //if (entity.Type == RevealableType.Boss && bossIconUIPrefab != null && worldMarkersCanvas != null)
+        //{
+        //    // Find a head socket or just use the entity's transform
+        //    Transform headSocket = entity.transform.Find("HeadSocket") ?? entity.transform;
+
+        //    // Instantiate the UI prefab and parent it to the dedicated canvas
+        //    GameObject iconInstance = Instantiate(bossIconUIPrefab, worldMarkersCanvas);
+
+        //    // Tell the new UI icon which 3D target to follow
+        //    if (iconInstance.TryGetComponent<BossIconUI>(out var iconUI))
+        //    {
+        //        iconUI.targetToFollow = headSocket;
+        //    }
+
+        //    // Add the UI instance to the list to be managed and destroyed later
+        //    outlineObjects.Add(iconInstance);
+        //}
 
         return outlineObjects;
     }

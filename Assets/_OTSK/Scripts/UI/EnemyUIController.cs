@@ -9,7 +9,7 @@ public class EnemyUIController : MonoBehaviour
     [SerializeField] private Slider alertSlider;
     [SerializeField] private GameObject deathZoneMark;
     [SerializeField] private Slider castBarSlider;
-
+    private GameObject _revealIconInstance;
 
     [Header("VFX")]
     [Tooltip("Drag the child Alert_VFX GameObject here.")]
@@ -92,6 +92,27 @@ public class EnemyUIController : MonoBehaviour
         if (deathZoneMark != null)
         {
             deathZoneMark.SetActive(isActive);
+        }
+    }
+    public void InitializeRevealIcon(GameObject iconPrefab)
+    {
+        if (iconPrefab != null)
+        {
+            Transform anchor = transform.Find("RevealIcon_Anchor");
+            if (anchor != null)
+            {
+                _revealIconInstance = Instantiate(iconPrefab, anchor);
+                _revealIconInstance.SetActive(false);
+            }
+        }
+    }
+
+    //  This is the simple show/hide command Balor's Vision will use.
+    public void SetRevealIconActive(bool isActive)
+    {
+        if (_revealIconInstance != null)
+        {
+            _revealIconInstance.SetActive(isActive);
         }
     }
 }

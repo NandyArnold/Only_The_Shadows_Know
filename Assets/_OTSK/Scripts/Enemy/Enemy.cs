@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour, ISaveable
     [Header("UI")] // NEW
     [SerializeField] private GameObject statusBarPrefab;
     [SerializeField] private Transform statusBarAnchor;
+    [SerializeField] private Transform revealIconAnchor;
     public EnemyConfigSO Config => config;
     public DetectionSystem Detector { get; private set; }
 
@@ -102,6 +103,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _patrolRoute = GetComponent<PatrolRoute>();
         _resistances = GetComponent<EnemyResistances>(); 
         _revealableEntity = GetComponent<RevealableEntity>();
+        revealIconAnchor = transform.Find("RevealIcon_Anchor");
 
         statusBarAnchor = transform.Find("StatusBarAnchor");
         if (statusBarAnchor == null)
@@ -183,8 +185,12 @@ public class Enemy : MonoBehaviour, ISaveable
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
 
             // Connect the standard events
-            _health.OnHealthChanged += _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+            if (_uiController != null)
+            {
+                _health.OnHealthChanged += _uiController.UpdateHealth;
+                Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+                _uiController.InitializeRevealIcon(config.revealIconPrefab);
+            }
 
             if (_ai != null)
             {
