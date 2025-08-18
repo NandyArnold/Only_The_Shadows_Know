@@ -254,6 +254,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _animController.PlayDeathAnimation();
 
         gameObject.tag = "DeadBody";
+        gameObject.layer = LayerMask.NameToLayer("DeadBody");
         // 3. Start a timer to remove the body
         //StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
     }

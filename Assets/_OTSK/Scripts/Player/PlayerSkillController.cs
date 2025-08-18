@@ -165,15 +165,20 @@ public class PlayerSkillController : MonoBehaviour
         
     }
 
-    public void TryActivateSkill(SkillIdentifier skillID, Enemy target)
+    public bool TryActivateSkill(SkillIdentifier skillID, Enemy target)
     {
-        if (_isActivatingASkill || _channeledSkill != null) return;
+        if (CombatManager.Instance.IsPlayerInCombat)
+        {
+            Debug.Log("Cannot use Death Zone while in combat.");
+            return false; // Block the skill activation.
+        }
+        if (_isActivatingASkill || _channeledSkill != null) return false;
 
         SkillSO skill = GetSkill(skillID);
-        if (skill == null) return;
+        if (skill == null) return false;
 
-        if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID)) return;
-        if (playerStats.CurrentMana < skill.manaCost) return;
+        if (SkillCooldownManager.Instance.IsOnCooldown(skill.skillID)) return false;
+        if (playerStats.CurrentMana < skill.manaCost) return false;
 
         // We don't need all the other checks because this is only for Death Zone for now
 
@@ -192,6 +197,7 @@ public class PlayerSkillController : MonoBehaviour
         _channeledSkill = skill;
         // We now pass the target object to the coroutine
         _channelingCoroutine = StartCoroutine(skill.skillEffectData.StartChannel(this.gameObject, target));
+        return true;
     }
     private void HandleSkillCanceled(int skillIndex)
     {

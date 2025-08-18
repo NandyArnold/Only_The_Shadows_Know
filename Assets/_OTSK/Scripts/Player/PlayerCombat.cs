@@ -325,9 +325,13 @@ public class PlayerCombat : MonoBehaviour
             if (target != null)
             {
                 // If there is a target, play the animation...
-                playerAnimationController.TriggerTertiaryAttack();
-                // ...and tell the PlayerSkillController to activate the skill on that target.
-                playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone, target);
+                bool wasSuccessfullyActivated = playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone, target);
+
+                // Only play the animation IF the skill was successfully activated.
+                if (wasSuccessfullyActivated)
+                {
+                    playerAnimationController.TriggerTertiaryAttack();
+                }
             }
             else
             {
