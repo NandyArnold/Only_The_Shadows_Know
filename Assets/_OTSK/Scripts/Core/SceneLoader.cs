@@ -115,10 +115,10 @@ public class SceneLoader : MonoBehaviour
         OnNewSceneReady?.Invoke();
 
         //  NOW it is safe to perform the autosave.
-        if (AutosaveManager.Instance != null)
-        {
-            AutosaveManager.Instance.PerformAutosave(sceneToLoad);
-        }
+        //if (AutosaveManager.Instance != null)
+        //{
+        //    AutosaveManager.Instance.PerformAutosave(sceneToLoad);
+        //}
 
         // 7. Hold the black screen for the specified duration.
         if (postLoadBlackScreenDuration > 0)

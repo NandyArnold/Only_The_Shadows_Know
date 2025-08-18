@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using Esper.ESave; // Add the ESave namespace
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.IO;
+using Esper.ESave.SavableObjects; // Add the ESave Data namespace 
+using static Esper.ESave.SaveFileSetupData;
+
+
 
 public class SaveLoadManager : MonoBehaviour
 {
@@ -16,6 +21,8 @@ public class SaveLoadManager : MonoBehaviour
     [Header("ESave Configuration")]
     [SerializeField] private SaveFileSetup saveFileSetup; // Assign this in the Inspector
 
+    private SaveFile _metaFile;
+    private const string LastSaveKey = "LastSaveName";
 
     private SaveFile _saveFile;
     private GameStateData _currentGameState;
@@ -25,6 +32,17 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
+
+        var metaFileSetupData = new SaveFileSetupData()
+        {
+            fileName = "meta", // ESave will add the extension
+            saveLocation = SaveLocation.PersistentDataPath,
+            // We set this to false so this internal file doesn't show up in a save game list.
+            addToStorage = false
+        };
+
+        // Now we can create the file correctly using the setup data.
+        _metaFile = new SaveFile(metaFileSetupData);
     }
 
     private void Start()
@@ -32,34 +50,41 @@ public class SaveLoadManager : MonoBehaviour
         if (saveFileSetup != null)
         {
             _saveFile = saveFileSetup.GetSaveFile();
+            // Get a new SaveFile instance just for our metadata
+            
         }
         else
         {
             Debug.LogError("SaveFileSetup is not assigned on the SaveLoadManager!", this);
         }
+       
     }
 
-    public void SaveGame(string saveFileName = "save_slot_1")
+    public void SaveGame(string saveFileName)
     {
-        if (_saveFile == null)
-        {
-            Debug.LogError("Save file is not initialized!");
-            return;
-        }
-        _currentGameState = new GameStateData();
-        // Add the current scene name to the save data
+        // Get a SaveFile instance for the specific file name we are saving to.
+        var saveFile = new SaveFile(new SaveFileSetupData() { fileName = saveFileName });
+
+        var currentGameState = new GameStateData();
+       
+        // Initialize the GameStateData object with default values.
+        currentGameState.playerData = new PlayerStateData();
         if (SceneLoader.Instance.CurrentlyLoadedScene != null)
         {
-            _currentGameState.sceneID = SceneLoader.Instance.CurrentlyLoadedScene.sceneID;
+            currentGameState.sceneID = SceneLoader.Instance.CurrentlyLoadedScene.sceneID;
         }
 
+        // Pass the GameStateData object to the gather methods to be filled.
+        GatherPlayerData(currentGameState);
+        GatherObjectiveData(currentGameState);
+        GatherWorldData(currentGameState);
 
-        GatherPlayerData();
-        GatherObjectiveData();
-        GatherWorldData();
+        saveFile.AddOrUpdateData(GameStateKey, currentGameState);
+        saveFile.Save();
 
-        _saveFile.AddOrUpdateData(GameStateKey, _currentGameState);
-        _saveFile.Save();
+        // After successfully saving, also save the name to our metadata file.
+        _metaFile.AddOrUpdateData(LastSaveKey, saveFileName);
+        _metaFile.Save();
 
         Debug.Log($"<color=green>Game Saved via ESave:</color> {saveFileName}");
     }
@@ -73,14 +98,15 @@ public class SaveLoadManager : MonoBehaviour
 
     private IEnumerator LoadGameRoutine(string saveFileName)
     {
-        if (!_saveFile.HasData(GameStateKey))
+        var saveFile = new SaveFile(new SaveFileSetupData() { fileName = saveFileName });
+
+        if (!saveFile.HasData(GameStateKey))
         {
-            Debug.LogWarning("Save file has no GameState data.");
+            Debug.LogWarning($"Save file '{saveFileName}' has no GameState data.");
             yield break;
         }
 
-        // 1. Load the data from the file first.
-        _currentGameState = _saveFile.GetData<GameStateData>(GameStateKey);
+        var currentGameState = saveFile.GetData<GameStateData>(GameStateKey);
 
         // 2. Find the correct SceneDataSO using the saved ID from the registry.
         var sceneDataToLoad = sceneRegistry.GetSceneData(_currentGameState.sceneID);
@@ -98,9 +124,9 @@ public class SaveLoadManager : MonoBehaviour
         yield return new WaitUntil(() => GameManager.Instance.Player != null);
 
         // 5. NOW that the new player exists in the new scene, it's safe to restore all data.
-        RestorePlayerData();
-        RestoreObjectiveData();
-        RestoreWorldData();
+        RestorePlayerData(currentGameState);
+        RestoreObjectiveData(currentGameState);
+        RestoreWorldData(currentGameState);
 
         // 6. Connect the camera to the new player.
         if (CameraManager.Instance != null)
@@ -114,29 +140,40 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log($"<color=cyan>Game Loaded:</color> {saveFileName}");
     }
 
-    private void GatherObjectiveData()
+    private void GatherObjectiveData(GameStateData gameState)
     {
         if (ObjectiveManager.Instance != null)
         {
-            _currentGameState.objectiveData = ObjectiveManager.Instance.CaptureState();
+            gameState.objectiveData = ObjectiveManager.Instance.CaptureState();
+        }
+        else
+        {
+            Debug.LogWarning("GatherObjectiveData was called, but ObjectiveManager.Instance was null. Aborting objective save.");
         }
     }
 
-    private void GatherPlayerData()
+    private void GatherPlayerData(GameStateData gameState)
     {
+        // --- THIS IS THE FIX ---
+        // First, get the player reference and add a safety check.
         var player = GameManager.Instance.Player;
-        if (player == null) return;
+        if (player == null)
+        {
+            Debug.LogWarning("GatherPlayerData was called, but GameManager.Instance.Player was null. Aborting player save.");
+            return;
+        }
+        // -----------------------
 
         var stats = player.GetComponent<PlayerStats>();
 
         // Convert Unity types to ESave's savable types
-        _currentGameState.playerData.position = player.transform.position.ToSavable();
-        _currentGameState.playerData.rotation = player.transform.rotation.ToSavable();
-        _currentGameState.playerData.currentHealth = stats.CurrentHealth;
-        _currentGameState.playerData.currentMana = stats.CurrentMana;
+        gameState.playerData.position = player.transform.position.ToSavable();
+        gameState.playerData.rotation = player.transform.rotation.ToSavable();
+        gameState.playerData.currentHealth = stats.CurrentHealth;
+        gameState.playerData.currentMana = stats.CurrentMana;
     }
 
-    private void RestorePlayerData()
+    private void RestorePlayerData(GameStateData gameState)
     {
         var player = GameManager.Instance.Player;
         if (player == null) return;
@@ -153,29 +190,31 @@ public class SaveLoadManager : MonoBehaviour
         stats.RestoreStats(_currentGameState.playerData.currentHealth, _currentGameState.playerData.currentMana);
     }
 
-    private void RestoreObjectiveData()
+    private void RestoreObjectiveData(GameStateData gameState)
     {
         if (ObjectiveManager.Instance != null)
         {
             ObjectiveManager.Instance.RestoreState(_currentGameState.objectiveData);
         }
     }
-    private void GatherWorldData()
+    private void GatherWorldData(GameStateData gameState)
     {
-        // Find all objects in the scene that implement the ISaveable interface.
         var saveableEntities = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).OfType<ISaveable>();
-
         var worldState = new Dictionary<string, object>();
+
         foreach (var entity in saveableEntities)
         {
-            // For each object, capture its state and store it in a dictionary with its unique ID.
-            worldState[entity.UniqueID] = entity.CaptureState();
+            // Add a safety check for the UniqueID
+            if (entity != null && !string.IsNullOrEmpty(entity.UniqueID))
+            {
+                worldState[entity.UniqueID] = entity.CaptureState();
+            }
         }
 
-        _currentGameState.worldData = new WorldStateData(worldState);
+        gameState.worldData = new WorldStateData(worldState);
     }
 
-    private void RestoreWorldData()
+    private void RestoreWorldData(GameStateData gameState)
     {
         var saveableEntities = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).OfType<ISaveable>();
         var worldState = _currentGameState.worldData.ToDictionary();
@@ -190,4 +229,25 @@ public class SaveLoadManager : MonoBehaviour
             }
         }
     }
+
+  
+       
+
+    // NEW: A public method to check if a save file exists
+    public bool DoesSaveExist(string saveName)
+    {
+        string path = Path.Combine(Application.persistentDataPath, saveName + ".sav");
+        return File.Exists(path);
+    }
+    
+     public string GetLastSaveName()
+    {
+        // Load the metadata file and read the value
+        if (_metaFile.HasData(LastSaveKey))
+        {
+            return _metaFile.GetData<string>(LastSaveKey);
+        }
+        return null;
+    }
+
 }
