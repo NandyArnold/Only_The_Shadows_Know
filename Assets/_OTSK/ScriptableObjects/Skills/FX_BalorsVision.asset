@@ -21,5 +21,5 @@ MonoBehaviour:
   combatDuration: 1.5
   normalTimeScale: 0.25
   combatTimeScale: 0.75
-  transitionDuration: 0.5
+  transitionDuration: 0.2
   timeScaleAmount: 0.25

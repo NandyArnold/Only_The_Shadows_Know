@@ -10843,6 +10843,11 @@ MonoBehaviour:
   riftPlaceVFXPrefab: {fileID: 3980101321277970685, guid: 553579bee0171d7418f0d2d45bb2a5cd, type: 3}
   riftTeleportVFXPrefab: {fileID: 3980101321277970685, guid: c905b20e33aae0a41bc68cc84f68d15f, type: 3}
   scryingCastVFXPrefab: {fileID: 8960210433693217950, guid: ab515fd6aff1c9046bbaf594d5cef0c8, type: 3}
+  enemyRevealMaterial: {fileID: 2100000, guid: 350c6e19c3efdc5418ced8f89611bbbd, type: 2}
+  interactableRevealMaterial: {fileID: 2100000, guid: 55e80c6a1729b4f4195fae3f70fc1ca1, type: 2}
+  bossRevealMaterial: {fileID: 2100000, guid: 7164d71be8b2da247a3adb7c40947d6f, type: 2}
+  casterRevealMaterial: {fileID: 2100000, guid: b3ad389bd9ec07d4883f2ac60acb93a3, type: 2}
+  bossIconPrefab: {fileID: 1063613071519003308, guid: e3dd49f0760906f48aac13fed2cc65f6, type: 3}
 --- !u!114 &1837955071
 MonoBehaviour:
   m_ObjectHideFlags: 0

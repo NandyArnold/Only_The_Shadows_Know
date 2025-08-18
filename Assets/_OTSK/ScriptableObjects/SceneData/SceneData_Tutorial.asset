@@ -117,13 +117,13 @@ MonoBehaviour:
       initialState: 1
   - groupName: CityCenter
     spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+    - enemyToSpawn: {fileID: 11400000, guid: dba14bc1a88725b4e96592982b848f6a, type: 2}
       spawnPointID: Guard_P_Center1
       patrolRouteID: Guard_PPCenter
       initialState: 0
   - groupName: Tavern
     spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+    - enemyToSpawn: {fileID: 11400000, guid: 3608bb419a469294ba89dfb2ccbfa6bf, type: 2}
       spawnPointID: Guard_P_Tavern6
       patrolRouteID: Guard_PP_Tavern1
       initialState: 0

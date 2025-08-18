@@ -38,7 +38,7 @@ public class TimeManager : MonoBehaviour
             StopCoroutine(_timeScaleCoroutine);
         }
         _timeScaleCoroutine = StartCoroutine(TimeScaleRoutine(targetScale, duration));
-        DG.Tweening.DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 2, 0.4f).SetEase(DG.Tweening.Ease.InQuad).SetUpdate(true);
+        //DG.Tweening.DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 2, 0.4f).SetEase(DG.Tweening.Ease.InQuad).SetUpdate(true);
     }
 
     public void SetTimeScale(float scale)

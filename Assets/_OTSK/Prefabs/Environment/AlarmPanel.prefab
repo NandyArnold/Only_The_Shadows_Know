@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 788522881883531794}
   - component: {fileID: 3451134294854655507}
   - component: {fileID: 6923375339463583759}
-  m_Layer: 6
+  - component: {fileID: 171414549371416799}
+  m_Layer: 13
   m_Name: AlarmPanel
   m_TagString: AlarmPanel
   m_Icon: {fileID: 0}
@@ -126,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee17b4f9b119a34390c60db6b5ef008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  alertRadius: 25
   eventToRaiseOnAlarm: {fileID: 0}
 --- !u!114 &3451134294854655507
 MonoBehaviour:
@@ -155,6 +157,19 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 83758d8f6b5d9be4a9ec14a6319424a0, type: 2}
   statusBarPrefab: {fileID: 8542730887588098974, guid: 200591ffff209e34fb6f49aeef873453, type: 3}
   statusBarAnchor: {fileID: 4071150078977421043}
+--- !u!114 &171414549371416799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521134539857699593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 573999e140df096418d268faf2c1834e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
 --- !u!1 &3758356784618027195
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,7 +179,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4071150078977421043}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: UIAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -72,7 +72,7 @@ MonoBehaviour:
     To: Player_BalorsVision_CM
     Blend:
       Style: 2
-      Time: 0.5
+      Time: 0.2
       CustomCurve:
         serializedVersion: 2
         m_Curve: []
@@ -83,7 +83,7 @@ MonoBehaviour:
     To: Player_ThirdPerson_CM
     Blend:
       Style: 3
-      Time: 0.5
+      Time: 0.2
       CustomCurve:
         serializedVersion: 2
         m_Curve: []

@@ -7,13 +7,21 @@ public class VFXManager : MonoBehaviour
     public static VFXManager Instance { get; private set; }
 
     // This list will be configured in the Inspector
-    [SerializeField] private List<VFXMapping> revealVFXMappings;
+    //[SerializeField] private List<VFXMapping> revealVFXMappings;
     [SerializeField] private GameObject riftPlaceVFXPrefab; 
     [SerializeField] private GameObject riftTeleportVFXPrefab;
     [SerializeField] private GameObject scryingCastVFXPrefab;
 
+    [Header("Reveal VFX")]
+    [SerializeField] private Material enemyRevealMaterial;
+    [SerializeField] private Material interactableRevealMaterial;
+    [SerializeField] private Material bossRevealMaterial;
+    [SerializeField] private Material casterRevealMaterial;
+    [SerializeField] private GameObject bossIconPrefab;
+
     // We use a dictionary for fast lookups at runtime
     private Dictionary<RevealableType, GameObject> _vfxDictionary;
+  
 
     private void Awake()
     {
@@ -21,7 +29,7 @@ public class VFXManager : MonoBehaviour
         else Instance = this;
 
         // Populate the dictionary from the list for efficient access
-        _vfxDictionary = revealVFXMappings.ToDictionary(x => x.type, x => x.vfxPrefab);
+        //_vfxDictionary = revealVFXMappings.ToDictionary(x => x.type, x => x.vfxPrefab);
     }
 
     // The method now takes a type to determine which VFX to play
@@ -74,5 +82,73 @@ public class VFXManager : MonoBehaviour
         //    // Optionally, you can add a cleanup mechanism to destroy the effect after some time
         //    Destroy(instaKillVFX, 2f); // Adjust duration as needed
         //}
+    }
+
+    public List<GameObject> CreateOutlineEffect(RevealableEntity entity)
+    {
+        var outlineObjects = new List<GameObject>();
+        Material[] outlineMaterials = GetOutlineMaterials(entity.Type);
+
+        // If we don't have a valid material for this type, do nothing.
+        if (outlineMaterials == null) return null;
+
+        // --- 1. Handle Skinned Meshes (for characters) ---
+        SkinnedMeshRenderer[] originalSkinnedMeshes = entity.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var originalMesh in originalSkinnedMeshes)
+        {
+            GameObject outlineObject = new GameObject(entity.name + "_Outline");
+            outlineObject.transform.SetParent(originalMesh.transform, false);
+
+            SkinnedMeshRenderer newMesh = outlineObject.AddComponent<SkinnedMeshRenderer>();
+            newMesh.sharedMesh = originalMesh.sharedMesh;
+            newMesh.sharedMaterials = outlineMaterials;
+            newMesh.bones = originalMesh.bones;
+            newMesh.rootBone = originalMesh.rootBone;
+            outlineObjects.Add(outlineObject);
+        }
+
+        // --- 2. Handle Static Meshes (for objects like Alarm Panels) ---
+        MeshRenderer[] originalStaticMeshes = entity.GetComponentsInChildren<MeshRenderer>();
+        foreach (var originalMesh in originalStaticMeshes)
+        {
+            GameObject outlineObject = new GameObject(entity.name + "_Outline");
+            outlineObject.transform.SetParent(originalMesh.transform, false);
+
+            // For static meshes, we need a MeshFilter and a MeshRenderer
+            MeshFilter newFilter = outlineObject.AddComponent<MeshFilter>();
+            newFilter.sharedMesh = originalMesh.GetComponent<MeshFilter>().sharedMesh;
+
+            MeshRenderer newRenderer = outlineObject.AddComponent<MeshRenderer>();
+            newRenderer.sharedMaterials = outlineMaterials;
+            outlineObjects.Add(outlineObject);
+        }
+
+        // --- 3. Handle Boss Icons (unchanged) ---
+        if (entity.Type == RevealableType.Boss && bossIconPrefab != null)
+        {
+            Transform headSocket = entity.transform.Find("HeadSocket") ?? entity.transform;
+            GameObject iconInstance = Instantiate(bossIconPrefab, headSocket);
+            outlineObjects.Add(iconInstance);
+        }
+
+        return outlineObjects;
+    }
+
+    // A helper to get the correct material based on type
+    private Material[] GetOutlineMaterials(RevealableType type)
+    {
+        switch (type)
+        {
+            case RevealableType.Normal:
+                return new Material[] { enemyRevealMaterial };
+            case RevealableType.Boss:
+                return new Material[] { bossRevealMaterial };
+            case RevealableType.HiddenItem:
+                return new Material[] { interactableRevealMaterial };
+            case RevealableType.Caster: 
+                return new Material[] { casterRevealMaterial };
+            default:
+                return null;
+        }
     }
 }

@@ -24,7 +24,8 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     private Coroutine _revealCoroutine;
     //  A dictionary to track the active VFX for each revealed entity.
-    private Dictionary<RevealableEntity, GameObject> _activeVFX = new Dictionary<RevealableEntity, GameObject>();
+    private Dictionary<RevealableEntity, List<GameObject>> _activeVFX = new Dictionary<RevealableEntity, List<GameObject>>();
+
 
 
 
@@ -35,16 +36,14 @@ public class BalorsVisionEffectSO : SkillEffectSO
         var cameraController = caster.GetComponent<CameraController>();
         if (cameraController != null)
         {
-            // Call the switch with the new duration parameter
             cameraController.SwitchToCamera(CameraType.BalorsVision, transitionDuration);
         }
 
-        // Use the new smooth time transition
-        TimeManager.Instance.DoTimeScale(timeScaleAmount, transitionDuration);
-
         float timeScaleToUse = CombatManager.Instance.IsPlayerInCombat ? combatTimeScale : normalTimeScale;
-        TimeManager.Instance.SetTimeScale(timeScaleToUse);
-        return RevealRoutine(caster);
+        TimeManager.Instance.DoTimeScale(timeScaleToUse, transitionDuration);
+
+        _revealCoroutine = SkillExecutor.Instance.StartCoroutine(RevealRoutine(caster));
+        yield break;
     }
 
     public override void StopChannel(GameObject caster)
@@ -52,33 +51,37 @@ public class BalorsVisionEffectSO : SkillEffectSO
         var cameraController = caster.GetComponent<CameraController>();
         if (cameraController != null)
         {
-            // Switch back to the default gameplay camera
             cameraController.SwitchToCamera(CameraType.Shoulder);
         }
-
         TimeManager.Instance.ResetTimeScale();
 
-        if (_revealCoroutine != null) SkillExecutor.Instance.StopCoroutine(_revealCoroutine);
-
-        // When the channel stops, tell all active VFX to begin their cleanup.
-        float duration = CombatManager.Instance.IsPlayerInCombat ? combatDuration : normalDuration;
-        foreach (var vfxInstance in _activeVFX.Values)
+        if (_revealCoroutine != null)
         {
-            if (vfxInstance.TryGetComponent<VFXCleanup>(out var cleanup))
+            SkillExecutor.Instance.StopCoroutine(_revealCoroutine);
+            _revealCoroutine = null;
+        }
+
+        float duration = CombatManager.Instance.IsPlayerInCombat ? combatDuration : normalDuration;
+        foreach (var vfxList in _activeVFX.Values)
+        {
+            foreach (var vfx in vfxList)
             {
-                cleanup.BeginCleanup(duration);
+                if (vfx != null)
+                {
+                    // Add the cleanup component and start its timer.
+                    vfx.AddComponent<VFXCleanup>().BeginCleanup(duration);
+                }
             }
         }
-        _activeVFX.Clear(); // Clear the tracking dictionary.
-        caster.GetComponent<CameraController>().SwitchToCamera(CameraType.Shoulder);
+        _activeVFX.Clear();
     }
+
 
 
     private IEnumerator RevealRoutine(GameObject caster)
     {
         while (true)
         {
-            var foundEntities = new HashSet<RevealableEntity>();
             Collider[] hits = Physics.OverlapSphere(caster.transform.position, revealRadius, revealLayerMask);
 
             foreach (var hit in hits)
@@ -87,14 +90,14 @@ public class BalorsVisionEffectSO : SkillEffectSO
                 {
                     if (entity.Type != RevealableType.None)
                     {
-                        foundEntities.Add(entity);
-                        // If this is a NEW entity we haven't seen before, create a VFX for it.
-                        if (!_activeVFX.ContainsKey(entity))
+                        if (entity.Type != RevealableType.None && !_activeVFX.ContainsKey(entity))
                         {
-                            GameObject vfxInstance = VFXManager.Instance.GetRevealEffect(entity.Type, entity.transform.position);
-                            if (vfxInstance != null)
+                            // --- THIS IS THE FIX ---
+                            // Call the new CreateOutlineEffect method and store the returned LIST
+                            List<GameObject> vfxInstances = VFXManager.Instance.CreateOutlineEffect(entity);
+                            if (vfxInstances != null)
                             {
-                                _activeVFX.Add(entity, vfxInstance);
+                                _activeVFX.Add(entity, vfxInstances);
                             }
                         }
                     }
