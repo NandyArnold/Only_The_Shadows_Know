@@ -18,13 +18,15 @@ public class SaveLoadManager : MonoBehaviour
     [Header("Data Registries")] 
     [SerializeField] private SceneRegistrySO sceneRegistry;
 
-    [Header("ESave Configuration")]
-    [SerializeField] private SaveFileSetup saveFileSetup; // Assign this in the Inspector
+    //[Header("ESave Configuration")]
+    //[SerializeField] private SaveFileSetup saveFileSetup; // Assign this in the Inspector
+
+    private const string SaveSubfolder = "OTSK";
 
     private SaveFile _metaFile;
     private const string LastSaveKey = "LastSaveName";
 
-    private SaveFile _saveFile;
+    //private SaveFile _saveFile;
     private GameStateData _currentGameState;
     private const string GameStateKey = "GameState"; // The ID for our main data object
 
@@ -32,49 +34,43 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
+        DontDestroyOnLoad(gameObject);
 
         var metaFileSetupData = new SaveFileSetupData()
         {
-            fileName = "meta", // ESave will add the extension
+            fileName = "meta",
             saveLocation = SaveLocation.PersistentDataPath,
-            // We set this to false so this internal file doesn't show up in a save game list.
+            // We can add the subfolder here too for consistency
+            filePath = SaveSubfolder,
             addToStorage = false
         };
-
-        // Now we can create the file correctly using the setup data.
         _metaFile = new SaveFile(metaFileSetupData);
     }
 
-    private void Start()
+    private SaveFileSetupData GetSetupDataFor(string fileName)
     {
-        if (saveFileSetup != null)
+        return new SaveFileSetupData()
         {
-            _saveFile = saveFileSetup.GetSaveFile();
-            // Get a new SaveFile instance just for our metadata
-            
-        }
-        else
-        {
-            Debug.LogError("SaveFileSetup is not assigned on the SaveLoadManager!", this);
-        }
-       
+            fileName = fileName,
+            saveLocation = SaveLocation.PersistentDataPath,
+            filePath = SaveSubfolder // Always use our defined subfolder
+        };
     }
 
     public void SaveGame(string saveFileName)
     {
-        // Get a SaveFile instance for the specific file name we are saving to.
-        var saveFile = new SaveFile(new SaveFileSetupData() { fileName = saveFileName });
+        // --- THIS IS THE FIX ---
+        // Create a new SaveFile instance for the specific file name we are saving to.
+        var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
 
         var currentGameState = new GameStateData();
-       
-        // Initialize the GameStateData object with default values.
         currentGameState.playerData = new PlayerStateData();
+
         if (SceneLoader.Instance.CurrentlyLoadedScene != null)
         {
             currentGameState.sceneID = SceneLoader.Instance.CurrentlyLoadedScene.sceneID;
         }
 
-        // Pass the GameStateData object to the gather methods to be filled.
         GatherPlayerData(currentGameState);
         GatherObjectiveData(currentGameState);
         GatherWorldData(currentGameState);
@@ -82,46 +78,53 @@ public class SaveLoadManager : MonoBehaviour
         saveFile.AddOrUpdateData(GameStateKey, currentGameState);
         saveFile.Save();
 
-        // After successfully saving, also save the name to our metadata file.
         _metaFile.AddOrUpdateData(LastSaveKey, saveFileName);
         _metaFile.Save();
 
-        Debug.Log($"<color=green>Game Saved via ESave:</color> {saveFileName}");
+        string path = Path.Combine(Application.persistentDataPath, saveFileName + ".json");
+        Debug.Log($"<color=green>Game Saved to:</color> {path} | Last Save is now: {saveFileName}");
     }
 
-    public void LoadGame(string saveFileName = "save_slot_1")
+    public void LoadGame(string saveFileName)
     {
-        if (_saveFile == null) return;
+        Debug.Log($"<color=cyan>--- LOAD GAME REQUEST RECEIVED ---</color> Attempting to load file: '{saveFileName}'");
+        //if (_saveFile == null) return;
         StartCoroutine(LoadGameRoutine(saveFileName));
         
     }
 
     private IEnumerator LoadGameRoutine(string saveFileName)
     {
-        var saveFile = new SaveFile(new SaveFileSetupData() { fileName = saveFileName });
+        Debug.Log($"<color=cyan>--- LOAD GAME ROUTINE STARTED ---</color> Attempting to load file: '{saveFileName}'");
+
+        // Use the new helper method to get a consistent SaveFile object.
+        var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
 
         if (!saveFile.HasData(GameStateKey))
         {
-            Debug.LogWarning($"Save file '{saveFileName}' has no GameState data.");
+            Debug.LogError($"<color=red>LOAD FAILED:</color> Save file '{saveFileName}' has no GameState data.", this.gameObject);
             yield break;
         }
 
+        Debug.Log("Found GameState data. Loading...");
         var currentGameState = saveFile.GetData<GameStateData>(GameStateKey);
-
         // 2. Find the correct SceneDataSO using the saved ID from the registry.
         var sceneDataToLoad = sceneRegistry.GetSceneData(_currentGameState.sceneID);
         if (sceneDataToLoad == null)
         {
-            Debug.LogError($"Could not find scene with ID '{_currentGameState.sceneID}' in the SceneRegistry!");
+            Debug.LogError($"<color=red>LOAD FAILED:</color> Could not find scene with ID '{currentGameState.sceneID}' in the SceneRegistry!");
             yield break;
         }
 
+        Debug.Log($"Scene to load is '{sceneDataToLoad.SceneName}'. Starting SceneLoader...");
         // 3. Tell the SceneLoader to start loading the scene.
         //    We don't pass a spawn point tag because the save data will override the position.
         SceneLoader.Instance.LoadScene(sceneDataToLoad);
 
+        Debug.Log("Waiting for player to be spawned...");
         // 4. Wait until the SceneLoader has finished its ENTIRE routine and a new player exists.
         yield return new WaitUntil(() => GameManager.Instance.Player != null);
+        Debug.Log("<color=green>Player has been spawned!</color> Restoring data...");
 
         // 5. NOW that the new player exists in the new scene, it's safe to restore all data.
         RestorePlayerData(currentGameState);
@@ -137,7 +140,7 @@ public class SaveLoadManager : MonoBehaviour
         // 7. Revive the player to reset their animation state.
         GameManager.Instance.Player.GetComponent<PlayerStats>().Revive();
 
-        Debug.Log($"<color=cyan>Game Loaded:</color> {saveFileName}");
+        Debug.Log($"<color=cyan>--- GAME LOADED SUCCESSFULLY ---</color> File: '{saveFileName}'");
     }
 
     private void GatherObjectiveData(GameStateData gameState)
@@ -230,23 +233,30 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
-  
-       
+
+
 
     // NEW: A public method to check if a save file exists
     public bool DoesSaveExist(string saveName)
     {
-        string path = Path.Combine(Application.persistentDataPath, saveName + ".sav");
-        return File.Exists(path);
+        string path = Path.Combine(Application.persistentDataPath, SaveSubfolder, saveName + ".json");
+
+        bool exists = File.Exists(path);
+        Debug.Log($"Checking for save file '{saveName}' at path: {path}. Exists: {exists}");
+        return exists;
     }
-    
-     public string GetLastSaveName()
+
+    public string GetLastSaveName()
     {
-        // Load the metadata file and read the value
-        if (_metaFile.HasData(LastSaveKey))
+        if (_metaFile != null && _metaFile.HasData(LastSaveKey))
         {
-            return _metaFile.GetData<string>(LastSaveKey);
+            string lastSave = _metaFile.GetData<string>(LastSaveKey);
+
+            // --- NEW DEBUG LOG ---
+            Debug.Log($"Found last save name in meta file: '{lastSave}'");
+            return lastSave;
         }
+        Debug.LogWarning("No last save name found in meta file.");
         return null;
     }
 

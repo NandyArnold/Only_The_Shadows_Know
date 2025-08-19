@@ -1,0 +1,67 @@
+{
+  "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Esper.ESave.SavableObjects.SavableObject, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+  "InfiniteExampleSave0": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "InfiniteExampleSave0",
+      "saveLocation": 1,
+      "filePath": "StylishEsper/ESave/Examples/Any RP Examples",
+      "fileType": 0,
+      "encryptionMethod": 0,
+      "aesKey": null,
+      "aesIV": null,
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "InfiniteExampleSave0"
+  },
+  "InfiniteExampleSave1": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "InfiniteExampleSave1",
+      "saveLocation": 1,
+      "filePath": "StylishEsper/ESave/Examples/Any RP Examples",
+      "fileType": 0,
+      "encryptionMethod": 0,
+      "aesKey": null,
+      "aesIV": null,
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "InfiniteExampleSave1"
+  },
+  "InfiniteExampleSave2": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "InfiniteExampleSave2",
+      "saveLocation": 1,
+      "filePath": "StylishEsper/ESave/Examples/Any RP Examples",
+      "fileType": 0,
+      "encryptionMethod": 0,
+      "aesKey": null,
+      "aesIV": null,
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "InfiniteExampleSave2"
+  },
+  "InfiniteExampleSave3": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "InfiniteExampleSave3",
+      "saveLocation": 1,
+      "filePath": "StylishEsper/ESave/Examples/Any RP Examples",
+      "fileType": 0,
+      "encryptionMethod": 0,
+      "aesKey": null,
+      "aesIV": null,
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "InfiniteExampleSave3"
+  }
+}

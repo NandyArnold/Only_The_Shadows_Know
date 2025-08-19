@@ -26,8 +26,10 @@ public class MainMenuButtons : MonoBehaviour
 
     public void OnLoadGameClicked()
     {
+        Debug.Log("Load Game clicked.");
         if (SaveLoadManager.Instance != null && !string.IsNullOrEmpty(_lastSaveName))
         {
+            Debug.Log($"<color=cyan>Loading last saved game: {_lastSaveName}</color>");
             // Load the last saved game, whatever its name was.
             SaveLoadManager.Instance.LoadGame(_lastSaveName);
         }
