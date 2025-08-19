@@ -20,7 +20,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (!_activeEnemies.Contains(enemy))
         {
-            Debug.Log($"Registering enemy: {enemy.gameObject.name} with ID: {enemy.UniqueID}", this.gameObject);
+            //Debug.Log($"Registering enemy: {enemy.gameObject.name} with ID: {enemy.UniqueID}", this.gameObject);
             _activeEnemies.Add(enemy);
         }
     }

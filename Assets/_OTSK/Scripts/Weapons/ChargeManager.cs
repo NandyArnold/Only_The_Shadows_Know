@@ -1,16 +1,51 @@
 // Create this new script, ChargeManager.cs
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class ChargeManager : MonoBehaviour
+public class ChargeManager : MonoBehaviour, ISaveable
 {
+
+    [SerializeField]
+    private ChargeableItemRegistrySO itemRegistry;
+
+    [System.Serializable]
+    public struct ChargeSaveData
+    {
+        public List<string> itemNames; 
+        public List<int> itemValues;
+    }
+
+    public string UniqueID => GetComponent<UniqueID>().ID;
+
     private int _infiniteChargeRequesters = 0;
     // Event to notify the UI when a charge count changes
     public event Action<ChargeableItemSO, int> OnChargeCountChanged;
 
     private Dictionary<ChargeableItemSO, int> _chargeCounts = new Dictionary<ChargeableItemSO, int>();
 
+    private void Start()
+    {
+        Debug.Log($"--- ChargeManager.Start() called for {gameObject.name} ---");
+        if (SaveableEntityRegistry.Instance != null)
+        {
+            SaveableEntityRegistry.Instance.Register(this);
+        }
+        else
+        {
+            Debug.LogError($"Could not register {name}, SaveableEntityRegistry.Instance is null!");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Use OnDestroy for unregistering. It's safer than OnDisable for objects that get deactivated.
+        if (SaveableEntityRegistry.Instance != null)
+        {
+            SaveableEntityRegistry.Instance.Unregister(this);
+        }
+    }
     public void AddCharges(ChargeableItemSO item, int amount)
     {
         if (!_chargeCounts.ContainsKey(item))
@@ -60,5 +95,32 @@ public class ChargeManager : MonoBehaviour
             _infiniteChargeRequesters--;
         }
         _infiniteChargeRequesters = Mathf.Max(0, _infiniteChargeRequesters);
+    }
+
+    public object CaptureState()
+    {
+        return new ChargeSaveData
+        {
+            // Convert the dictionary keys (ScriptableObjects) to a list of their names (strings)
+            itemNames = _chargeCounts.Keys.Select(item => item.name).ToList(),
+            itemValues = _chargeCounts.Values.ToList()
+        };
+    }
+
+    public void RestoreState(object state)
+    {
+        var saveData = (ChargeSaveData)state;
+        _chargeCounts.Clear();
+
+        for (int i = 0; i < saveData.itemNames.Count; i++)
+        {
+            // Use the registry to find the ScriptableObject asset by its saved name
+            ChargeableItemSO item = itemRegistry.GetItem(saveData.itemNames[i]);
+            if (item != null)
+            {
+                // Rebuild the dictionary with the correct asset reference and its saved charge count
+                _chargeCounts[item] = saveData.itemValues[i];
+            }
+        }
     }
 }

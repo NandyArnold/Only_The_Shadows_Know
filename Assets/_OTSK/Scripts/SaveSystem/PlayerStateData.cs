@@ -11,4 +11,5 @@ public class PlayerStateData
 
     public float currentHealth;
     public float currentMana;
+    public string equippedWeaponID;
 }

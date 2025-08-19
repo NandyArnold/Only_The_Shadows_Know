@@ -36,6 +36,11 @@ public class AutosaveManager : MonoBehaviour
     // This is now our event handler
     private void HandlePlayerReady()
     {
+        if (SaveLoadManager.Instance != null && SaveLoadManager.Instance.IsLoading)
+        {
+            Debug.Log("<color=yellow>Skipping autosave because a game load is in progress.</color>");
+            return;
+        }
         // Get the current scene data from the SceneLoader
         var sceneData = SceneLoader.Instance.CurrentlyLoadedScene;
         if (sceneData == null) return;

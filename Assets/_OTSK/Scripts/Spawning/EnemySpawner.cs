@@ -88,8 +88,8 @@ public class EnemySpawner : MonoBehaviour
 
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
-                Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}'" +
-                    $" with patrol route '{routeToAssign?.name ?? "None"}'.");
+                //Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}'" +
+                //    $" with patrol route '{routeToAssign?.name ?? "None"}'.");
                 enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
             }
         }
@@ -104,13 +104,21 @@ public class EnemySpawner : MonoBehaviour
 
             if (enemyInstance.TryGetComponent<Enemy>(out var enemy))
             {
-                Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
+                //Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
                 enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
             }
         }
     }
     private void SpawnInitialEnemies()
     {
+        if (SaveLoadManager.Instance != null && SaveLoadManager.Instance.IsLoading)
+        {
+            // If we are loading from a save file, the SaveLoadManager will handle spawning enemies.
+            // We skip the default spawn defined in the SceneDataSO.
+            Debug.Log("<color=yellow>[EnemySpawner]</color> Skipping initial enemy spawn because a game load is in progress.");
+            return;
+        }
+
         if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
 
         // Loop through each SPAWN GROUP in the list

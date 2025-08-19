@@ -4452,6 +4452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 799a3b2d20f3d674ea39359ce3de847b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveFileName: manual_save_1
 --- !u!114 &863591107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10674,6 +10675,7 @@ GameObject:
   - component: {fileID: 1837955079}
   - component: {fileID: 1837955080}
   - component: {fileID: 1837955081}
+  - component: {fileID: 1837955082}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -10885,7 +10887,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneRegistry: {fileID: 11400000, guid: d1db0db3bdc78cf4396a6481fdc53dc0, type: 2}
-  saveFileSetup: {fileID: 1837955065}
+  enemyRegistry: {fileID: 11400000, guid: 2985b7cadfc0e1e49bff919cb7a5c93a, type: 2}
+  weaponRegistry: {fileID: 11400000, guid: 9707e74a7b599f2468e0d88160a72d9c, type: 2}
 --- !u!114 &1837955067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11198,6 +11201,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1837955082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3b53af61f7f35747a8c9623c8f90ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1853120219
 GameObject:
   m_ObjectHideFlags: 0
@@ -11493,6 +11508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59a184b2284411c48b2a63eeda74a634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveFileName: autosave
 --- !u!114 &1891975903
 MonoBehaviour:
   m_ObjectHideFlags: 0

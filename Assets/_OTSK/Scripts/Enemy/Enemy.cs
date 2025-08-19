@@ -12,14 +12,26 @@ public class Enemy : MonoBehaviour, ISaveable
 
     // --- Save Data Structure ---
     [System.Serializable]
-    private struct EnemySaveData
+    public struct EnemySaveData
     {
-        // For Position
+        public string configSOName;
+        public string patrolRouteID;
+        public InitialAIState initialState;
+
+        // Transform
         public float posX, posY, posZ;
-        // For Rotation
         public float rotX, rotY, rotZ, rotW;
-        // For Health
+
+        // Health
         public float currentHealth;
+
+        // AI State
+        public int summonCount;
+
+        // Active State
+        public bool wasActive;
+
+        public int lastWaypointIndex;
     }
     // --- ISaveable Implementation ---
     public string UniqueID => _uniqueID.ID;
@@ -53,24 +65,82 @@ public class Enemy : MonoBehaviour, ISaveable
 
     public object CaptureState()
     {
+        int waypointIndex = -1; // Default to -1 (not patrolling)
+        if (_ai.CurrentState is PatrolState patrolState)
+        {
+            waypointIndex = patrolState.GetCurrentWaypointIndex();
+        }
+        string routeID = (_ai.PatrolRoute != null) ? _ai.PatrolRoute.routeID : null;
+        
+
+
         return new EnemySaveData
         {
+            configSOName = config.name, // Save the name of the config SO
+
+            patrolRouteID = routeID,
+            initialState = _ai.InitialState,
+            lastWaypointIndex = waypointIndex,
+
+            // Transform Data
             posX = transform.position.x,
             posY = transform.position.y,
             posZ = transform.position.z,
-
             rotX = transform.rotation.x,
             rotY = transform.rotation.y,
             rotZ = transform.rotation.z,
             rotW = transform.rotation.w,
 
-            currentHealth = _health.CurrentHealth
+            // Health Data
+            currentHealth = _health.CurrentHealth,
+
+            // AI Data
+            summonCount = _ai.SummonCount,
+
+            // Active State Data
+            wasActive = gameObject.activeSelf
+
         };
     }
 
     public void RestoreState(object state)
     {
+       
+
+        // --- THIS IS THE FIX ---
+        // First, check if the enemy was dead in the save file.
         var saveData = (EnemySaveData)state;
+
+        if (!saveData.wasActive || saveData.currentHealth <= 0)
+        {
+            // --- THIS IS THE FIX for the standing dead body ---
+            // Call HandleDeath to correctly set the dead state, disable components, and change tags.
+            // The 'true' flag tells HandleDeath this is from a save file, preventing some errors.
+            HandleDeath(false, true);
+            return;
+        }
+        _ai.InitialState = saveData.initialState;
+
+        if (!string.IsNullOrEmpty(saveData.patrolRouteID))
+        {
+            PatrolRoute route = PatrolRouteManager.Instance.GetRoute(saveData.patrolRouteID);
+            if (route != null)
+            {
+                _ai.PatrolRoute = route; // Assign the route to the AI
+            }
+            else
+            {
+                Debug.LogWarning($"Could not find Patrol Route with ID '{saveData.patrolRouteID}' for enemy {UniqueID}.");
+            }
+        }
+
+        // If the enemy was alive, restore its full state.
+
+        transform.position = new Vector3(saveData.posX, saveData.posY, saveData.posZ);
+        transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
+
+        _health.SetHealth(saveData.currentHealth);
+        _ai.SetSummonCount(saveData.summonCount); // You'll need to add this method to EnemyAI
 
         if (_statusBarInstance == null && saveData.currentHealth > 0)
         {
@@ -90,6 +160,7 @@ public class Enemy : MonoBehaviour, ISaveable
         transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
 
         _health.SetHealth(saveData.currentHealth);
+        //_ai.StartAI(saveData.lastWaypointIndex);
     }
     private void Awake()
     {
@@ -110,18 +181,23 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             Debug.LogError("StatusBarAnchor child object not found on Enemy!", this.gameObject);
         }
+
     }
 
     private void OnEnable()
     {
-        
-        _health.OnDied += HandleDeath; // Subscribe to the death event
+
+        _health.OnDied += (isSilentKill) => HandleDeath(isSilentKill, false); // Subscribe to the death event
+
+
     }
 
     private void OnDisable()
     {
-        
-        _health.OnDied -= HandleDeath; // Unsubscribe
+
+        _health.OnDied -= (isSilentKill) => HandleDeath(isSilentKill, false); // Unsubscribe
+
+
     }
 
     private void OnDestroy()
@@ -145,6 +221,10 @@ public class Enemy : MonoBehaviour, ISaveable
                 _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
                 _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
             }
+        }
+        if (SaveableEntityRegistry.Instance != null)
+        {
+            SaveableEntityRegistry.Instance.Unregister(this);
         }
     }
 
@@ -170,8 +250,25 @@ public class Enemy : MonoBehaviour, ISaveable
       
 
     }
+    public void LoadConfiguration(EnemyConfigSO loadedConfig)
+    {
+        this.config = loadedConfig;
+
+        if (_health == null) _health = GetComponent<EnemyHealth>();
+        if (Detector == null) Detector = GetComponent<DetectionSystem>();
+        if (_resistances == null) _resistances = GetComponent<EnemyResistances>();
+        if (_revealableEntity == null) _revealableEntity = GetComponent<RevealableEntity>();
+        if (_ai == null) _ai = GetComponent<EnemyAI>();
+
+        _health.Initialize(loadedConfig);
+        Detector.Initialize(loadedConfig);
+        _resistances.Initialize(loadedConfig);
+        _revealableEntity.Initialize(loadedConfig);
+        _ai.Config = loadedConfig;
+    }
     private void Start()
     {
+        Debug.Log($"--- Enemy.Start() called for {gameObject.name} ---");
         //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
         EnemyManager.Instance.RegisterEnemy(this);
 
@@ -204,59 +301,73 @@ public class Enemy : MonoBehaviour, ISaveable
             // The initial sound gauge is 0, which will correctly hide the alert slider.
             //_uiController.UpdateAlert(0, config.hearingThreshold);
         }
-    
+
+
+        if (SaveableEntityRegistry.Instance != null)
+        {
+            SaveableEntityRegistry.Instance.Register(this);
+        }
+        else
+        {
+            Debug.LogError($"Could not register {name}, SaveableEntityRegistry.Instance is null!");
+        }
+
     }
 
-    private void HandleDeath(bool isSilentKill)
+    private void HandleDeath(bool isSilentKill, bool isLoadedFromSave = false)
     {
-        Debug.Log($"<color=cyan>[Enemy]</color> HandleDeath() called. isSilentKill is: {isSilentKill}");
-        bool wasInCombat = (_ai.CurrentState is CombatState);
+        // The 'isLoadedFromSave' flag prevents a restored dead body from trying
+        // to unregister itself from managers it was never added to in this session.
 
-        if (wasInCombat && CombatManager.Instance != null)
+        if (!isLoadedFromSave)
         {
-            // PASS the flag along to the CombatManager
-            CombatManager.Instance.ReportEnemyDeath(this, isSilentKill);
-        }
-        else if (CombatManager.Instance != null)
-        {
-            CombatManager.Instance.UnregisterEnemyFromCombat(this);
-        }
+            // This is the original logic for a "live" death that happens during gameplay.
+            // It correctly reports the death to the various managers.
+            Debug.Log($"<color=cyan>[Enemy]</color> HandleDeath() called for a LIVE enemy. isSilentKill is: {isSilentKill}");
+            bool wasInCombat = (_ai.CurrentState is CombatState);
 
-        if (EnemyManager.Instance != null)
-        {
-            EnemyManager.Instance.UnregisterEnemy(this);
-        }
-       
-        if (_uiController != null)
-        {
-            _health.OnHealthChanged -= _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
-            if (_ai != null)
+            if (wasInCombat && CombatManager.Instance != null)
             {
-                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+                CombatManager.Instance.ReportEnemyDeath(this, isSilentKill);
+            }
+            else if (CombatManager.Instance != null)
+            {
+                CombatManager.Instance.UnregisterEnemyFromCombat(this);
+            }
+
+            if (EnemyManager.Instance != null)
+            {
+                EnemyManager.Instance.UnregisterEnemy(this);
             }
         }
-        //  Destroy the status bar immediately.
-        if (_statusBarInstance != null)
+
+        // This logic runs for BOTH live deaths and loaded dead bodies to ensure
+        // they are visually and functionally in a "dead" state.
+
+        if (_uiController != null && _statusBarInstance != null)
         {
             Destroy(_statusBarInstance);
         }
-        // 1. Play the death animation immediately.
-        _animController.PlayDeathAnimation();
-        // 1. Disable all intelligence and movement
-        _ai.enabled = false;
-        _navigator.Stop();
-        //GetComponent<NavMeshAgent>().enabled = false;
-        _navigator.enabled = false;
-        //_collider.enabled = false;
 
-        // 2. Play the death animation
+        if (Detector != null) Detector.enabled = false;
+
+        // Disable all intelligence and movement
+        if (_ai != null) _ai.enabled = false;
+        if (_navigator != null)
+        {
+            _navigator.enabled = false;
+            if (gameObject.activeInHierarchy) // Only call Stop if the object is active
+            {
+                _navigator.Stop();
+            }
+        }
+
+        // Play the death animation
         _animController.PlayDeathAnimation();
 
+        // Set the object's tag and layer to identify it as a corpse
         gameObject.tag = "DeadBody";
         gameObject.layer = LayerMask.NameToLayer("DeadBody");
-        // 3. Start a timer to remove the body
-        //StartCoroutine(CleanupBody(5f)); // Wait 5 seconds before removing body
     }
 
     private IEnumerator CleanupBody(float delay)

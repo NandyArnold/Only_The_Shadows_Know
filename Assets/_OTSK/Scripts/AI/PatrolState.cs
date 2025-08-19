@@ -9,12 +9,13 @@ public class PatrolState : EnemyAIState
     private Coroutine _patrolCoroutine;
    
     private float _gracePeriodTimer;
- 
 
+    private int _currentWaypointIndex = -1;
 
-    public PatrolState(PatrolRoute route)
+    public PatrolState(PatrolRoute route, int startingIndex = -1)
     { 
         _patrolRoute = route;
+        _currentWaypointIndex = startingIndex;
     }
 
     public override void Enter(EnemyAI enemyAI)
@@ -75,7 +76,7 @@ public class PatrolState : EnemyAIState
             yield break;
         }
 
-        int _currentWaypointIndex = -1;
+      
         
             while (true)
             {
@@ -117,5 +118,10 @@ public class PatrolState : EnemyAIState
                         break;
                 }
             }
-        }
+    }
+
+    public int GetCurrentWaypointIndex()
+    {
+        return _currentWaypointIndex;
+    }
 }

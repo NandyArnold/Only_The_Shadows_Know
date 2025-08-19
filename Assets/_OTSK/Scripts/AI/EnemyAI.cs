@@ -97,9 +97,9 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    public void StartAI()
+    public void StartAI(int startingWaypoint = -1)
     {
-        TransitionToState(new SpawnState());
+        TransitionToState(new SpawnState(startingWaypoint));
     }
 
 
@@ -259,6 +259,11 @@ public class EnemyAI : MonoBehaviour
         Debug.Log($"<color=cyan>{name} is responding to a call for help!</color>");
         LastKnownPlayerPosition = player.position;
         TransitionToState(new CombatState());
+    }
+
+    public void SetSummonCount(int count)
+    {
+        SummonCount = count;
     }
 
 }

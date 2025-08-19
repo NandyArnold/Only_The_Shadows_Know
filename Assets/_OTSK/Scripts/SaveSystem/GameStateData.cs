@@ -10,6 +10,6 @@ public class GameStateData
     {
         playerData = new PlayerStateData();
         objectiveData = new ObjectiveStateData();
-        worldData = new WorldStateData(new System.Collections.Generic.Dictionary<string, object>());
+        worldData = new WorldStateData();
     }
 }

@@ -175,7 +175,30 @@ public class WeaponManager : MonoBehaviour
     {
         return (socket == EquipSocket.Right_Hand) ? _handSocketR : _handSocketL;
     }
-  
+
+    public void EquipWeaponOnLoad(WeaponSO weaponToEquip)
+    {
+        if (weaponToEquip == null) return;
+
+        // Unequip old, if any (without animation)
+        if (_currentlyEquippedWeapon != null && _weaponInstances.TryGetValue(_currentlyEquippedWeapon, out var oldInstances))
+        {
+            ParentToSocket(oldInstances.main, GetSocketTransform(_currentlyEquippedWeapon.mainHandSheathSocket));
+            ParentToSocket(oldInstances.off, GetSocketTransform(_currentlyEquippedWeapon.offHandSheathSocket));
+        }
+
+        // Equip new (without animation)
+        if (_weaponInstances.TryGetValue(weaponToEquip, out var newInstances))
+        {
+            ParentToSocket(newInstances.main, GetSocketTransform(weaponToEquip.mainHandEquipSocket));
+            ParentToSocket(newInstances.off, GetSocketTransform(weaponToEquip.offHandEquipSocket));
+        }
+
+        _currentlyEquippedWeapon = weaponToEquip;
+        // Also notify PlayerCombat about the change
+        GetComponent<PlayerCombat>().SwitchWeapon(weaponToEquip);
+    }
+
 }
 
 
