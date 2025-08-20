@@ -53,6 +53,7 @@ public class SceneDataSO : ScriptableObject
 
     [Header("Audio")]
     public AudioClip sceneMusic;
+    [Range(0f, 1f)] public float sceneMusicVolume = 1f;
 
 
     // This special Unity method runs in the Editor whenever you change a value.

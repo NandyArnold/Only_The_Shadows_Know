@@ -6,6 +6,8 @@ public class MusicTriggerZone : MonoBehaviour
     [Header("Music Settings")]
     [Tooltip("The music track to play when the player enters this zone.")]
     [SerializeField] private AudioClip zoneMusic;
+    [Tooltip("The target volume for this zone's music.")]
+    [Range(0f, 1f)][SerializeField] private float zoneMusicVolume = 0.8f;
 
     private void Awake()
     {
@@ -16,8 +18,9 @@ public class MusicTriggerZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            AudioManager.Instance.SetOverrideMusic(zoneMusic, zoneMusicVolume);
             // Tell the AudioManager to use this music as an override
-            AudioManager.Instance.SetOverrideMusic(zoneMusic);
+            AudioManager.Instance.SetOverrideMusic(zoneMusic,zoneMusicVolume);
         }
     }
 

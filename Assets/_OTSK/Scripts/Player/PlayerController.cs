@@ -87,8 +87,10 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator DeathRoutine()
     {
+        if (_isDead) yield break;
         _isDead = true;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(true);
         //  Tell all enemies to stand down.
         if (EnemyManager.Instance != null)
         {

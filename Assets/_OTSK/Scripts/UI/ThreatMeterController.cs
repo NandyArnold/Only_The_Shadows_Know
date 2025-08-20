@@ -11,9 +11,6 @@ public class ThreatMeterController : MonoBehaviour
     [SerializeField] private GameObject alertIcon;
     [SerializeField] private GameObject combatIcon;
 
-    [Header("Audio Settings")]
-    [SerializeField] private AudioClip alertMusic;
-    [SerializeField] private AudioClip combatMusic;
 
     [Header("Animation Settings")]
     [SerializeField] private float fadeDuration = 0.3f;

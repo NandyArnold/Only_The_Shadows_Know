@@ -10,18 +10,32 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource musicSource; // For the main music track (ambient or priority)
+    [SerializeField] private AudioSource musicSourceA; // For the main music track (ambient or priority)
+    [SerializeField] private AudioSource musicSourceB;
+    //[SerializeField] private AudioSource musicSourceC;
     [SerializeField] private AudioSource uiSfxSource;
     [SerializeField] private List<AudioSource> ambienceSources;
 
     [Header("Priority Music")]
     [SerializeField] private AudioClip alertMusic;
+    [SerializeField][Range(0f, 1f)] private float alertMusicVolume = 0.9f;
     [SerializeField] private AudioClip combatMusic;
+    [SerializeField][Range(0f, 1f)] private float combatMusicVolume = 1f;
+    [SerializeField] private AudioClip gameOverMusic;
+    [SerializeField][Range(0f, 1f)] private float gameOverMusicVolume = 1f;
 
+    private AudioSource _activeMusicSource;
     private ThreatState _currentThreatState = ThreatState.Safe;
+
     private AudioClip _currentSceneMusic; // The default track for the loaded level
+    private float _currentSceneMusicVolume = 1f;
+
     private AudioClip _overrideMusic;
+    private float _overrideMusicVolume = 1f;
+
     private Coroutine _activeMusicFade;
+    private bool _isGameOver = false;
+
 
     private void Awake()
     {
@@ -31,50 +45,40 @@ public class AudioManager : MonoBehaviour
             return;
         }
         Instance = this;
-    
+
+        musicSourceA.loop = true;
+        musicSourceB.loop = true;
+
+        _activeMusicSource = musicSourceA;
+
     }
 
     // --- Music Control ---
 
-    public void PlayMusic(AudioClip musicClip, bool loop = true)
-    {
-        if (musicClip == null) return;
-
-        musicSource.clip = musicClip;
-        musicSource.loop = loop;
-        musicSource.Play();
-    }
-
-    public void FadeInMusic(AudioClip musicClip, float duration = 1.0f, bool loop = true)
-    {
-        if (musicClip == null) return;
-
-        musicSource.clip = musicClip;
-        musicSource.loop = loop;
-        musicSource.volume = 0;
-        musicSource.Play();
-        musicSource.DOFade(1f, duration);
-    }
-
-    private void FadeBetweenMusic(AudioClip newClip, float duration = 1.0f)
+    private void FadeBetweenMusic(AudioClip newClip, float volume, float duration = 1.0f)
     {
         if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
-        _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(newClip, duration));
+        _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(newClip, volume, duration));
     }
 
 
-    private IEnumerator FadeBetweenMusicRoutine(AudioClip newClip, float duration)
+    private IEnumerator FadeBetweenMusicRoutine(AudioClip newClip, float targetVolume, float duration)
     {
-        if (musicSource.isPlaying)
-        {
-            yield return musicSource.DOFade(0f, duration / 2).WaitForCompletion();
-        }
+        AudioSource activeSource = _activeMusicSource;
+        AudioSource newSource = (_activeMusicSource == musicSourceA) ? musicSourceB : musicSourceA;
 
-        musicSource.clip = newClip;
-        musicSource.Play();
-        yield return musicSource.DOFade(1f, duration / 2).WaitForCompletion();
+        newSource.clip = newClip;
+        newSource.volume = 0;
+        newSource.Play();
+
+        activeSource.DOFade(0f, duration);
+        yield return newSource.DOFade(targetVolume, duration).WaitForCompletion();
+
+        activeSource.Stop();
+        _activeMusicSource = newSource;
+        _activeMusicFade = null;
     }
-    
+
 
     // --- UI Sound Control ---
 
@@ -84,16 +88,20 @@ public class AudioManager : MonoBehaviour
         uiSfxSource.PlayOneShot(uiClip);
     }
 
-    public void SetSceneMusic(AudioClip sceneMusic)
+ 
+
+    // Called by MusicTriggerZone
+    public void SetSceneMusic(AudioClip sceneMusic, float volume)
     {
         _currentSceneMusic = sceneMusic;
+        _currentSceneMusicVolume = volume;
         UpdateMusic();
     }
 
-    // Called by MusicTriggerZone
-    public void SetOverrideMusic(AudioClip overrideClip)
+    public void SetOverrideMusic(AudioClip overrideClip, float volume)
     {
         _overrideMusic = overrideClip;
+        _overrideMusicVolume = volume;
         UpdateMusic();
     }
 
@@ -107,46 +115,38 @@ public class AudioManager : MonoBehaviour
         if (_currentThreatState == newState) return;
         _currentThreatState = newState;
         UpdateMusic();
-
-        // Also control the ambience layers
-        if (newState == ThreatState.Safe)
-        {
-            FadeInAllAmbience();
-        }
-        else
-        {
-            FadeOutAllAmbience();
-        }
+        if (newState == ThreatState.Safe) FadeInAllAmbience();
+        else FadeOutAllAmbience();
     }
     private void UpdateMusic()
     {
         AudioClip targetClip = null;
+        float targetVolume = 1f;
 
-        // Priority 1: Combat
-        if (_currentThreatState == ThreatState.Combat)
-        {
-            targetClip = combatMusic;
+        if (_isGameOver) 
+        { 
+            targetClip = gameOverMusic; targetVolume = gameOverMusicVolume;
         }
-        // Priority 2: Alert
+        else if (_currentThreatState == ThreatState.Combat)
+        { 
+            targetClip = combatMusic; targetVolume = combatMusicVolume; 
+        }
         else if (_currentThreatState == ThreatState.Alert)
         {
-            targetClip = alertMusic;
+            targetClip = alertMusic; targetVolume = alertMusicVolume; 
         }
-        // Priority 3: Music Zone Override
-        else if (_overrideMusic != null)
+        else if (_overrideMusic != null) 
         {
-            targetClip = _overrideMusic;
+            targetClip = _overrideMusic; targetVolume = _overrideMusicVolume;
         }
-        // Priority 4: Default Scene Music
-        else
+        else 
         {
-            targetClip = _currentSceneMusic;
+            targetClip = _currentSceneMusic; targetVolume = _currentSceneMusicVolume; 
         }
 
-        // Only fade if the target clip is different from what's currently playing
-        if (targetClip != null && musicSource.clip != targetClip)
+        if (targetClip != null && _activeMusicSource.clip != targetClip)
         {
-            FadeBetweenMusic(targetClip);
+            FadeBetweenMusic(targetClip, targetVolume);
         }
     }
 
@@ -180,19 +180,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void PlayMusicTrack(AudioClip clip)
-    {
-        if (musicSource.clip == clip) return;
+    //private void PlayMusicTrack(AudioClip clip)
+    //{
+    //    if (musicSource.clip == clip) return;
 
-        if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
-        _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(clip, 1.0f));
-    }
+    //    if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
+    //    _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(clip, 1.0f));
+    //}
 
-    public void PlayMusicOverride(AudioClip overrideClip)
-    {
-        if (musicSource.clip == overrideClip) return; // Don't restart if already playing
-        FadeBetweenMusic(overrideClip);
-    }
+   
 
     private void FadeOutAllAmbience(float duration = 0.5f)
     {
@@ -220,14 +216,39 @@ public class AudioManager : MonoBehaviour
         return null;
     }
     // Call this when combat ends or you leave a special zone
-    public void ReturnToSceneMusic()
-    {
-        if (musicSource.clip == _currentSceneMusic) return; // Don't restart if already playing
-        FadeBetweenMusic(_currentSceneMusic);
-    }
-
+   
     public void StopMusic(float fadeDuration = 0.5f)
     {
-        musicSource.DOFade(0f, fadeDuration);
+        _activeMusicSource.DOFade(0f, fadeDuration);
+    }
+    public void ResetAudioState()
+    {
+        _currentThreatState = ThreatState.Safe;
+        _overrideMusic = null;
+        // You could also stop all ambience here if needed
+    }
+
+
+    //public void PlayGameOverMusic()
+    //{
+    //    if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
+    //    FadeOutAllAmbience(0.5f); // Fade out ambient sounds
+    //    musicSource.DOKill(); // Instantly stop any current fades
+    //    PlayMusicTrack(gameOverMusic);
+    //}
+
+    // This is called when the GameOverScreen is hidden.
+    public void StopGameOverMusic()
+    {
+        // This triggers the normal priority check, which will figure out
+        // if it should go back to scene music, combat music, etc.
+        UpdateMusic();
+    }
+    public void SetGameOver(bool isGameOver)
+    {
+        if (_isGameOver == isGameOver) return;
+        _isGameOver = isGameOver;
+        UpdateMusic();
+        if (isGameOver) FadeOutAllAmbience();
     }
 }

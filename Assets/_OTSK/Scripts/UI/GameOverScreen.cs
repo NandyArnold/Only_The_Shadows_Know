@@ -24,12 +24,13 @@ public class GameOverScreen : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-  
-
+   
+   
 
 
     private void OnRespawnClicked()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
         Time.timeScale = 1f;
         Debug.Log("Respawn button clicked...");
 
@@ -44,6 +45,7 @@ public class GameOverScreen : MonoBehaviour
 
     private void OnLoadClicked()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
         Time.timeScale = 1f;
         Debug.Log("Load button clicked...");
         gameObject.SetActive(false);
@@ -53,6 +55,7 @@ public class GameOverScreen : MonoBehaviour
 
     private void OnMainMenuClicked()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
         Debug.Log("Main Menu button clicked...");
         
         SceneLoader.Instance.LoadScene(mainMenuSceneData);

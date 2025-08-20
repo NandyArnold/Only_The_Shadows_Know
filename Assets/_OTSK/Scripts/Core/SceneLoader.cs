@@ -58,14 +58,17 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadSceneRoutine(SceneDataSO sceneToLoad)
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.StopMusic(fadeDuration);
         // 1. Fade TO black
         FadeCanvas.Instance.FadeIn(fadeDuration);
         GameManager.Instance.UpdateGameState(GameState.Loading);
         yield return new WaitForSeconds(fadeDuration);
 
-        if (AudioManager.Instance != null) AudioManager.Instance.StopMusic(fadeDuration);
         // 2. Load the Loading Scene
         yield return SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Additive);
+
+        // Reset the AudioManager's state before unloading the old scene's triggers.
+        if (AudioManager.Instance != null) AudioManager.Instance.ResetAudioState();
 
         // 3. Unload the OLD scene
         if (_currentlyLoadedScene != null)
@@ -108,7 +111,7 @@ public class SceneLoader : MonoBehaviour
         // Set the default music for the newly loaded scene
         if (AudioManager.Instance != null && _currentlyLoadedScene.sceneMusic != null)
         {
-            AudioManager.Instance.SetSceneMusic(_currentlyLoadedScene.sceneMusic);
+            AudioManager.Instance.SetSceneMusic(_currentlyLoadedScene.sceneMusic, _currentlyLoadedScene.sceneMusicVolume);
         }
 
         //  Announce that the scene is loaded. Managers like ObjectiveManager will react to this.
