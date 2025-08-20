@@ -144,8 +144,9 @@ public class AudioManager : MonoBehaviour
             targetClip = _currentSceneMusic; targetVolume = _currentSceneMusicVolume; 
         }
 
-        if (targetClip != null && _activeMusicSource.clip != targetClip)
+        if (targetClip != null && (_activeMusicSource.clip != targetClip || !_activeMusicSource.isPlaying))
         {
+            // Pass the correct target volume to the fade routine
             FadeBetweenMusic(targetClip, targetVolume);
         }
     }
@@ -201,7 +202,10 @@ public class AudioManager : MonoBehaviour
     {
         foreach (var source in ambienceSources)
         {
-            if (source.clip != null) source.DOFade(1, duration); // Assumes volume is controlled by the source itself
+            if (source.clip != null && source.TryGetComponent<AmbienceZone>(out var zone))
+            {
+                source.DOFade(zone.targetVolume, duration);
+            } // Assumes volume is controlled by the source itself
         }
     }
 

@@ -6,7 +6,7 @@ public class AmbienceZone : MonoBehaviour
     [Header("Audio Settings")]
     [SerializeField] private AudioClip ambientClip;
     [Range(0f, 1f)]
-    [SerializeField] private float targetVolume = 0.8f;
+    public float targetVolume = 0.8f;
     [SerializeField] private float fadeInDuration = 2.0f;
     [SerializeField] private float fadeOutDuration = 2.0f;
 
@@ -30,7 +30,7 @@ public class AmbienceZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            AudioManager.Instance.ExitAmbienceZone(ambientClip, fadeOutDuration);
+            AudioManager.Instance.ExitAmbienceZone(ambientClip,targetVolume);
         }
     }
 }

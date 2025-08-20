@@ -44,7 +44,7 @@ public class SceneLoader : MonoBehaviour
     public void LoadScene(SceneDataSO sceneData, string spawnPointTag = null)
     {
         if (_isLoading) return;
-
+        if (TimeManager.Instance != null) TimeManager.Instance.ResetTimeScale();
         GameManager.Instance.UpdateGameState(GameState.Loading);
 
         // Tell the PlayerSpawner where to spawn in the next scene
@@ -58,89 +58,86 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadSceneRoutine(SceneDataSO sceneToLoad)
     {
-        if (AudioManager.Instance != null) AudioManager.Instance.StopMusic(fadeDuration);
-        // 1. Fade TO black
+        _isLoading = true;
+
+        // --- PART 1: EXIT THE CURRENT SCENE ---
+        // Fade the screen (and the music) to black.
         FadeCanvas.Instance.FadeIn(fadeDuration);
-        GameManager.Instance.UpdateGameState(GameState.Loading);
+        if (AudioManager.Instance != null) AudioManager.Instance.StopMusic(fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
-        // 2. Load the Loading Scene
-        yield return SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Additive);
+        // --- PART 2: THE LOADING SCENE ---
+        // Load the loading scene by itself. This automatically unloads the old scene.
+        yield return SceneManager.LoadSceneAsync(loadingSceneName);
 
-        // Reset the AudioManager's state before unloading the old scene's triggers.
+        // Reset the audio manager's state to prevent music leaks.
         if (AudioManager.Instance != null) AudioManager.Instance.ResetAudioState();
 
-        // 3. Unload the OLD scene
-        if (_currentlyLoadedScene != null)
-        {
-            yield return SceneManager.UnloadSceneAsync(_currentlyLoadedScene.SceneName);
-        }
+        // Now, fade IN to the loading screen so the player can see it.
+        FadeCanvas.Instance.FadeOut(fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
 
-        // 4. Load the NEW scene in the background
-        float startTime = Time.realtimeSinceStartup;
+        // --- PART 3: LOAD THE NEW SCENE IN THE BACKGROUND ---
+        // Start loading the target scene additively while the loading screen is visible.
+        float startTime = Time.time;
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneToLoad.SceneName, LoadSceneMode.Additive);
         operation.allowSceneActivation = false;
 
+        // Update the progress bar while loading
         while (operation.progress < 0.9f)
         {
             if (LoadingScreenController.Instance != null)
                 LoadingScreenController.Instance.UpdateProgress(operation.progress / 0.9f);
             yield return null;
         }
-
         if (LoadingScreenController.Instance != null)
             LoadingScreenController.Instance.UpdateProgress(1f);
 
-        // 5. Enforce minimum load time
-        float elapsedTime = Time.realtimeSinceStartup - startTime;
+        // Enforce the minimum load time.
+        float elapsedTime = Time.time - startTime;
         if (elapsedTime < minLoadTime)
         {
-            yield return new WaitForSecondsRealtime(minLoadTime - elapsedTime);
+            yield return new WaitForSeconds(minLoadTime - elapsedTime);
         }
 
-        // 6. Activate the new scene and unload the loading scene
+        // --- PART 4: TRANSITION TO THE NEW SCENE ---
+        // Fade back to black to hide the switch.
+        FadeCanvas.Instance.FadeIn(fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
+
+        // Activate the new scene. It's now loaded and ready.
         operation.allowSceneActivation = true;
         yield return new WaitUntil(() => SceneManager.GetSceneByName(sceneToLoad.SceneName).isLoaded);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad.SceneName));
+
+        // Unload the loading scene.
         yield return SceneManager.UnloadSceneAsync(loadingSceneName);
 
-        // --- FINALIZATION ---
-        // The player will be spawned here, but the screen is still black.
+        // Officially set the new scene as active.
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad.SceneName));
+
+        // --- PART 5: FINALIZATION ---
         _currentlyLoadedScene = sceneToLoad;
 
-        // Set the default music for the newly loaded scene
+        // Set the default music for the new scene (it will be silent until we fade in).
         if (AudioManager.Instance != null && _currentlyLoadedScene.sceneMusic != null)
         {
             AudioManager.Instance.SetSceneMusic(_currentlyLoadedScene.sceneMusic, _currentlyLoadedScene.sceneMusicVolume);
         }
 
-        //  Announce that the scene is loaded. Managers like ObjectiveManager will react to this.
-        OnSceneLoadCompleted?.Invoke(_currentlyLoadedScene);// This will spawn the player
-
-        //  Wait for the end of the frame. This gives everything in the new scene
-        //    (like spawn points and patrol data) a chance to run their Start() methods.
+        OnSceneLoadCompleted?.Invoke(_currentlyLoadedScene);
         yield return new WaitForEndOfFrame();
-
-        // 3. NOW, announce that the scene is truly "ready" for spawning.
         OnNewSceneReady?.Invoke();
 
-        //  NOW it is safe to perform the autosave.
-        //if (AutosaveManager.Instance != null)
-        //{
-        //    AutosaveManager.Instance.PerformAutosave(sceneToLoad);
-        //}
-
-        // 7. Hold the black screen for the specified duration.
         if (postLoadBlackScreenDuration > 0)
         {
             yield return new WaitForSeconds(postLoadBlackScreenDuration);
         }
 
-        // 8. Fade FROM black.
+        // Finally, fade IN to the new scene.
         FadeCanvas.Instance.FadeOut(fadeDuration);
-        yield return new WaitForSecondsRealtime(fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
 
-        // 9. NOW, with the scene visible, update the game state to Gameplay.
+        // Update the game state now that the scene is visible.
         switch (sceneToLoad.sceneType)
         {
             case SceneType.Menu:
@@ -150,7 +147,6 @@ public class SceneLoader : MonoBehaviour
                 GameManager.Instance.UpdateGameState(GameState.Gameplay);
                 break;
         }
-
         _isLoading = false;
     }
 

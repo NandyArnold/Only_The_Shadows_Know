@@ -18,7 +18,7 @@ public class MusicTriggerZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            AudioManager.Instance.SetOverrideMusic(zoneMusic, zoneMusicVolume);
+          
             // Tell the AudioManager to use this music as an override
             AudioManager.Instance.SetOverrideMusic(zoneMusic,zoneMusicVolume);
         }
