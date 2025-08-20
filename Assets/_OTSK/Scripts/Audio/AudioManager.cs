@@ -24,6 +24,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip gameOverMusic;
     [SerializeField][Range(0f, 1f)] private float gameOverMusicVolume = 1f;
 
+   
+
+
     private AudioSource _activeMusicSource;
     private ThreatState _currentThreatState = ThreatState.Safe;
 
@@ -55,7 +58,7 @@ public class AudioManager : MonoBehaviour
 
     // --- Music Control ---
 
-    private void FadeBetweenMusic(AudioClip newClip, float volume, float duration = 1.0f)
+    private void FadeBetweenMusic(AudioClip newClip, float volume, float duration)
     {
         if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
         _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(newClip, volume, duration));
@@ -69,12 +72,14 @@ public class AudioManager : MonoBehaviour
 
         newSource.clip = newClip;
         newSource.volume = 0;
+        newSource.loop = true;
         newSource.Play();
 
-        activeSource.DOFade(0f, duration);
+        if (activeSource.isPlaying) activeSource.DOFade(0f, duration);
         yield return newSource.DOFade(targetVolume, duration).WaitForCompletion();
 
         activeSource.Stop();
+        activeSource.clip = null;
         _activeMusicSource = newSource;
         _activeMusicFade = null;
     }
@@ -123,45 +128,49 @@ public class AudioManager : MonoBehaviour
         AudioClip targetClip = null;
         float targetVolume = 1f;
 
-        if (_isGameOver) 
-        { 
-            targetClip = gameOverMusic; targetVolume = gameOverMusicVolume;
-        }
-        else if (_currentThreatState == ThreatState.Combat)
-        { 
-            targetClip = combatMusic; targetVolume = combatMusicVolume; 
-        }
-        else if (_currentThreatState == ThreatState.Alert)
-        {
-            targetClip = alertMusic; targetVolume = alertMusicVolume; 
-        }
-        else if (_overrideMusic != null) 
-        {
-            targetClip = _overrideMusic; targetVolume = _overrideMusicVolume;
-        }
-        else 
-        {
-            targetClip = _currentSceneMusic; targetVolume = _currentSceneMusicVolume; 
-        }
+        if (_isGameOver) { targetClip = gameOverMusic; targetVolume = gameOverMusicVolume; }
+        else if (_currentThreatState == ThreatState.Combat) { targetClip = combatMusic; targetVolume = combatMusicVolume; }
+        else if (_currentThreatState == ThreatState.Alert) { targetClip = alertMusic; targetVolume = alertMusicVolume; }
+        else if (_overrideMusic != null) { targetClip = _overrideMusic; targetVolume = _overrideMusicVolume; }
+        else { targetClip = _currentSceneMusic; targetVolume = _currentSceneMusicVolume; }
 
+        if (targetClip != null)
+        {
+            Debug.Log($"<color=yellow>[AudioManager]</color> UpdateMusic decided the target is '{targetClip.name}' at volume '{targetVolume}'.");
+        }
         if (targetClip != null && (_activeMusicSource.clip != targetClip || !_activeMusicSource.isPlaying))
         {
-            // Pass the correct target volume to the fade routine
-            FadeBetweenMusic(targetClip, targetVolume);
+            FadeBetweenMusic(targetClip, targetVolume, 1.0f); // Pass all 3 arguments
         }
     }
 
 
     public void EnterAmbienceZone(AudioClip clip, float volume, float fadeDuration)
     {
-        AudioSource source = GetAvailableAmbienceSource();
-        if (source != null)
+        // First, check if this sound is already playing to avoid duplicates
+        foreach (var source in ambienceSources)
         {
-            source.clip = clip;
-            source.Play();
-            if (_currentThreatState == ThreatState.Safe) // Only fade in if we are not in combat
+            if (source.clip == clip && source.isPlaying)
             {
+                // If it's already playing but faded out, just fade it back in
+                source.DOKill();
                 source.DOFade(volume, fadeDuration);
+                return;
+            }
+        }
+
+        AudioSource availableSource = GetAvailableAmbienceSource();
+        if (availableSource != null)
+        {
+            availableSource.clip = clip;
+            availableSource.volume = 0;
+            availableSource.loop = true;
+            availableSource.Play();
+
+            if (_currentThreatState == ThreatState.Safe)
+            {
+                availableSource.DOKill();
+                availableSource.DOFade(volume, fadeDuration);
             }
         }
     }
@@ -172,55 +181,65 @@ public class AudioManager : MonoBehaviour
         {
             if (source.clip == clip)
             {
+                source.DOKill();
                 source.DOFade(0, fadeDuration).OnComplete(() => {
                     source.Stop();
-                    source.clip = null;
+                    source.clip = null; // Frees up the source for the pool
                 });
                 return;
             }
         }
     }
 
-    //private void PlayMusicTrack(AudioClip clip)
+    private AudioSource GetAvailableAmbienceSource()
+    {
+        foreach (var source in ambienceSources)
+        {
+            // A source is available if it has no clip assigned to it.
+            if (source.clip == null)
+            {
+                return source;
+            }
+        }
+        Debug.LogWarning("No available ambience sources!");
+        return null;
+    }
+
+    //public void UnregisterAmbienceZone(AmbienceZone zone)
     //{
-    //    if (musicSource.clip == clip) return;
-
-    //    if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
-    //    _activeMusicFade = StartCoroutine(FadeBetweenMusicRoutine(clip, 1.0f));
+    //    if (_activeAmbienceZones.Contains(zone)) _activeAmbienceZones.Remove(zone);
     //}
-
-   
 
     private void FadeOutAllAmbience(float duration = 0.5f)
     {
         foreach (var source in ambienceSources)
         {
-            if (source.isPlaying) source.DOFade(0, duration);
+            if (source.isPlaying)
+            {
+                source.DOKill();
+                source.DOFade(0, duration);
+            }
         }
     }
     private void FadeInAllAmbience(float duration = 1.0f)
     {
-        foreach (var source in ambienceSources)
-        {
-            if (source.clip != null && source.TryGetComponent<AmbienceZone>(out var zone))
-            {
-                source.DOFade(zone.targetVolume, duration);
-            } // Assumes volume is controlled by the source itself
-        }
+        // This method is tricky now. We don't know the target volume for each sound.
+        // For now, let's leave this blank as the Enter/Exit logic handles fading.
+        // A more complex system could store the target volume for each active sound.
     }
 
-    private AudioSource GetAvailableAmbienceSource()
-    {
-        // Find the first source that isn't currently playing a clip
-        foreach (var source in ambienceSources)
-        {
-            if (source.clip == null) return source;
-        }
-        Debug.LogWarning("No available ambience sources!");
-        return null;
-    }
+    //private AudioSource GetAvailableAmbienceSource()
+    //{
+    //    // Find the first source that isn't currently playing a clip
+    //    foreach (var source in ambienceSources)
+    //    {
+    //        if (source.clip == null) return source;
+    //    }
+    //    Debug.LogWarning("No available ambience sources!");
+    //    return null;
+    //}
     // Call this when combat ends or you leave a special zone
-   
+
     public void StopMusic(float fadeDuration = 0.5f)
     {
         _activeMusicSource.DOFade(0f, fadeDuration);
@@ -233,13 +252,6 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    //public void PlayGameOverMusic()
-    //{
-    //    if (_activeMusicFade != null) StopCoroutine(_activeMusicFade);
-    //    FadeOutAllAmbience(0.5f); // Fade out ambient sounds
-    //    musicSource.DOKill(); // Instantly stop any current fades
-    //    PlayMusicTrack(gameOverMusic);
-    //}
 
     // This is called when the GameOverScreen is hidden.
     public void StopGameOverMusic()
@@ -254,5 +266,10 @@ public class AudioManager : MonoBehaviour
         _isGameOver = isGameOver;
         UpdateMusic();
         if (isGameOver) FadeOutAllAmbience();
+    }
+
+    public bool IsSafe()
+    {
+        return _currentThreatState == ThreatState.Safe && !_isGameOver;
     }
 }
