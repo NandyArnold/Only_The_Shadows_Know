@@ -2985,6 +2985,7 @@ GameObject:
   - component: {fileID: 156690411}
   - component: {fileID: 156690410}
   - component: {fileID: 156690409}
+  - component: {fileID: 156690413}
   m_Layer: 0
   m_Name: Sphere (2)
   m_TagString: Untagged
@@ -3093,6 +3094,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 156690407}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &156690413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156690407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: TestingCP2
 --- !u!1001 &169025047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17384,6 +17398,7 @@ GameObject:
   - component: {fileID: 1014907429}
   - component: {fileID: 1014907428}
   - component: {fileID: 1014907427}
+  - component: {fileID: 1014907431}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -17492,6 +17507,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014907425}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1014907431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014907425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: TestingCP1
 --- !u!1 &1016090370
 GameObject:
   m_ObjectHideFlags: 0
@@ -25244,6 +25272,7 @@ GameObject:
   - component: {fileID: 1538335455}
   - component: {fileID: 1538335454}
   - component: {fileID: 1538335453}
+  - component: {fileID: 1538335457}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -25352,6 +25381,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1538335451}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1538335457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538335451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: TestingCP
 --- !u!1 &1544557167
 GameObject:
   m_ObjectHideFlags: 0
@@ -26472,6 +26514,7 @@ GameObject:
   - component: {fileID: 1660120701}
   - component: {fileID: 1660120700}
   - component: {fileID: 1660120699}
+  - component: {fileID: 1660120703}
   m_Layer: 0
   m_Name: Sphere (4)
   m_TagString: Untagged
@@ -26580,6 +26623,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1660120697}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1660120703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660120697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: TestingCP4
 --- !u!1001 &1665427436
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27250,6 +27306,7 @@ GameObject:
   - component: {fileID: 1692520819}
   - component: {fileID: 1692520818}
   - component: {fileID: 1692520817}
+  - component: {fileID: 1692520821}
   m_Layer: 0
   m_Name: Sphere (3)
   m_TagString: Untagged
@@ -27358,6 +27415,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1692520815}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1692520821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692520815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: TestingCP3
 --- !u!1 &1706257393
 GameObject:
   m_ObjectHideFlags: 0

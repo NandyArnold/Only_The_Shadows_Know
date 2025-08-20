@@ -2861,7 +2861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29891e2aef2faad4498b64f34f0a0b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: 
+  _id: PlayerCharacterID1234
 --- !u!4 &5361356829297170697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8191740002585371210, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}

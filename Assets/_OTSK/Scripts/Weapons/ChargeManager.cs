@@ -112,14 +112,28 @@ public class ChargeManager : MonoBehaviour, ISaveable
         var saveData = (ChargeSaveData)state;
         _chargeCounts.Clear();
 
+        Debug.Log("<color=magenta>[ChargeManager]</color> RestoreState called. Found " + saveData.itemNames.Count + " item types in save file.");
+
         for (int i = 0; i < saveData.itemNames.Count; i++)
         {
-            // Use the registry to find the ScriptableObject asset by its saved name
+            string itemName = saveData.itemNames[i];
+            int value = saveData.itemValues[i];
+
+            Debug.Log($"<color=magenta>[ChargeManager]</color> Loading item '{itemName}' with value '{value}'.");
+
             ChargeableItemSO item = itemRegistry.GetItem(saveData.itemNames[i]);
             if (item != null)
             {
-                // Rebuild the dictionary with the correct asset reference and its saved charge count
-                _chargeCounts[item] = saveData.itemValues[i];
+                // Make sure you are using the value from the loop here
+                _chargeCounts[item] = value;
+
+                // This event tells the HUD to update its text
+                OnChargeCountChanged?.Invoke(item, value);
+                Debug.Log($"<color=green>[ChargeManager]</color> Successfully restored {item.name}. Firing UI update event with value {value}.");
+            }
+            else
+            {
+                Debug.LogWarning($"<color=orange>[ChargeManager]</color> Could not find item '{itemName}' in the Item Registry.");
             }
         }
     }

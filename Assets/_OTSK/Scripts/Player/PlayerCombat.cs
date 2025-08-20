@@ -149,11 +149,14 @@ public class PlayerCombat : MonoBehaviour
         }
 
         // Give the player their starting charges for all available weapons
-        foreach (var weapon in availableWeapons)
+        if (SaveLoadManager.Instance != null && !SaveLoadManager.Instance.IsLoading)
         {
-            if (weapon is BowSO bow && bow.ammoType != null)
+            foreach (var weapon in availableWeapons)
             {
-                _chargeManager.AddCharges(bow.ammoType, bow.ammoType.startingCharges);
+                if (weapon is BowSO bow && bow.ammoType != null)
+                {
+                    _chargeManager.AddCharges(bow.ammoType, bow.ammoType.startingCharges);
+                }
             }
         }
 

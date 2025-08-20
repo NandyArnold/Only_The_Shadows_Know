@@ -132,4 +132,11 @@ public class PlayerStats : MonoBehaviour
         OnManaChanged?.Invoke(CurrentMana, maxMana);
     }
 
+    public void ReviveOnLoad()
+    {
+        // This version does NOT restore health, assuming it's already been set from the save file.
+        _playerController.SetIsDead(false);
+        _animController.PlayReviveAnimation();
+    }
+
 }

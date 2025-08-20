@@ -157,9 +157,9 @@ public class SaveLoadManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         // 5. NOW that the new player exists in the new scene, it's safe to restore all data.
         Debug.Log("<color=green>Scene is ready!</color> Restoring data...");
-        RestorePlayerData(_currentGameState);
         RestoreObjectiveData(_currentGameState);
         RestoreWorldData(_currentGameState);
+        RestorePlayerData(_currentGameState);
 
         // 6. Connect the camera to the new player.
         if (CameraManager.Instance != null)
@@ -168,7 +168,7 @@ public class SaveLoadManager : MonoBehaviour
         }
 
         // 7. Revive the player to reset their animation state.
-        GameManager.Instance.Player.GetComponent<PlayerStats>().Revive();
+        GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
 
         Debug.Log($"<color=cyan>--- GAME LOADED SUCCESSFULLY ---</color> File: '{saveFileName}'");
         IsLoading = false;
@@ -222,6 +222,7 @@ public class SaveLoadManager : MonoBehaviour
         var stats = player.GetComponent<PlayerStats>();
         var weaponManager = player.GetComponent<WeaponManager>();
         var playerCombat = player.GetComponent<PlayerCombat>();
+        var chargeManager = player.GetComponent<ChargeManager>();
 
         if (controller != null) controller.enabled = false;
 
@@ -236,15 +237,29 @@ public class SaveLoadManager : MonoBehaviour
             stats.RestoreStats(gameState.playerData.currentHealth, gameState.playerData.currentMana);
         }
 
-        if (weaponManager != null && playerCombat != null && !string.IsNullOrEmpty(gameState.playerData.equippedWeaponID))
+        if (!string.IsNullOrEmpty(gameState.playerData.equippedWeaponID))
         {
             WeaponSO weaponToEquip = weaponRegistry.GetWeapon(gameState.playerData.equippedWeaponID);
             if (weaponToEquip != null)
             {
-                // This is the line that was crashing. It should now be safe.
                 playerCombat.SwitchWeapon(weaponToEquip);
             }
         }
+        if (gameState.worldData.chargeManagerSaveData.TryGetValue(chargeManager.UniqueID, out var chargeSaveData))
+        {
+            chargeManager.RestoreState(chargeSaveData);
+            Debug.Log("<color=lime>Player charges restored.</color>");
+        }
+
+        //if (weaponManager != null && playerCombat != null && !string.IsNullOrEmpty(gameState.playerData.equippedWeaponID))
+        //{
+        //    WeaponSO weaponToEquip = weaponRegistry.GetWeapon(gameState.playerData.equippedWeaponID);
+        //    if (weaponToEquip != null)
+        //    {
+        //        // This is the line that was crashing. It should now be safe.
+        //        playerCombat.SwitchWeapon(weaponToEquip);
+        //    }
+        //}
     }
 
     private void RestoreObjectiveData(GameStateData gameState)
@@ -329,14 +344,17 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log($"<color=lime>Restored spawned enemy:</color> {config.displayName} with saved ID: {uniqueId}");
         }
 
-        foreach (var chargeData in gameState.worldData.chargeManagerSaveData)
-        {
-            if (SaveableEntityRegistry.Instance.GetEntity(chargeData.Key) is ChargeManager chargeManager)
-            {
-                Debug.Log($"Restoring charge manager: {chargeManager.name} with ID: {chargeManager.UniqueID}");
-                chargeManager.RestoreState(chargeData.Value);
-            }
-        }
+        //foreach (var chargeData in gameState.worldData.chargeManagerSaveData)
+        //{
+        //    // Find the ChargeManager in the registry by its UniqueID
+        //    if (SaveableEntityRegistry.Instance.GetEntity(chargeData.Key) is ChargeManager chargeManager)
+        //    {
+        //        // Call its RestoreState method
+        //        chargeManager.RestoreState(chargeData.Value);
+        //        Debug.Log($"<color=lime>Restored charges for:</color> {chargeManager.name}");
+        //    }
+        //}
+
         foreach (var checkpointData in gameState.worldData.checkpointSaveData)
         {
             Debug.Log($"Restoring checkpoint: {checkpointData.Key}");
