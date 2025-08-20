@@ -36,11 +36,13 @@ public class Enemy : MonoBehaviour, ISaveable
     // --- ISaveable Implementation ---
     public string UniqueID => _uniqueID.ID;
 
+    private bool _isLoadedDead = false;
+
     // --- Component References 
     [Header("Data")] [Tooltip("The enemy's configuration data, including stats and behavior.")]
     [SerializeField] private EnemyConfigSO config;
 
-    [Header("UI")] // NEW
+    [Header("UI")] 
     [SerializeField] private GameObject statusBarPrefab;
     [SerializeField] private Transform statusBarAnchor;
     [SerializeField] private Transform revealIconAnchor;
@@ -113,12 +115,11 @@ public class Enemy : MonoBehaviour, ISaveable
 
         if (!saveData.wasActive || saveData.currentHealth <= 0)
         {
-            // --- THIS IS THE FIX for the standing dead body ---
-            // Call HandleDeath to correctly set the dead state, disable components, and change tags.
-            // The 'true' flag tells HandleDeath this is from a save file, preventing some errors.
-            HandleDeath(false, true);
-            return;
+            _isLoadedDead = true; // Set the flag
+            return; 
         }
+
+      
         _ai.InitialState = saveData.initialState;
 
         if (!string.IsNullOrEmpty(saveData.patrolRouteID))
@@ -268,6 +269,13 @@ public class Enemy : MonoBehaviour, ISaveable
     }
     private void Start()
     {
+        if (_isLoadedDead)
+        {
+            // We pass 'true' for isLoadedFromSave to prevent unregistering.
+            HandleDeath(false, true);
+            return; // IMPORTANT: Stop the rest of Start() from running.
+        }
+
         Debug.Log($"--- Enemy.Start() called for {gameObject.name} ---");
         //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
         EnemyManager.Instance.RegisterEnemy(this);
@@ -344,21 +352,33 @@ public class Enemy : MonoBehaviour, ISaveable
         // This logic runs for BOTH live deaths and loaded dead bodies to ensure
         // they are visually and functionally in a "dead" state.
 
-        if (_uiController != null && _statusBarInstance != null)
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged -= _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+            }
+        }
+        if (_statusBarInstance != null)
         {
             Destroy(_statusBarInstance);
         }
 
+        // 2. Disable all sensory and intelligence components
         if (Detector != null) Detector.enabled = false;
-
-        // Disable all intelligence and movement
         if (_ai != null) _ai.enabled = false;
         if (_navigator != null)
         {
             _navigator.enabled = false;
-            if (gameObject.activeInHierarchy) // Only call Stop if the object is active
+            if (gameObject.activeInHierarchy) // Only call Stop if the object is active and on a NavMesh
             {
-                _navigator.Stop();
+                var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (agent.isOnNavMesh)
+                {
+                    _navigator.Stop();
+                }
             }
         }
 
