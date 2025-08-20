@@ -170,3 +170,4 @@ MonoBehaviour:
       spawnPointID: 
       patrolRouteID: 
       initialState: 1
+  sceneMusic: {fileID: 8300000, guid: 2e4ab6c9654cd2d4b813dfcddf012c60, type: 3}

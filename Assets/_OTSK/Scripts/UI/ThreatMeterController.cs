@@ -4,12 +4,16 @@ using DG.Tweening;
 
 public class ThreatMeterController : MonoBehaviour
 {
-    private enum ThreatState { Safe, Alert, Combat }
+  
 
     [Header("UI References")]
     [SerializeField] private GameObject safeIcon;
     [SerializeField] private GameObject alertIcon;
     [SerializeField] private GameObject combatIcon;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip alertMusic;
+    [SerializeField] private AudioClip combatMusic;
 
     [Header("Animation Settings")]
     [SerializeField] private float fadeDuration = 0.3f;
@@ -31,61 +35,48 @@ public class ThreatMeterController : MonoBehaviour
     private void Start()
     {
         // Set initial state
-        SetState(ThreatState.Safe, true);
+        SetVisualState(ThreatState.Safe, true);
     }
 
     private void Update()
     {
         // Determine the correct state
         ThreatState targetState;
-        if (CombatManager.Instance.IsPlayerInCombat)
-        {
-            targetState = ThreatState.Combat;
-        }
-        else if (EnemyManager.Instance.IsAnyEnemyAlerted())
-        {
-            targetState = ThreatState.Alert;
-        }
-        else
-        {
-            targetState = ThreatState.Safe;
-        }
+        if (CombatManager.Instance.IsPlayerInCombat) targetState = ThreatState.Combat;
+        else if (EnemyManager.Instance.IsAnyEnemyAlerted()) targetState = ThreatState.Alert;
+        else targetState = ThreatState.Safe;
 
-        // If the state needs to change, update the UI
         if (targetState != _currentState)
         {
-            SetState(targetState);
+            _currentState = targetState;
+
+            // This is the only line that should handle audio
+            AudioManager.Instance.SetThreatState(_currentState);
+
+            // This now only handles visuals
+            SetVisualState(_currentState);
         }
     }
 
-    private void SetState(ThreatState newState, bool instant = false)
+    private void SetVisualState(ThreatState newState, bool instant = false)
     {
-        if (_currentState == newState && !instant) return;
-
-        _currentState = newState;
-
         // Stop any previous looping animations
         if (_activeTween != null) _activeTween.Kill();
 
         float duration = instant ? 0f : fadeDuration;
 
         // --- HIDE INACTIVE ICONS ---
-        if (_currentState != ThreatState.Safe) _safeCG.DOFade(0f, duration);
-        if (_currentState != ThreatState.Alert) _alertCG.DOFade(0f, duration);
-        if (_currentState != ThreatState.Combat) _combatCG.DOFade(0f, duration);
+        _safeCG.DOFade((newState == ThreatState.Safe) ? 1f : 0f, duration);
+        _alertCG.DOFade((newState == ThreatState.Alert) ? 1f : 0f, duration);
+        _combatCG.DOFade((newState == ThreatState.Combat) ? 1f : 0f, duration);
 
         // --- SHOW AND ANIMATE THE ACTIVE ICON ---
         switch (newState)
         {
-            case ThreatState.Safe:
-                _safeCG.DOFade(1f, duration);
-                break;
             case ThreatState.Alert:
-                _alertCG.DOFade(1f, duration);
                 _activeTween = alertIcon.transform.DOShakeRotation(1f, new Vector3(0, 0, alertShakeStrength), 10, 90, false).SetLoops(-1);
                 break;
             case ThreatState.Combat:
-                _combatCG.DOFade(1f, duration);
                 _activeTween = combatIcon.transform.DOScale(combatPulseScale, combatPulseDuration).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
                 break;
         }

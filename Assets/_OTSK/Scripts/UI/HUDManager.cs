@@ -338,12 +338,12 @@ public class HUDManager : MonoBehaviour
         {
             chargePanel.SetActive(true);
             int currentCharges = _chargeManager.GetChargeCount(bow.ammoType);
-            Debug.Log($"<color=lightblue>[HUDManager]</color> HandleWeaponSwitched: Bow equipped. Getting charge count. Value is: {currentCharges}. Updating UI.");
+            //Debug.Log($"<color=lightblue>[HUDManager]</color> HandleWeaponSwitched: Bow equipped. Getting charge count. Value is: {currentCharges}. Updating UI.");
             UpdateChargeCount(bow.ammoType, _chargeManager.GetChargeCount(bow.ammoType));
         }
         else
         {
-            Debug.Log("<color=lightblue>[HUDManager]</color> HandleWeaponSwitched: Non-bow weapon equipped. Hiding charge panel.");
+            //Debug.Log("<color=lightblue>[HUDManager]</color> HandleWeaponSwitched: Non-bow weapon equipped. Hiding charge panel.");
             // Hide the ammo count for weapons that don't use it
             chargePanel.SetActive(false);
         }
@@ -355,7 +355,7 @@ public class HUDManager : MonoBehaviour
         // We can make it smarter to handle multiple ammo types later if needed.
         if (item.name == "Chargeable_Arrows") // A simple check to make sure we're updating the right text
         {
-            Debug.Log($"<color=lightblue>[HUDManager]</color> UpdateChargeCount event received. Setting charge text to: {count}.");
+            //Debug.Log($"<color=lightblue>[HUDManager]</color> UpdateChargeCount event received. Setting charge text to: {count}.");
             chargeCountText.text = $"Arrows: {count}";
         }
     }

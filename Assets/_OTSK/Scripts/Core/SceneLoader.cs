@@ -63,6 +63,7 @@ public class SceneLoader : MonoBehaviour
         GameManager.Instance.UpdateGameState(GameState.Loading);
         yield return new WaitForSeconds(fadeDuration);
 
+        if (AudioManager.Instance != null) AudioManager.Instance.StopMusic(fadeDuration);
         // 2. Load the Loading Scene
         yield return SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Additive);
 
@@ -103,6 +104,12 @@ public class SceneLoader : MonoBehaviour
         // --- FINALIZATION ---
         // The player will be spawned here, but the screen is still black.
         _currentlyLoadedScene = sceneToLoad;
+
+        // Set the default music for the newly loaded scene
+        if (AudioManager.Instance != null && _currentlyLoadedScene.sceneMusic != null)
+        {
+            AudioManager.Instance.SetSceneMusic(_currentlyLoadedScene.sceneMusic);
+        }
 
         //  Announce that the scene is loaded. Managers like ObjectiveManager will react to this.
         OnSceneLoadCompleted?.Invoke(_currentlyLoadedScene);// This will spawn the player

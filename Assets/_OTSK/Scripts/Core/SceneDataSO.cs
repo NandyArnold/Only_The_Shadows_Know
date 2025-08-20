@@ -51,6 +51,9 @@ public class SceneDataSO : ScriptableObject
     [Tooltip("Groups of enemies that can be spawned by in-game events.")]
     public List<SpawnGroup> enemyEventSpawns;
 
+    [Header("Audio")]
+    public AudioClip sceneMusic;
+
 
     // This special Unity method runs in the Editor whenever you change a value.
     private void OnValidate()
