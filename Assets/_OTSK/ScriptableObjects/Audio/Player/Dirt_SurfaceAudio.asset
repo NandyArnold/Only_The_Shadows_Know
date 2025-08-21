@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c785f750a56c5bf45a798a45ad6d8226, type: 3}
+  m_Name: Dirt_SurfaceAudio
+  m_EditorClassIdentifier: 
+  surface: 3
+  walkSound:
+    clips:
+    - {fileID: 8300000, guid: 2c254ca5d68bc3f41992cfb6babd0756, type: 3}
+    - {fileID: 8300000, guid: 7ae4446a91cbd4641a056f03364d83d4, type: 3}
+    - {fileID: 8300000, guid: e66bf4d3e15083c42b30fc545171acdd, type: 3}
+    - {fileID: 8300000, guid: 6f7282fc868f77d43b6d6f6fcd0619d9, type: 3}
+    minVolume: 0.503
+    maxVolume: 1
+    minPitch: 0.9
+    maxPitch: 1.1
+  runSound:
+    clips: []
+    minVolume: 0.898
+    maxVolume: 1
+    minPitch: 0.9
+    maxPitch: 1.1
+  crouchSound:
+    clips: []
+    minVolume: 0.8
+    maxVolume: 1
+    minPitch: 0.9
+    maxPitch: 1.1

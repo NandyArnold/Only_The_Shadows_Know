@@ -11708,6 +11708,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 416f9e9cc6010354787d9cc48eaee0c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundEffectPrefab: {fileID: 1419009546791984866, guid: 93f4006485dec914a81ceba2670a17dc, type: 3}
+  initialPoolSize: 20
 --- !u!114 &1837955080
 MonoBehaviour:
   m_ObjectHideFlags: 0

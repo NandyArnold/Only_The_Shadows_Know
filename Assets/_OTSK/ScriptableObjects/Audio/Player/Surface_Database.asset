@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bdc83b534087184bbc08f2534717efa, type: 3}
+  m_Name: Surface_Database
+  m_EditorClassIdentifier: 
+  surfaceAudioData:
+  - {fileID: 11400000, guid: da47633cdefe4c842bf37d7b72b7bec6, type: 2}
+  - {fileID: 11400000, guid: 052f7f8b6aa26864780cd409e4037b40, type: 2}
+  - {fileID: 11400000, guid: 61585479444d86a4dba93ab89f8eeae5, type: 2}
+  - {fileID: 11400000, guid: 067d1974624316b46b8369dc7d0557e7, type: 2}

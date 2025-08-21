@@ -9,7 +9,7 @@ public class ArrowProjectile : MonoBehaviour
     [SerializeField] private float lifeTime = 5f;
 
     [Header("Impact Settings")]
-    [SerializeField] private SurfaceAudioDataSO surfaceAudioData;
+    [SerializeField] private SurfaceAudioSO surfaceAudio;
     [SerializeField] private ImpactNoiseDataSO impactNoiseData;
 
     private Rigidbody _rb;
@@ -76,10 +76,10 @@ public class ArrowProjectile : MonoBehaviour
         {
             surfaceType = surface.surfaceType;
         }
-
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Get the correct sound data
-        var soundData = surfaceAudioData.GetSound(surfaceType);
-        SoundEffectManager.Instance.PlaySoundAtPoint(soundData.audioClip, transform.position);
+        //var soundData = surfaceAudio.GetSound(surfaceType);
+        //SoundEffectManager.Instance.PlaySoundAtPoint(soundData.audioClip, transform.position);
 
         // Get the correct noise data and generate the in-game noise
         float noiseIntensity = impactNoiseData.GetNoiseIntensity(surfaceType);

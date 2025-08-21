@@ -2219,6 +2219,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5542526034190857502}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5409467819871987632}
   m_SourcePrefab: {fileID: 100100000, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}
 --- !u!4 &160012044527519977 stripped
 Transform:
@@ -2661,6 +2664,7 @@ MonoBehaviour:
   jumpHeight: 1.5
   runningJumpHeight: 2.5
   gravity: -9.81
+  landingVelocityThreshold: -5
   aimSpeedMultiplier: 0.5
   normalHeight: 2
   normalCenterY: 1
@@ -2862,6 +2866,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: PlayerCharacterID1234
+--- !u!114 &5409467819871987632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257710320307730926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d7683a02082bdc4bab118a4ac656f5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovement: {fileID: 629505888469661623}
+  surfaceDatabase: {fileID: 11400000, guid: 6afb72cda32d70f488b18088a6ceff42, type: 2}
+  jumpGrunt: {fileID: 8300000, guid: 442d5ed6218ffaf4baf809216e033beb, type: 3}
+  runningJumpGrunt: {fileID: 8300000, guid: 33667de99fc78364ba80d1d1d9db72cf, type: 3}
+  dodgeGrunt: {fileID: 8300000, guid: 90c77f5212fa86e40b9164b90ebf2b8a, type: 3}
+  landSound: {fileID: 8300000, guid: 7da24104a5fc851479a1a4df1bf7389f, type: 3}
+  footstepPoint: {fileID: 4313145350801755303}
+  surfaceCheckRadius: 0.2
+  surfaceCheckDistance: 0.3
+  surfaceLayer:
+    serializedVersion: 2
+    m_Bits: 641
 --- !u!4 &5361356829297170697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8191740002585371210, guid: 64bca7f5ea66dca458f24430867df6ae, type: 3}

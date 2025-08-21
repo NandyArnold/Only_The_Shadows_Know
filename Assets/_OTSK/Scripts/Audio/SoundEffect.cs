@@ -1,34 +1,47 @@
+// SoundEffect.cs
 using UnityEngine;
 using System.Collections;
 
+// This ensures the GameObject will always have an AudioSource component.
 [RequireComponent(typeof(AudioSource))]
 public class SoundEffect : MonoBehaviour
 {
     private AudioSource _audioSource;
+    private Coroutine _returnCoroutine;
 
     private void Awake()
     {
+        // Get the AudioSource component on this GameObject.
         _audioSource = GetComponent<AudioSource>();
     }
 
-    // This is the main method the manager will call to play a sound.
-    public void Play(AudioClip clip, float volume = 1f, float pitch = 1f)
+    // This is the main method called by the SoundEffectManager.
+    public void Play(AudioClip clip, float volume, float pitch)
     {
+        // Configure the AudioSource with the provided settings.
         _audioSource.clip = clip;
         _audioSource.volume = volume;
         _audioSource.pitch = pitch;
+
+        // Play the sound.
         _audioSource.Play();
 
-        // Start a coroutine to automatically return this object to the pool.
-        StartCoroutine(ReturnToPoolAfterPlay());
+        // If a previous "return to pool" coroutine was running, stop it.
+        if (_returnCoroutine != null)
+        {
+            StopCoroutine(_returnCoroutine);
+        }
+
+        // Start a new coroutine to return this object to the pool after the clip finishes.
+        _returnCoroutine = StartCoroutine(ReturnToPoolAfterDelay(clip.length));
     }
 
-    private IEnumerator ReturnToPoolAfterPlay()
+    private IEnumerator ReturnToPoolAfterDelay(float delay)
     {
-        // Wait for the length of the audio clip.
-        yield return new WaitForSeconds(_audioSource.clip.length);
+        // Wait for the duration of the audio clip.
+        yield return new WaitForSeconds(delay);
 
-        // Tell the manager that this object is now available.
+        // Tell the manager to take this object back.
         SoundEffectManager.Instance.ReturnToPool(this);
     }
 }

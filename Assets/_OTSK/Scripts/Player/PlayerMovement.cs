@@ -1,10 +1,28 @@
 using UnityEngine;
 using System.Collections;
-
+using System;
 public enum LocomotionState { Idle, Walk, Run, CrouchWalk, Jump, DodgeRoll }
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    public event Action OnJump;
+    public event Action OnDodge;
+    public event Action OnLand;
+
+    public LocomotionState CurrentLocomotionState
+    {
+        get
+        {
+            if (_isCrouching && _moveInput.magnitude > 0.1f) return LocomotionState.CrouchWalk;
+            if (_isRunning) return LocomotionState.Run;
+            if (_moveInput.magnitude > 0.1f) return LocomotionState.Walk;
+            return LocomotionState.Idle;
+        }
+    }
+
+
+
     [Header("References")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlayerAnimationController playerAnimationController;
@@ -25,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float runningJumpHeight = 2.5f;
     [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float landingVelocityThreshold = -5f;
     [SerializeField] private float aimSpeedMultiplier = 0.5f;
 
     [Header("Character Controller Settings")]
@@ -135,6 +154,10 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         ApplyGravity();
+
+        HandleGrounding(); 
+        HandleLandingEffects();
+
         HandlePlayerRotation();
         HandleContinuousNoise();
 
@@ -148,14 +171,19 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        CheckIfGrounded();
+        //CheckIfGrounded();
         HandleMovement();
        
     }
-
-    private void CheckIfGrounded()
+    private void LateUpdate()
     {
-        bool isGroundedNow = Physics.SphereCast(
+        // We update the _wasGrounded state at the end of the frame
+        _wasGrounded = _isGrounded;
+    }
+
+    private void HandleGrounding()
+    {
+        _isGrounded = Physics.SphereCast(
             groundCheckPoint.position,
             groundCheckRadius,
             Vector3.down,
@@ -165,16 +193,53 @@ public class PlayerMovement : MonoBehaviour
             QueryTriggerInteraction.Ignore
         );
 
-        if (!_wasGrounded && isGroundedNow)
+        // If we are on the ground, we can reset the jump state.
+        // This is now independent of the landing sound velocity.
+        if (_isGrounded)
         {
-            NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
             _isJumping = false;
         }
-
-        _isGrounded = isGroundedNow;
-        _wasGrounded = isGroundedNow;
-
     }
+
+    // --- NEW METHOD: Handles only the aesthetic landing effects (sound/noise) ---
+    private void HandleLandingEffects()
+    {
+        // Check if we were in the air last frame but are on the ground now.
+        if (!_wasGrounded && _isGrounded)
+        {
+            // Only trigger effects if the fall was hard enough.
+            if (_velocity.y < landingVelocityThreshold)
+            {
+                OnLand?.Invoke();
+                NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
+            }
+        }
+    }
+
+    //private void CheckIfGrounded()
+    //{
+    //    bool isGroundedNow = Physics.SphereCast(
+    //        groundCheckPoint.position,
+    //        groundCheckRadius,
+    //        Vector3.down,
+    //        out RaycastHit hitInfo,
+    //        groundCastDistance,
+    //        groundLayer,
+    //        QueryTriggerInteraction.Ignore
+    //    );
+
+    //    if (!_wasGrounded && isGroundedNow && _velocity.y < landingVelocityThreshold)
+    //    {
+    //        // This block now only runs after a significant fall
+    //        OnLand?.Invoke();
+    //        NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
+    //        _isJumping = false;
+    //    }
+
+    //    _isGrounded = isGroundedNow;
+    //    _wasGrounded = isGroundedNow;
+
+    //}
     // This is now the entry point for a single-press jump
 
 
@@ -182,6 +247,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // All of your original guard clauses are here, making it safe.
         if (_isJumping || _isFocused || _isDodgeRolling || !_isGrounded) return;
+        OnJump?.Invoke();
 
         _isJumping = true; // Set the lock
 
@@ -217,6 +283,7 @@ public class PlayerMovement : MonoBehaviour
       
         if (_isDodgeRolling || _isJumping || _isFocused || !_isGrounded) return;
 
+        OnDodge?.Invoke();  
         NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.dodgeRollNoise, gameObject);
         StartCoroutine(DodgeRollCoroutine());
     }
