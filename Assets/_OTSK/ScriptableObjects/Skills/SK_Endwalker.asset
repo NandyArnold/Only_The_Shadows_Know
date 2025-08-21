@@ -19,7 +19,7 @@ MonoBehaviour:
   description: Step into the realm of death to hide or move past enemies. Careful
     not staying too much as wandering souls will take over your body. Some enemies
     like Undead can see in the  realm of death. Can't be used in combat
-  manaCost: 50
+  manaCost: 0
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
