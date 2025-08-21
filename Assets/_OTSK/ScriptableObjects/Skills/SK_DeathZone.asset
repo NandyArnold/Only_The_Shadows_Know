@@ -17,10 +17,11 @@ MonoBehaviour:
   skillName: Death Zone
   icon: {fileID: 21300000, guid: 45b68c8316432934fbf482e311cbb736, type: 3}
   description: 
-  manaCost: 10
+  manaCost: 0
   cooldown: 0
   manaCostOverTime: 0
   usageCondition: 2
   castMode: 2
+  keybindText: 
   lockMovementWhileCasting: 1
   skillEffectData: {fileID: 11400000, guid: fa9ae86b6db9026468c953b5b3bb4baa, type: 2}

@@ -17,8 +17,18 @@ public class DeathZoneEffectSO : SkillEffectSO
     [Header("Damage Profile")]
     [SerializeField] private List<DamageInstance> damageProfile;
 
-   
 
+    [Header("Audio Settings")]
+    [Tooltip("The main looping sound for the channel.")]
+    [SerializeField] private AudioClip channelLoopSound;
+    [Tooltip("The sound that plays when the channel successfully finishes.")]
+    [SerializeField] private SoundDefinition finisherSound; // We can use our one-shot system for this!
+
+    [Header("Audio Stretching Workaround")]
+    [Tooltip("At what point during the channel (0 to 1) should the audio ramp up to normal speed?")]
+    [Range(0f, 1f)][SerializeField] private float audioRampUpPoint = 0.7f;
+    [Tooltip("The pitch (speed) of the audio during the 'stretched' part of the channel.")]
+    [SerializeField] private float stretchedAudioPitch = 0.5f;
 
     public float MaxTargetingRange => maxTargetingRange;
     public LayerMask TargetLayers => targetLayers;
@@ -42,7 +52,7 @@ public class DeathZoneEffectSO : SkillEffectSO
         }
 
         _targetEnemyHealth = target.GetComponent<EnemyHealth>();
-
+        AudioManager.Instance.PlayChanneledSound(channelLoopSound);
         if (_targetEnemyHealth == null)
         {
             Debug.Log("Death Zone failed: No valid target in range.");
@@ -66,14 +76,14 @@ public class DeathZoneEffectSO : SkillEffectSO
                 }
             }
 
-            float channelTimer = 0f;
+        float channelTimer = 0f;
         while (channelTimer < channelDuration)
         {
             // Check if the target is still valid every frame
             if (_targetEnemyHealth == null || Vector3.Distance(caster.transform.position, _targetEnemyHealth.transform.position) > maxTargetingRange)
             {
                 Debug.Log("Death Zone cancelled: Target moved out of range.");
-                    
+                    caster.GetComponent<PlayerAnimationController>().CancelCurrentAnimation();
                     yield break; // Exit the coroutine, the finally block will handle cleanup
             }
 
@@ -83,8 +93,23 @@ public class DeathZoneEffectSO : SkillEffectSO
             if (Physics.Linecast(playerEyes.position, enemyCenter, caster.GetComponent<PlayerCombat>().CurrentWeapon.LineOfSightBlockingLayers))
             {
                 Debug.Log("Death Zone cancelled: Line of sight broken.");
-                   
+                    caster.GetComponent<PlayerAnimationController>().CancelCurrentAnimation();
                     yield break; // Exit the coroutine
+            }
+
+            float channelProgress = channelTimer / channelDuration;
+            if (channelProgress < audioRampUpPoint)
+            {
+                // We are in the "stretched" part of the audio
+                AudioManager.Instance.SetChanneledSoundPitch(stretchedAudioPitch);
+            }
+            else
+            {
+                // We are in the final "ramp up" part of the audio
+                // We can smoothly increase the pitch back to normal
+                float rampUpProgress = (channelProgress - audioRampUpPoint) / (1 - audioRampUpPoint);
+                float currentPitch = Mathf.Lerp(stretchedAudioPitch, 1f, rampUpProgress);
+                AudioManager.Instance.SetChanneledSoundPitch(currentPitch);
             }
 
             channelTimer += Time.deltaTime;
@@ -93,12 +118,15 @@ public class DeathZoneEffectSO : SkillEffectSO
         
         // If the loop completes, execute the finisher
         Debug.Log($"<color=purple>Death Zone Finisher</color> on {_targetEnemyHealth.name}!");
-        _targetEnemyHealth.TakeDamage(damageProfile, caster, true); // Pass 'true' for silent kill
+            finisherSound.Play(caster.transform);
+
+            _targetEnemyHealth.TakeDamage(damageProfile, caster, true); // Pass 'true' for silent kill
         }
         finally
         {
             // 6. This code will run NO MATTER WHAT (success, failure, or player cancellation).
             // It tells the controller that the channel is over, which will trigger StopChannel().
+            AudioManager.Instance.StopChanneledSound();
             caster.GetComponent<PlayerSkillController>().CancelChannel();
         }
     }
@@ -111,7 +139,7 @@ public class DeathZoneEffectSO : SkillEffectSO
             Destroy(_vfxInstance);
         }
         _targetEnemyHealth = null;
-        caster.GetComponent<PlayerAnimationController>().CancelCurrentAnimation();
+        //caster.GetComponent<PlayerAnimationController>().CancelCurrentAnimation();
 
         Debug.Log("Stopped channeling Death Zone.");
     }

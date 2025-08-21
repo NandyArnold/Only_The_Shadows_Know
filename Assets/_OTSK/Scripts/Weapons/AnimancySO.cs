@@ -24,10 +24,20 @@ public class AnimancySO : WeaponSO
     [SerializeField] private List<EnemyType> vulnerableToExecution;
     [SerializeField] private List<DamageInstance> executionDamageProfile;
 
+
+    [Header("Animancy Specific Audio")]
+    [Tooltip("Sound for the ranged beam attack (LMB)")]
+    public SoundDefinition primaryAttackSound;
+    [Tooltip("Sound for the melee spell attack (RMB)")]
+    public SoundDefinition secondaryAttackSound;
+    [Tooltip("Sound for activating the Death Zone skill (MMB)")]
+    public SoundDefinition tertiaryAttackSound;
+
     // Ranged Soul Sever (LMB)
     public override void PrimaryAttack(PlayerCombat combatController)
     {
-         combatController.PlayerAnimationController.TriggerPrimaryAttack();
+        primaryAttackSound.Play(combatController.transform);
+        combatController.PlayerAnimationController.TriggerPrimaryAttack();
          NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 
          Transform firePoint = combatController.FirePoint;
@@ -96,6 +106,7 @@ public class AnimancySO : WeaponSO
     // Melee Soul Sever (RMB)
     public override void SecondaryAttack(PlayerCombat combatController)
     {
+        secondaryAttackSound.Play(combatController.transform);
         combatController.PlayerAnimationController.TriggerSecondaryAttack();
         NoiseManager.Instance.GenerateNoise(combatController.transform.position, combatController.NoiseSettings.daggerAttackNoise, combatController.gameObject);
 

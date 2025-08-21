@@ -15,6 +15,8 @@ public class AudioManager : MonoBehaviour
     //[SerializeField] private AudioSource musicSourceC;
     [SerializeField] private AudioSource uiSfxSource;
     [SerializeField] private List<AudioSource> ambienceSources;
+    [SerializeField] private AudioSource channelSfxSource;
+
 
     [Header("Priority Music")]
     [SerializeField] private AudioClip alertMusic;
@@ -54,6 +56,35 @@ public class AudioManager : MonoBehaviour
 
         _activeMusicSource = musicSourceA;
 
+    }
+
+    public void PlayChanneledSound(AudioClip clip)
+    {
+        if (channelSfxSource == null || clip == null) return;
+
+        channelSfxSource.clip = clip;
+        channelSfxSource.loop = true;
+        channelSfxSource.pitch = 1f; // Ensure pitch is normal at the start
+        channelSfxSource.Play();
+    }
+
+    // Call this to change the pitch, creating the "stretch" effect
+    public void SetChanneledSoundPitch(float pitch)
+    {
+        if (channelSfxSource != null && channelSfxSource.isPlaying)
+        {
+            channelSfxSource.pitch = pitch;
+        }
+    }
+
+    // Call this to stop the sound immediately
+    public void StopChanneledSound()
+    {
+        if (channelSfxSource != null)
+        {
+            channelSfxSource.Stop();
+            channelSfxSource.clip = null;
+        }
     }
 
     // --- Music Control ---

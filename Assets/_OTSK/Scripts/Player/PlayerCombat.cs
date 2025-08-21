@@ -333,13 +333,14 @@ public class PlayerCombat : MonoBehaviour
     private void HandleTertiaryAttack()
     {
         // Check if the currently equipped weapon is Animancy
-        if (_currentWeapon is AnimancySO)
+        if (_currentWeapon is AnimancySO animancyWeapon)
         {
             // Ask this script's own method if there's a valid target
             Enemy target = GetPotentialDeathZoneTarget();
             if (target != null)
             {
-                // If there is a target, play the animation...
+                // If there is a target, play the animation and sound 
+                animancyWeapon.tertiaryAttackSound.Play(transform);
                 bool wasSuccessfullyActivated = playerSkillController.TryActivateSkill(SkillIdentifier.DeathZone, target);
 
                 // Only play the animation IF the skill was successfully activated.

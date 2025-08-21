@@ -21,3 +21,12 @@ MonoBehaviour:
   damageProfile:
   - DamageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
     Value: 1
+  channelLoopSound: {fileID: 8300000, guid: 2cbf3fac93d34ec4491fd8aa400b01ff, type: 3}
+  finisherSound:
+    clips: []
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  audioRampUpPoint: 0.7
+  stretchedAudioPitch: 0.5
