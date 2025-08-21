@@ -12,6 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcd64ab060d71f41a7acbbddc6ef137, type: 3}
   m_Name: FX_SpectralShift
   m_EditorClassIdentifier: 
+  audioProfile:
+    castStartSound:
+      clips:
+      - {fileID: 8300000, guid: 726c4d005bd892a468f8e125980c2099, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
+    channelLoopSound: {fileID: 8300000, guid: c3cdda3a8edf5ab4e949400f60d90507, type: 3}
+    loopStartDelay: 0
+    channelVolume: 0.8
+    channelPitch: 1
+    loopFadeInDuration: 0.5
+    loopFadeOutDuration: 0.5
+    castEndSound:
+      clips:
+      - {fileID: 8300000, guid: 4dd13322233756f4fa833746555308ca, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
   targetingIndicatorPrefab: {fileID: 7527345028319761921, guid: 10e7ca9ee95815a449a0f3c5c33a82d4, type: 3}
   indicatorHeightOffset: 9
   maxTargetingDistance: 50
@@ -23,4 +44,11 @@ MonoBehaviour:
     m_Bits: 375
   startCastDuration: 0.5
   confirmCastDuration: 0.5
+  invalidTargetSound:
+    clips:
+    - {fileID: 8300000, guid: 5e70f62e858da6d48b5dfa97e54c42bf, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
   maxPlayerTeleportRange: 15

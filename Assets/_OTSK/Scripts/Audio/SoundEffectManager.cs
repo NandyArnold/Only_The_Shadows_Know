@@ -10,6 +10,7 @@ public class SoundEffectManager : MonoBehaviour
     [SerializeField] private int initialPoolSize = 20;
 
     private Queue<SoundEffect> _soundEffectPool;
+    private bool _isEndwalkerActive = false;
 
     private void Awake()
     {
@@ -31,9 +32,19 @@ public class SoundEffectManager : MonoBehaviour
         }
     }
 
-    // This is the new, primary method for playing sounds.
-    public void PlaySoundAtPoint(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f)
+    public void SetEndwalkerState(bool isActive)
     {
+        _isEndwalkerActive = isActive;
+    }
+
+    // This is the new, primary method for playing sounds.
+    public void PlaySoundAtPoint(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f, SoundCategory category = SoundCategory.Normal)
+    {
+        if (_isEndwalkerActive && category == SoundCategory.Normal)
+        {
+            return; // Mute the sound
+        }
+
         if (clip == null) return;
 
         // Get an object from the pool.

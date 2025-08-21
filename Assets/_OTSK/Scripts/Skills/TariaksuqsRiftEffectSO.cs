@@ -14,6 +14,10 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     [Header("VFX Settings")] // NEW
     [SerializeField] private float vfxLingerDuration = 2f;
 
+    [Header("Specific Audio")]
+    [Tooltip("Sound that plays when the rift is cancelled manually or by another skill.")]
+    public SoundDefinition cancelSound;
+
     // Static variables hold the state across all uses of this skill.
     private static Vector3? _riftPosition = null;
     private static GameObject _riftInstance;
@@ -53,6 +57,9 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     }
     private IEnumerator PlaceRiftRoutine(GameObject caster)
     {
+
+        audioProfile.castStartSound.Play(caster.transform);
+
         var combatController = caster.GetComponent<PlayerCombat>();
         var animController = caster.GetComponent<PlayerAnimationController>();
         var movementController = caster.GetComponent<PlayerMovement>();
@@ -85,6 +92,7 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     // NEW: Coroutine for the "Teleport to Rift" action
     private IEnumerator TeleportToRiftRoutine(GameObject caster)
     {
+        audioProfile.castEndSound.Play(caster.transform);
         var combatController = caster.GetComponent<PlayerCombat>();
         var animController = caster.GetComponent<PlayerAnimationController>();
         var movementController = caster.GetComponent<PlayerMovement>();
@@ -111,6 +119,17 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
 
     public static void CancelRift()
     {
+
+        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        {
+            // Find the skill on the player to get its unique sound data
+            var skill = GameManager.Instance.Player.GetComponent<PlayerSkillController>()?.GetSkill(SkillIdentifier.TariaksuqsRift);
+            if (skill != null && skill.skillEffectData is TariaksuqsRiftEffectSO riftEffect)
+            {
+                riftEffect.cancelSound.Play(GameManager.Instance.Player.transform);
+            }
+        }
+
         if (_riftInstance != null)
         {
             Destroy(_riftInstance);

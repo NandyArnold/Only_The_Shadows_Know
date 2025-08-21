@@ -34,17 +34,9 @@ public class SkillAudioController : MonoBehaviour
     {
         if (_currentProfile == null) return;
 
-        // Stop the loop-starting coroutine if it's running.
-        if (_loopCoroutine != null)
-        {
-            StopCoroutine(_loopCoroutine);
-            _loopCoroutine = null;
-        }
+        StopLoopOnly(); // Call the new method to stop the loop
 
-        // Tell the AudioManager to stop the looping sound.
-        AudioManager.Instance.StopChanneledSound(_currentProfile.loopFadeOutDuration);
-
-        // Play the final one-shot sound.
+        // Then, play the final one-shot sound
         _currentProfile.castEndSound.Play(_currentEmitter);
 
         _currentProfile = null;
@@ -62,5 +54,18 @@ public class SkillAudioController : MonoBehaviour
          _currentProfile.channelPitch,
          _currentProfile.loopFadeInDuration
      );
+    }
+    public void StopLoopOnly()
+    {
+        if (_currentProfile == null) return;
+
+        if (_loopCoroutine != null)
+        {
+            StopCoroutine(_loopCoroutine);
+            _loopCoroutine = null;
+        }
+
+        // Only stop the looping sound, do NOT play the end sound
+        AudioManager.Instance.StopChanneledSound(_currentProfile.loopFadeOutDuration);
     }
 }

@@ -15728,6 +15728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3130ff19a5b18354ea918f2b0f1ff7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: 0
   ambientClip: {fileID: 8300000, guid: e9ac1373c9ffc564296bc96668cf6cf1, type: 3}
   targetVolume: 0.083
   fadeInDuration: 1
@@ -19158,6 +19159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3130ff19a5b18354ea918f2b0f1ff7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: 1
   ambientClip: {fileID: 8300000, guid: dde124d0b58edfb42bdebf1f15969054, type: 3}
   targetVolume: 0.8
   fadeInDuration: 2

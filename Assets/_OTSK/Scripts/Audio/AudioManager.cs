@@ -1,9 +1,13 @@
-using UnityEngine;
+using DG.Tweening; // We'll use DOTween for smooth fading
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening; // We'll use DOTween for smooth fading
-
-
+using UnityEngine;
+using UnityEngine.Audio;
+public struct AmbienceData
+{
+    public AmbienceCategory category;
+    public float targetVolume;
+}
 
 public class AudioManager : MonoBehaviour
 {
@@ -16,6 +20,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource uiSfxSource;
     [SerializeField] private List<AudioSource> ambienceSources;
     [SerializeField] private AudioSource channelSfxSource;
+    [SerializeField] private AudioSource overrideAmbienceSource;
+
+    private readonly Dictionary<AudioSource, AmbienceCategory> _activeAmbienceCategories = new Dictionary<AudioSource, AmbienceCategory>();
+    private readonly Dictionary<AudioSource, AmbienceData> _activeAmbienceSounds = new Dictionary<AudioSource, AmbienceData>();
+
+    private bool _isNormalAmbienceMuted = false;
+    private bool _isNormalMusicMuted = false;
+
     private Tween _channelFadeTween;
 
 
@@ -27,8 +39,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip gameOverMusic;
     [SerializeField][Range(0f, 1f)] private float gameOverMusicVolume = 1f;
 
-   
+    [Header("Audio Mixing")]
+    [SerializeField] private AudioMixer gameMixer;
+    [SerializeField] private AudioMixerSnapshot normalMix;
+    [SerializeField] private AudioMixerSnapshot combatMix;
+    [SerializeField] private float mixTransitionDuration = 1.0f;
 
+
+    private AudioClip _musicBeforeMute;
+    private float _volumeBeforeMute;
 
     private AudioSource _activeMusicSource;
     private ThreatState _currentThreatState = ThreatState.Safe;
@@ -164,8 +183,15 @@ public class AudioManager : MonoBehaviour
         UpdateMusic();
     }
 
-    public void SetOverrideMusic(AudioClip overrideClip, float volume)
+    public void SetOverrideMusic(AudioClip overrideClip, float volume, MusicCategory category)
     {
+        // --- THE GATEKEEPER LOGIC ---
+        // If normal music is muted AND this is a Normal category track, do nothing.
+        if (_isNormalMusicMuted && category == MusicCategory.Normal)
+        {
+            return; // Ignore the request
+        }
+
         _overrideMusic = overrideClip;
         _overrideMusicVolume = volume;
         UpdateMusic();
@@ -176,13 +202,47 @@ public class AudioManager : MonoBehaviour
         _overrideMusic = null;
         UpdateMusic();
     }
+    public void MuteNormalMusic(bool isMuted, float fadeDuration)
+    {
+        _isNormalMusicMuted = isMuted;
+        if (isMuted && _activeMusicSource.isPlaying)
+        {
+            // --- ADD THIS: Remember what was playing before muting ---
+            _musicBeforeMute = _activeMusicSource.clip;
+            _volumeBeforeMute = _activeMusicSource.volume; // Store the current volume
+
+            _activeMusicSource.DOFade(0, fadeDuration);
+        }
+    }
+    public void RestoreNormalMusic(float fadeDuration)
+    {
+        // Unmute the music system
+        _isNormalMusicMuted = false;
+
+        // If we have a track to restore, play it
+        if (_musicBeforeMute != null)
+        {
+            FadeBetweenMusic(_musicBeforeMute, _volumeBeforeMute, fadeDuration);
+            _musicBeforeMute = null; // Clear the memory
+        }
+    }
     public void SetThreatState(ThreatState newState)
     {
         if (_currentThreatState == newState) return;
         _currentThreatState = newState;
         UpdateMusic();
-        if (newState == ThreatState.Safe) FadeInAllAmbience();
-        else FadeOutAllAmbience();
+        if (newState == ThreatState.Safe)
+        {
+            // Transition to the normal mix
+            normalMix.TransitionTo(mixTransitionDuration);
+            FadeInAllAmbience();
+        }
+        else
+        {
+            // Transition to the combat mix
+            combatMix.TransitionTo(mixTransitionDuration);
+            FadeOutAllAmbience();
+        }
     }
     private void UpdateMusic()
     {
@@ -206,8 +266,13 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public void EnterAmbienceZone(AudioClip clip, float volume, float fadeDuration)
+    public void EnterAmbienceZone(AudioClip clip, float volume, float fadeDuration, AmbienceCategory category)
     {
+        // If normal ambience is muted AND this is a Normal category zone, do nothing.
+        if (_isNormalAmbienceMuted && category == AmbienceCategory.Normal)
+        {
+            return; // Ignore the request to start this ambient sound
+        }
         // First, check if this sound is already playing to avoid duplicates
         foreach (var source in ambienceSources)
         {
@@ -223,6 +288,8 @@ public class AudioManager : MonoBehaviour
         AudioSource availableSource = GetAvailableAmbienceSource();
         if (availableSource != null)
         {
+            _activeAmbienceSounds[availableSource] = new AmbienceData { category = category, targetVolume = volume };
+
             availableSource.clip = clip;
             availableSource.volume = 0;
             availableSource.loop = true;
@@ -246,8 +313,41 @@ public class AudioManager : MonoBehaviour
                 source.DOFade(0, fadeDuration).OnComplete(() => {
                     source.Stop();
                     source.clip = null; // Frees up the source for the pool
+                                        // --- REMOVE FROM DICTIONARY ---
+                    _activeAmbienceSounds.Remove(source);
                 });
                 return;
+            }
+        }
+    }
+
+    public void MuteNormalAmbience(float fadeDuration)
+    {
+        
+        // We now iterate through the correct dictionary that holds all active sounds.
+        foreach (var activeSound in _activeAmbienceSounds)
+        {
+            // Check the 'category' from the AmbienceData struct
+            if (activeSound.Value.category == AmbienceCategory.Normal)
+            {
+                // Fade out the AudioSource
+                activeSound.Key.DOFade(0, fadeDuration);
+            }
+        }
+    }
+    public void RestoreNormalAmbience(float fadeDuration)
+    {
+        // Now that we're leaving Endwalker, unmute normal ambience
+        _isNormalAmbienceMuted = false;
+
+        // Check all active sounds
+        foreach (var activeSound in _activeAmbienceSounds)
+        {
+            // If we find one that is "Normal"...
+            if (activeSound.Value.category == AmbienceCategory.Normal)
+            {
+                // ...fade it back in to its original target volume.
+                activeSound.Key.DOFade(activeSound.Value.targetVolume, fadeDuration);
             }
         }
     }
@@ -266,9 +366,10 @@ public class AudioManager : MonoBehaviour
         return null;
     }
 
-    
+
     private void FadeOutAllAmbience(float duration = 0.5f)
     {
+        // This now correctly iterates through the source pool
         foreach (var source in ambienceSources)
         {
             if (source.isPlaying)
@@ -280,12 +381,12 @@ public class AudioManager : MonoBehaviour
     }
     private void FadeInAllAmbience(float duration = 1.0f)
     {
-        // This method is tricky now. We don't know the target volume for each sound.
-        // For now, let's leave this blank as the Enter/Exit logic handles fading.
-        // A more complex system could store the target volume for each active sound.
+        // This method is no longer needed in the new system, as zones are
+        // faded in individually by EnterAmbienceZone. 
+        // We leave it empty to prevent errors.
     }
 
-    
+
 
     public void StopMusic(float fadeDuration = 0.5f)
     {
@@ -318,5 +419,29 @@ public class AudioManager : MonoBehaviour
     public bool IsSafe()
     {
         return _currentThreatState == ThreatState.Safe && !_isGameOver;
+    }
+
+    public void PlayOverrideAmbience(AudioClip clip, float volume, float fadeIn)
+    {
+        if (overrideAmbienceSource == null || clip == null) return;
+
+        _isNormalAmbienceMuted = true;
+        MuteNormalAmbience(fadeIn);
+
+        overrideAmbienceSource.clip = clip;
+        overrideAmbienceSource.loop = true;
+        overrideAmbienceSource.volume = 0;
+        overrideAmbienceSource.Play();
+        overrideAmbienceSource.DOFade(volume, fadeIn);
+    }
+
+    public void StopOverrideAmbience(float fadeOut)
+    {
+        if (overrideAmbienceSource == null || !overrideAmbienceSource.isPlaying) return;
+
+        // Fade out the Endwalker ambience
+        overrideAmbienceSource.DOFade(0, fadeOut).OnComplete(() => overrideAmbienceSource.Stop());
+        RestoreNormalAmbience(fadeOut);
+        
     }
 }

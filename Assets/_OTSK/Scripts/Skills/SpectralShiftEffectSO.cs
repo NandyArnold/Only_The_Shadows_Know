@@ -22,7 +22,9 @@ public class SpectralShiftEffectSO : SkillEffectSO
     [SerializeField] private float startCastDuration = 0.5f;
     [SerializeField] private float confirmCastDuration = 0.3f;
 
-   
+    [Header("Specific Audio")]
+    [Tooltip("Sound to play when the player tries to confirm an invalid target location.")]
+    public SoundDefinition invalidTargetSound;
 
     [Header("Skill Constraints")]
     [SerializeField] private float maxPlayerTeleportRange = 25f;
@@ -46,6 +48,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
         var cameraController = caster.GetComponent<CameraController>();
         var animController = caster.GetComponent<PlayerAnimationController>();
         var skillController = caster.GetComponent<PlayerSkillController>();
+        var audioController = caster.GetComponent<SkillAudioController>();
 
         TargetingIndicator indicator = null;
         Coroutine indicatorUpdateRoutine = null;
@@ -57,20 +60,31 @@ public class SpectralShiftEffectSO : SkillEffectSO
         Action onConfirm = () => {
             if (indicator != null && indicator.IsValid)
             {
+                audioController?.StopLoopOnly();
                 confirmed = true;
                 isTargeting = false;
             }
             else
             {
-                // Optional: Play a "fail" sound or show a UI message
+                //  Play a "fail" sound or show a UI message
+                invalidTargetSound.Play(caster.transform);
                 Debug.Log("Confirm failed: Target not valid.");
             }
         };
-        Action onCancel = () => isTargeting = false;
-        Action<float> onCycleMode = (scrollValue) => {
+
+        Action onCancel = () =>
+        {
+            // CANCELLATION: Stop the targeting loop.
+            audioController?.StopLoopOnly();
+            isTargeting = false;
+        };
+        
+        Action<float> onCycleMode = (scrollValue) =>
+        {
             if (scrollValue > 0) currentMode = TargetingMode.High;
             else if (scrollValue < 0) currentMode = TargetingMode.Low;
         };
+        
 
         playerInput.OnConfirmInput += onConfirm;
         playerInput.OnCancelInput += onCancel;
@@ -78,6 +92,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
 
         try
         {
+            audioController?.Play(audioProfile, caster.transform);
             Debug.Log("TargetingRoutine: START. Entering TRY block.");
             animController.SetSpectralState(1);
             cameraController.SwitchToCamera(CameraType.Targeting);
@@ -99,6 +114,7 @@ public class SpectralShiftEffectSO : SkillEffectSO
         }
         finally
         {
+            audioController?.StopLoopOnly();
             Debug.Log("TargetingRoutine: FINALLY block executed.");
             // CLEANUP: This block now ONLY handles cleanup. It does NOT call CancelChannel.
             if (indicatorUpdateRoutine != null) skillController.StopCoroutine(indicatorUpdateRoutine);
@@ -119,10 +135,10 @@ public class SpectralShiftEffectSO : SkillEffectSO
             Debug.Log("TargetingRoutine: Target CONFIRMED. Playing state 3.");
             animController.SetSpectralState(3);
             yield return new WaitForSeconds(confirmCastDuration);
+            audioProfile.castEndSound.Play(caster.transform);
 
-            caster.GetComponent<PlayerStats>().ConsumeMana(
-           caster.GetComponent<PlayerSkillController>().GetSkill(SkillIdentifier.SpectralShift).manaCost
-       );
+           caster.GetComponent<PlayerStats>().ConsumeMana(
+           caster.GetComponent<PlayerSkillController>().GetSkill(SkillIdentifier.SpectralShift).manaCost);
 
             var cc = caster.GetComponent<CharacterController>();
             TeleportManager.Instance.ExecuteTeleport(cc, validTeleportPosition);

@@ -12,7 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34322dd00da1a0b4e80cecf451d5db26, type: 3}
   m_Name: FX_TariaksuqsRift
   m_EditorClassIdentifier: 
+  audioProfile:
+    castStartSound:
+      category: 0
+      clips:
+      - {fileID: 8300000, guid: a67c42a7b5618f74fa04d6f7c86f8055, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
+    channelLoopSound: {fileID: 0}
+    loopStartDelay: 0
+    channelVolume: 0.8
+    channelPitch: 1
+    loopFadeInDuration: 0.5
+    loopFadeOutDuration: 0.5
+    castEndSound:
+      category: 0
+      clips:
+      - {fileID: 8300000, guid: 890d6bacb47798e40930626fafb93596, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
   riftMarkerPrefab: {fileID: 2896813399296741940, guid: dda5dc777783d1b4a97d8db3aa17b15d, type: 3}
   maxTeleportRange: 15
   castAnimationDuration: 1
   vfxLingerDuration: 1
+  cancelSound:
+    category: 0
+    clips:
+    - {fileID: 8300000, guid: 80b6516a24fc4c846a872b93c6ece9c2, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05

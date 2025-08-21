@@ -12,3 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e77db903056f4b42a8acd1da35dece3, type: 3}
   m_Name: FX_Endwalker
   m_EditorClassIdentifier: 
+  audioProfile:
+    castStartSound:
+      category: 0
+      clips: []
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
+    channelLoopSound: {fileID: 8300000, guid: 545b1b60ea3fa8044be0c51c097c99bd, type: 3}
+    loopStartDelay: 0
+    channelVolume: 0.8
+    channelPitch: 1
+    loopFadeInDuration: 1
+    loopFadeOutDuration: 0.5
+    castEndSound:
+      category: 0
+      clips: []
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05

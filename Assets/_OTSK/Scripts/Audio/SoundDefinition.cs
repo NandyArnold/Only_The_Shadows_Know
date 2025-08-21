@@ -4,6 +4,11 @@ using UnityEngine;
 [System.Serializable]
 public class SoundDefinition
 {
+
+    [Tooltip("Which audio world this sound belongs to. 'Normal' sounds will be muted during Endwalker.")]
+    public SoundCategory category = SoundCategory.Normal;
+
+
     public AudioClip[] clips;
 
     [Range(0f, 1f)] public float minVolume = 0.9f;
@@ -29,6 +34,6 @@ public class SoundDefinition
         float randomVolume = Random.Range(minVolume, maxVolume);
         float randomPitch = Random.Range(minPitch, maxPitch);
 
-        SoundEffectManager.Instance.PlaySoundAtPoint(randomClip, emitter.position, randomVolume, randomPitch);
+        SoundEffectManager.Instance.PlaySoundAtPoint(randomClip, emitter.position, randomVolume, randomPitch, category);
     }
 }
