@@ -8,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public abstract class SkillEffectSO : ScriptableObject
 {
+    [Header("Audio")]
+    public SkillAudioProfile audioProfile;
     // The main method that gets called to activate the skill's logic.
     // We pass the "caster" so the effect knows who is performing the skill.
     public abstract void Activate(GameObject caster);

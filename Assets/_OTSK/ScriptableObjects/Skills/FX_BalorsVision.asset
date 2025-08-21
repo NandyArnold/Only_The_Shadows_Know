@@ -12,6 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ef402b7732a4b44a7f03beb45006a4, type: 3}
   m_Name: FX_BalorsVision
   m_EditorClassIdentifier: 
+  audioProfile:
+    castStartSound:
+      clips:
+      - {fileID: 8300000, guid: 7bb97ca55b4179f45ac55a58bc2d5574, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
+    channelLoopSound: {fileID: 8300000, guid: e2a8d47afe47db14885bfd2ee2ca00bb, type: 3}
+    loopStartDelay: 0
+    channelVolume: 0.8
+    channelPitch: 1
+    loopFadeInDuration: 1
+    loopFadeOutDuration: 0.5
+    castEndSound:
+      clips:
+      - {fileID: 8300000, guid: e4710c21430716844beec4d9b59d16f3, type: 3}
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
   revealRadius: 30
   revealTickRate: 0.5
   revealLayerMask:

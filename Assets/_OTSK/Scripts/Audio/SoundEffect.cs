@@ -38,7 +38,7 @@ public class SoundEffect : MonoBehaviour
     public void Play(AudioClip clip, float volume, float pitch)
     {
         _initialVolume = volume;
-        _maxDistance = _audioSource.maxDistance > 0 ? _audioSource.maxDistance : 50f;
+        _maxDistance = _audioSource.maxDistance > 0 ? _audioSource.maxDistance : 100f;
 
         if (_listener == null)
         {

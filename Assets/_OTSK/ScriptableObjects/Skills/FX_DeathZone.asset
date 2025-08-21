@@ -12,6 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ba966ea9edbf549be2ff0904bb09e3, type: 3}
   m_Name: FX_DeathZone
   m_EditorClassIdentifier: 
+  audioProfile:
+    castStartSound:
+      clips: []
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
+    channelLoopSound: {fileID: 8300000, guid: 2cbf3fac93d34ec4491fd8aa400b01ff, type: 3}
+    loopStartDelay: 0
+    channelVolume: 0.8
+    channelPitch: 1
+    loopFadeInDuration: 0.5
+    loopFadeOutDuration: 0
+    castEndSound:
+      clips: []
+      minVolume: 0.9
+      maxVolume: 1
+      minPitch: 0.95
+      maxPitch: 1.05
   deathZoneVFXPrefab: {fileID: 6824903412663903792, guid: 12582fbcbb1d442479b0283c92f4de25, type: 3}
   channelDuration: 5
   maxTargetingRange: 10
@@ -23,10 +42,11 @@ MonoBehaviour:
     Value: 1
   channelLoopSound: {fileID: 8300000, guid: 2cbf3fac93d34ec4491fd8aa400b01ff, type: 3}
   finisherSound:
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: c5e9c5318e9b0ce4c9eb0d903f9c3878, type: 3}
     minVolume: 0.9
     maxVolume: 1
     minPitch: 0.95
     maxPitch: 1.05
-  audioRampUpPoint: 0.7
-  stretchedAudioPitch: 0.5
+  audioRampUpPoint: 0
+  stretchedAudioPitch: 0.75

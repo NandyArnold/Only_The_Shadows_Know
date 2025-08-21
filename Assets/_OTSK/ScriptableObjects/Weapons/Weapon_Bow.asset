@@ -25,9 +25,9 @@ MonoBehaviour:
   offHandEquipSocket: 0
   offHandSheathSocket: 0
   equipTriggerName: Bow_Equip
-  equipDuration: 0.2
+  equipDuration: 0.5
   unequipTriggerName: Bow_Unequip
-  unequipDuration: 0.2
+  unequipDuration: 0.5
   weaponDescription: Special Assassination Bow. Limited Movement speed while equiped
   primaryAttackName: Bow Shot
   primaryAttackDescription: Shoot of your equiped arrow. Has less accuracy,speed

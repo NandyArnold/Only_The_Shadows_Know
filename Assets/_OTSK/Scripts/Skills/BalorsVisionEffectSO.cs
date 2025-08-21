@@ -33,6 +33,7 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override IEnumerator StartChannel(GameObject caster, object target = null)
     {
+        caster.GetComponent<SkillAudioController>()?.Play(audioProfile, caster.transform);
         var cameraController = caster.GetComponent<CameraController>();
         if (cameraController != null)
         {
@@ -48,6 +49,7 @@ public class BalorsVisionEffectSO : SkillEffectSO
 
     public override void StopChannel(GameObject caster)
     {
+        caster.GetComponent<SkillAudioController>()?.Stop();
         var cameraController = caster.GetComponent<CameraController>();
         if (cameraController != null)
         {

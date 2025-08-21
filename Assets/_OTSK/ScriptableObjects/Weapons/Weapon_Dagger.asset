@@ -25,9 +25,9 @@ MonoBehaviour:
   offHandEquipSocket: 1
   offHandSheathSocket: 2
   equipTriggerName: Dagger_Equip
-  equipDuration: 0.2
+  equipDuration: 0.5
   unequipTriggerName: Dagger_Unequip
-  unequipDuration: 0.2
+  unequipDuration: 0.5
   weaponDescription: A pair of daggers speciffically tailored to assassinations,
     even when they don't happen on the first try
   primaryAttackName: Lingering Stab

@@ -16,6 +16,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource uiSfxSource;
     [SerializeField] private List<AudioSource> ambienceSources;
     [SerializeField] private AudioSource channelSfxSource;
+    private Tween _channelFadeTween;
 
 
     [Header("Priority Music")]
@@ -58,13 +59,28 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public void PlayChanneledSound(AudioClip clip)
+    public void PlayChanneledSound(AudioClip clip, float volume, float pitch, float fadeInDuration)
     {
         if (channelSfxSource == null || clip == null) return;
 
+        // Kill any previous fade that might be running
+        _channelFadeTween?.Kill();
+
         channelSfxSource.clip = clip;
         channelSfxSource.loop = true;
-        channelSfxSource.pitch = 1f; // Ensure pitch is normal at the start
+        channelSfxSource.pitch = pitch;
+
+        // If there's a fade-in, start at 0 volume and fade up
+        if (fadeInDuration > 0)
+        {
+            channelSfxSource.volume = 0f;
+            _channelFadeTween = channelSfxSource.DOFade(volume, fadeInDuration);
+        }
+        else // Otherwise, just set the volume instantly
+        {
+            channelSfxSource.volume = volume;
+        }
+
         channelSfxSource.Play();
     }
 
@@ -78,9 +94,23 @@ public class AudioManager : MonoBehaviour
     }
 
     // Call this to stop the sound immediately
-    public void StopChanneledSound()
+    public void StopChanneledSound(float fadeOutDuration)
     {
-        if (channelSfxSource != null)
+        if (channelSfxSource == null || !channelSfxSource.isPlaying) return;
+
+        // Kill any previous fade
+        _channelFadeTween?.Kill();
+
+        // If there's a fade-out, fade to 0 and then stop
+        if (fadeOutDuration > 0)
+        {
+            _channelFadeTween = channelSfxSource.DOFade(0f, fadeOutDuration)
+                .OnComplete(() => {
+                    channelSfxSource.Stop();
+                    channelSfxSource.clip = null;
+                });
+        }
+        else // Otherwise, just stop instantly
         {
             channelSfxSource.Stop();
             channelSfxSource.clip = null;

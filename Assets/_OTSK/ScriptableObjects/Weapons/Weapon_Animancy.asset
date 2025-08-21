@@ -25,9 +25,9 @@ MonoBehaviour:
   offHandEquipSocket: 1
   offHandSheathSocket: 0
   equipTriggerName: Animancy_Equip
-  equipDuration: 0.2
+  equipDuration: 0.5
   unequipTriggerName: Animancy_Unequip
-  unequipDuration: 0.2
+  unequipDuration: 0.5
   weaponDescription: Magic made for separating soul from body
   primaryAttackName: Soul Sever (R)
   primaryAttackDescription: Fire off a beam of animancy type damge, attempting to
