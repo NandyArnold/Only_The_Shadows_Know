@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class SurfaceImpact
+{
+    public SurfaceType surface;
+    public SoundDefinition sound;
+}
 public abstract class WeaponSO : ScriptableObject, IWeapon
 {
 
@@ -43,8 +49,29 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
     [TextArea] public string tertiaryAttackDescription;
     public Sprite weaponIcon;
 
+    [Header("Audio")]
+    public SoundDefinition equipSound;
+    public SoundDefinition unequipSound;
+    [Space]
+    public SoundDefinition defaultImpactSound; // Fallback for unknown surfaces
+    public List<SurfaceImpact> impactSounds;
+
 
     // Damage profiles are defined in the specific weapon scripts (DaggerSO, BowSO, etc.)
     public abstract void PrimaryAttack(PlayerCombat combatController);
     public abstract void SecondaryAttack(PlayerCombat combatController);
+
+    public SoundDefinition GetImpactSound(SurfaceType surfaceType)
+    {
+        foreach (var impact in impactSounds)
+        {
+            if (impact.surface == surfaceType)
+            {
+                return impact.sound;
+            }
+        }
+        // If no specific sound is found, return the default
+        return defaultImpactSound;
+    }
+
 }

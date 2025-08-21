@@ -63,7 +63,7 @@ public class BowSO : WeaponSO
                 List<DamageInstance> damageToApply = isFocused ? focusedDamageProfile : unfocusedDamageProfile;
 
                 // Initialize the projectile with all the correct data
-                projectile.Initialize(combatController.gameObject, damageToApply, currentSpeed);
+                projectile.Initialize(combatController.gameObject, damageToApply, currentSpeed, this);
         combatController.PlayerAnimationController.TriggerPrimaryAttack();
             }
         }

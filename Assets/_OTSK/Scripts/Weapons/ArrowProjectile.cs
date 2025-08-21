@@ -22,7 +22,7 @@ public class ArrowProjectile : MonoBehaviour
     private bool _isReadyToFire = false;
     private TrailRenderer _trailRenderer;
 
-   
+    private BowSO _bowData;
     private void Awake()
     {
         
@@ -40,12 +40,13 @@ public class ArrowProjectile : MonoBehaviour
         }
     }
     // This is the method the BowSO will call to give the arrow its stats.
-    public void Initialize(GameObject owner, List<DamageInstance> damageProfile, float speed)
+    public void Initialize(GameObject owner, List<DamageInstance> damageProfile, float speed, BowSO bowData)
     {
         //Debug.Log($"(8) Arrow (ID: {GetInstanceID()}) is being INITIALIZED with speed {speed}.");
         _owner = owner;
         _damageProfile = damageProfile;
         _initialSpeed = speed;
+        _bowData = bowData;
         _isReadyToFire = true;
         Destroy(gameObject, lifeTime);
     }
@@ -71,19 +72,25 @@ public class ArrowProjectile : MonoBehaviour
         _rb.isKinematic = true;
         transform.SetParent(collision.transform, true);
         // ----------NOISE AND SOUND EFFECTS---------
+
+        // 1. Determine the surface type just ONCE and store it in a variable.
         SurfaceType surfaceType = SurfaceType.Default;
         if (collision.collider.TryGetComponent<SurfaceIdentifier>(out var surface))
         {
             surfaceType = surface.surfaceType;
         }
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // Get the correct sound data
-        //var soundData = surfaceAudio.GetSound(surfaceType);
-        //SoundEffectManager.Instance.PlaySoundAtPoint(soundData.audioClip, transform.position);
 
-        // Get the correct noise data and generate the in-game noise
+        // 2. Play the impact SOUND using the determined surface type.
+        // This logic relies on the _bowData reference we set up.
+        if (_bowData != null)
+        {
+            _bowData.GetImpactSound(surfaceType).Play(transform);
+        }
+
+        // 3. Generate the in-game NOISE using the SAME surface type.
         float noiseIntensity = impactNoiseData.GetNoiseIntensity(surfaceType);
         NoiseManager.Instance.GenerateNoise(transform.position, noiseIntensity, this.gameObject);
+
 
         //-------------------------------------------
 
