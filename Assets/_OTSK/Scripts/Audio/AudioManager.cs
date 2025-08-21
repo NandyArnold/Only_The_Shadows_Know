@@ -205,11 +205,7 @@ public class AudioManager : MonoBehaviour
         return null;
     }
 
-    //public void UnregisterAmbienceZone(AmbienceZone zone)
-    //{
-    //    if (_activeAmbienceZones.Contains(zone)) _activeAmbienceZones.Remove(zone);
-    //}
-
+    
     private void FadeOutAllAmbience(float duration = 0.5f)
     {
         foreach (var source in ambienceSources)
@@ -228,17 +224,7 @@ public class AudioManager : MonoBehaviour
         // A more complex system could store the target volume for each active sound.
     }
 
-    //private AudioSource GetAvailableAmbienceSource()
-    //{
-    //    // Find the first source that isn't currently playing a clip
-    //    foreach (var source in ambienceSources)
-    //    {
-    //        if (source.clip == null) return source;
-    //    }
-    //    Debug.LogWarning("No available ambience sources!");
-    //    return null;
-    //}
-    // Call this when combat ends or you leave a special zone
+    
 
     public void StopMusic(float fadeDuration = 0.5f)
     {
