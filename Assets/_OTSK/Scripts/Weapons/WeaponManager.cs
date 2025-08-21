@@ -81,6 +81,7 @@ public class WeaponManager : MonoBehaviour
         
         if (oldWeapon != null)
         {
+            oldWeapon.unequipSound.Play(transform);
             if (!string.IsNullOrEmpty(oldWeapon.unequipTriggerName))
             {
                 
@@ -100,7 +101,7 @@ public class WeaponManager : MonoBehaviour
         // 2. EQUIP the new weapon
         if (newWeapon != null)
         {
-           
+            newWeapon.equipSound.Play(transform);
 
             // Play the equip animation and wait for it to finish
             if (!string.IsNullOrEmpty(newWeapon.equipTriggerName))

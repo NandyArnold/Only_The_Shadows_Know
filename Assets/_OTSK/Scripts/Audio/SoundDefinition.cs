@@ -12,6 +12,14 @@ public class SoundDefinition
     [Range(0.5f, 1.5f)] public float minPitch = 0.95f;
     [Range(0.5f, 1.5f)] public float maxPitch = 1.05f;
 
+    public SoundDefinition()
+    {
+        // Set the default values here
+        minVolume = 0.9f;
+        maxVolume = 1.0f;
+        minPitch = 0.95f;
+        maxPitch = 1.05f;
+    }
     // A helper method to play the sound easily
     public void Play(Transform emitter)
     {

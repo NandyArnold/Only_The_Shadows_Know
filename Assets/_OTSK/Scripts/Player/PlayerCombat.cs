@@ -290,11 +290,23 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleSecondaryAttack()
     {
-        if (_currentWeapon is BowSO && _isAiming)
+        if (_currentWeapon is BowSO bowWeapon && _isAiming)
         {
-            // This is the toggle logic. It sets the focus state to the opposite of what it currently is.
+            if (!_isFocused)
+            {
+                // --- PLAY THE DRAW SOUND HERE ---
+                bowWeapon.drawSound.Play(transform);
+            }
+            else // Optional: If we ARE focused, it means we are cancelling the focus.
+            {
+                // You could add an "unfocus" sound here if you have one.
+                // bowWeapon.unfocusSound.Play(transform); 
+            }
+
+            // This is the original toggle logic.
             SetFocusState(!_isFocused);
         }
+            
         // Case 2: The weapon is a Dagger or Animancy (or any other standard melee/magic weapon).
         else if (_currentWeapon is DaggerSO || _currentWeapon is AnimancySO)
         {

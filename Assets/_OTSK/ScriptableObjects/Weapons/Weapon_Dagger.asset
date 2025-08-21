@@ -40,6 +40,47 @@ MonoBehaviour:
   tertiaryAttackName: 
   tertiaryAttackDescription: 
   weaponIcon: {fileID: 21300000, guid: 0bb1459ee9853284b8876379fef042ba, type: 3}
+  equipSound:
+    clips:
+    - {fileID: 8300000, guid: 72a1f57e6d17dee46813336132d5dd4f, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  unequipSound:
+    clips:
+    - {fileID: 8300000, guid: 9c3514148be9a544d8569eeba0da502c, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  defaultImpactSound:
+    clips:
+    - {fileID: 8300000, guid: 5a25f9aba4dacd64db666ff45dd14e76, type: 3}
+    - {fileID: 8300000, guid: 012797e33597cbf4c9f42500a78aa53c, type: 3}
+    - {fileID: 8300000, guid: e367b3b5bb08eeb4a908d5f1f2540695, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  impactSounds:
+  - surface: 1
+    sound:
+      clips:
+      - {fileID: 8300000, guid: 06628dca12ea2744db699d1f9eda0c4b, type: 3}
+      - {fileID: 8300000, guid: 95865e474a859894db517f629a652201, type: 3}
+      minVolume: 0.724
+      maxVolume: 0.855
+      minPitch: 0.95
+      maxPitch: 1.05
+  - surface: 4
+    sound:
+      clips:
+      - {fileID: 8300000, guid: cb0ed97fa75d398428483ab43a3d1128, type: 3}
+      minVolume: 0.805
+      maxVolume: 0.863
+      minPitch: 0.95
+      maxPitch: 1.05
   attackRange: 2
   hittableLayers:
     serializedVersion: 2
@@ -50,3 +91,20 @@ MonoBehaviour:
   finisherDamageProfile:
   - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
     Value: 150
+  finisherSound:
+    clips:
+    - {fileID: 8300000, guid: 882b13f72c368d747876e28556de0182, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  swingSound:
+    clips:
+    - {fileID: 8300000, guid: cd13ec19964e07246a980a9486e2d560, type: 3}
+    - {fileID: 8300000, guid: 6f06bb50d878f9d4b8f5a6f5e5fcff27, type: 3}
+    - {fileID: 8300000, guid: fda24663321cea444872ad5d21d6b935, type: 3}
+    - {fileID: 8300000, guid: 7a9bde9ce0ba1554d85795ca59b719a2, type: 3}
+    minVolume: 0.9
+    maxVolume: 1
+    minPitch: 0.95
+    maxPitch: 1.05

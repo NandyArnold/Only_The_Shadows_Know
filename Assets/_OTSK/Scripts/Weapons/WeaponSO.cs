@@ -6,7 +6,7 @@ using UnityEngine;
 public class SurfaceImpact
 {
     public SurfaceType surface;
-    public SoundDefinition sound;
+    public SoundDefinition sound = new SoundDefinition();
 }
 public abstract class WeaponSO : ScriptableObject, IWeapon
 {
@@ -63,14 +63,25 @@ public abstract class WeaponSO : ScriptableObject, IWeapon
 
     public SoundDefinition GetImpactSound(SurfaceType surfaceType)
     {
+        Debug.Log($"<color=cyan>[Audio System]</color> Searching for impact sound for surface: {surfaceType}");
+
         foreach (var impact in impactSounds)
         {
             if (impact.surface == surfaceType)
             {
+                Debug.Log($"<color=green>[Audio System]</color> Match found for {surfaceType}!");
+
+                // --- THIS IS THE CRITICAL CHECK ---
+                if (impact.sound == null || impact.sound.clips == null || impact.sound.clips.Length == 0)
+                {
+                    Debug.LogError($"<color=red>[Audio System]</color> The SoundDefinition for '{surfaceType}' was found, but its 'Clips' array is empty! Check your DaggerSO asset in the Inspector.", this);
+                }
+
                 return impact.sound;
             }
         }
-        // If no specific sound is found, return the default
+
+        Debug.Log($"<color=orange>[Audio System]</color> No specific sound found for {surfaceType}. Returning default impact sound.");
         return defaultImpactSound;
     }
 

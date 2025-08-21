@@ -19,10 +19,16 @@ public class BowSO : WeaponSO
     public List<DamageInstance> unfocusedDamageProfile;
     public List<DamageInstance> focusedDamageProfile;
 
+    public SoundDefinition drawSound; // Sound for when you start focusing
+    public SoundDefinition releaseSound;
+    public SoundDefinition fireSound;
+
 
     // A central fire method to avoid repeating code
     private void Fire(PlayerCombat combatController, bool isFocused)
     {
+        releaseSound.Play(combatController.transform);
+        fireSound.Play(combatController.transform);
 
         CinemachineBrain cinemachineBrain = combatController.Brain;
         if (cinemachineBrain == null) return;

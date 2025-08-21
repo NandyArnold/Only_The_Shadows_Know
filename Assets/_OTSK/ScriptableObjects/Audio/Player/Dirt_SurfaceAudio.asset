@@ -19,19 +19,19 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 7ae4446a91cbd4641a056f03364d83d4, type: 3}
     - {fileID: 8300000, guid: e66bf4d3e15083c42b30fc545171acdd, type: 3}
     - {fileID: 8300000, guid: 6f7282fc868f77d43b6d6f6fcd0619d9, type: 3}
-    minVolume: 0.503
-    maxVolume: 1
+    minVolume: 0.186
+    maxVolume: 0.279
     minPitch: 0.9
     maxPitch: 1.1
   runSound:
     clips: []
-    minVolume: 0.898
-    maxVolume: 1
+    minVolume: 0.686
+    maxVolume: 0.82
     minPitch: 0.9
     maxPitch: 1.1
   crouchSound:
     clips: []
-    minVolume: 0.8
-    maxVolume: 1
+    minVolume: 0.021
+    maxVolume: 0.095
     minPitch: 0.9
     maxPitch: 1.1
