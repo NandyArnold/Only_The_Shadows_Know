@@ -33,6 +33,8 @@ public class SceneTransitionButton : MonoBehaviour
     {
         if (SceneLoader.Instance != null)
         {
+            SaveLoadManager.Instance.DeleteAllSaves();
+
             PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
 
             if (targetSceneData == null)

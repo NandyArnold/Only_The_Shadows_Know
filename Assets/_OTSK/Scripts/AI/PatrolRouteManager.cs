@@ -45,7 +45,7 @@ public class PatrolRouteManager : MonoBehaviour
         SceneLoader.Instance.OnSceneLoaded -= ClearRoutes;
         SceneLoader.Instance.OnSceneLoaded -= (sceneData) => IsReady = false;
     }
-    private void ClearRoutes(SceneDataSO sceneData)
+    public void ClearRoutes(SceneDataSO sceneData)
     {
         _patrolRoutes.Clear();
     }

@@ -17,42 +17,37 @@ public class AutosaveManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // Subscribe to the event when this manager is enabled
-        if (GameManager.Instance != null)
+        if (SceneLoader.Instance != null)
         {
-            GameManager.Instance.OnPlayerReady += HandlePlayerReady;
+            SceneLoader.Instance.OnSceneReadyAndFadedIn += HandleSceneReadyForAutosave;
         }
     }
 
     private void OnDisable()
     {
         // Unsubscribe to prevent memory leaks
-        if (GameManager.Instance != null)
+        if (SceneLoader.Instance != null)
         {
-            GameManager.Instance.OnPlayerReady -= HandlePlayerReady;
+            SceneLoader.Instance.OnSceneReadyAndFadedIn -= HandleSceneReadyForAutosave;
         }
     }
 
     // This is now our event handler
-    private void HandlePlayerReady()
+    private void HandleSceneReadyForAutosave()
     {
         if (SaveLoadManager.Instance != null && SaveLoadManager.Instance.IsLoading)
         {
             Debug.Log("<color=yellow>Skipping autosave because a game load is in progress.</color>");
             return;
         }
-        // Get the current scene data from the SceneLoader
-        var sceneData = SceneLoader.Instance.CurrentlyLoadedScene;
-        if (sceneData == null) return;
 
-        // Now it's safe to perform the autosave
-        if (sceneData.sceneType == SceneType.Gameplay)
+        var sceneData = SceneLoader.Instance.CurrentlyLoadedScene;
+        if (sceneData == null || sceneData.sceneType != SceneType.Gameplay) return;
+
+        if (SaveLoadManager.Instance != null)
         {
-            if (SaveLoadManager.Instance != null)
-            {
-                Debug.Log($"<color=cyan>AUTOSAVING (Player Ready)...</color> Scene: {sceneData.SceneName}");
-                SaveLoadManager.Instance.SaveGame("autosave");
-            }
+            Debug.Log($"<color=cyan>AUTOSAVING (Scene Faded In)...</color> Scene: {sceneData.SceneName}");
+            SaveLoadManager.Instance.SaveGame("autosave");
         }
     }
 }

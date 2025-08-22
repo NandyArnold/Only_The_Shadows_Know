@@ -1,7 +1,20 @@
 using UnityEngine;
-
+using UnityEngine.UI;
 public class InGameMenuButtons : MonoBehaviour
 {
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private SceneDataSO mainMenuSceneData;
+    [SerializeField] private Button exitButton;
+
+
+    private void Awake()
+    {
+        // Subscribe to the buttons' onClick events
+        mainMenuButton.onClick.AddListener(OnMainMenuClicked);
+        exitButton.onClick.AddListener(OnExitGameClicked);
+        
+     
+    }
     public void OnResumeClicked()
     {
         // Tell the GameManager to go back to the Gameplay state
@@ -36,13 +49,14 @@ public class InGameMenuButtons : MonoBehaviour
         // Here you would typically open a UI panel for options
     }
 
-    public void OnMainMenuClicked()
+    private void OnMainMenuClicked()
     {
-        // Logic to return to the main menu
-        Debug.Log("Main Menu clicked.");
-        
-        //  loads the main menu scene 
-        
+        if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
+        Debug.Log("Main Menu button clicked...");
+
+        if (GameManager.Instance != null) GameManager.Instance.ResetManagersForMainMenu();
+
+        SceneLoader.Instance.LoadScene(mainMenuSceneData);
     }
 
     public void OnExitGameClicked()

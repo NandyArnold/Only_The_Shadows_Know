@@ -1,12 +1,8 @@
 // SaveLoadManager.cs - ESave Powered Version
 using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 using Esper.ESave; // Add the ESave namespace
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
-using Esper.ESave.SavableObjects; // Add the ESave Data namespace 
 using static Esper.ESave.SaveFileSetupData;
 
 
@@ -397,6 +393,30 @@ public class SaveLoadManager : MonoBehaviour
         // When the scene is truly ready, set our flag
         _isSceneReadyForRestore = true;
         Debug.Log("<color=yellow>SaveLoadManager received OnNewSceneReady event.</color>");
+    }
+
+    public void DeleteAllSaves()
+    {
+        Debug.Log("<color=red>--- DELETING ALL SAVE FILES ---</color>");
+
+        // Define all known save file names here
+        var saveFilesToDelete = new string[] { "autosave", "manual_save_1", GetLastSaveName() };
+
+        foreach (var fileName in saveFilesToDelete)
+        {
+            if (string.IsNullOrEmpty(fileName)) continue;
+
+            string path = Path.Combine(Application.persistentDataPath, SaveSubfolder, fileName + ".json");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Debug.Log($"Deleted save file: {path}");
+            }
+        }
+
+        // Also clear the "last save" meta file so the "Load Game" button becomes disabled
+        _metaFile.DeleteFile();
+        _metaFile.Save();
     }
 
 }

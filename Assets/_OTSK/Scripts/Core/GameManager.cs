@@ -185,4 +185,17 @@ public class GameManager : MonoBehaviour
             Player.GetComponent<PlayerStats>().TakeDamage(float.MaxValue);
         }
     }
+
+    public void ResetManagersForMainMenu()
+    {
+        Debug.Log("<color=red>--- RESETTING ALL MANAGERS FOR MAIN MENU ---</color>");
+
+        // Reset every manager that holds runtime data
+        if (SaveableEntityRegistry.Instance != null) SaveableEntityRegistry.Instance.ClearRegistry();
+        if (AudioManager.Instance != null) AudioManager.Instance.ResetAudioState();
+        if (ObjectiveManager.Instance != null) ObjectiveManager.Instance.ResetState(); // Assuming it has a reset method
+        TariaksuqsRiftEffectSO.ResetStaticData();
+     
+        // This is also where we will fix the "Patrol route is null" bug later.
+    }
 }

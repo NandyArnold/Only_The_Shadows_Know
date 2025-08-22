@@ -14,6 +14,7 @@ public class SceneLoader : MonoBehaviour
     public event Action<SceneDataSO> OnSceneLoaded;
     public event Action<SceneDataSO> OnSceneLoadCompleted;
     public event Action OnNewSceneReady;
+    public event Action OnSceneReadyAndFadedIn;
 
     [Header("Loading Settings")]
     [SerializeField] private float minLoadTime = 2.0f;
@@ -142,6 +143,10 @@ public class SceneLoader : MonoBehaviour
         // Finally, fade IN to the new scene.
         FadeCanvas.Instance.FadeOut(fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
+
+
+        // --- INVOKE THE NEW EVENT HERE, after the fade is complete ---
+        OnSceneReadyAndFadedIn?.Invoke();
 
         // --- UNMUTE SOUNDS AT THE VERY END ---
         if (SoundEffectManager.Instance != null) SoundEffectManager.Instance.Muted = false;

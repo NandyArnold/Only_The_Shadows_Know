@@ -144,4 +144,15 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
     public override IEnumerator StartChannel(GameObject caster, object target = null) { yield break; }
     public override void StopChannel(GameObject caster) { }
 
+    public static void ResetStaticData()
+    {
+        if (_riftInstance != null)
+        {
+            Destroy(_riftInstance);
+        }
+        _riftInstance = null;
+        _riftPosition = null;
+        Debug.Log("TariaksuqsRift static data has been reset.");
+    }
+
 }

@@ -148,4 +148,25 @@ public class ObjectiveManager : MonoBehaviour
             OnCurrentObjectiveChanged?.Invoke(null);
         }
     }
+    public void ResetState()
+    {
+        // 1. Unsubscribe from any triggers left over from the last scene
+        //    to prevent memory leaks.
+        foreach (var trigger in _activeTriggers.Values)
+        {
+            trigger.OnTriggerActivated -= HandleTriggerActivated;
+        }
+        _activeTriggers.Clear(); // 2. Clear the trigger dictionary
+
+        // 3. Reset the objective progress
+        _currentLevelObjectiveChain = null;
+        _currentObjectiveIndex = 0;
+
+        // 4. Notify the UI that there is no active objective
+        OnCurrentObjectiveChanged?.Invoke(null);
+        OnLevelCompleted?.Invoke(); // You might want to call this to reset any "Level Complete" UI too
+
+        Debug.Log("<color=red>ObjectiveManager state has been reset.</color>");
+    }
+
 }

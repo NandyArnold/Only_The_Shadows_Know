@@ -56,5 +56,12 @@ public class SaveableEntityRegistry : MonoBehaviour
        
         return entity;
     }
-        
+
+    public void ClearRegistry()
+    {
+       
+        _registry.Clear();
+        Debug.Log("<color=red>Saveable Entity Registry has been cleared.</color>");
+    }
+
 }
