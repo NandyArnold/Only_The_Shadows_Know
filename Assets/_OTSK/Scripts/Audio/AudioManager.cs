@@ -30,6 +30,8 @@ public class AudioManager : MonoBehaviour
 
     private Tween _channelFadeTween;
 
+    private Tween _overrideAmbienceFade;
+
 
     [Header("Priority Music")]
     [SerializeField] private AudioClip alertMusic;
@@ -60,6 +62,7 @@ public class AudioManager : MonoBehaviour
 
     private Coroutine _activeMusicFade;
     private bool _isGameOver = false;
+    private bool _isStoppingOverride = false;
 
 
     private void Awake()
@@ -235,10 +238,15 @@ public class AudioManager : MonoBehaviour
         {
             // Transition to the normal mix
             normalMix.TransitionTo(mixTransitionDuration);
-            FadeInAllAmbience();
+            //FadeInAllAmbience();
         }
         else
         {
+            if (overrideAmbienceSource.isPlaying)
+            {
+                Debug.Log("Threat state changed to Alert/Combat, stopping Endwalker override ambience.");
+                StopOverrideAmbience(0.5f); // Use a quick 0.5s fade out
+            }
             // Transition to the combat mix
             combatMix.TransitionTo(mixTransitionDuration);
             FadeOutAllAmbience();
@@ -246,6 +254,8 @@ public class AudioManager : MonoBehaviour
     }
     private void UpdateMusic()
     {
+        if (_isStoppingOverride) return;
+
         AudioClip targetClip = null;
         float targetVolume = 1f;
 
@@ -425,6 +435,7 @@ public class AudioManager : MonoBehaviour
     {
         if (overrideAmbienceSource == null || clip == null) return;
 
+
         _isNormalAmbienceMuted = true;
         MuteNormalAmbience(fadeIn);
 
@@ -437,11 +448,23 @@ public class AudioManager : MonoBehaviour
 
     public void StopOverrideAmbience(float fadeOut)
     {
-        if (overrideAmbienceSource == null || !overrideAmbienceSource.isPlaying) return;
+        if (overrideAmbienceSource == null) return;
+
+        _overrideAmbienceFade?.Kill();
+
+        _isStoppingOverride = true;
+
+        _isNormalAmbienceMuted = false;
 
         // Fade out the Endwalker ambience
-        overrideAmbienceSource.DOFade(0, fadeOut).OnComplete(() => overrideAmbienceSource.Stop());
+        _overrideAmbienceFade = overrideAmbienceSource.DOFade(0, fadeOut)
+         .OnComplete(() => {
+             overrideAmbienceSource.Stop();
+             // --- SET THE FLAG to false when we finish ---
+             _isStoppingOverride = false;
+         });
+
         RestoreNormalAmbience(fadeOut);
-        
+
     }
 }
