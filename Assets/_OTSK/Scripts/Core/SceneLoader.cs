@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
+using System.Threading;
+using Unity.VisualScripting;
 
 
 public class SceneLoader : MonoBehaviour
@@ -59,6 +61,10 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator LoadSceneRoutine(SceneDataSO sceneToLoad)
     {
         _isLoading = true;
+
+        /// ---MUTE SOUNDS AT THE START ---
+        if (SoundEffectManager.Instance != null) SoundEffectManager.Instance.Muted = true;
+        if (UISoundPlayer.Instance != null) UISoundPlayer.Instance.Muted = true;
 
         // --- PART 1: EXIT THE CURRENT SCENE ---
         // Fade the screen (and the music) to black.
@@ -136,6 +142,11 @@ public class SceneLoader : MonoBehaviour
         // Finally, fade IN to the new scene.
         FadeCanvas.Instance.FadeOut(fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
+
+        // --- UNMUTE SOUNDS AT THE VERY END ---
+        if (SoundEffectManager.Instance != null) SoundEffectManager.Instance.Muted = false;
+        if (UISoundPlayer.Instance != null) UISoundPlayer.Instance.Muted = false;
+
 
         // Update the game state now that the scene is visible.
         switch (sceneToLoad.sceneType)

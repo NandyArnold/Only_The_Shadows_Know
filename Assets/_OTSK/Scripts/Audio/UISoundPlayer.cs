@@ -4,6 +4,7 @@ using UnityEngine;
 public class UISoundPlayer : MonoBehaviour
 {
     public static UISoundPlayer Instance { get; private set; }
+    public bool Muted { get; set; } = true;
 
     [SerializeField] private UISoundsSO uiSounds;
 
@@ -27,6 +28,8 @@ public class UISoundPlayer : MonoBehaviour
 
     private void Play(AudioClip clip)
     {
+        if (Muted) return;
+
         if (clip != null)
         {
             // Use the dedicated uiSfxSource from our AudioManager

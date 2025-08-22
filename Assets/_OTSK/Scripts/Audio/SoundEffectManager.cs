@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class SoundEffectManager : MonoBehaviour
 {
     public static SoundEffectManager Instance { get; private set; }
+    public bool Muted { get; set; } = true;
 
     [Header("Pooling Settings")]
     [SerializeField] private SoundEffect soundEffectPrefab; // The prefab we'll create
@@ -40,6 +41,7 @@ public class SoundEffectManager : MonoBehaviour
     // This is the new, primary method for playing sounds.
     public void PlaySoundAtPoint(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f, SoundCategory category = SoundCategory.Normal)
     {
+        if (Muted) return;
         if (_isEndwalkerActive && category == SoundCategory.Normal)
         {
             return; // Mute the sound
