@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83cec2a2cd614754291ca68637e10bf1, type: 3}
-  m_Name: GameEvent_SummonReinforcements
+  m_Name: GE_Summon_Start_AllyDeath
   m_EditorClassIdentifier: 

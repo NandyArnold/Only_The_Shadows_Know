@@ -158,6 +158,94 @@ MonoBehaviour:
       patrolRouteID: 
       initialState: 1
   enemyEventSpawns:
+  - groupName: Start3SummsPanel
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Start2SummsOnAllyDeath
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Start2SummsTimeInCombat
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Mid5SummsAllyDeath
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: 
+      patrolRouteID: 
+      initialState: 1
   - groupName: AlarmSummons
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
