@@ -62,7 +62,7 @@ public class EnemySpawner : MonoBehaviour
             callChain += $"--> {method.DeclaringType.Name}.{method.Name}\n";
         }
         ISpawnPoint spawnPoint = GlobalSpawnRegistry.Instance.GetSpawnPoint(data.spawnPointID);
-        Debug.Log($"--- SPAWN ENEMY CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
+        //Debug.Log($"--- SPAWN ENEMY CALLED --- \nThis call was received by the spawner on '{gameObject.name}' with ID {GetInstanceID()}.", this.gameObject);
         // --- THIS IS THE NEW FALLBACK LOGIC ---
         if (spawnPoint == null)
         {

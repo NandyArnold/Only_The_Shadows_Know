@@ -32,6 +32,7 @@ public class AudioManager : MonoBehaviour
 
     private Tween _overrideAmbienceFade;
 
+    private MusicCategory _overrideMusicCategory;
 
     [Header("Priority Music")]
     [SerializeField] private AudioClip alertMusic;
@@ -48,8 +49,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float mixTransitionDuration = 1.0f;
 
 
-    private AudioClip _musicBeforeMute;
-    private float _volumeBeforeMute;
+    //private AudioClip _musicBeforeMute;
+    //private float _volumeBeforeMute;
 
     private AudioSource _activeMusicSource;
     private ThreatState _currentThreatState = ThreatState.Safe;
@@ -63,6 +64,7 @@ public class AudioManager : MonoBehaviour
     private Coroutine _activeMusicFade;
     private bool _isGameOver = false;
     private bool _isStoppingOverride = false;
+
 
 
     private void Awake()
@@ -207,31 +209,24 @@ public class AudioManager : MonoBehaviour
     }
     public void MuteNormalMusic(bool isMuted, float fadeDuration)
     {
-        _isNormalMusicMuted = isMuted;
-        if (isMuted && _activeMusicSource.isPlaying)
-        {
-            // --- ADD THIS: Remember what was playing before muting ---
-            _musicBeforeMute = _activeMusicSource.clip;
-            _volumeBeforeMute = _activeMusicSource.volume; // Store the current volume
+        // Don't change anything if the state is the same
+        if (_isNormalMusicMuted == isMuted) return;
 
-            _activeMusicSource.DOFade(0, fadeDuration);
-        }
+        _isNormalMusicMuted = isMuted;
+
+        // Just re-evaluate the music state. UpdateMusic() will handle the rest.
+        UpdateMusic();
     }
     public void RestoreNormalMusic(float fadeDuration)
     {
-        // Unmute the music system
-        _isNormalMusicMuted = false;
-
-        // If we have a track to restore, play it
-        if (_musicBeforeMute != null)
-        {
-            FadeBetweenMusic(_musicBeforeMute, _volumeBeforeMute, fadeDuration);
-            _musicBeforeMute = null; // Clear the memory
-        }
+        // This method is now identical to MuteNormalMusic(false, ...).
+        // We keep it for semantic clarity in the PlayerController.
+        MuteNormalMusic(false, fadeDuration);
     }
     public void SetThreatState(ThreatState newState)
     {
         if (_currentThreatState == newState) return;
+        Debug.Log($"<color=lime>DEBUG (AUDIO):</color> SetThreatState called with new state: {newState}.");
         _currentThreatState = newState;
         UpdateMusic();
         if (newState == ThreatState.Safe)
@@ -242,12 +237,12 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            if (overrideAmbienceSource.isPlaying)
-            {
-                Debug.Log("Threat state changed to Alert/Combat, stopping Endwalker override ambience.");
-                StopOverrideAmbience(0.5f); // Use a quick 0.5s fade out
-            }
-            // Transition to the combat mix
+            //if (overrideAmbienceSource.isPlaying)
+            //{
+            //    Debug.Log("Threat state changed to Alert/Combat, stopping Endwalker override ambience.");
+            //    StopOverrideAmbience(0.5f); // Use a quick 0.5s fade out
+            //}
+            //Transition to the combat mix
             combatMix.TransitionTo(mixTransitionDuration);
             FadeOutAllAmbience();
         }
@@ -259,19 +254,47 @@ public class AudioManager : MonoBehaviour
         AudioClip targetClip = null;
         float targetVolume = 1f;
 
+        MusicCategory targetCategory = MusicCategory.Normal;
+
+        // 1. Determine the highest-priority music that SHOULD be playing.
         if (_isGameOver) { targetClip = gameOverMusic; targetVolume = gameOverMusicVolume; }
         else if (_currentThreatState == ThreatState.Combat) { targetClip = combatMusic; targetVolume = combatMusicVolume; }
         else if (_currentThreatState == ThreatState.Alert) { targetClip = alertMusic; targetVolume = alertMusicVolume; }
-        else if (_overrideMusic != null) { targetClip = _overrideMusic; targetVolume = _overrideMusicVolume; }
+        else if (_overrideMusic != null)
+        {
+            targetClip = _overrideMusic;
+            targetVolume = _overrideMusicVolume;
+            // We need to fetch the category from a variable that MusicTriggerZone sets.
+            // Assuming you have _overrideMusicCategory as a class member:
+            // targetCategory = _overrideMusicCategory;
+        }
         else { targetClip = _currentSceneMusic; targetVolume = _currentSceneMusicVolume; }
+
+        // 2. THE NEW GATEKEEPER: Check if Endwalker should mute this track.
+        if (_isNormalMusicMuted && targetCategory == MusicCategory.Normal)
+        {
+            // If the chosen music is "Normal" but we're in Endwalker, force silence.
+            targetClip = null;
+        }
+
+        // 3. Apply the final decision.
+        if (_activeMusicSource.clip == targetClip)
+        {
+            // If the correct clip is already playing, just ensure the volume is correct.
+            _activeMusicSource.DOFade(targetVolume, 0.5f);
+            return;
+        }
+
 
         if (targetClip != null)
         {
-            Debug.Log($"<color=yellow>[AudioManager]</color> UpdateMusic decided the target is '{targetClip.name}' at volume '{targetVolume}'.");
+            // If a new clip needs to be played, fade to it.
+            FadeBetweenMusic(targetClip, targetVolume, 1.0f);
         }
-        if (targetClip != null && (_activeMusicSource.clip != targetClip || !_activeMusicSource.isPlaying))
+        else
         {
-            FadeBetweenMusic(targetClip, targetVolume, 1.0f); // Pass all 3 arguments
+            // If no clip should be playing, fade the current music out.
+            _activeMusicSource.DOFade(0f, 1.0f);
         }
     }
 
@@ -450,9 +473,12 @@ public class AudioManager : MonoBehaviour
     {
         if (overrideAmbienceSource == null) return;
 
+        Debug.Log("<color=yellow>DEBUG 2 (AUDIO):</color> StopOverrideAmbience has been called.");
+        
         _overrideAmbienceFade?.Kill();
 
         _isStoppingOverride = true;
+        Debug.Log("<color=yellow>DEBUG 3 (AUDIO):</color> _isStoppingOverride flag SET to TRUE.");
 
         _isNormalAmbienceMuted = false;
 
@@ -462,9 +488,11 @@ public class AudioManager : MonoBehaviour
              overrideAmbienceSource.Stop();
              // --- SET THE FLAG to false when we finish ---
              _isStoppingOverride = false;
+             Debug.Log("<color=yellow>DEBUG 5 (AUDIO):</color> Endwalker fade-out COMPLETE. _isStoppingOverride flag SET to FALSE.");
+            UpdateMusic();
          });
 
-        RestoreNormalAmbience(fadeOut);
+         RestoreNormalAmbience(fadeOut);
 
     }
 }

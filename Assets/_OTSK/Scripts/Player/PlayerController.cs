@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
         if (_isDead) return; // Prevent multiple death triggers
         if (IsInEndwalkerState)
         {
+            Debug.Log("<color=orange>DEBUG 1 (PLAYER):</color> HandleDeath triggered while in Endwalker. Calling SetEndwalkerState(false).");
             SetEndwalkerState(false);
         }
         StartCoroutine(DeathRoutine());
@@ -101,7 +102,7 @@ public class PlayerController : MonoBehaviour
         // If we enter combat while in Endwalker, turn it off.
         if (IsInEndwalkerState)
         {
-            Debug.Log("Combat started, automatically ending Endwalker state.");
+            Debug.Log("<color=orange>DEBUG 1 (PLAYER):</color> HandleCombatStart triggered while in Endwalker. Calling SetEndwalkerState(false).");
             SetEndwalkerState(false);
         }
     }

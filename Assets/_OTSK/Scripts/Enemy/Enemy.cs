@@ -276,7 +276,7 @@ public class Enemy : MonoBehaviour, ISaveable
             return; // IMPORTANT: Stop the rest of Start() from running.
         }
 
-        Debug.Log($"--- Enemy.Start() called for {gameObject.name} ---");
+        //Debug.Log($"--- Enemy.Start() called for {gameObject.name} ---");
         //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
         EnemyManager.Instance.RegisterEnemy(this);
 

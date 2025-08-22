@@ -20,7 +20,7 @@ public class PatrolState : EnemyAIState
 
     public override void Enter(EnemyAI enemyAI)
     {
-        Debug.Log("Entering Patrol State");
+        //Debug.Log("Entering Patrol State");
         _gracePeriodTimer = 0.5f;
 
         _patrolCoroutine = enemyAI.StartCoroutine(PatrolRoutine(enemyAI));
@@ -59,7 +59,7 @@ public class PatrolState : EnemyAIState
 
     public override void Exit(EnemyAI enemyAI)
     {
-        Debug.Log("Exiting Patrol State");
+        //Debug.Log("Exiting Patrol State");
         // IMPORTANT: Stop the coroutine when we exit the state.
         if (_patrolCoroutine != null)
         {

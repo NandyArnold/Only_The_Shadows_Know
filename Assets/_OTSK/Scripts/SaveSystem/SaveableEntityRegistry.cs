@@ -22,11 +22,11 @@ public class SaveableEntityRegistry : MonoBehaviour
 
     public void Register(ISaveable entity)
     {
-        Debug.Log($"[Registry] Attempting to register '{((MonoBehaviour)entity)?.name ?? "NULL ENTITY"}'...");
+        //Debug.Log($"[Registry] Attempting to register '{((MonoBehaviour)entity)?.name ?? "NULL ENTITY"}'...");
         if (entity != null && !string.IsNullOrEmpty(entity.UniqueID))
         {
             _registry[entity.UniqueID] = entity;
-            Debug.Log($"<color=cyan>[Registry]</color> Registered: {((MonoBehaviour)entity).name} (ID: {entity.UniqueID}) | Total: {_registry.Count}");
+            //Debug.Log($"<color=cyan>[Registry]</color> Registered: {((MonoBehaviour)entity).name} (ID: {entity.UniqueID}) | Total: {_registry.Count}");
         }
         else
         {
@@ -41,7 +41,7 @@ public class SaveableEntityRegistry : MonoBehaviour
         if (entity != null && !string.IsNullOrEmpty(entity.UniqueID) && _registry.ContainsKey(entity.UniqueID))
         {
             _registry.Remove(entity.UniqueID);
-            Debug.Log($"<color=orange>[Registry]</color> Unregistered: {((MonoBehaviour)entity).name} (ID: {entity.UniqueID}) | Total: {_registry.Count}");
+            //Debug.Log($"<color=orange>[Registry]</color> Unregistered: {((MonoBehaviour)entity).name} (ID: {entity.UniqueID}) | Total: {_registry.Count}");
         }
     }
 

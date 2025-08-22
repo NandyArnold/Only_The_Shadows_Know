@@ -20,7 +20,7 @@ public class Checkpoint : MonoBehaviour, ISaveable
     }
     private void Start()
     {
-        Debug.Log($"--- Checkpoint.Start() called for {gameObject.name} ---");
+        //Debug.Log($"--- Checkpoint.Start() called for {gameObject.name} ---");
         if (SaveableEntityRegistry.Instance != null)
         {
             SaveableEntityRegistry.Instance.Register(this);

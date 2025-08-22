@@ -10,7 +10,7 @@ public class SpawnState : EnemyAIState
     public SpawnState(int startingWaypoint = -1) { _startingWaypoint = startingWaypoint; }
     public override void Enter(EnemyAI enemyAI)
     {
-      Debug.Log("Entering Spawn State");
+      //Debug.Log("Entering Spawn State");
         _timer = 0f;
         // The enemy is idle while "spawning in"
         enemyAI.StartCoroutine(EnterRoutine(enemyAI));

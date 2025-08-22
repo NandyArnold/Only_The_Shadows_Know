@@ -7,7 +7,7 @@ public class GuardState : EnemyAIState
 
     public override void Enter(EnemyAI enemyAI)
     {
-        Debug.Log("Entering Guard State");
+        //Debug.Log("Entering Guard State");
         // Tell the navigator to go back to its spawn position.
         enemyAI.Navigator.Resume();
         enemyAI.Navigator.SetSpeed(enemyAI.Config.patrolSpeed);
