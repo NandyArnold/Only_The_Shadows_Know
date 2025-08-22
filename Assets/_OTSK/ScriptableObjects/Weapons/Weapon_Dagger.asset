@@ -17,7 +17,7 @@ MonoBehaviour:
     m_Bits: 0
   weaponName: Ze'ra's Kiss
   usesAimIK: 0
-  timeBetweenAttacks: 0.5
+  timeBetweenAttacks: 1
   mainHandPrefab: {fileID: 6145625656122818527, guid: d4d12e97cda7a4444ae3a762f962d3bb, type: 3}
   mainHandEquipSocket: 0
   mainHandSheathSocket: 1
