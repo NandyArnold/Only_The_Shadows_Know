@@ -35,6 +35,16 @@ MonoBehaviour:
       spawnPointID: Guard_PatrolC
       patrolRouteID: GuardPathC
       initialState: 0
+  - groupName: UndeadStart
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Undead_Start1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: faa98d25ebeb04143a72dfe4d3551e07, type: 2}
+      spawnPointID: Undead_Start2
+      patrolRouteID: 
+      initialState: 1
   - groupName: StaticKnights
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}

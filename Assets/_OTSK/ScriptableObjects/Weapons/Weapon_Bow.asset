@@ -40,6 +40,7 @@ MonoBehaviour:
   tertiaryAttackDescription: 
   weaponIcon: {fileID: 21300000, guid: 8c636f70961f5c14db69f086d8f2b7c2, type: 3}
   equipSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 0e34d9140f3437a4b832747f475d4a22, type: 3}
     minVolume: 0.9
@@ -47,6 +48,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   unequipSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: eb1fada563ab6344b894fd0fefa5c615, type: 3}
     minVolume: 0.9
@@ -54,6 +56,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   defaultImpactSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 1f47c4a21c56159458177eb752781f35, type: 3}
     minVolume: 0.9
@@ -63,6 +66,7 @@ MonoBehaviour:
   impactSounds:
   - surface: 1
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: a13e63b05a6deb3418e578a691506bb7, type: 3}
       minVolume: 0.9
@@ -71,6 +75,7 @@ MonoBehaviour:
       maxPitch: 1.05
   - surface: 6
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: cf1bee11e667bdc4386641cc4dec249b, type: 3}
       minVolume: 0.9
@@ -79,6 +84,7 @@ MonoBehaviour:
       maxPitch: 1.05
   - surface: 4
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: a33e4e618c240aa48a05daf74fdbfdf3, type: 3}
       minVolume: 0.9
@@ -87,6 +93,7 @@ MonoBehaviour:
       maxPitch: 1.05
   - surface: 5
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: 620303abcd83c40419354785eb07706a, type: 3}
       minVolume: 0.9
@@ -95,6 +102,7 @@ MonoBehaviour:
       maxPitch: 1.05
   - surface: 3
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: d13f19cc91577e44d8b93c8460bdb372, type: 3}
       minVolume: 0.9
@@ -104,7 +112,7 @@ MonoBehaviour:
   arrowPrefab: {fileID: 2748330518523898865, guid: faf148121ddae8d43ba5439f6723f77f, type: 3}
   aimLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 131136
   ammoType: {fileID: 11400000, guid: 8b76f17334b8a6f4ea450c6f372630dd, type: 2}
   arrowSpeed: 50
   focusedArrowSpeed: 100
@@ -116,6 +124,7 @@ MonoBehaviour:
   - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
     Value: 150
   drawSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: a4482b40e4fde004aadc6648c1cfa398, type: 3}
     minVolume: 0.9
@@ -123,6 +132,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   releaseSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: d50c1ef8e20a9924c93d58cd08aa1538, type: 3}
     - {fileID: 8300000, guid: 4880ee1e79cbfa04bb8d5a76d70f9f59, type: 3}
@@ -131,6 +141,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   fireSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: a8bbb035b73a0244d9f2051d9354251e, type: 3}
     - {fileID: 8300000, guid: 092f37d0a7d4ed34d8c0c02844886a2f, type: 3}

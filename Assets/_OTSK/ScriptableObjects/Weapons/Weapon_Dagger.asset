@@ -41,6 +41,7 @@ MonoBehaviour:
   tertiaryAttackDescription: 
   weaponIcon: {fileID: 21300000, guid: 0bb1459ee9853284b8876379fef042ba, type: 3}
   equipSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 72a1f57e6d17dee46813336132d5dd4f, type: 3}
     minVolume: 0.9
@@ -48,6 +49,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   unequipSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 9c3514148be9a544d8569eeba0da502c, type: 3}
     minVolume: 0.9
@@ -55,6 +57,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   defaultImpactSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 5a25f9aba4dacd64db666ff45dd14e76, type: 3}
     - {fileID: 8300000, guid: 012797e33597cbf4c9f42500a78aa53c, type: 3}
@@ -66,6 +69,7 @@ MonoBehaviour:
   impactSounds:
   - surface: 1
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: 06628dca12ea2744db699d1f9eda0c4b, type: 3}
       - {fileID: 8300000, guid: 95865e474a859894db517f629a652201, type: 3}
@@ -75,6 +79,7 @@ MonoBehaviour:
       maxPitch: 1.05
   - surface: 4
     sound:
+      category: 0
       clips:
       - {fileID: 8300000, guid: cb0ed97fa75d398428483ab43a3d1128, type: 3}
       minVolume: 0.805
@@ -84,7 +89,7 @@ MonoBehaviour:
   attackRange: 2
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 131136
   slashDamageProfile:
   - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
     Value: 25
@@ -92,6 +97,7 @@ MonoBehaviour:
   - DamageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
     Value: 150
   finisherSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: 882b13f72c368d747876e28556de0182, type: 3}
     minVolume: 0.9
@@ -99,6 +105,7 @@ MonoBehaviour:
     minPitch: 0.95
     maxPitch: 1.05
   swingSound:
+    category: 0
     clips:
     - {fileID: 8300000, guid: cd13ec19964e07246a980a9486e2d560, type: 3}
     - {fileID: 8300000, guid: 6f06bb50d878f9d4b8f5a6f5e5fcff27, type: 3}

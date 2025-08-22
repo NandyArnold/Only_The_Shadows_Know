@@ -1,5 +1,6 @@
 // PlayerController.cs
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -25,6 +26,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CameraController cameraController;
     [Tooltip("The handler for player health and mana.")]
     [SerializeField] private PlayerStats playerStats;
+
+    private readonly Dictionary<GameObject, int> _originalLayers = new Dictionary<GameObject, int>();
+    private int _playerOriginalLayer;
 
     [Header("Death Settings")] 
     [SerializeField] private float deathAnimationDuration = 2.5f;
@@ -136,6 +140,48 @@ public class PlayerController : MonoBehaviour
         IsInEndwalkerState = isActive;
         Debug.Log("Endwalker state set to: " + isActive);
 
+        int spiritWorldLayer = LayerMask.NameToLayer("SpiritWorld");
+
+        if (isActive)
+        {
+            // Store and change player's layer (and all children)
+            _playerOriginalLayer = gameObject.layer;
+            SetLayerRecursively(this.gameObject, spiritWorldLayer);
+
+            // Store and change layers of all spirit enemies
+            if (EnemyManager.Instance != null)
+            {
+                _originalLayers.Clear();
+                foreach (var enemy in EnemyManager.Instance.GetActiveEnemies())
+                {
+                    // Use your existing check from the EnemyConfigSO
+                    if (enemy.Config.enemyType == EnemyType.Undead /* or other spirit types */)
+                    {
+                        _originalLayers[enemy.gameObject] = enemy.gameObject.layer;
+                        SetLayerRecursively(enemy.gameObject, spiritWorldLayer);
+                    }
+                }
+            }
+        }
+        else // When turning Endwalker OFF
+        {
+            // Restore player's layer (and all children)
+            SetLayerRecursively(this.gameObject, _playerOriginalLayer);
+
+            // Restore layers of all enemies we changed
+            foreach (var entry in _originalLayers)
+            {
+                if (entry.Key != null) // Check if the enemy still exists
+                {
+                    SetLayerRecursively(entry.Key, entry.Value);
+                }
+            }
+            _originalLayers.Clear();
+        }
+
+
+        EndwalkerVisuals.Instance.SetEndwalkerActive(isActive);
+
         // Get the skill data from the skill controller to access its audio profile
         var endwalkerSkill = playerSkillController.GetSkill(SkillIdentifier.Endwalker);
         if (endwalkerSkill != null && endwalkerSkill.skillEffectData.audioProfile != null)
@@ -150,6 +196,7 @@ public class PlayerController : MonoBehaviour
 
             if (isActive)
             {
+
                 // Play the start sound if one is assigned
                 AudioManager.Instance.PlayOverrideAmbience(
                 audioProfile.channelLoopSound,
@@ -172,9 +219,44 @@ public class PlayerController : MonoBehaviour
                 OnEndwalkerStateEnded?.Invoke();
             }
         }
+        // Handle the visual effects
+        if (VFXManager.Instance != null && EnemyManager.Instance != null)
+        {
+            if (isActive)
+            {
+                // Activate aura on the player
+                //VFXManager.Instance.PlayEndwalkerAura(this.transform);
+
+                // Activate auras on all "spirit" enemies
+                foreach (var enemy in EnemyManager.Instance.GetActiveEnemies())
+                {
+                    // Use your existing check from the EnemyConfigSO
+                    if (enemy.Config.enemyType == EnemyType.Undead /* or other spirit types */)
+                    {
+                        VFXManager.Instance.PlayEndwalkerAura(enemy.transform);
+                    }
+                }
+            }
+            else
+            {
+                // Deactivate all auras
+                VFXManager.Instance.StopAllEndwalkerAuras();
+            }
+        }
     }
 
-    // You can add public methods here later if other systems need to interact with the player,
-    // for example: public void TeleportTo(Vector3 position) { ... }
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (obj == null) return;
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (child == null) continue;
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }
+
     public void SetIsDead(bool isDead) { _isDead = isDead; }
 }
