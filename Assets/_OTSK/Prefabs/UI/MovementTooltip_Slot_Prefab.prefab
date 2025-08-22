@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 986065428374729249}
   - component: {fileID: 8230840775987709204}
   - component: {fileID: 6592461543935283500}
+  - component: {fileID: -6551967424542502091}
   m_Layer: 0
   m_Name: MovementTooltip_Slot_Prefab
   m_TagString: Untagged
@@ -135,7 +136,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates: []
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
+--- !u!114 &-6551967424542502091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812007481407770729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7f1317920ea01439cab303ad8674b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickType: 0
+  playHoverSound: 1
 --- !u!1 &3835487161207174166
 GameObject:
   m_ObjectHideFlags: 0

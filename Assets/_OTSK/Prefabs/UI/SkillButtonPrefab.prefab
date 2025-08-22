@@ -227,6 +227,8 @@ GameObject:
   - component: {fileID: 8247995224687849579}
   - component: {fileID: 14767666921323243}
   - component: {fileID: 2390484330155735283}
+  - component: {fileID: 2842290501647998456}
+  - component: {fileID: -1935761174299106943}
   m_Layer: 0
   m_Name: SkillButtonPrefab
   m_TagString: Untagged
@@ -351,6 +353,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillIconImage: {fileID: 6765131549977390169}
   keybindText: {fileID: 3642085565858580039}
+--- !u!114 &2842290501647998456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596456478864488266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
+--- !u!114 &-1935761174299106943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596456478864488266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7f1317920ea01439cab303ad8674b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickType: 0
+  playHoverSound: 1
 --- !u!1 &4114447633234895648
 GameObject:
   m_ObjectHideFlags: 0

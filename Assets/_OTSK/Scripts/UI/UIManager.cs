@@ -42,7 +42,12 @@ public class UIManager : MonoBehaviour
                           SceneLoader.Instance.CurrentlyLoadedScene.sceneType == SceneType.Gameplay);
         if (inGameMenuPanel != null)
         {
+            UISoundPlayer.Instance.PlayMenuOpenSound();
             inGameMenuPanel.SetActive(showInGameMenu);
+        }
+        else
+        {
+            UISoundPlayer.Instance.PlayMenuCloseSound();
         }
 
         if (gameOverPanel != null)

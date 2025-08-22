@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8486057c7cab1d24f97cbdf2dc8506d2, type: 3}
+  m_Name: UI_Sounds
+  m_EditorClassIdentifier: 
+  hover: {fileID: 8300000, guid: ba8fd654292009c4bac551eafc705c7d, type: 3}
+  clickConfirm: {fileID: 8300000, guid: c648f17f353b17d41aa0477f7645ea2e, type: 3}
+  clickBack: {fileID: 8300000, guid: b13bd5040d7ef0446a17f933b3c29271, type: 3}
+  error: {fileID: 8300000, guid: 929428b8d2fdb664689007251a24752e, type: 3}
+  menuOpen: {fileID: 8300000, guid: 979f00589e9235d4e8b00304577e503a, type: 3}
+  menuClose: {fileID: 8300000, guid: ac648a55c0190ff49a75fe9d2e7359c6, type: 3}
+  toggle: {fileID: 8300000, guid: b8fd94d8a1953ff43ae804c7dc9ba33e, type: 3}
+  newObjective: {fileID: 8300000, guid: 5743e63fc6081ed4fb2859e8ea7ca7bb, type: 3}

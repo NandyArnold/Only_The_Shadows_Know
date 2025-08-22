@@ -118,10 +118,12 @@ public class TooltipManager : MonoBehaviour
 
         if (_isPanelOpen)
         {
+            UISoundPlayer.Instance.PlayMenuOpenSound();
             GameManager.Instance.UpdateGameState(GameState.Details);
         }
         else
         {
+            UISoundPlayer.Instance.PlayMenuCloseSound();
             GameManager.Instance.UpdateGameState(GameState.Gameplay);
         }
 
@@ -218,6 +220,9 @@ public class TooltipManager : MonoBehaviour
 
             // Add event triggers from code to handle hover
             EventTrigger trigger = slotGO.GetComponent<EventTrigger>() ?? slotGO.AddComponent<EventTrigger>();
+
+            //AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => UISoundPlayer.Instance.PlayHoverSound());
+
             AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => ShowSkillTooltip(skill));
             AddEventTrigger(trigger, EventTriggerType.PointerExit, HideSkillTooltip);
         }
@@ -271,6 +276,9 @@ public class TooltipManager : MonoBehaviour
 
             // Add event triggers from code to handle hovering
             EventTrigger trigger = slotGO.GetComponent<EventTrigger>();
+
+            //AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => UISoundPlayer.Instance.PlayHoverSound());
+
             AddEventTrigger(trigger, EventTriggerType.PointerEnter, () => ShowDescriptionTooltip(move.abilityName, move.abilityDescription));
             AddEventTrigger(trigger, EventTriggerType.PointerExit, HideDescriptionTooltip);
         }

@@ -224,6 +224,7 @@ public class HUDManager : MonoBehaviour
 
     private IEnumerator ShowObjectiveCoroutine(string text)
     {
+        UISoundPlayer.Instance.PlayNewObjectiveSound();
         // Fade Out (if it was already visible)
         float startAlpha = _objectivePanelCG.alpha;
         float elapsedTime = 0f;
@@ -277,6 +278,7 @@ public class HUDManager : MonoBehaviour
         ObjectiveSO currentObjective = ObjectiveManager.Instance.GetCurrentObjective();
         if (currentObjective != null)
         {
+            UISoundPlayer.Instance.PlayToggleSound();
             // Re-run the same fade coroutine we already have
             if (_objectiveCoroutine != null) StopCoroutine(_objectiveCoroutine);
             _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(currentObjective.objectiveDescription));
