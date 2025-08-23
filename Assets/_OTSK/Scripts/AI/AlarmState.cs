@@ -9,6 +9,7 @@ public class AlarmState : EnemyAIState
 
     private AlarmPanel _targetPanel;
     private float _timer;
+    private Coroutine _signalCoroutine;
 
     public override void Enter(EnemyAI enemyAI)
     {
@@ -17,6 +18,12 @@ public class AlarmState : EnemyAIState
         switch (enemyAI.Config.alarmType)
         {
             case AlarmType.GoToPanel:
+                if (enemyAI.Config.limitPanelAlarms && enemyAI.PanelAlarmCount >= enemyAI.Config.maxPanelAlarms)
+                {
+                    Debug.Log($"Panel alarm limit ({enemyAI.Config.maxPanelAlarms}) reached. Transitioning to Combat State instead.", enemyAI.gameObject);
+                    enemyAI.TransitionToState(new CombatState());
+                    return; // Exit the Enter method immediately
+                }
                 _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
                 
                 if (_targetPanel != null)
@@ -45,7 +52,7 @@ public class AlarmState : EnemyAIState
                     enemyAI.TransitionToState(new CombatState());
                     return;
                 }
-                enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
+                _signalCoroutine = enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
                 break;
 
             case AlarmType.None:
@@ -71,6 +78,7 @@ public class AlarmState : EnemyAIState
                 if (_targetPanel != null)
                 {
                     _targetPanel.TriggerAlarm();
+                    enemyAI.IncrementPanelAlarmCount();
                 }
                 enemyAI.TransitionToState(new CombatState());
             }
@@ -119,7 +127,14 @@ public class AlarmState : EnemyAIState
     }
 
 
-    public override void Exit(EnemyAI enemyAI) { }
+    public override void Exit(EnemyAI enemyAI)
+    {
+        // If the signal coroutine is running when we leave this state, stop it.
+        if (_signalCoroutine != null)
+        {
+            enemyAI.StopCoroutine(_signalCoroutine);
+        }
+    }
 
     private AlarmPanel FindClosestAlarmPanel(Vector3 position)
     {

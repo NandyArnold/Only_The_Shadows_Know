@@ -184,6 +184,11 @@ public class GameManager : MonoBehaviour
             // Deal a huge amount of damage that cannot be survived.
             Player.GetComponent<PlayerStats>().TakeDamage(float.MaxValue);
         }
+
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.OnPlayerDeath();
+        }
     }
 
     public void ResetManagersForMainMenu()

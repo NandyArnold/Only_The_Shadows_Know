@@ -16,7 +16,7 @@ public class Destructible : MonoBehaviour
     public event Action<float, float> OnHealthChanged;
 
     private float _currentHealth;
-    private EnemyUIController _uiController;
+    private DestructibleUIController _uiController;
 
     private void Awake()
     {
@@ -24,7 +24,7 @@ public class Destructible : MonoBehaviour
         if (statusBarPrefab != null && statusBarAnchor != null)
         {
             GameObject statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, statusBarAnchor);
-            _uiController = statusBarInstance.GetComponent<EnemyUIController>();
+            _uiController = statusBarInstance.GetComponent<DestructibleUIController>();
 
             // Subscribe the UI to this object's health changes
             if (_uiController != null)

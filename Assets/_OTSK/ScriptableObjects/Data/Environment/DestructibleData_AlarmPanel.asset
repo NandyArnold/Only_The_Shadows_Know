@@ -15,7 +15,7 @@ MonoBehaviour:
   maxHealth: 150
   resistances:
   - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
-    multiplier: 1.5
+    multiplier: 1
   - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     multiplier: 0
   - damageType: {fileID: 11400000, guid: d18aea837f3d939458876ee353196e1e, type: 2}

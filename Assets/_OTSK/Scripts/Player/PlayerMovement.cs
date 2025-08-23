@@ -211,7 +211,7 @@ public class PlayerMovement : MonoBehaviour
             if (_velocity.y < landingVelocityThreshold)
             {
                 OnLand?.Invoke();
-                NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
+                NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.landNoise, this.gameObject);
             }
         }
     }

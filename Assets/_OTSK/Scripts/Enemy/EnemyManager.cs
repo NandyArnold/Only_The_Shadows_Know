@@ -100,6 +100,12 @@ public class EnemyManager : MonoBehaviour
         {
             if (enemy != null)
             {
+                EnemyCombatHandler handler = enemy.GetComponent<EnemyCombatHandler>();
+                if (handler != null)
+                {
+                    handler.CancelAttack();
+                }
+                ResetAllEnemies();
                 // Disable their ability to see or hear.
                 if (enemy.Detector != null)
                 {

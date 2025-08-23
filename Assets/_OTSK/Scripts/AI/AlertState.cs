@@ -98,19 +98,68 @@ public class AlertState : EnemyAIState
         //    will play during the beginning of this wait.
         yield return new WaitForSeconds(enemyAI.Config.alertInvestigateTime);
 
-        // 3. After waiting, decide where to go based on the AI's initial role.
+        bool shouldRaiseAlarm = false;
+        switch (enemyAI.Config.alarmType)
+        {
+            case AlarmType.GoToPanel:
+                // Check if we are allowed to use panels and haven't hit our limit.
+                if (!enemyAI.Config.limitPanelAlarms || enemyAI.PanelAlarmCount < enemyAI.Config.maxPanelAlarms)
+                {
+                    // Check if there is actually a panel nearby to run to.
+                    if (FindClosestAlarmPanel(enemyAI) != null)
+                    {
+                        shouldRaiseAlarm = true;
+                    }
+                }
+                break;
+
+            case AlarmType.SignalFromPosition:
+                // Check if we haven't hit our summon/signal limit.
+                if (enemyAI.SummonCount < enemyAI.Config.maxSummonCount)
+                {
+                    shouldRaiseAlarm = false;
+                }
+                break;
+        }
+
+        if (shouldRaiseAlarm)
+        {
+            // If any of the conditions were met, escalate to AlarmState.
+            enemyAI.LastKnownPlayerPosition = _alertLocation; // Ensure AI knows where the body was
+            enemyAI.TransitionToState(new AlarmState());
+            yield break; // Stop this coroutine. The new state will take over.
+        }
+
+        // --- 3. IF NO ALARM WAS RAISED, RETURN TO NORMAL DUTIES (Original Logic) ---
         if (enemyAI.InitialState == InitialAIState.Guard)
         {
-            // If we are a guard, we go back to guarding.
             enemyAI.TransitionToState(new GuardState());
         }
-        else // Otherwise, we are a patroller.
+        else
         {
-            // If we are a patroller, we go back to patrolling.
             enemyAI.TransitionToState(new PatrolState(enemyAI.PatrolRoute));
         }
     }
 
+    private AlarmPanel FindClosestAlarmPanel(EnemyAI enemyAI)
+    {
+        GameObject[] panels = GameObject.FindGameObjectsWithTag("AlarmPanel");
+        AlarmPanel closest = null;
+        float minDistance = float.MaxValue;
 
+        foreach (GameObject panel in panels)
+        {
+            float distance = Vector3.Distance(enemyAI.transform.position, panel.transform.position);
+
+            // --- THIS IS THE CHANGE ---
+            // We now check if the panel is the closest so far AND within the search radius.
+            if (distance < minDistance && distance <= enemyAI.Config.alarmPanelSearchRadius)
+            {
+                minDistance = distance;
+                closest = panel.GetComponent<AlarmPanel>();
+            }
+        }
+        return closest;
+    }
 
 }

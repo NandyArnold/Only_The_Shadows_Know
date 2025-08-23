@@ -83,4 +83,8 @@ public class EnemyCombatHandler : MonoBehaviour
         Gizmos.DrawWireCube(Vector3.zero, hitboxSize);
     }
 
+    public void CancelAttack()
+    {
+        _damageWindowIsOpen = false;
+    }
 }

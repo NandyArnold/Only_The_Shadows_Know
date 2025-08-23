@@ -12660,6 +12660,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eventResponses:
+  - eventChannel: {fileID: 11400000, guid: d4b207a38daa5074e8c6e37b2a9399d4, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Start_AlarmPanelSumm
+            m_BoolArgument: 0
+          m_CallState: 2
   - eventChannel: {fileID: 11400000, guid: a152ed73ceeda52429432d902748f6fd, type: 2}
     response:
       m_PersistentCalls:
@@ -12716,22 +12732,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventChannel: {fileID: 11400000, guid: d4b207a38daa5074e8c6e37b2a9399d4, type: 2}
-    response:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1837955073}
-          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
-          m_MethodName: TriggerSpawnGroup
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: StartSummsPanel
-            m_BoolArgument: 0
-          m_CallState: 2
   - eventChannel: {fileID: 11400000, guid: d2cbf8c0af518bf42aeb254b791d7aa0, type: 2}
     response:
       m_PersistentCalls:
@@ -12745,7 +12745,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: StartAllyDeathSummon
+            m_StringArgument: Start_Lake_SummOnAllyDeath
             m_BoolArgument: 0
           m_CallState: 2
   - eventChannel: {fileID: 11400000, guid: f3fcf7e5d0ffeda4bbd2d15a3cb5278a, type: 2}
@@ -12761,7 +12761,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: StartTiCSummon
+            m_StringArgument: Start_Lake_SummOnAllyDeath
             m_BoolArgument: 0
           m_CallState: 2
   - eventChannel: {fileID: 11400000, guid: 0fe91448308be2845bb508523a04ac2e, type: 2}
@@ -12777,7 +12777,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: AnimancySummons
+            m_StringArgument: Mid_AnimancySummons
             m_BoolArgument: 0
           m_CallState: 2
   - eventChannel: {fileID: 11400000, guid: b0acda24ccc31b94abd4ece847ae1655, type: 2}
@@ -15192,5 +15192,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1837955055}
-  - {fileID: 879551567}
   - {fileID: 1865568905}
+  - {fileID: 879551567}

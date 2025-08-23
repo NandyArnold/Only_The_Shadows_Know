@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 3011562132158654508}
   - component: {fileID: 6345878136775759085}
   - component: {fileID: 7991931343461231824}
+  - component: {fileID: 5473676857823073551}
   m_Layer: 6
   m_Name: Knight_Patrol_Prefab
   m_TagString: Enemy
@@ -251,6 +252,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b71515c93ee846b2873da62971d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5473676857823073551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576752461769993476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a705cf65fba97e249bb905fa41dd2bde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventChannel: {fileID: 0}
+  response:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2080416359781553335
 GameObject:
   m_ObjectHideFlags: 0

@@ -69,14 +69,14 @@ MonoBehaviour:
   rangedRange: 15
   aimLayerMask:
     serializedVersion: 2
-    m_Bits: 131136
+    m_Bits: 393280
   rangedDamageProfile:
   - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     Value: 150
   meleeRange: 2
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 147191
+    m_Bits: 409335
   meleeDamageProfile:
   - DamageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     Value: 150

@@ -22,6 +22,7 @@ public class EnemyAI : MonoBehaviour
 
     public PatrolRoute PatrolRoute { get; set; }
     public int SummonCount { get; private set; } = 0;
+     public int PanelAlarmCount { get; private set; } = 0;
 
     public bool HasCalledForHelp => _hasCalledForHelp;
    
@@ -147,6 +148,7 @@ public class EnemyAI : MonoBehaviour
     public void ResetToInitialState()
     {
         _hasCalledForHelp = false;
+        PanelAlarmCount = 0;
         // Re-enable the NavMeshAgent in case it was disabled (e.g., on death).
         var agent = GetComponent<NavMeshAgent>();
         if (agent != null) agent.enabled = true;
@@ -202,28 +204,31 @@ public class EnemyAI : MonoBehaviour
         // If we are in combat, we also ignore it for now.
         if (CurrentState is CombatState) return;
 
+        Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
+        TransitionToState(new AlertState(bodyTransform.position));
+
         // --- THIS IS THE FIX ---
         // Read our config to decide what to do.
-        switch (Config.alarmType)
-        {
-            case AlarmType.GoToPanel:
-                Debug.Log($"<color=red>{name} has spotted a dead body! Going to alarm panel!</color>");
-                TransitionToState(new AlarmState());
-                break;
-            case AlarmType.SignalFromPosition:
-                // If we are capable of raising an alarm, transition to the AlarmState.
-                Debug.Log($"<color=red>{name} has spotted a dead body! Sounding the alarm!</color>");
-                LastKnownPlayerPosition = bodyTransform.position;
-                TransitionToState(new AlarmState());
-                break;
+        //switch (Config.alarmType)
+        //{
+        //    case AlarmType.GoToPanel:
+        //        Debug.Log($"<color=red>{name} has spotted a dead body! Going to alarm panel!</color>");
+        //        TransitionToState(new AlarmState());
+        //        break;
+        //    case AlarmType.SignalFromPosition:
+        //        // If we are capable of raising an alarm, transition to the AlarmState.
+        //        Debug.Log($"<color=red>{name} has spotted a dead body! Sounding the alarm!</color>");
+        //        LastKnownPlayerPosition = bodyTransform.position;
+        //        TransitionToState(new AlarmState());
+        //        break;
 
-            case AlarmType.None:
-            default:
-                // If we are not configured to raise an alarm, just investigate the body.
-                Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
-                TransitionToState(new AlertState(bodyTransform.position));
-                break;
-        }
+        //    case AlarmType.None:
+        //    default:
+        //        // If we are not configured to raise an alarm, just investigate the body.
+        //        Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
+        //        TransitionToState(new AlertState(bodyTransform.position));
+        //        break;
+        //}
     }
 
     public void ResetSummonCount()
@@ -234,7 +239,7 @@ public class EnemyAI : MonoBehaviour
     private void HandleAllyDiedInCombat(Enemy deadAlly)
     {
         // If we're already in combat/alarm, or if we're not configured to care, do nothing.
-        if (!Config.soundsAlarmOnAllyDeath || CurrentState is CombatState || CurrentState is AlarmState)
+        if (!Config.soundsAlarmOnAllyDeath  || CurrentState is AlarmState) // removed || CurrentState is CombatState just in case
         {
             return;
         }
@@ -265,5 +270,6 @@ public class EnemyAI : MonoBehaviour
     {
         SummonCount = count;
     }
+    public void IncrementPanelAlarmCount() => PanelAlarmCount++;
 
 }

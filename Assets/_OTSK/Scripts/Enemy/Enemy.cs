@@ -177,6 +177,7 @@ public class Enemy : MonoBehaviour, ISaveable
         _revealableEntity = GetComponent<RevealableEntity>();
         revealIconAnchor = transform.Find("RevealIcon_Anchor");
 
+
         statusBarAnchor = transform.Find("StatusBarAnchor");
         if (statusBarAnchor == null)
         {
@@ -370,7 +371,7 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             Destroy(_statusBarInstance);
         }
-
+        _ai?.CurrentState?.Exit(_ai);
         // 2. Disable all sensory and intelligence components
         if (Detector != null) Detector.enabled = false;
         if (_ai != null) _ai.enabled = false;

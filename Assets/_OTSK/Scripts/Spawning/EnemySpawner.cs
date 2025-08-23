@@ -15,6 +15,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float reinforcementSpawnRadius = 20f;
     [Tooltip("How far from the player to search for pre-placed spawn points.")]
     [SerializeField] private float reinforcementSearchRadius = 40f;
+    [Tooltip("Layers that block line-of-sight for spawning. Should match enemy vision layers.")]
+    [SerializeField] private LayerMask visionBlockingLayers;
 
     private SceneDataSO _currentSceneData;
 
@@ -134,6 +136,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void TriggerSpawnGroup(string groupName)
     {
+        Debug.Log($"<color=cyan><b>[SPAWNER TRIGGERED]</b></color> Spawner was told to trigger spawn group with name: <b>'{groupName}'</b>", this.gameObject);
         if (_currentSceneData == null || GameManager.Instance.Player == null) return;
         SpawnGroup groupToSpawn = _currentSceneData.enemyEventSpawns.Find(g => g.groupName == groupName);
 
@@ -160,7 +163,9 @@ public class EnemySpawner : MonoBehaviour
         var validPoints = allSpawnPoints
          .Where(p => p.IsReinforcementPoint &&
                      Vector3.Distance(searchOrigin, p.transform.position) <= reinforcementSearchRadius &&
-                     IsOffScreen(p.transform.position))
+                     IsOffScreen(p.transform.position) &&
+                     // ADDED: Check for line of sight on pre-placed points too
+                     !Physics.Linecast(searchOrigin, p.transform.position, visionBlockingLayers))
          .OrderBy(p => Vector3.Distance(searchOrigin, p.transform.position))
          .ToList();
 
@@ -172,18 +177,17 @@ public class EnemySpawner : MonoBehaviour
         }
 
         // --- FALLBACK LOGIC ---
-        // If no pre-placed points are found, create a "virtual" one.
-        for (int i = 0; i < 10; i++) // Try 10 times to find a random spot
+        for (int i = 0; i < 20; i++) // Increased attempts for better results
         {
             Vector2 randomDir = Random.insideUnitCircle.normalized * reinforcementSpawnRadius;
             Vector3 randomPoint = searchOrigin + new Vector3(randomDir.x, 0, randomDir.y);
 
             if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
             {
-                if (IsOffScreen(hit.position))
+                // Check if the point is off-screen AND has line of sight to the player
+                if (IsOffScreen(hit.position) && !Physics.Linecast(searchOrigin, hit.position, visionBlockingLayers))
                 {
                     position = hit.position;
-                    // Have the enemy spawn facing the player
                     rotation = Quaternion.LookRotation(searchOrigin - hit.position);
                     return true;
                 }

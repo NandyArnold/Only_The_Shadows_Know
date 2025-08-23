@@ -53,7 +53,13 @@ public class EnemyConfigSO : ScriptableObject
     public float timeInCombatAlarmThreshold = 20f;
     [Tooltip("The amount of times this enemy can trigger the alarm")]
     public int maxSummonCount = 1;
-    
+    [Tooltip("The maximum distance an enemy will search for an alarm panel.")]
+    public float alarmPanelSearchRadius = 30f;
+    [Tooltip("If checked, the enemy can only use an Alarm Panel a limited number of times.")]
+    public bool limitPanelAlarms = false;
+    [Tooltip("The maximum number of times this enemy can successfully trigger an Alarm Panel. Only works if 'Limit Panel Alarms' is checked.")]
+    public int maxPanelAlarms = 1;
+
 
     [Range(0, 360)]
     public float detectionConeAngle = 90f;

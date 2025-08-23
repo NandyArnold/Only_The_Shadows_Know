@@ -21,6 +21,32 @@ public class CombatManager : MonoBehaviour
         else Instance = this;
     }
 
+    private void Update()
+    {
+        // When you press the 'I' key...
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            // ...check if the combat list is supposed to be empty.
+            if (_enemiesInCombat.Count > 0)
+            {
+                Debug.Log($"<color=orange>COMBAT MANAGER DEBUG: There are {_enemiesInCombat.Count} enemies still registered in combat.</color>");
+                foreach (var enemy in _enemiesInCombat)
+                {
+                    // Print the name and status of each enemy in the list.
+                    // This will expose the "ghost" enemy that is dead but still registered.
+                    string configName = enemy.Config != null ? enemy.Config.name : "CONFIG NOT FOUND";
+                    string status = (enemy.GetComponent<EnemyHealth>().IsDead) ? " (Is Dead)" : " (Is Alive)";
+
+                    Debug.Log($"--> Config: {configName} on GameObject: {enemy.name}{status}");
+                }
+            }
+            else
+            {
+                Debug.Log("<color=green>COMBAT MANAGER DEBUG: The combat list is empty. All enemies correctly unregistered.</color>");
+            }
+        }
+    }
+
     // UPDATED: Now takes the enemy that started the fight.
     public void RegisterEnemyInCombat(Enemy enemy)
     {

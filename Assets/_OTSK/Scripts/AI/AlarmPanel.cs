@@ -26,7 +26,14 @@ public class AlarmPanel : MonoBehaviour
 
     public void TriggerAlarm()
     {
-
+        if (eventToRaiseOnAlarm != null)
+        {
+            Debug.Log($"<color=red><b>[EVENT RAISE ATTEMPT]</b></color> by Alarm Panel: <b>'{this.name}'</b>. Raising event: <b>'{eventToRaiseOnAlarm.name}'</b>", this.gameObject);
+        }
+        else
+        {
+            Debug.LogWarning($"<color=orange>[ALARM PANEL]</color> <b>'{this.name}'</b> tried to raise an alarm, but no GameEvent is assigned.", this.gameObject);
+        }
 
         Debug.Log($"<color=red>ALARM TRIGGERED!</color> by {name}. Alerting allies within {alertRadius}m.");
 

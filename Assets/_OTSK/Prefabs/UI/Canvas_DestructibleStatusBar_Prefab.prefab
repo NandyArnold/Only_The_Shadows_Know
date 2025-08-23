@@ -838,9 +838,9 @@ GameObject:
   - component: {fileID: 8710371966680319846}
   - component: {fileID: 212519954659415646}
   - component: {fileID: 2779575914791289170}
-  - component: {fileID: 5303617283717156442}
+  - component: {fileID: -8783232043042931146}
   m_Layer: 5
-  m_Name: Canvas_EnemyStatusBar_Prefab
+  m_Name: Canvas_DestructibleStatusBar_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -915,7 +915,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &2779575914791289170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -933,7 +933,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5303617283717156442
+--- !u!114 &-8783232043042931146
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -942,14 +942,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8542730887588098974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51c977967ae0a374582ed6cc5cd904cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 0473fef7342ed4344ab4130e0b57737b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 8303506323392618186}
-  alertSlider: {fileID: 7122220978641911183}
-  deathZoneMark: {fileID: 8763383001976217153}
-  castBarSlider: {fileID: 7586261011472871076}
-  alertVFXObject: {fileID: 2944556520406054917}
 --- !u!1 &8763383001976217153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,11 +1133,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78444f5264807ba4991b339e974be777, type: 3}
---- !u!1 &2944556520406054917 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4414479325852632663, guid: 78444f5264807ba4991b339e974be777, type: 3}
-  m_PrefabInstance: {fileID: 1557764998415810130}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6679387162054114623 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5273636269825868653, guid: 78444f5264807ba4991b339e974be777, type: 3}

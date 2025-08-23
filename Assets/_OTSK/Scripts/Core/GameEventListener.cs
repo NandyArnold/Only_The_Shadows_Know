@@ -19,6 +19,10 @@ public class GameEventListener : MonoBehaviour
 
     private void OnEventRaised()
     {
+        // --- ADD THIS DEBUG LOG ---
+        Debug.Log($"<color=green><b>[EVENT HEARD]</b></color> Listener on <b>'{this.name}'</b> heard event: <b>'{eventChannel.name}'</b>. Invoking response.", this.gameObject);
+        // --- END OF LOG ---
+
         response?.Invoke();
     }
 }
