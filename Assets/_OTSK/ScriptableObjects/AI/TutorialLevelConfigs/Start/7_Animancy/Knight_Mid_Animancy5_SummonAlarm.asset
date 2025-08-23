@@ -15,8 +15,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
   revealableType: 5
-  revealIconPrefab: {fileID: 0}
-  displayName: Patrol Guard Tester
+  revealIconPrefab: {fileID: 1532475450579200181, guid: 033f84f62407e5645b32cc1f4b6592ad, type: 3}
+  displayName: AnimancySummoner
   maxHealth: 250
   attackDamage: 50
   attackRange: 2.2

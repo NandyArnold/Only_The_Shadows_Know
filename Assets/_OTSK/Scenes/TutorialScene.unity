@@ -45391,6 +45391,7 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 43dc9d09d045db240b2432fa4d405397, type: 2}
   statusBarPrefab: {fileID: 8542730887588098974, guid: 200591ffff209e34fb6f49aeef873453, type: 3}
   statusBarAnchor: {fileID: 1629873926}
+  revealIconPrefab: {fileID: 1532475450579200181, guid: 4748f64dbb25d334aa646e5d367f4a60, type: 3}
 --- !u!114 &8679880006885714812
 MonoBehaviour:
   m_ObjectHideFlags: 0

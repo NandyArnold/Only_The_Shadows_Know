@@ -12443,10 +12443,20 @@ MonoBehaviour:
   riftPlaceVFXPrefab: {fileID: 3980101321277970685, guid: 553579bee0171d7418f0d2d45bb2a5cd, type: 3}
   riftTeleportVFXPrefab: {fileID: 3980101321277970685, guid: c905b20e33aae0a41bc68cc84f68d15f, type: 3}
   scryingCastVFXPrefab: {fileID: 8960210433693217950, guid: ab515fd6aff1c9046bbaf594d5cef0c8, type: 3}
-  enemyRevealMaterial: {fileID: 2100000, guid: 350c6e19c3efdc5418ced8f89611bbbd, type: 2}
-  interactableRevealMaterial: {fileID: 2100000, guid: 55e80c6a1729b4f4195fae3f70fc1ca1, type: 2}
-  bossRevealMaterial: {fileID: 2100000, guid: 7164d71be8b2da247a3adb7c40947d6f, type: 2}
+  hiddenItemeRevealMaterial: {fileID: 2100000, guid: 55e80c6a1729b4f4195fae3f70fc1ca1, type: 2}
+  manaAdditionRevealMaterial: {fileID: 2100000, guid: fb6a764ffdcf6a048aae13dfd7f15c90, type: 2}
+  arrowAdditionRevealMaterial: {fileID: 2100000, guid: b38ae42e9ec1b934ab3f95d6d11515b6, type: 2}
+  alarmPanelRevealMaterial: {fileID: 2100000, guid: fe8952baafe494440b0171e57bd25ad8, type: 2}
+  mainObjectiveRevealMaterial: {fileID: 2100000, guid: 23f23f54a1679734cb8839dc504f67c5, type: 2}
+  normalRevealMaterial: {fileID: 2100000, guid: 5002ac5f8cca3064eab1f9853237f143, type: 2}
+  priorityEnemyRevealMaterial: {fileID: 2100000, guid: 38922c1e7d9dcd2489aec312fd4b464f, type: 2}
+  summonerRevealMaterial: {fileID: 2100000, guid: 409925cc48e1297448d358ddf63636c3, type: 2}
+  eliteSummonerRevealMaterial: {fileID: 2100000, guid: e4d31557f4c51f04695ac24127a4772c, type: 2}
+  instakillRevealMaterial: {fileID: 2100000, guid: 96724f32d82a5cd4ab5d3ecbbd4d4bdd, type: 2}
+  undeadRevealMaterial: {fileID: 2100000, guid: 350c6e19c3efdc5418ced8f89611bbbd, type: 2}
   casterRevealMaterial: {fileID: 2100000, guid: b3ad389bd9ec07d4883f2ac60acb93a3, type: 2}
+  eliteRevealMaterial: {fileID: 2100000, guid: 18a427d29d6823646860bf3a07e750ae, type: 2}
+  bossRevealMaterial: {fileID: 2100000, guid: 7164d71be8b2da247a3adb7c40947d6f, type: 2}
   worldMarkersCanvas: {fileID: 400007564}
   endwalkerAuraPrefab: {fileID: 3823170294624016871, guid: d23032ff1e03067488b3e278a6c3adee, type: 3}
 --- !u!114 &1837955071

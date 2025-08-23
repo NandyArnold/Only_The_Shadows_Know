@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8476429950492592160}
   - component: {fileID: 8466519304327311922}
   m_Layer: 0
-  m_Name: BossIcon_UI
+  m_Name: EliteSummonerIcon_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 87ba54e3dbd45c04aa9e9b80f144d453, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e452162ba28dfbc47951612d389efa08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

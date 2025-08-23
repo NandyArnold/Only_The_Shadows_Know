@@ -13,5 +13,6 @@ public enum RevealableType
     Undead,
     Caster,
     Elite,
+    MainObjective,
     Boss
 }

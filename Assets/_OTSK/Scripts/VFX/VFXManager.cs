@@ -17,6 +17,7 @@ public class VFXManager : MonoBehaviour
     [SerializeField] private Material manaAdditionRevealMaterial;
     [SerializeField] private Material arrowAdditionRevealMaterial;
     [SerializeField] private Material alarmPanelRevealMaterial;
+    [SerializeField] private Material mainObjectiveRevealMaterial;
     [SerializeField] private Material normalRevealMaterial;
     [SerializeField] private Material priorityEnemyRevealMaterial;
     [SerializeField] private Material summonerRevealMaterial;
@@ -144,6 +145,8 @@ public class VFXManager : MonoBehaviour
                 return new Material[] { arrowAdditionRevealMaterial };
             case RevealableType.AlarmPanel:
                 return new Material[] { alarmPanelRevealMaterial };
+            case RevealableType.MainObjective:
+                return new Material[] { mainObjectiveRevealMaterial };
             case RevealableType.Normal:
                 return new Material[] { normalRevealMaterial };
             case RevealableType.Priority:

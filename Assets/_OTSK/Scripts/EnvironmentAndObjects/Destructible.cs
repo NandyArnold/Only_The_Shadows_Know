@@ -10,6 +10,7 @@ public class Destructible : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject statusBarPrefab;
     [SerializeField] private Transform statusBarAnchor;
+    [SerializeField] private GameObject revealIconPrefab;
 
     public event Action OnDied;
     public event Action<float, float> OnHealthChanged;
@@ -31,6 +32,7 @@ public class Destructible : MonoBehaviour
                 this.OnHealthChanged += _uiController.UpdateHealth;
                 // Set the initial state (full health, so it will be hidden)
                 _uiController.UpdateHealth(_currentHealth, data.maxHealth);
+                _uiController.InitializeRevealIcon(revealIconPrefab);
             }
         }
     }
