@@ -74,7 +74,7 @@ MonoBehaviour:
   - groupName: Mid_InstakillOnAllyDeath
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: 1098b0fc363f72e45bb243376ce0c8e9, type: 2}
-      spawnPointID: Guard_S_Mid_InstakillAD
+      spawnPointID: Guard_S_Mid_InstakillAD1
       patrolRouteID: 
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: 4ac060d6f425f594f87438aa9f1cc532, type: 2}
@@ -129,6 +129,14 @@ MonoBehaviour:
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: Guard_StaticB
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: 09c9d28db3d7a454d8eb41b73e32ac51, type: 2}
+      spawnPointID: Guard_S_LakeHouse1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: 09c9d28db3d7a454d8eb41b73e32ac51, type: 2}
+      spawnPointID: Guard_S_LakeHouse2
       patrolRouteID: 
       initialState: 1
   - groupName: TowerGuards
@@ -223,7 +231,7 @@ MonoBehaviour:
       initialState: 1
   - groupName: PatrolingKnights
     spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+    - enemyToSpawn: {fileID: 11400000, guid: add7d3705ab67d440a1f13c8eb17958f, type: 2}
       spawnPointID: Guard_PatrolA
       patrolRouteID: GuardPathA
       initialState: 0
@@ -236,7 +244,7 @@ MonoBehaviour:
       patrolRouteID: GuardPathC
       initialState: 0
   enemyEventSpawns:
-  - groupName: Start3SummsPanel
+  - groupName: StartSummsPanel
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: 
@@ -258,7 +266,7 @@ MonoBehaviour:
       spawnPointID: 
       patrolRouteID: 
       initialState: 1
-  - groupName: Start2SummsOnAllyDeath
+  - groupName: StartAllyDeathSummon
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: 
@@ -280,7 +288,7 @@ MonoBehaviour:
       spawnPointID: 
       patrolRouteID: 
       initialState: 1
-  - groupName: Start2SummsTimeInCombat
+  - groupName: StartTiCSummon
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: 
@@ -302,7 +310,7 @@ MonoBehaviour:
       spawnPointID: 
       patrolRouteID: 
       initialState: 1
-  - groupName: Mid5SummsAllyDeath
+  - groupName: AnimancySummons
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: 

@@ -12716,6 +12716,86 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: d4b207a38daa5074e8c6e37b2a9399d4, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: StartSummsPanel
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: d2cbf8c0af518bf42aeb254b791d7aa0, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: StartAllyDeathSummon
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: f3fcf7e5d0ffeda4bbd2d15a3cb5278a, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: StartTiCSummon
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: 0fe91448308be2845bb508523a04ac2e, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: AnimancySummons
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventChannel: {fileID: 11400000, guid: b0acda24ccc31b94abd4ece847ae1655, type: 2}
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1837955073}
+          m_TargetAssemblyTypeName: EnemySpawner, Assembly-CSharp
+          m_MethodName: TriggerSpawnGroup
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: BossSummons
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!114 &1837955082
 MonoBehaviour:
   m_ObjectHideFlags: 0

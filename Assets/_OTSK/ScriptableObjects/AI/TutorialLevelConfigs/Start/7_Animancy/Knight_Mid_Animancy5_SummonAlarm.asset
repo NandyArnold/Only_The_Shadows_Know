@@ -35,7 +35,7 @@ MonoBehaviour:
   lookAroundAnimationDuration: 4
   alarmType: 2
   soundsAlarmOnAllyDeath: 1
-  alarmEventToRaise: {fileID: 11400000, guid: a152ed73ceeda52429432d902748f6fd, type: 2}
+  alarmEventToRaise: {fileID: 11400000, guid: 0fe91448308be2845bb508523a04ac2e, type: 2}
   useTimeOutAlarm: 0
   timeInCombatAlarmThreshold: 5
   maxSummonCount: 2
