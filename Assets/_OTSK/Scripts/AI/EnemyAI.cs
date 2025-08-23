@@ -23,6 +23,7 @@ public class EnemyAI : MonoBehaviour
     public PatrolRoute PatrolRoute { get; set; }
     public int SummonCount { get; private set; } = 0;
      public int PanelAlarmCount { get; private set; } = 0;
+    public int InstakillAlarmCount { get; private set; } = 0;
 
     public bool HasCalledForHelp => _hasCalledForHelp;
    
@@ -149,6 +150,8 @@ public class EnemyAI : MonoBehaviour
     {
         _hasCalledForHelp = false;
         PanelAlarmCount = 0;
+        SummonCount = 0;
+        InstakillAlarmCount = 0;
         // Re-enable the NavMeshAgent in case it was disabled (e.g., on death).
         var agent = GetComponent<NavMeshAgent>();
         if (agent != null) agent.enabled = true;
@@ -207,34 +210,10 @@ public class EnemyAI : MonoBehaviour
         Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
         TransitionToState(new AlertState(bodyTransform.position));
 
-        // --- THIS IS THE FIX ---
-        // Read our config to decide what to do.
-        //switch (Config.alarmType)
-        //{
-        //    case AlarmType.GoToPanel:
-        //        Debug.Log($"<color=red>{name} has spotted a dead body! Going to alarm panel!</color>");
-        //        TransitionToState(new AlarmState());
-        //        break;
-        //    case AlarmType.SignalFromPosition:
-        //        // If we are capable of raising an alarm, transition to the AlarmState.
-        //        Debug.Log($"<color=red>{name} has spotted a dead body! Sounding the alarm!</color>");
-        //        LastKnownPlayerPosition = bodyTransform.position;
-        //        TransitionToState(new AlarmState());
-        //        break;
-
-        //    case AlarmType.None:
-        //    default:
-        //        // If we are not configured to raise an alarm, just investigate the body.
-        //        Debug.Log($"<color=orange>{name} has spotted a dead body! Investigating...</color>");
-        //        TransitionToState(new AlertState(bodyTransform.position));
-        //        break;
-        //}
+        
     }
 
-    public void ResetSummonCount()
-    {
-        SummonCount = 0;
-    }
+  
 
     private void HandleAllyDiedInCombat(Enemy deadAlly)
     {
@@ -247,14 +226,16 @@ public class EnemyAI : MonoBehaviour
         // Check if the dead ally was close enough to matter.
         if (Vector3.Distance(transform.position, deadAlly.transform.position) <= Config.visionRange)
         {
-            Debug.Log($"<color=orange>{name} saw an ally die! Sounding the alarm!</color>");
-            TransitionToState(new AlarmState());
+            Debug.Log($"<color=orange>{name} saw an ally die! Attempting to raise alarm.</color>", this.gameObject);
+
+            // --- THIS IS THE FIX ---
+            // OLD: TransitionToState(new AlarmState());
+            // NEW: Call our new centralized decision-making method.
+            TryEscalateToAlarm();
         }
     }
 
     public void SetHasCalledForHelp(bool value) => _hasCalledForHelp = value;
-
-    public void IncrementSummonCount() => SummonCount++;
 
     public void RespondToCallForHelp(Transform player)
     {
@@ -266,10 +247,77 @@ public class EnemyAI : MonoBehaviour
         TransitionToState(new CombatState());
     }
 
+    public bool TryEscalateToAlarm()
+    {
+        // Check for GoToPanel type first
+        if (Config.alarmType == AlarmType.GoToPanel)
+        {
+            if (!Config.limitPanelAlarms || PanelAlarmCount < Config.maxPanelAlarms)
+            {
+                if (FindClosestAlarmPanel(transform.position, Config.alarmPanelSearchRadius) != null)
+                {
+                    TransitionToState(new AlarmState()); // Pass no event for GoToPanel
+                    return true; // Escalation successful
+                }
+            }
+        }
+        // If not GoToPanel, check for SignalFromPosition types
+        else if (Config.alarmType == AlarmType.SignalFromPosition)
+        {
+            GameEvent eventToRaise = null;
+
+            // Priority 1: Instakill
+            if (Config.instakillGameEvent != null && (!Config.limitInstakillAlarm || InstakillAlarmCount < Config.maxInstakillAlarms))
+            {
+                eventToRaise = Config.instakillGameEvent;
+            }
+            // Priority 2: Summon
+            else if (Config.summonGameEvent != null && SummonCount < Config.maxSummonCount)
+            {
+                eventToRaise = Config.summonGameEvent;
+            }
+
+            if (eventToRaise != null)
+            {
+                TransitionToState(new AlarmState(eventToRaise));
+                return true; // Escalation successful
+            }
+        }
+
+        return false; // No alarm was raised
+    }
+
+    // Add this helper method, moved from AlertState for central access.
+    private AlarmPanel FindClosestAlarmPanel(Vector3 position, float radius)
+    {
+        GameObject[] panels = GameObject.FindGameObjectsWithTag("AlarmPanel");
+        AlarmPanel closest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (GameObject panel in panels)
+        {
+            float distance = Vector3.Distance(position, panel.transform.position);
+            if (distance < minDistance && distance <= radius)
+            {
+                minDistance = distance;
+                closest = panel.GetComponent<AlarmPanel>();
+            }
+        }
+        return closest;
+    }
+
+    public void IncrementSummonCount() => SummonCount++;
+    public void ResetSummonCount()
+    {
+        SummonCount = 0;
+    }
+
     public void SetSummonCount(int count)
     {
         SummonCount = count;
     }
     public void IncrementPanelAlarmCount() => PanelAlarmCount++;
 
+    public void IncrementInstakillAlarmCount() => InstakillAlarmCount++;
+    public void ResetInstakillAlarmCount() { InstakillAlarmCount = 0; }
 }

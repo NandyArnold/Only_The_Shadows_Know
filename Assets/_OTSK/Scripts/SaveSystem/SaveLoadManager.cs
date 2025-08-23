@@ -16,6 +16,7 @@ public class SaveLoadManager : MonoBehaviour
     [SerializeField] private SceneRegistrySO sceneRegistry;
     [SerializeField] private EnemyRegistrySO enemyRegistry;
     [SerializeField] private WeaponRegistrySO weaponRegistry;
+    [SerializeField] private SkillRegistrySO skillRegistry;
 
     public bool IsLoading { get; private set; }
     private bool _isSceneReadyForRestore = false;
@@ -117,6 +118,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         IsLoading = true;
         Debug.Log($"<color=cyan>--- LOAD GAME ROUTINE STARTED ---</color> Attempting to load file: '{saveFileName}'");
+        ValidateRegistries();
 
         // Use the helper method to get a consistent SaveFile object.
         var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
@@ -145,6 +147,10 @@ public class SaveLoadManager : MonoBehaviour
 
         Debug.Log("Waiting for SceneLoader to confirm the new scene is ready...");
         yield return new WaitUntil(() => _isSceneReadyForRestore);
+
+        Debug.Log("Scene is ready. Now waiting for Patrol Routes to be registered...");
+        yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
+        // --- END OF ADDITION ---
         //Debug.Log("Waiting for player to be spawned...");
         // 4. Wait until the SceneLoader has finished its ENTIRE routine and a new player exists.
         //yield return new WaitUntil(() => GameManager.Instance.Player != null);
@@ -301,42 +307,53 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log($"Restoring world data for scene: {gameState.sceneID}");
 
         // --- SPAWN & RESTORE DYNAMIC ENEMIES ---
-        foreach (var enemySaveEntry in gameState.worldData.enemySaveData) // <-- Make sure this is enemyData, not enemySaveData
+        foreach (var enemySaveEntry in gameState.worldData.enemySaveData)
         {
             string uniqueId = enemySaveEntry.Key;
             Enemy.EnemySaveData enemyData = enemySaveEntry.Value;
 
             EnemyConfigSO config = enemyRegistry.GetConfig(enemyData.configSOName);
-            if (config == null) continue;
+            if (config == null)
+            {
+                Debug.LogWarning($"Could not find config '{enemyData.configSOName}' in EnemyRegistry. Skipping enemy.");
+                continue;
+            }
 
-            // --- START OF FINAL FIX ---
+            // --- THE NEW, ROBUST LOADING SEQUENCE ---
 
-            // 1. Prepare the saved position and rotation.
+            // 1. Instantiate the prefab AT the correct position and rotation, but keep it inactive.
             Vector3 savedPosition = new Vector3(enemyData.posX, enemyData.posY, enemyData.posZ);
             Quaternion savedRotation = new Quaternion(enemyData.rotX, enemyData.rotY, enemyData.rotZ, enemyData.rotW);
-
-            // 2. Instantiate the prefab AT the correct position and rotation from the start.
             GameObject enemyInstance = Instantiate(config.enemyPrefab, savedPosition, savedRotation);
+            enemyInstance.SetActive(false); // Keep it disabled during setup!
 
-            // 3. Immediately deactivate it.
-            enemyInstance.SetActive(false);
-
-            // --- END OF FINAL FIX ---
-
-            // The NavMeshAgent is now created at a valid location. The rest of the logic can proceed.
+            // 2. Get component references.
             var uniqueIdComponent = enemyInstance.GetComponent<UniqueID>();
             uniqueIdComponent.SetID(uniqueId);
-
             Enemy enemyScript = enemyInstance.GetComponent<Enemy>();
-            enemyScript.LoadConfiguration(config);
 
+            // 3. Find the Patrol Route from the saved ID
+            PatrolRoute route = null;
+            if (!string.IsNullOrEmpty(enemyData.patrolRouteID))
+            {
+                route = PatrolRouteManager.Instance.GetRoute(enemyData.patrolRouteID);
+            }
+
+            // 4. Call our new single setup method. This replaces Awake, Start, and Initialize.
+            enemyScript.SetupForLoad(config, route);
+
+            // 5. Restore the variable state (health, etc.).
             enemyScript.RestoreState(enemyData);
 
+            // 6. Register with the save system *after* its ID and state have been set.
             SaveableEntityRegistry.Instance.Register(enemyScript);
 
-            // Activate the GameObject now that it's fully configured.
+            // 7. NOW, activate the GameObject. This will safely trigger OnEnable.
             enemyInstance.SetActive(true);
-            enemyScript.GetComponent<EnemyAI>().StartAI(enemyData.lastWaypointIndex);
+
+            // 8. Finally, tell the fully-initialized enemy to start its AI logic.
+            enemyScript.ActivateAIFromLoad(enemyData);
+
             Debug.Log($"<color=lime>Restored spawned enemy:</color> {config.displayName} with saved ID: {uniqueId}");
         }
 
@@ -417,6 +434,41 @@ public class SaveLoadManager : MonoBehaviour
         // Also clear the "last save" meta file so the "Load Game" button becomes disabled
         _metaFile.DeleteFile();
         _metaFile.Save();
+    }
+
+    private void ValidateRegistries()
+    {
+        Debug.Log("<color=yellow>Validating and Resetting Asset Registries...</color>");
+
+        // --- SCENE REGISTRY ---
+        if (sceneRegistry == null) // A simpler check is fine now
+        {
+            Debug.LogWarning("Scene Registry was null. Reloading from Resources.");
+            sceneRegistry = Resources.Load<SceneRegistrySO>("SceneRegistrySO");
+        }
+        //sceneRegistry.Reset(); // Assumes you add Reset() to SceneRegistrySO as well
+
+        // --- ENEMY REGISTRY ---
+        if (enemyRegistry == null)
+        {
+            Debug.LogWarning("Enemy Registry was null. Reloading from Resources.");
+            enemyRegistry = Resources.Load<EnemyRegistrySO>("EnemyRegistrySO");
+        }
+        enemyRegistry.Reset(); // Call the new reset method
+
+        // --- WEAPON REGISTRY ---
+        if (weaponRegistry == null)
+        {
+            Debug.LogWarning("Weapon Registry was null. Reloading from Resources.");
+            weaponRegistry = Resources.Load<WeaponRegistrySO>("WeaponRegistrySO");
+        }
+
+        if (skillRegistry == null)
+        {
+            Debug.LogWarning("Skill Registry was null. Reloading from Resources.");
+            skillRegistry = Resources.Load<SkillRegistrySO>("SkillRegistry"); // Use the asset's file name
+        }
+        weaponRegistry.Reset();
     }
 
 }

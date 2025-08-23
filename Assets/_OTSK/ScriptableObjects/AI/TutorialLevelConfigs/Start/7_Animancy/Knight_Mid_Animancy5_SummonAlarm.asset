@@ -34,11 +34,17 @@ MonoBehaviour:
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
   alarmType: 2
-  soundsAlarmOnAllyDeath: 1
-  alarmEventToRaise: {fileID: 11400000, guid: 0fe91448308be2845bb508523a04ac2e, type: 2}
   useTimeOutAlarm: 0
   timeInCombatAlarmThreshold: 5
+  soundsAlarmOnAllyDeath: 1
+  summonGameEvent: {fileID: 11400000, guid: 0fe91448308be2845bb508523a04ac2e, type: 2}
   maxSummonCount: 2
+  instakillGameEvent: {fileID: 0}
+  limitInstakillAlarm: 0
+  maxInstakillAlarms: 1
+  alarmPanelSearchRadius: 30
+  limitPanelAlarms: 0
+  maxPanelAlarms: 1
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50

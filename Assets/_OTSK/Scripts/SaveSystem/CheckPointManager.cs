@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CheckpointManager : MonoBehaviour
+public class CheckpointManager : MonoBehaviour, IResettable
 {
     public static CheckpointManager Instance { get; private set; }
 
@@ -31,5 +31,10 @@ public class CheckpointManager : MonoBehaviour
         {
             SaveLoadManager.Instance.SaveGame("autosave");
         }
+    }
+    public void ResetState()
+    {
+        LastCheckpointPosition = Vector3.zero;
+        LastCheckpointRotation = Quaternion.identity;
     }
 }

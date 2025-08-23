@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatManager : MonoBehaviour
+public class CombatManager : MonoBehaviour, IResettable
 {
     public static CombatManager Instance { get; private set; }
 
@@ -110,5 +110,21 @@ public class CombatManager : MonoBehaviour
             Debug.Log("<color=green>[CombatManager]</color> Kill was NOT silent. Firing OnEnemyDiedInCombat event.");
             OnEnemyDiedInCombat?.Invoke(deadEnemy);
         }
+    }
+
+    public void ResetState()
+    {
+        // 1. Reset the primary combat flag to its default state.
+        IsPlayerInCombat = false;
+
+        // 2. Clear the list of any enemies from the previous session.
+        _enemiesInCombat.Clear();
+
+        // 3. Clear all event subscribers to prevent memory leaks or errors.
+        OnCombatStart = null;
+        OnCombatEnd = null;
+        OnEnemyDiedInCombat = null;
+
+        Debug.Log("<color=orange>CombatManager state has been reset.</color>");
     }
 }

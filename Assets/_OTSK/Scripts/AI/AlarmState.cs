@@ -10,84 +10,70 @@ public class AlarmState : EnemyAIState
     private AlarmPanel _targetPanel;
     private float _timer;
     private Coroutine _signalCoroutine;
+    // ---It will store the event it needs to raise ---
+    private readonly GameEvent _eventToRaise;
 
+    // ---Two constructors to handle both ways of entering the state ---
+    public AlarmState() { _eventToRaise = null; } // For GoToPanel type
+    public AlarmState(GameEvent eventToRaise) { _eventToRaise = eventToRaise; } // For Signal types
     public override void Enter(EnemyAI enemyAI)
     {
         Debug.Log("Entering Alarm State");
 
-        switch (enemyAI.Config.alarmType)
+        if (enemyAI.Config.alarmType == AlarmType.GoToPanel)
         {
-            case AlarmType.GoToPanel:
-                if (enemyAI.Config.limitPanelAlarms && enemyAI.PanelAlarmCount >= enemyAI.Config.maxPanelAlarms)
-                {
-                    Debug.Log($"Panel alarm limit ({enemyAI.Config.maxPanelAlarms}) reached. Transitioning to Combat State instead.", enemyAI.gameObject);
-                    enemyAI.TransitionToState(new CombatState());
-                    return; // Exit the Enter method immediately
-                }
-                _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
-                
-                if (_targetPanel != null)
-                {
-                    Debug.Log($" Found alarm panel: {_targetPanel.name}", enemyAI.gameObject);
-                    _subState = SubState.RunningToPanel;
-                    enemyAI.Navigator.Resume();
-                    enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
-                    enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
-                    enemyAI.Navigator.MoveTo(_targetPanel.transform.position);
-                }
-                else
-                {
-                //No panel found.Instead of going to combat, we will
-                // transition to the AlertState to investigate the last known position
-                // (which HandleDeadBodySpotted correctly set to the body's location).
-                Debug.LogWarning("No alarm panel found. Investigating body instead.", enemyAI.gameObject);
-                    enemyAI.TransitionToState(new AlertState(enemyAI.LastKnownPlayerPosition));
-                }
-                break;
-
-            case AlarmType.SignalFromPosition:
-                _subState = SubState.SignalingHelp;
-                if (enemyAI.SummonCount >= enemyAI.Config.maxSummonCount)
-                {
-                    enemyAI.TransitionToState(new CombatState());
-                    return;
-                }
-                _signalCoroutine = enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
-                break;
-
-            case AlarmType.None:
-            default:
-                Debug.Log("AlarmType is set to None. Cannot raise an alarm.", enemyAI.gameObject);
-                // This enemy can't raise an alarm, so it just goes back to combat.
+            _targetPanel = FindClosestAlarmPanel(enemyAI.transform.position);
+            if (_targetPanel != null)
+            {
+                _subState = SubState.RunningToPanel;
+                enemyAI.Navigator.Resume();
+                enemyAI.Navigator.SetSpeed(enemyAI.Config.chaseSpeed);
+                enemyAI.AnimController.SetSpeed(enemyAI.Config.chaseSpeed);
+                enemyAI.Navigator.MoveTo(_targetPanel.transform.position);
+            }
+            else
+            {
+                Debug.LogWarning("Tried to GoToPanel, but no panel was in range. Transitioning to Combat.", enemyAI.gameObject);
                 enemyAI.TransitionToState(new CombatState());
-                break;
+            }
         }
+        // For SignalFromPosition, we now know exactly which event to use.
+        else if (enemyAI.Config.alarmType == AlarmType.SignalFromPosition)
+        {
+            // --- ADD THIS SAFETY CHECK ---
+            if (_eventToRaise == null)
+            {
+                Debug.LogError($"'{enemyAI.name}' entered AlarmState for a SignalFromPosition alarm, but was not given an event to raise! The alarm will fail. Check the state transition that led here.", enemyAI.gameObject);
+                // Fail gracefully by just going to combat instead of getting stuck.
+                enemyAI.TransitionToState(new CombatState());
+                return;
+            }
+            // --- END OF CHECK ---
+
+            _subState = SubState.SignalingHelp;
+            _signalCoroutine = enemyAI.StartCoroutine(SignalForHelpRoutine(enemyAI));
+        }
+        else // AlarmType.None
+        {
+            enemyAI.TransitionToState(new CombatState());
+        }
+
+          
+        
        
     }
 
     public override void Execute(EnemyAI enemyAI)
     {
-        if (_subState == SubState.RunningToPanel || _subState == SubState.SignalingHelp)
+        if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
         {
-            // The logic for what happens on arrival is still here.
-            if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
+            enemyAI.Navigator.Stop();
+            enemyAI.AnimController.SetSpeed(0);
+            if (_targetPanel != null)
             {
-                enemyAI.Navigator.Stop();
-                enemyAI.AnimController.SetSpeed(0);
-
-                if (_targetPanel != null)
-                {
-                    _targetPanel.TriggerAlarm();
-                    enemyAI.IncrementPanelAlarmCount();
-                }
-                enemyAI.TransitionToState(new CombatState());
+                _targetPanel.TriggerAlarm();
+                enemyAI.IncrementPanelAlarmCount();
             }
-            return; // Exit the method to prevent other checks from running.
-        }
-
-        // If we are not busy with an alarm action, the AI is free to check for threats.
-        if (enemyAI.PlayerTarget != null && enemyAI.Detector.CanSeePlayer())
-        {
             enemyAI.TransitionToState(new CombatState());
         }
     }
@@ -108,20 +94,26 @@ public class AlarmState : EnemyAIState
                 yield break; // Exit the coroutine immediately if dead
             }
             castTimer += Time.deltaTime;
-            float progress = castTimer / castDuration;
-            enemyAI.ReportCastProgress(progress); // Broadcast progress
+            enemyAI.ReportCastProgress(castTimer / castDuration);// Broadcast progress
             yield return null;
         }
 
         // Hide the cast bar when finished
         enemyAI.ReportCastProgress(0);
-
-        if (enemyAI.Config.alarmEventToRaise != null)
+        if (_eventToRaise != null)
         {
-            enemyAI.Config.alarmEventToRaise.Raise();
+            _eventToRaise.Raise();
+
+            // Increment the correct counter based on which event we just raised
+            if (_eventToRaise == enemyAI.Config.summonGameEvent)
+            {
+                enemyAI.IncrementSummonCount();
+            }
+            else if (_eventToRaise == enemyAI.Config.instakillGameEvent)
+            {
+                enemyAI.IncrementInstakillAlarmCount();
+            }
         }
-        enemyAI.IncrementSummonCount();
-       
 
         enemyAI.TransitionToState(new CombatState());
     }

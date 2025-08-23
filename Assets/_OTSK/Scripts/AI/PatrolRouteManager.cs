@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System;
 
-public class PatrolRouteManager : MonoBehaviour
+public class PatrolRouteManager : MonoBehaviour, IResettable
 {
     public static PatrolRouteManager Instance { get; private set; }
 
@@ -77,5 +77,12 @@ public class PatrolRouteManager : MonoBehaviour
     {
         if (_patrolRoutes.Count == 0) return null;
         return _patrolRoutes.Values.ElementAt(UnityEngine.Random.Range(0, _patrolRoutes.Count));
+    }
+
+    public void ResetState()
+    {
+        _patrolRoutes.Clear();
+        IsReady = false;
+        Debug.Log("<color=orange>PatrolRouteManager state has been reset.</color>");
     }
 }

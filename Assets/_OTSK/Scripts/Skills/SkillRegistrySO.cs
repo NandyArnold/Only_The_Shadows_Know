@@ -37,4 +37,10 @@ public class SkillRegistrySO : ScriptableObject
         _skillDictionary.TryGetValue(skillID, out SkillSO skill);
         return skill;
     }
+
+    public void Reset()
+    {
+        _isInitialized = false;
+        _skillDictionary = null; // Clear the dictionary to force re-initialization
+    }
 }

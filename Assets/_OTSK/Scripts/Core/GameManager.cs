@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public PlayerController Player { get; private set; }
     public AimTargetController AimTargetController { get; private set; }
     public Transform AimTarget { get; private set; }
+    [Header("Manager References for Reset")]
+    [SerializeField] private MonoBehaviour[] resettableManagers;
 
     [Header("Game Start Settings")]
     [SerializeField] private SceneDataSO initialScene;
@@ -181,6 +183,7 @@ public class GameManager : MonoBehaviour
     {
         if (Player != null && Player.GetComponent<PlayerStats>() != null)
         {
+            Debug.Log("Instakilling player.");
             // Deal a huge amount of damage that cannot be survived.
             Player.GetComponent<PlayerStats>().TakeDamage(float.MaxValue);
         }
@@ -200,7 +203,13 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null) AudioManager.Instance.ResetAudioState();
         if (ObjectiveManager.Instance != null) ObjectiveManager.Instance.ResetState(); // Assuming it has a reset method
         TariaksuqsRiftEffectSO.ResetStaticData();
-     
-        // This is also where we will fix the "Patrol route is null" bug later.
+
+        foreach (var manager in resettableManagers)
+        {
+            if (manager is IResettable resettable)
+            {
+                resettable.ResetState();
+            }
+        }
     }
 }

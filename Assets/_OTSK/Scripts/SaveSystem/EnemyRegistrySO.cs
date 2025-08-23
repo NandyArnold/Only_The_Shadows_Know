@@ -19,4 +19,10 @@ public class EnemyRegistrySO : ScriptableObject
         _lookup.TryGetValue(configName, out EnemyConfigSO config);
         return config;
     }
+    public bool IsEmpty() => enemyConfigs == null || enemyConfigs.Count == 0;
+    public void Reset()
+    {
+        // This will force the dictionary to be rebuilt on the next GetConfig call.
+        _lookup = null;
+    }
 }

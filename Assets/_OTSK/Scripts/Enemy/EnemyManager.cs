@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : MonoBehaviour, IResettable
 {
     public static EnemyManager Instance { get; private set; }
 
@@ -177,5 +177,11 @@ public class EnemyManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ResetState()
+    {
+        _activeEnemies.Clear();
+        Debug.Log("<color=orange>EnemyManager state has been reset.</color>");
     }
 }

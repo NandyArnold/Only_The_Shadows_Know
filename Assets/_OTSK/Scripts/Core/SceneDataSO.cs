@@ -67,4 +67,23 @@ public class SceneDataSO : ScriptableObject
         }
 #endif
     }
+    public void IsEmpty()
+    {
+        if (string.IsNullOrEmpty(sceneID))
+        {
+            Debug.LogWarning($"SceneDataSO '{name}' has an empty sceneID.");
+        }
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogWarning($"SceneDataSO '{name}' has an empty sceneName. Assign a Scene Asset in the Editor.");
+        }
+        if (objectiveChain == null)
+        {
+            Debug.LogWarning($"SceneDataSO '{name}' has no LevelObjectiveChain assigned.");
+        }
+        if (enemyInitialSpawns == null || enemyInitialSpawns.Count == 0)
+        {
+            Debug.LogWarning($"SceneDataSO '{name}' has no initial enemy spawns defined.");
+        }
+    }
 }

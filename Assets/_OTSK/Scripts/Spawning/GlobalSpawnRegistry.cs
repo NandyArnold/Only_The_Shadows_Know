@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalSpawnRegistry : MonoBehaviour
+public class GlobalSpawnRegistry : MonoBehaviour, IResettable
 {
     public static GlobalSpawnRegistry Instance { get; private set; }
 
@@ -65,4 +65,13 @@ public class GlobalSpawnRegistry : MonoBehaviour
 
     // Clear the registry when a new level starts loading
     public void ClearRegistry() => _spawnPoints.Clear();
+
+    public void ResetState()
+    {
+        ClearRegistry();
+        IsReady = false; // Also reset the IsReady flag
+        Debug.Log("<color=orange>GlobalSpawnRegistry state has been reset.</color>");
+    }
+
+
 }

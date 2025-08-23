@@ -11,4 +11,6 @@ public class SceneRegistrySO : ScriptableObject
     {
         return scenes.FirstOrDefault(s => s.sceneID == id);
     }
+
+    public bool IsEmpty() => scenes == null || scenes.Count == 0;
 }

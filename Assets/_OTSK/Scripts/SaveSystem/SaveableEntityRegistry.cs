@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class SaveableEntityRegistry : MonoBehaviour
+public class SaveableEntityRegistry : MonoBehaviour, IResettable
 {
     public static SaveableEntityRegistry Instance { get; private set; }
 
@@ -62,6 +62,10 @@ public class SaveableEntityRegistry : MonoBehaviour
        
         _registry.Clear();
         Debug.Log("<color=red>Saveable Entity Registry has been cleared.</color>");
+    }
+    public void ResetState()
+    {
+        ClearRegistry();
     }
 
 }

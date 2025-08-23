@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIPanelRegistry : MonoBehaviour
+public class UIPanelRegistry : MonoBehaviour, IResettable
 {
     public static UIPanelRegistry Instance { get; private set; }
 
@@ -27,5 +27,10 @@ public class UIPanelRegistry : MonoBehaviour
     {
         _panelRegistry.TryGetValue(id, out GameObject panel);
         return panel;
+    }
+    public void ResetState()
+    {
+        _panelRegistry.Clear();
+        Debug.Log("<color=orange>UIPanelRegistry state has been reset.</color>");
     }
 }

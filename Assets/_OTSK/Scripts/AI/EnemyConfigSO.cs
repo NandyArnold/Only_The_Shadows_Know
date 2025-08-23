@@ -43,16 +43,30 @@ public class EnemyConfigSO : ScriptableObject
 
     [Header("Alarm Logic")] 
     public AlarmType alarmType = AlarmType.None;
-    [Tooltip("Should this enemy sound an alarm when an ally dies?")]
-    public bool soundsAlarmOnAllyDeath = false;
-    [Tooltip("The Game Event to raise when this enemy successfully signals for help.")]
-    public GameEvent alarmEventToRaise;
     [Tooltip("Should this enemy sound an alarm if combat lasts too long?")]
     public bool useTimeOutAlarm = false;
     [Tooltip("If the enemy is in combat for this long without winning, it raises an alarm.")]
     public float timeInCombatAlarmThreshold = 20f;
+    [Tooltip("Should this enemy sound an alarm when an ally dies?")]
+    public bool soundsAlarmOnAllyDeath = false;
+
+    [Header("Summoning Logic")]
+
+    [Tooltip("The Game Event to raise for a SUMMONING alarm.")]
+    public GameEvent summonGameEvent;
     [Tooltip("The amount of times this enemy can trigger the alarm")]
     public int maxSummonCount = 1;
+   
+    [Header("Instakill Logic")]
+    [Tooltip("The Game Event to raise for an INSTAKILL alarm.")]
+    public GameEvent instakillGameEvent;
+    [Tooltip("If checked, the enemy can only use the instakill alarm a limited number of times.")]
+    public bool limitInstakillAlarm = false;
+    [Tooltip("The maximum number of times this enemy can use the instakill alarm.")]
+    public int maxInstakillAlarms = 1;
+
+
+    [Header("Alarm Panel Logic")]
     [Tooltip("The maximum distance an enemy will search for an alarm panel.")]
     public float alarmPanelSearchRadius = 30f;
     [Tooltip("If checked, the enemy can only use an Alarm Panel a limited number of times.")]

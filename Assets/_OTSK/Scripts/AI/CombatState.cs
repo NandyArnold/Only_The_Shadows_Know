@@ -82,18 +82,29 @@ public class CombatState : EnemyAIState
         // Check if the timer has exceeded the threshold.
         if (enemyAI.Config.useTimeOutAlarm)
         {
-            // If so, increment the timer every frame we are in combat.
             _timeInCombatTimer += Time.deltaTime;
 
-            // Check if the timer has exceeded the threshold.
             if (!_hasTriggeredTimeoutAlarm && _timeInCombatTimer >= enemyAI.Config.timeInCombatAlarmThreshold)
             {
-                if (enemyAI.Config.alarmType != AlarmType.None)
+                _hasTriggeredTimeoutAlarm = true;
+
+                // --- THIS IS THE FIX ---
+                // Decide which event to raise on timeout. Let's prioritize the summon event as a default.
+                GameEvent eventToRaiseOnTimeout = enemyAI.Config.summonGameEvent ?? enemyAI.Config.instakillGameEvent;
+
+                if (eventToRaiseOnTimeout != null)
                 {
-                    _hasTriggeredTimeoutAlarm = true;
-                    enemyAI.TransitionToState(new AlarmState());
-                    return; // Exit the Execute method for this frame
+                    // Now we correctly pass the event to the AlarmState.
+                    enemyAI.TransitionToState(new AlarmState(eventToRaiseOnTimeout));
                 }
+                else
+                {
+                    // If no event is configured, do nothing.
+                    Debug.LogWarning($"'{enemyAI.name}' tried to raise a timeout alarm, but has no summon or instakill event assigned.", enemyAI.gameObject);
+                }
+                // --- END OF FIX ---
+
+                return; // Exit the Execute method for this frame
             }
         }
 

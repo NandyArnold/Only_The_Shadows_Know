@@ -19,4 +19,11 @@ public class ChargeableItemRegistrySO : ScriptableObject
         _lookup.TryGetValue(itemName, out ChargeableItemSO item);
         return item;
     }
+
+    public bool IsEmpty() => chargeableItems == null || chargeableItems.Count == 0;
+    public void Reset()
+    {
+        // This will force the dictionary to be rebuilt on the next GetConfig call.
+        _lookup = null;
+    }
 }

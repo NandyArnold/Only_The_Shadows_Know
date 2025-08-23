@@ -5,6 +5,8 @@ public class InGameMenuButtons : MonoBehaviour
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private SceneDataSO mainMenuSceneData;
     [SerializeField] private Button exitButton;
+    [SerializeField] private Button loadLastCheckpointButton;
+    [SerializeField] private Button loadGameButton;
 
 
     private void Awake()
@@ -12,8 +14,10 @@ public class InGameMenuButtons : MonoBehaviour
         // Subscribe to the buttons' onClick events
         mainMenuButton.onClick.AddListener(OnMainMenuClicked);
         exitButton.onClick.AddListener(OnExitGameClicked);
-        
-     
+        loadLastCheckpointButton.onClick.AddListener(OnLoadLastCheckpointClicked);
+        loadGameButton.onClick.AddListener(OnLoadGameClicked);
+
+
     }
     public void OnResumeClicked()
     {
@@ -29,6 +33,16 @@ public class InGameMenuButtons : MonoBehaviour
         if (SaveLoadManager.Instance != null)
         {
             SaveLoadManager.Instance.SaveGame("manual_save_1"); 
+        }
+    }
+
+    public void OnLoadLastCheckpointClicked()
+    {
+        Debug.Log("Load Last Checkpoint clicked.");
+        if (SaveLoadManager.Instance != null)
+        {
+            // This uses the logic from your old script to load the autosave.
+            SaveLoadManager.Instance.LoadGame("autosave");
         }
     }
 

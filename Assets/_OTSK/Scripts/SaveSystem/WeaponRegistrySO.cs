@@ -17,4 +17,10 @@ public class WeaponRegistrySO : ScriptableObject
         _lookup.TryGetValue(weaponName, out WeaponSO weapon);
         return weapon;
     }
+    public bool IsEmpty() => weapons == null || weapons.Count == 0;
+    public void Reset()
+    {
+        // This will force the dictionary to be rebuilt on the next GetConfig call.
+        _lookup = null;
+    }
 }

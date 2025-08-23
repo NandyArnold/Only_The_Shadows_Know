@@ -92,14 +92,17 @@ public class DetectionSystem : MonoBehaviour
                 
             }
         }
-        if (_playerTransform.TryGetComponent<PlayerController>(out var playerController))
+        var playerController = _playerTransform.GetComponent<PlayerController>();
+        if (playerController != null && playerController.IsDead)
         {
-            if (playerController.IsInEndwalkerState)
+            return false; // A dead player cannot be seen as a threat.
+        }
+
+        if (playerController != null && playerController.IsInEndwalkerState)
+        {
+            if (config.enemyType != EnemyType.Undead)
             {
-                if (config.enemyType != EnemyType.Undead)
-                {
-                    return false;
-                }
+                return false;
             }
         }
 

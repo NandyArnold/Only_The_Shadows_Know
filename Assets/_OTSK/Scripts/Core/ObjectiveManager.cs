@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectiveManager : MonoBehaviour
+public class ObjectiveManager : MonoBehaviour, IResettable
 {
     public static ObjectiveManager Instance { get; private set; }
 

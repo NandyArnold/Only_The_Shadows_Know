@@ -119,49 +119,22 @@ public class Enemy : MonoBehaviour, ISaveable
             return; 
         }
 
-      
-        _ai.InitialState = saveData.initialState;
-
-        if (!string.IsNullOrEmpty(saveData.patrolRouteID))
-        {
-            PatrolRoute route = PatrolRouteManager.Instance.GetRoute(saveData.patrolRouteID);
-            if (route != null)
-            {
-                _ai.PatrolRoute = route; // Assign the route to the AI
-            }
-            else
-            {
-                Debug.LogWarning($"Could not find Patrol Route with ID '{saveData.patrolRouteID}' for enemy {UniqueID}.");
-            }
-        }
-
-        // If the enemy was alive, restore its full state.
 
         transform.position = new Vector3(saveData.posX, saveData.posY, saveData.posZ);
         transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
 
+        // Restore variable stats
         _health.SetHealth(saveData.currentHealth);
-        _ai.SetSummonCount(saveData.summonCount); // You'll need to add this method to EnemyAI
+        _ai.SetSummonCount(saveData.summonCount);
+        _ai.InitialState = saveData.initialState; // Set the intended initial state
 
-        if (_statusBarInstance == null && saveData.currentHealth > 0)
+        // Now that health is restored, update the UI with initial values.
+        if (_uiController != null)
         {
-            _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
-            _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
-
-            // Re-connect the standard events
-            _health.OnHealthChanged += _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
-            if (_ai != null)
-            {
-                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
-            }
+            _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
+            _uiController.UpdateAlert(0, config.hearingThreshold);
+            _uiController.HandleAIStateChanged(_ai.CurrentState); // Set initial AI icon
         }
-
-        transform.position = new Vector3(saveData.posX, saveData.posY, saveData.posZ);
-        transform.rotation = new Quaternion(saveData.rotX, saveData.rotY, saveData.rotZ, saveData.rotW);
-
-        _health.SetHealth(saveData.currentHealth);
-        //_ai.StartAI(saveData.lastWaypointIndex);
     }
     private void Awake()
     {
@@ -432,5 +405,65 @@ public class Enemy : MonoBehaviour, ISaveable
             if (child == null) continue;
             SetLayerRecursively(child.gameObject, newLayer);
         }
+    }
+
+    public void SetupForLoad(EnemyConfigSO loadedConfig, PatrolRoute route)
+    {
+        // 1. Manually gather component references (from Awake)
+        Detector = GetComponent<DetectionSystem>();
+        _health = GetComponent<EnemyHealth>();
+        _navigator = GetComponent<EnemyNavigator>();
+        _ai = GetComponent<EnemyAI>();
+        _animController = GetComponent<EnemyAnimationController>();
+        _collider = GetComponent<CapsuleCollider>();
+        _uniqueID = GetComponent<UniqueID>();
+        _resistances = GetComponent<EnemyResistances>();
+        _revealableEntity = GetComponent<RevealableEntity>();
+        statusBarAnchor = transform.Find("StatusBarAnchor");
+        revealIconAnchor = transform.Find("RevealIcon_Anchor");
+
+        // 2. Apply the configuration (from Initialize/LoadConfiguration)
+        this.config = loadedConfig;
+        _health.Initialize(config);
+        Detector.Initialize(config);
+        _ai.Config = config;
+        _ai.PatrolRoute = route; // Assign the patrol route
+        _resistances.Initialize(config);
+        _revealableEntity.Initialize(config);
+
+        // 3. Register with the EnemyManager
+        EnemyManager.Instance.RegisterEnemy(this);
+
+        // 4. Create the UI (from Start)
+        if (statusBarPrefab != null)
+        {
+            _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
+            _statusBarInstance.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+            _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
+        }
+
+        // 5. Subscribe to all events (from OnEnable and Start)
+        // We do this manually to ensure it happens in the correct order.
+        _health.OnDied += (isSilentKill) => HandleDeath(isSilentKill, false);
+
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged += _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+            _uiController.InitializeRevealIcon(config.revealIconPrefab);
+
+            if (_ai != null)
+            {
+                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
+                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
+            }
+        }
+    }
+
+    public void ActivateAIFromLoad(Enemy.EnemySaveData saveData)
+    {
+        // Now that the enemy is fully configured and its state is restored, start the AI.
+        // We pass the saved waypoint index to the AI's Start method.
+        _ai.StartAI(saveData.lastWaypointIndex);
     }
 }
