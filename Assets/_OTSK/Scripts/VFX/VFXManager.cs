@@ -13,10 +13,20 @@ public class VFXManager : MonoBehaviour
     [SerializeField] private GameObject scryingCastVFXPrefab;
 
     [Header("Reveal VFX")]
-    [SerializeField] private Material enemyRevealMaterial;
-    [SerializeField] private Material interactableRevealMaterial;
-    [SerializeField] private Material bossRevealMaterial;
+    [SerializeField] private Material hiddenItemeRevealMaterial;
+    [SerializeField] private Material manaAdditionRevealMaterial;
+    [SerializeField] private Material arrowAdditionRevealMaterial;
+    [SerializeField] private Material alarmPanelRevealMaterial;
+    [SerializeField] private Material normalRevealMaterial;
+    [SerializeField] private Material priorityEnemyRevealMaterial;
+    [SerializeField] private Material summonerRevealMaterial;
+    [SerializeField] private Material eliteSummonerRevealMaterial;
+    [SerializeField] private Material instakillRevealMaterial;
+    [SerializeField] private Material undeadRevealMaterial;
     [SerializeField] private Material casterRevealMaterial;
+    [SerializeField] private Material eliteRevealMaterial;
+    [SerializeField] private Material bossRevealMaterial;
+
     [SerializeField] private Transform worldMarkersCanvas;
 
     [SerializeField] private GameObject endwalkerAuraPrefab;
@@ -126,14 +136,32 @@ public class VFXManager : MonoBehaviour
     {
         switch (type)
         {
-            case RevealableType.Normal:
-                return new Material[] { enemyRevealMaterial };
-            case RevealableType.Boss:
-                return new Material[] { bossRevealMaterial };
             case RevealableType.HiddenItem:
-                return new Material[] { interactableRevealMaterial };
+                return new Material[] { hiddenItemeRevealMaterial };
+            case RevealableType.ManaAddition:
+                return new Material[] { manaAdditionRevealMaterial };
+            case RevealableType.ArrowAddition:
+                return new Material[] { arrowAdditionRevealMaterial };
+            case RevealableType.AlarmPanel:
+                return new Material[] { alarmPanelRevealMaterial };
+            case RevealableType.Normal:
+                return new Material[] { normalRevealMaterial };
+            case RevealableType.Priority:
+                return new Material[] { priorityEnemyRevealMaterial };
+            case RevealableType.Summoner:
+                return new Material[] { summonerRevealMaterial };
+            case RevealableType.EliteSummoner:
+                return new Material[] { eliteSummonerRevealMaterial };
+            case RevealableType.Instakill:
+                return new Material[] { instakillRevealMaterial };
+            case RevealableType.Undead:
+                return new Material[] { undeadRevealMaterial };
             case RevealableType.Caster: 
                 return new Material[] { casterRevealMaterial };
+            case RevealableType.Elite:
+                return new Material[] { eliteRevealMaterial };
+            case RevealableType.Boss:
+                return new Material[] { bossRevealMaterial };
             default:
                 return null;
         }
