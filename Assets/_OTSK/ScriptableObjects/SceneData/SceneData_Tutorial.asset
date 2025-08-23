@@ -21,30 +21,6 @@ MonoBehaviour:
   objectiveChain: {fileID: 11400000, guid: c9c9e3cbc38ccb3499cbda9924dabe80, type: 2}
   defaultSpawnPointTag: InitialSpawn
   enemyInitialSpawns:
-  - groupName: PatrolingKnights
-    spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_PatrolA
-      patrolRouteID: GuardPathA
-      initialState: 0
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_PatrolB
-      patrolRouteID: GuardPathB
-      initialState: 0
-    - enemyToSpawn: {fileID: 11400000, guid: 0b4b6862390314944ba81d8ecb0606ca, type: 2}
-      spawnPointID: Guard_PatrolC
-      patrolRouteID: GuardPathC
-      initialState: 0
-  - groupName: UndeadStart
-    spawns:
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Undead_Start1
-      patrolRouteID: 
-      initialState: 1
-    - enemyToSpawn: {fileID: 11400000, guid: faa98d25ebeb04143a72dfe4d3551e07, type: 2}
-      spawnPointID: Undead_Start2
-      patrolRouteID: 
-      initialState: 1
   - groupName: StaticKnights
     spawns:
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
@@ -53,14 +29,6 @@ MonoBehaviour:
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: Guard_StaticB
-      patrolRouteID: 
-      initialState: 1
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_StaticC
-      patrolRouteID: 
-      initialState: 1
-    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_StaticD
       patrolRouteID: 
       initialState: 1
   - groupName: TowerGuards
@@ -96,11 +64,11 @@ MonoBehaviour:
       patrolRouteID: 
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_S_Gate3
+      spawnPointID: Guard_S_Gate3Instakill
       patrolRouteID: 
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
-      spawnPointID: Guard_S_Gate4
+      spawnPointID: Guard_S_Gate4Instakill
       patrolRouteID: 
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
@@ -155,6 +123,116 @@ MonoBehaviour:
       initialState: 1
     - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
       spawnPointID: Guard_S_Tavern5
+      patrolRouteID: 
+      initialState: 1
+  - groupName: PatrolingKnights
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_PatrolA
+      patrolRouteID: GuardPathA
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_PatrolB
+      patrolRouteID: GuardPathB
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: 0b4b6862390314944ba81d8ecb0606ca, type: 2}
+      spawnPointID: Guard_PatrolC
+      patrolRouteID: GuardPathC
+      initialState: 0
+  - groupName: Start_Solo
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_StartA_1
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Start_FinisherAggro
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_StartA_2
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_StartA_1
+      patrolRouteID: Guard_P_StartA_1
+      initialState: 0
+  - groupName: Start_AlarmPanelSumm
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_SA_GoToPanel_1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_SA_AP_1
+      patrolRouteID: Guard_P_SA_AP_1
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_SA_AP_2
+      patrolRouteID: Guard_P_SA_AP_2
+      initialState: 0
+  - groupName: Start_Lake_SummOnAllyDeath
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_ADA_Sum1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_ADA_Sum2
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Start_Lake_SummTimeInCombat
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_TiC_1
+      patrolRouteID: Guard_P_TiC_1
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_TiC_2
+      patrolRouteID: Guard_P_TiC_2
+      initialState: 0
+  - groupName: Mid_InstakillOnAllyDeath
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Mid_InstakillAD1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_S_Mid_InstakillAD2
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Mid_Animancy
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Animancy1
+      patrolRouteID: Guard_P_Animancy1
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Animancy2
+      patrolRouteID: Guard_P_Animancy2
+      initialState: 0
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Guard_P_Animancy3
+      patrolRouteID: Guard_P_Animancy3
+      initialState: 0
+  - groupName: UndeadGuards
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Undead_S_TavernEntrance1
+      patrolRouteID: 
+      initialState: 1
+    - enemyToSpawn: {fileID: 11400000, guid: faa98d25ebeb04143a72dfe4d3551e07, type: 2}
+      spawnPointID: Undead_S_TavernEntrance2
+      patrolRouteID: 
+      initialState: 1
+  - groupName: Boss
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: Boss
+      patrolRouteID: 
+      initialState: 1
+  - groupName: MiniBoss
+    spawns:
+    - enemyToSpawn: {fileID: 11400000, guid: a1b17b2b7ddaf1548bd46b6e3fc26f94, type: 2}
+      spawnPointID: MiniBoss
       patrolRouteID: 
       initialState: 1
   enemyEventSpawns:
@@ -269,4 +347,4 @@ MonoBehaviour:
       patrolRouteID: 
       initialState: 1
   sceneMusic: {fileID: 8300000, guid: 2e4ab6c9654cd2d4b813dfcddf012c60, type: 3}
-  sceneMusicVolume: 0.808
+  sceneMusicVolume: 0.8

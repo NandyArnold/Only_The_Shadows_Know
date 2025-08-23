@@ -1822,7 +1822,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
       propertyPath: routesInThisScene.Array.size
-      value: 6
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
       propertyPath: 'routesInThisScene.Array.data[0]'
@@ -1851,7 +1851,35 @@ PrefabInstance:
     - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
       propertyPath: 'routesInThisScene.Array.data[6]'
       value: 
-      objectReference: {fileID: 1400185567}
+      objectReference: {fileID: 1337629179}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[7]'
+      value: 
+      objectReference: {fileID: 668474433}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[8]'
+      value: 
+      objectReference: {fileID: 477175872}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[9]'
+      value: 
+      objectReference: {fileID: 409932533}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2079646617}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[11]'
+      value: 
+      objectReference: {fileID: 1033193369}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[12]'
+      value: 
+      objectReference: {fileID: 1132109955}
+    - target: {fileID: 5017427724097854724, guid: 3c998fa311982504088aa5927f940718, type: 3}
+      propertyPath: 'routesInThisScene.Array.data[13]'
+      value: 
+      objectReference: {fileID: 1345472784}
     - target: {fileID: 7013238114038017105, guid: 3c998fa311982504088aa5927f940718, type: 3}
       propertyPath: m_Name
       value: _ScenePatrolData_Tutorial
@@ -2471,7 +2499,7 @@ GameObject:
   - component: {fileID: 97300986}
   - component: {fileID: 97300987}
   m_Layer: 0
-  m_Name: Guard_Patrol (17)
+  m_Name: Guard_S_Mid_InstakillAD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2504,7 +2532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Guard_StaticC
+  spawnPointID: Guard_S_Mid_InstakillAD1
   isReinforcementPoint: 0
 --- !u!1 &101647325
 GameObject:
@@ -9481,7 +9509,7 @@ GameObject:
   - component: {fileID: 409932532}
   - component: {fileID: 409932533}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_Animancy1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10690,7 +10718,7 @@ GameObject:
   - component: {fileID: 468375667}
   - component: {fileID: 468375668}
   m_Layer: 0
-  m_Name: Guard_Patrol (30)
+  m_Name: Guard_S_ADA_Sum1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10860,7 +10888,7 @@ GameObject:
   - component: {fileID: 473212594}
   - component: {fileID: 473212595}
   m_Layer: 0
-  m_Name: Guard_Patrol (9)
+  m_Name: Guard_S_Gate4Instakill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10893,7 +10921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Guard_S_Gate4
+  spawnPointID: Guard_S_Gate4Instakill
   isReinforcementPoint: 0
 --- !u!1 &477175870
 GameObject:
@@ -10906,7 +10934,7 @@ GameObject:
   - component: {fileID: 477175871}
   - component: {fileID: 477175872}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_SA_AP_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10941,7 +10969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80153818db2f5b409fdc35a8614774b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  routeID: Guard_SA_PA_2
+  routeID: Guard_P_SA_AP_2
   waypoints:
   - {fileID: 767520830}
   - {fileID: 1575968075}
@@ -15090,7 +15118,7 @@ GameObject:
   - component: {fileID: 668474432}
   - component: {fileID: 668474433}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_SA_AP_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15426,7 +15454,7 @@ GameObject:
   - component: {fileID: 674268151}
   - component: {fileID: 674268152}
   m_Layer: 0
-  m_Name: Guard_Patrol (10)
+  m_Name: Guard_S_Gate3Instakill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15459,7 +15487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Guard_S_Gate3
+  spawnPointID: Guard_S_Gate3Instakill
   isReinforcementPoint: 0
 --- !u!1 &679540216
 GameObject:
@@ -18389,7 +18417,7 @@ GameObject:
   - component: {fileID: 819474164}
   - component: {fileID: 819474165}
   m_Layer: 0
-  m_Name: Guard_Patrol (18)
+  m_Name: Guard_S_Mid_InstakillAD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18422,7 +18450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Guard_StaticD
+  spawnPointID: Guard_S_Mid_InstakillAD2
   isReinforcementPoint: 0
 --- !u!1 &822728721
 GameObject:
@@ -20831,7 +20859,7 @@ GameObject:
   - component: {fileID: 908095530}
   - component: {fileID: 908095531}
   m_Layer: 0
-  m_Name: Guard_Patrol (21)
+  m_Name: Guard_S_StartA_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23268,7 +23296,7 @@ GameObject:
   - component: {fileID: 1033193368}
   - component: {fileID: 1033193369}
   m_Layer: 0
-  m_Name: PatrolRoute (2)
+  m_Name: Guard_P_Animancy3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24781,7 +24809,7 @@ GameObject:
   - component: {fileID: 1132109954}
   - component: {fileID: 1132109955}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_TiC_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25001,7 +25029,7 @@ GameObject:
   - component: {fileID: 1140260995}
   - component: {fileID: 1140260996}
   m_Layer: 0
-  m_Name: Guard_SA_PA_2
+  m_Name: Guard_P_SA_AP_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25035,7 +25063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Guard_SA_PA_2
+  spawnPointID: Guard_P_SA_AP_2
   isReinforcementPoint: 0
 --- !u!1 &1146857908
 GameObject:
@@ -28269,7 +28297,7 @@ GameObject:
   - component: {fileID: 1291129321}
   - component: {fileID: 1291129322}
   m_Layer: 0
-  m_Name: Guard_Patrol (22)
+  m_Name: Guard_S_StartA_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29080,7 +29108,7 @@ GameObject:
   - component: {fileID: 1337629178}
   - component: {fileID: 1337629179}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_StartA_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29237,7 +29265,7 @@ GameObject:
   - component: {fileID: 1345472783}
   - component: {fileID: 1345472784}
   m_Layer: 0
-  m_Name: PatrolRoute
+  m_Name: Guard_P_TiC_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31609,7 +31637,7 @@ GameObject:
   - component: {fileID: 1422266323}
   - component: {fileID: 1422266324}
   m_Layer: 0
-  m_Name: Guard_Patrol (19)
+  m_Name: Undead_S_TavernEntrance1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31642,7 +31670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Undead_Start1
+  spawnPointID: Undead_S_TavernEntrance1
   isReinforcementPoint: 0
 --- !u!1001 &1429779340
 PrefabInstance:
@@ -38755,7 +38783,7 @@ GameObject:
   - component: {fileID: 1858339949}
   - component: {fileID: 1858339950}
   m_Layer: 0
-  m_Name: Guard_Patrol (24)
+  m_Name: Guard_S_SA_GoToPanel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41399,7 +41427,7 @@ GameObject:
   - component: {fileID: 2013914598}
   - component: {fileID: 2013914599}
   m_Layer: 0
-  m_Name: Guard_Patrol (20)
+  m_Name: Undead_S_TavernEntrance2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41432,7 +41460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e83965b1125984689dcd410a3051f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointID: Undead_Start2
+  spawnPointID: Undead_S_TavernEntrance2
   isReinforcementPoint: 0
 --- !u!1 &2014245519
 GameObject:
@@ -42360,7 +42388,7 @@ GameObject:
   - component: {fileID: 2040413679}
   - component: {fileID: 2040413680}
   m_Layer: 0
-  m_Name: Guard_Patrol (31)
+  m_Name: Guard_S_ADA_Sum2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42886,7 +42914,7 @@ GameObject:
   - component: {fileID: 2079646616}
   - component: {fileID: 2079646617}
   m_Layer: 0
-  m_Name: PatrolRoute (1)
+  m_Name: Guard_P_Animancy2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -23,3 +23,4 @@ MonoBehaviour:
   enemyInitialSpawns: []
   enemyEventSpawns: []
   sceneMusic: {fileID: 8300000, guid: b81523bafcda138488e0bf5c84982645, type: 3}
+  sceneMusicVolume: 0.8
