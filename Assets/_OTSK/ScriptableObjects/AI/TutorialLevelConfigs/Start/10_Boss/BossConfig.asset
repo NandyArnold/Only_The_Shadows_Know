@@ -10,19 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
-  m_Name: Knight_Mid_Instakill_AlarmNone
+  m_Name: BossConfig
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
-  revealableType: 1
-  revealIconPrefab: {fileID: 0}
+  revealableType: 5
+  revealIconPrefab: {fileID: 1532475450579200181, guid: 275c46b74b0d50d4182729840ffae72b, type: 3}
   displayName: Patrol Guard Tester
-  maxHealth: 100
-  attackDamage: 25
+  maxHealth: 1000
+  attackDamage: 50
   attackRange: 2.2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
-  resistances: []
+  resistances:
+  - damageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
+    multiplier: 0
+  - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
+    multiplier: 0.5
   patrolSpeed: 1
   alertSpeed: 3.5
   walkCombatSpeed: 2.5
@@ -31,10 +35,10 @@ MonoBehaviour:
   deathSoundIntensity: 90
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
-  alarmType: 0
+  alarmType: 2
   soundsAlarmOnAllyDeath: 0
-  alarmEventToRaise: {fileID: 0}
-  useTimeOutAlarm: 0
+  alarmEventToRaise: {fileID: 11400000, guid: d252d7abd853776438b91ef8e00052c0, type: 2}
+  useTimeOutAlarm: 1
   timeInCombatAlarmThreshold: 20
   maxSummonCount: 1
   detectionConeAngle: 90

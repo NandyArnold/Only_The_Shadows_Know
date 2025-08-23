@@ -17,7 +17,7 @@ MonoBehaviour:
   revealableType: 5
   revealIconPrefab: {fileID: 0}
   displayName: Patrol Guard Tester
-  maxHealth: 100
+  maxHealth: 250
   attackDamage: 50
   attackRange: 2.2
   attackCooldown: 2.5

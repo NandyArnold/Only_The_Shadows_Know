@@ -16,9 +16,9 @@ MonoBehaviour:
   enemyType: 1
   revealableType: 1
   revealIconPrefab: {fileID: 0}
-  displayName: Patrol Guard Tester
+  displayName: SoloKnight
   maxHealth: 100
-  attackDamage: 50
+  attackDamage: 20
   attackRange: 2.2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59e890e81f19e364fa3ef41892e6f355, type: 3}
-  m_Name: DestructibleData_AlarmPanel
+  m_Name: DestructibleData_AlarmPanel_Start
   m_EditorClassIdentifier: 
-  maxHealth: 150
+  maxHealth: 50
   resistances:
   - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
     multiplier: 1.5
-  - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
-    multiplier: 0
   - damageType: {fileID: 11400000, guid: d18aea837f3d939458876ee353196e1e, type: 2}
+    multiplier: 0
+  - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
     multiplier: 0
   - damageType: {fileID: 11400000, guid: 6ac28098fe4672e41b291fc856189423, type: 2}
     multiplier: 0

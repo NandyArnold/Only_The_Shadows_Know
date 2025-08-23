@@ -10,19 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
-  m_Name: _Boss
+  m_Name: MiniBossConfig
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
-  revealableType: 5
+  revealableType: 12
   revealIconPrefab: {fileID: 1532475450579200181, guid: 275c46b74b0d50d4182729840ffae72b, type: 3}
   displayName: Patrol Guard Tester
-  maxHealth: 100
-  attackDamage: 50
+  maxHealth: 1500
+  attackDamage: 75
   attackRange: 2.2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
-  resistances: []
+  resistances:
+  - damageType: {fileID: 11400000, guid: 4b65ae08037f7ab449fd049714f1d7df, type: 2}
+    multiplier: 0.7
+  - damageType: {fileID: 11400000, guid: 78964202e7be4e5478a95e7d35af580c, type: 2}
+    multiplier: 2
   patrolSpeed: 1
   alertSpeed: 3.5
   walkCombatSpeed: 2.5

@@ -160,7 +160,7 @@ MonoBehaviour:
   eyePoint: {fileID: 8598703289818991878}
   visionBlockingLayers:
     serializedVersion: 2
-    m_Bits: 145
+    m_Bits: 33425
   noiseDecayRate: 10
 --- !u!95 &3446622411678235474
 Animator:
