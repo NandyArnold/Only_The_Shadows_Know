@@ -23,4 +23,4 @@ MonoBehaviour:
   bowFireNoise: 30
   animancyRangedAttackNoise: 30
   animancyMeleeAttackNoise: 30
-  spectralShiftNoise: 70
+  spectralShiftNoise: 30

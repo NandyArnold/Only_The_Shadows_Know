@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyType: 3
   revealableType: 1
   revealIconPrefab: {fileID: 0}
-  displayName: TiCSummon
+  displayName: TiCSummon2
   maxHealth: 100
   attackDamage: 30
   attackRange: 2.2

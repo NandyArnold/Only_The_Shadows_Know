@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
-  m_Name: Knight_Mid_Animancy_AlarmNone 1
+  m_Name: Knight_Mid_Animancy_Summoned4
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
   revealableType: 1
   revealIconPrefab: {fileID: 0}
-  displayName: AnimancyGuard
+  displayName: Animancy_Summ4
   maxHealth: 100
-  attackDamage: 20
+  attackDamage: 30
   attackRange: 2.2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2

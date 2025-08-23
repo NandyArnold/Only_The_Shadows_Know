@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988c96ec80894ec49ad1d411e117c576, type: 3}
-  m_Name: Start_TiC_SummonAlarm
+  m_Name: Knight_AP_AlarmNoneSummoned3
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
   enemyType: 1
-  revealableType: 4
-  revealIconPrefab: {fileID: 1532475450579200181, guid: deb1d533769f27a429a33a280af66a10, type: 3}
-  displayName: TiCKnight
-  maxHealth: 200
-  attackDamage: 20
+  revealableType: 1
+  revealIconPrefab: {fileID: 0}
+  displayName: AP_Summ3
+  maxHealth: 100
+  attackDamage: 10
   attackRange: 2.2
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
@@ -31,11 +31,11 @@ MonoBehaviour:
   deathSoundIntensity: 90
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
-  alarmType: 2
+  alarmType: 0
   soundsAlarmOnAllyDeath: 0
-  alarmEventToRaise: {fileID: 11400000, guid: f3fcf7e5d0ffeda4bbd2d15a3cb5278a, type: 2}
-  useTimeOutAlarm: 1
-  timeInCombatAlarmThreshold: 10
+  alarmEventToRaise: {fileID: 0}
+  useTimeOutAlarm: 0
+  timeInCombatAlarmThreshold: 20
   maxSummonCount: 1
   detectionConeAngle: 90
   hearingRange: 10

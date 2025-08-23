@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyType: 1
   revealableType: 1
   revealIconPrefab: {fileID: 1532475450579200181, guid: 0eafee9511dac4d4b9f999f6baa15abc, type: 3}
-  displayName: Patrol Guard Tester
+  displayName: Undead_Knight_Alarm
   maxHealth: 100
   attackDamage: 50
   attackRange: 2.2

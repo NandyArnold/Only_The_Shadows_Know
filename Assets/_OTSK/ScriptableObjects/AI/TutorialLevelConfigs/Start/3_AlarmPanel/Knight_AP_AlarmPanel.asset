@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyType: 1
   revealableType: 2
   revealIconPrefab: {fileID: 1532475450579200181, guid: 0eafee9511dac4d4b9f999f6baa15abc, type: 3}
-  displayName: Patrol Guard Tester
+  displayName: AP_Guard3
   maxHealth: 100
   attackDamage: 30
   attackRange: 2.2
@@ -33,7 +33,7 @@ MonoBehaviour:
   lookAroundAnimationDuration: 4
   alarmType: 1
   soundsAlarmOnAllyDeath: 1
-  alarmEventToRaise: {fileID: 0}
+  alarmEventToRaise: {fileID: 11400000, guid: d4b207a38daa5074e8c6e37b2a9399d4, type: 2}
   useTimeOutAlarm: 0
   timeInCombatAlarmThreshold: 20
   maxSummonCount: 1

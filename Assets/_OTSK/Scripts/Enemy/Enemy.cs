@@ -351,6 +351,11 @@ public class Enemy : MonoBehaviour, ISaveable
 
         // This logic runs for BOTH live deaths and loaded dead bodies to ensure
         // they are visually and functionally in a "dead" state.
+        if (TryGetComponent<EnemyCombatHandler>(out var combatHandler))
+        {
+            combatHandler.enabled = false;
+        }
+
 
         if (_uiController != null)
         {
@@ -387,7 +392,7 @@ public class Enemy : MonoBehaviour, ISaveable
 
         // Set the object's tag and layer to identify it as a corpse
         gameObject.tag = "DeadBody";
-        gameObject.layer = LayerMask.NameToLayer("DeadBody");
+        SetLayerRecursively(this.gameObject, LayerMask.NameToLayer("DeadBody"));
     }
 
     private IEnumerator CleanupBody(float delay)
@@ -408,5 +413,23 @@ public class Enemy : MonoBehaviour, ISaveable
     {
         // Re-enable senses
         //if (Detector != null) Detector.enabled = true;
+    }
+
+    /// <summary>
+    /// Recursively sets the layer of a GameObject and all of its children.
+    /// </summary>
+    /// <param name="obj">The parent GameObject.</param>
+    /// <param name="newLayer">The integer ID of the new layer.</param>
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (obj == null) return;
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (child == null) continue;
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
     }
 }
