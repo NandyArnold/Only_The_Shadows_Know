@@ -35,7 +35,7 @@ MonoBehaviour:
       maxVolume: 1
       minPitch: 0.95
       maxPitch: 1.05
-  riftMarkerPrefab: {fileID: 2896813399296741940, guid: dda5dc777783d1b4a97d8db3aa17b15d, type: 3}
+  riftMarkerPrefab: {fileID: 8663498257505544717, guid: b4d78a3074f237f4aa5cbbf382af7fa6, type: 3}
   maxTeleportRange: 15
   castAnimationDuration: 1
   vfxLingerDuration: 1

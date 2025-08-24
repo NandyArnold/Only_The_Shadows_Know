@@ -167,11 +167,11 @@ public class DetectionSystem : MonoBehaviour
         if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState) return;
         // Check if the sound is within hearing range and loud enough.
         float distanceToSound = Vector3.Distance(transform.position, soundPosition);
-        Debug.Log($"<color=cyan>OnSoundHeard on {gameObject.name}:</color> " +
-              $"Sound at {soundPosition} (Intensity: {intensity}). " +
-              $"My position is {transform.position}. " +
-              $"Distance to sound is {distanceToSound}. " +
-              $"My hearing range is {config.hearingRange}.");
+        //Debug.Log($"<color=cyan>OnSoundHeard on {gameObject.name}:</color> " +
+        //      $"Sound at {soundPosition} (Intensity: {intensity}). " +
+        //      $"My position is {transform.position}. " +
+        //      $"Distance to sound is {distanceToSound}. " +
+        //      $"My hearing range is {config.hearingRange}.");
         if (distanceToSound > config.hearingRange)
         {
             Debug.LogWarning($"--> REJECTED: Sound is out of range.");
