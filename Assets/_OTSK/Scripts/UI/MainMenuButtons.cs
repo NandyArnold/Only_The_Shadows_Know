@@ -5,8 +5,20 @@ public class MainMenuButtons : MonoBehaviour
 {
     [Header("Button References")]
     [SerializeField] private Button loadGameButton;
+    [SerializeField] private Button optionsButton;
+    [SerializeField] private Button exitGameButton;
+            
 
     private string _lastSaveName;
+
+
+    private void Awake()
+    {
+        loadGameButton.onClick.AddListener(OnLoadGameClicked);
+        optionsButton.onClick.AddListener(OnOptionsClicked);
+        exitGameButton.onClick.AddListener(OnExitGameClicked);
+
+    }
 
     private void Start()
     {

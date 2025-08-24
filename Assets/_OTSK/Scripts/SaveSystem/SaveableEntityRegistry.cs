@@ -20,20 +20,30 @@ public class SaveableEntityRegistry : MonoBehaviour, IResettable
         Debug.Log("<color=lime>--- SaveableEntityRegistry AWAKE ---</color>");
     }
 
-    public void Register(ISaveable entity)
+    public bool Register(ISaveable entity)
     {
-        //Debug.Log($"[Registry] Attempting to register '{((MonoBehaviour)entity)?.name ?? "NULL ENTITY"}'...");
-        if (entity != null && !string.IsNullOrEmpty(entity.UniqueID))
+        if (entity == null || string.IsNullOrEmpty(entity.UniqueID))
         {
-            _registry[entity.UniqueID] = entity;
-            //Debug.Log($"<color=cyan>[Registry]</color> Registered: {((MonoBehaviour)entity).name} (ID: {entity.UniqueID}) | Total: {_registry.Count}");
-        }
-        else
-        {
-            // Log that the conditions FAILED and why
             string reason = entity == null ? "Entity was null" : "UniqueID was null or empty";
             Debug.LogWarning($"<color=orange>[Registry]</color> SKIPPED registration for {((MonoBehaviour)entity)?.name ?? "NULL ENTITY"}. Reason: {reason}");
+            return false; 
         }
+        if (_registry.ContainsKey(entity.UniqueID))
+        {
+            // If a duplicate is found, log a detailed error and reject the new one.
+            // This is the safeguard that will stop your duplication bug at the source.
+            //Debug.LogError($"<color=red>[Registry] DUPLICATE ID ERROR:</color> " +
+            //               $"Attempted to register '{((MonoBehaviour)entity).name}' " +
+            //               $"with ID '{entity.UniqueID}', but this ID is already registered to '{((MonoBehaviour)_registry[entity.UniqueID]).name}'. " +
+            //               $"Registration of the new object was rejected.",
+            //               ((MonoBehaviour)entity).gameObject);
+            return true;
+        }
+        // --- END OF UPGRADE ---
+
+        _registry[entity.UniqueID] = entity;
+        return true;
+
     }
 
     public void Unregister(ISaveable entity)

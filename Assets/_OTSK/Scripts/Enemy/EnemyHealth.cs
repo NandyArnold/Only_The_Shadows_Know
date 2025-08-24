@@ -1,4 +1,4 @@
-// EnemyHealth.cs - UPGRADED with OnDinamaged event
+
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -66,6 +66,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (_currentHealth <= 0)
         {
+            _currentHealth = 0;
             _isDead = true;
             Die();
         }
@@ -95,7 +96,13 @@ public class EnemyHealth : MonoBehaviour
         {
             // If loaded health is zero, make sure the enemy is already dead.
             _isDead = true;
-            gameObject.SetActive(false); // Instantly hide it.
+          
         }
+    }
+
+    public void SetDeadState()
+    {
+        _isDead = true;
+        _currentHealth = 0;
     }
 }

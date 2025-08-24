@@ -49,6 +49,7 @@ public class GameOverScreen : MonoBehaviour
         Time.timeScale = 1f;
         Debug.Log("Load button clicked...");
         gameObject.SetActive(false);
+   
         //SaveLoadManager.Instance.LoadGame();
         SaveLoadManager.Instance.LoadGame("autosave");
     }
@@ -56,6 +57,7 @@ public class GameOverScreen : MonoBehaviour
     private void OnMainMenuClicked()
     {
         if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
+        if (GameManager.Instance != null) GameManager.Instance.PrepareForNewScene();
         Debug.Log("Main Menu button clicked...");
         
         SceneLoader.Instance.LoadScene(mainMenuSceneData);

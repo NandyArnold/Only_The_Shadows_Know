@@ -33,14 +33,14 @@ public class EnemySpawner : MonoBehaviour
         // Keep this to know WHICH scene to spawn for
         SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
         // Subscribe to the NEW event to know WHEN to spawn
-        SceneLoader.Instance.OnNewSceneReady += SpawnInitialEnemies;
+        SceneLoader.Instance.OnNewSceneReady += () => StartCoroutine(SpawnInitialEnemies());
     }
 
     private void OnDisable()
     {
         if (SceneLoader.Instance == null) return;
         SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
-        SceneLoader.Instance.OnNewSceneReady -= SpawnInitialEnemies;
+        SceneLoader.Instance.OnNewSceneReady -= () => StartCoroutine(SpawnInitialEnemies());
     }
 
     // This is called by the SceneLoader when a new scene is ready.
@@ -111,17 +111,18 @@ public class EnemySpawner : MonoBehaviour
             }
         }
     }
-    private void SpawnInitialEnemies()
+    private IEnumerator SpawnInitialEnemies()
     {
-        if (SaveLoadManager.Instance != null && SaveLoadManager.Instance.IsLoading)
+        if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.NewGame)
         {
-            // If we are loading from a save file, the SaveLoadManager will handle spawning enemies.
-            // We skip the default spawn defined in the SceneDataSO.
-            Debug.Log("<color=yellow>[EnemySpawner]</color> Skipping initial enemy spawn because a game load is in progress.");
-            return;
+            Debug.Log($"<color=orange>[EnemySpawner]</color> Skipping initial spawn because Load Type is '{GameManager.Instance.CurrentLoadType}'.");
+            yield break;
         }
 
-        if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) return;
+        // This code will now ONLY run on a fresh "New Game" start.
+        Debug.Log("<color=green>[EnemySpawner]</color> This is a New Game. Spawning default enemies for the scene.");
+
+        if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) yield break;
 
         // Loop through each SPAWN GROUP in the list
         foreach (var group in _currentSceneData.enemyInitialSpawns)
@@ -131,6 +132,14 @@ public class EnemySpawner : MonoBehaviour
             {
                 SpawnEnemy(spawnData);
             }
+        }
+        yield return new WaitForEndOfFrame();
+
+        // Now, trigger the first-ever autosave.
+        Debug.Log("<color=cyan>[EnemySpawner]</color> Initial spawn complete. Triggering first autosave.");
+        if (SaveLoadManager.Instance != null)
+        {
+            StartCoroutine(SaveLoadManager.Instance.SaveGame("autosave"));
         }
     }
 

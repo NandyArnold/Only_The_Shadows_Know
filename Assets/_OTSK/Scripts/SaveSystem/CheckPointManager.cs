@@ -26,10 +26,14 @@ public class CheckpointManager : MonoBehaviour, IResettable
         LastCheckpointRotation = checkpointTransform.rotation;
         Debug.Log($"<color=green>New Checkpoint Set:</color> {checkpointTransform.name}");
 
-        // We can also trigger an autosave here for extra safety.
+        if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.None)
+        {
+            Debug.Log($"Checkpoint: Suppressing autosave because a load ({GameManager.Instance.CurrentLoadType}) is in progress.");
+            return;
+        }
         if (SaveLoadManager.Instance != null)
         {
-            SaveLoadManager.Instance.SaveGame("autosave");
+            StartCoroutine(SaveLoadManager.Instance.SaveGame("autosave"));
         }
     }
     public void ResetState()

@@ -1,8 +1,9 @@
 // SaveLoadManager.cs - ESave Powered Version
-using UnityEngine;
 using Esper.ESave; // Add the ESave namespace
 using System.Collections;
 using System.IO;
+using System.Linq;
+using UnityEngine;
 using static Esper.ESave.SaveFileSetupData;
 
 
@@ -20,6 +21,8 @@ public class SaveLoadManager : MonoBehaviour
 
     public bool IsLoading { get; private set; }
     private bool _isSceneReadyForRestore = false;
+
+    private bool _isBusy = false;
 
     //[Header("ESave Configuration")]
     //[SerializeField] private SaveFileSetup saveFileSetup; // Assign this in the Inspector
@@ -78,9 +81,24 @@ public class SaveLoadManager : MonoBehaviour
         };
     }
 
-    public void SaveGame(string saveFileName)
+    public IEnumerator SaveGame(string saveFileName)
     {
-        
+        if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.None)
+        {
+            Debug.LogWarning($"<color=red>SAVE REJECTED:</color> A scene load ({GameManager.Instance.CurrentLoadType}) is in progress. Save request for '{saveFileName}' was ignored.");
+            yield break;
+        }
+        if (_isBusy)
+        {
+            Debug.LogWarning($"SaveLoadManager is busy. Save request for '{saveFileName}' was ignored.");
+            yield break;
+        }
+
+        _isBusy = true; // Set the flag
+        Debug.Log($"<color=yellow>--- SAVE GAME STARTED ---</color> File: '{saveFileName}'");
+        yield return new WaitForEndOfFrame();
+
+
         // Create a new SaveFile instance for the specific file name we are saving to.
         var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
 
@@ -103,11 +121,19 @@ public class SaveLoadManager : MonoBehaviour
         _metaFile.Save();
 
         string path = Path.Combine(Application.persistentDataPath, saveFileName + ".json");
-        Debug.Log($"<color=green>Game Saved to:</color> {path} | Last Save is now: {saveFileName}");
+        Debug.Log($"<color=green>--- GAME SAVED SUCCESSFULLY ---</color> File: {path}");
+
+        _isBusy = false;
     }
 
     public void LoadGame(string saveFileName)
     {
+        if (_isBusy)
+        {
+            Debug.LogWarning($"SaveLoadManager is busy. Load request for '{saveFileName}' was ignored.");
+            return;
+        }
+
         Debug.Log($"<color=cyan>--- LOAD GAME REQUEST RECEIVED ---</color> Attempting to load file: '{saveFileName}'");
         //if (_saveFile == null) return;
         StartCoroutine(LoadGameRoutine(saveFileName));
@@ -116,64 +142,74 @@ public class SaveLoadManager : MonoBehaviour
 
     private IEnumerator LoadGameRoutine(string saveFileName)
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetLoadType(GameLoadType.LoadFromSave);
+        }
+
+        _isBusy = true;
         IsLoading = true;
-        Debug.Log($"<color=cyan>--- LOAD GAME ROUTINE STARTED ---</color> Attempting to load file: '{saveFileName}'");
-        ValidateRegistries();
-
-        // Use the helper method to get a consistent SaveFile object.
-        var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
-
-        if (!saveFile.HasData(GameStateKey))
+        try
         {
-            Debug.LogError($"<color=red>LOAD FAILED:</color> Save file '{saveFileName}' has no GameState data.", this.gameObject);
-            yield break;
-        }
+            Debug.Log("SAVELOAD: LoadGameRoutine has started.");
+            // --- All of your existing code goes inside this 'try' block ---
 
-        Debug.Log("Found GameState data. Loading...");
-        _currentGameState = saveFile.GetData<GameStateData>(GameStateKey);
-        // 2. Find the correct SceneDataSO using the saved ID from the registry.
-        var sceneDataToLoad = sceneRegistry.GetSceneData(_currentGameState.sceneID);
-        if (sceneDataToLoad == null)
+            ValidateRegistries();
+
+            var saveFile = new SaveFile(GetSetupDataFor(saveFileName));
+
+            if (!saveFile.HasData(GameStateKey))
+            {
+                Debug.LogError($"<color=red>LOAD FAILED:</color> Save file '{saveFileName}' has no GameState data.", this.gameObject);
+                yield break;
+            }
+
+            Debug.Log("Found GameState data. Loading...");
+            _currentGameState = saveFile.GetData<GameStateData>(GameStateKey);
+
+            var sceneDataToLoad = sceneRegistry.GetSceneData(_currentGameState.sceneID);
+            if (sceneDataToLoad == null)
+            {
+                Debug.LogError($"<color=red>LOAD FAILED:</color> Could not find scene with ID '{_currentGameState.sceneID}' in the SceneRegistry!");
+                yield break;
+            }
+
+            Debug.Log($"Scene to load is '{sceneDataToLoad.SceneName}'. Starting SceneLoader...");
+            SceneLoader.Instance.LoadScene(sceneDataToLoad);
+            _isSceneReadyForRestore = false;
+
+            Debug.Log("SAVELOAD: Waiting for OnNewSceneReady event...");
+            yield return new WaitUntil(() => _isSceneReadyForRestore);
+            Debug.Log("SAVELOAD: OnNewSceneReady event received.");
+
+            Debug.Log("SAVELOAD: Waiting for PatrolRouteManager to be ready...");
+            yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
+            Debug.Log("SAVELOAD: PatrolRouteManager is ready.");
+
+            yield return new WaitForEndOfFrame();
+
+            Debug.Log("<color=green>SAVELOAD: Restoring all game data now.</color>");
+            RestoreObjectiveData(_currentGameState);
+            RestoreWorldData(_currentGameState);
+            RestorePlayerData(_currentGameState);
+
+            if (CameraManager.Instance != null)
+            {
+                CameraManager.Instance.ConnectToPlayer(GameManager.Instance.Player);
+            }
+
+            GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
+
+            Debug.Log($"<color=cyan>--- GAME LOADED SUCCESSFULLY ---</color> File: '{saveFileName}'");
+        }
+        finally
         {
-            Debug.LogError($"<color=red>LOAD FAILED:</color> Could not find scene with ID '{_currentGameState.sceneID}' in the SceneRegistry!");
-            yield break;
+            // --- This code is GUARANTEED to run ---
+            IsLoading = false;
+            _isBusy = false;
+      
+            Debug.Log("<color=yellow>--- LOAD ROUTINE FINISHED ---</color> SaveLoadManager is no longer busy.");
         }
-
-        Debug.Log($"Scene to load is '{sceneDataToLoad.SceneName}'. Starting SceneLoader...");
-        // 3. Tell the SceneLoader to start loading the scene.
-        //    We don't pass a spawn point tag because the save data will override the position.
-        SceneLoader.Instance.LoadScene(sceneDataToLoad);
-        _isSceneReadyForRestore = false;
-
-        Debug.Log("Waiting for SceneLoader to confirm the new scene is ready...");
-        yield return new WaitUntil(() => _isSceneReadyForRestore);
-
-        Debug.Log("Scene is ready. Now waiting for Patrol Routes to be registered...");
-        yield return new WaitUntil(() => PatrolRouteManager.Instance != null && PatrolRouteManager.Instance.IsReady);
-        // --- END OF ADDITION ---
-        //Debug.Log("Waiting for player to be spawned...");
-        // 4. Wait until the SceneLoader has finished its ENTIRE routine and a new player exists.
-        //yield return new WaitUntil(() => GameManager.Instance.Player != null);
-        //Debug.Log("<color=green>Player has been spawned!</color> Restoring data...");
-
-        yield return new WaitForEndOfFrame();
-        // 5. NOW that the new player exists in the new scene, it's safe to restore all data.
-        Debug.Log("<color=green>Scene is ready!</color> Restoring data...");
-        RestoreObjectiveData(_currentGameState);
-        RestoreWorldData(_currentGameState);
-        RestorePlayerData(_currentGameState);
-
-        // 6. Connect the camera to the new player.
-        if (CameraManager.Instance != null)
-        {
-            CameraManager.Instance.ConnectToPlayer(GameManager.Instance.Player);
-        }
-
-        // 7. Revive the player to reset their animation state.
-        GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
-
-        Debug.Log($"<color=cyan>--- GAME LOADED SUCCESSFULLY ---</color> File: '{saveFileName}'");
-        IsLoading = false;
     }
 
     private void GatherObjectiveData(GameStateData gameState)
@@ -276,6 +312,7 @@ public class SaveLoadManager : MonoBehaviour
     private void GatherWorldData(GameStateData gameState)
     {
         var saveableEntities = SaveableEntityRegistry.Instance.GetSaveableEntities();
+        Debug.Log($"<color=yellow>GATHERING WORLD DATA:</color> The SaveableEntityRegistry contains {saveableEntities.Count()} entities.");
 
         // Clear the lists before populating
         gameState.worldData = new WorldStateData();
@@ -304,8 +341,9 @@ public class SaveLoadManager : MonoBehaviour
 
     private void RestoreWorldData(GameStateData gameState)
     {
-        Debug.Log($"Restoring world data for scene: {gameState.sceneID}");
+        Debug.Log($"<color=cyan>RESTORING WORLD DATA:</color> The save file contains {gameState.worldData.enemySaveData.Count} enemies.");
 
+        Debug.Log($"Restoring world data for scene: {gameState.sceneID}");
         // --- SPAWN & RESTORE DYNAMIC ENEMIES ---
         foreach (var enemySaveEntry in gameState.worldData.enemySaveData)
         {
@@ -346,7 +384,7 @@ public class SaveLoadManager : MonoBehaviour
             enemyScript.RestoreState(enemyData);
 
             // 6. Register with the save system *after* its ID and state have been set.
-            SaveableEntityRegistry.Instance.Register(enemyScript);
+            //SaveableEntityRegistry.Instance.Register(enemyScript);
 
             // 7. NOW, activate the GameObject. This will safely trigger OnEnable.
             enemyInstance.SetActive(true);
@@ -354,7 +392,7 @@ public class SaveLoadManager : MonoBehaviour
             // 8. Finally, tell the fully-initialized enemy to start its AI logic.
             enemyScript.ActivateAIFromLoad(enemyData);
 
-            Debug.Log($"<color=lime>Restored spawned enemy:</color> {config.displayName} with saved ID: {uniqueId}");
+            //Debug.Log($"<color=lime>Restored spawned enemy:</color> {config.displayName} with saved ID: {uniqueId}");
         }
 
         //foreach (var chargeData in gameState.worldData.chargeManagerSaveData)

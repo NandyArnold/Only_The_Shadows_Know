@@ -75,6 +75,15 @@ public class PlayerInputHandler : MonoBehaviour
 
         SetupInputCallbacks();
     }
+    private void OnDisable()
+    {
+        // This is crucial. It tells the Input System to release all control maps
+        // and event subscriptions associated with this specific player instance.
+        if (_inputActions != null)
+        {
+            _inputActions.Disable();
+        }
+    }
 
     private void Start()
     {

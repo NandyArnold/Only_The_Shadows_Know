@@ -33,17 +33,15 @@ public class SceneTransitionButton : MonoBehaviour
     {
         if (SceneLoader.Instance != null)
         {
-            SaveLoadManager.Instance.DeleteAllSaves();
-
-            PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
-
-            if (targetSceneData == null)
+            // --- THIS IS THE FIX ---
+            // Before doing anything, tell the GameManager we are starting a NEW game.
+            if (GameManager.Instance != null)
             {
-                Debug.LogError("SceneTransitionButton: Target Scene Data is not assigned!", this.gameObject);
-                return;
+                GameManager.Instance.SetLoadType(GameLoadType.NewGame);
             }
 
-            // This now calls the correct, updated method on the SceneLoader.
+            SaveLoadManager.Instance.DeleteAllSaves();
+            PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
             SceneLoader.Instance.LoadScene(targetSceneData, targetSpawnPointTag);
         }
         else

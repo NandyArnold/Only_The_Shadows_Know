@@ -12538,9 +12538,6 @@ MonoBehaviour:
   - {fileID: 1837955082}
   - {fileID: 1837955064}
   - {fileID: 1837955069}
-  - {fileID: 1837955069}
-  - {fileID: 1837955069}
-  - {fileID: 1837955069}
   initialScene: {fileID: 11400000, guid: edbde63fb363ef54c9768372daf3f712, type: 2}
 --- !u!114 &1837955057
 MonoBehaviour:

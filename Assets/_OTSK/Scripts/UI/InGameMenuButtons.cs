@@ -32,12 +32,13 @@ public class InGameMenuButtons : MonoBehaviour
     {
         if (SaveLoadManager.Instance != null)
         {
-            SaveLoadManager.Instance.SaveGame("manual_save_1"); 
+            StartCoroutine(SaveLoadManager.Instance.SaveGame("manual_save_1")); 
         }
     }
 
     public void OnLoadLastCheckpointClicked()
     {
+      
         Debug.Log("Load Last Checkpoint clicked.");
         if (SaveLoadManager.Instance != null)
         {
@@ -48,6 +49,7 @@ public class InGameMenuButtons : MonoBehaviour
 
     public void OnLoadGameClicked()
     {
+      
         // Logic to open a "Load Game" screen
         Debug.Log("Load Game clicked.");
 
@@ -68,7 +70,7 @@ public class InGameMenuButtons : MonoBehaviour
         if (AudioManager.Instance != null) AudioManager.Instance.SetGameOver(false);
         Debug.Log("Main Menu button clicked...");
 
-        if (GameManager.Instance != null) GameManager.Instance.ResetManagersForMainMenu();
+      
 
         SceneLoader.Instance.LoadScene(mainMenuSceneData);
     }

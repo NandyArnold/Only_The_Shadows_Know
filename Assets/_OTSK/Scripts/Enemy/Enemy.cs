@@ -32,11 +32,13 @@ public class Enemy : MonoBehaviour, ISaveable
         public bool wasActive;
 
         public int lastWaypointIndex;
+        public bool isDead;
     }
     // --- ISaveable Implementation ---
     public string UniqueID => _uniqueID.ID;
 
     private bool _isLoadedDead = false;
+    private bool _isRegistered = false;
 
     // --- Component References 
     [Header("Data")] [Tooltip("The enemy's configuration data, including stats and behavior.")]
@@ -73,8 +75,8 @@ public class Enemy : MonoBehaviour, ISaveable
             waypointIndex = patrolState.GetCurrentWaypointIndex();
         }
         string routeID = (_ai.PatrolRoute != null) ? _ai.PatrolRoute.routeID : null;
-        
 
+        bool isActuallyDead = _health.IsDead;
 
         return new EnemySaveData
         {
@@ -94,7 +96,8 @@ public class Enemy : MonoBehaviour, ISaveable
             rotW = transform.rotation.w,
 
             // Health Data
-            currentHealth = _health.CurrentHealth,
+            currentHealth = isActuallyDead ? 0f : _health.CurrentHealth,
+            isDead = isActuallyDead,
 
             // AI Data
             summonCount = _ai.SummonCount,
@@ -112,6 +115,12 @@ public class Enemy : MonoBehaviour, ISaveable
         // --- THIS IS THE FIX ---
         // First, check if the enemy was dead in the save file.
         var saveData = (EnemySaveData)state;
+
+        if (saveData.isDead)
+        {
+            _isLoadedDead = true;
+            return;
+        }
 
         if (!saveData.wasActive || saveData.currentHealth <= 0)
         {
@@ -159,48 +168,42 @@ public class Enemy : MonoBehaviour, ISaveable
 
     }
 
-    private void OnEnable()
-    {
-
-        _health.OnDied += (isSilentKill) => HandleDeath(isSilentKill, false); // Subscribe to the death event
-
-
-    }
-
-    private void OnDisable()
-    {
-
-        _health.OnDied -= (isSilentKill) => HandleDeath(isSilentKill, false); // Unsubscribe
-
-
-    }
-
+   
     private void OnDestroy()
     {
-        if (EnemyManager.Instance != null)
-        {
-            EnemyManager.Instance.UnregisterEnemy(this);
-        }
-
-        // ADD THIS: Notify the combat manager that this enemy is gone.
-        if (CombatManager.Instance != null)
-        {
-            CombatManager.Instance.UnregisterEnemyFromCombat(this);
-        }
-        if (_uiController != null)
-        {
-            _health.OnHealthChanged -= _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
-            if (_ai != null)
+        //Debug.Log($"<color=purple>OnDestroy called for {config.displayName} with ID {UniqueID}</color>");
+        UnsubscribeEvents();
+        if (_isRegistered)
+            if (EnemyManager.Instance != null)
             {
-                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
-                _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
+                EnemyManager.Instance.UnregisterEnemy(this);
             }
-        }
-        if (SaveableEntityRegistry.Instance != null)
-        {
-            SaveableEntityRegistry.Instance.Unregister(this);
-        }
+
+            // ADD THIS: Notify the combat manager that this enemy is gone.
+            if (CombatManager.Instance != null)
+            {
+                CombatManager.Instance.UnregisterEnemyFromCombat(this);
+            }
+
+            if (_uiController != null)
+            {
+                _health.OnHealthChanged -= _uiController.UpdateHealth;
+                Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+                if (_ai != null)
+                {
+                    _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+                    _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
+                }
+            }
+
+            {
+                if (SaveableEntityRegistry.Instance != null)
+                {
+                    SaveableEntityRegistry.Instance.Unregister(this);
+                }
+                // ... other manager unregistrations
+            }
+        //Debug.Log($"<color=white>OnDestroy completed for {name}</color>");
     }
 
     public void Initialize(EnemyConfigSO newConfig, PatrolRoute newPatrolRoute, InitialAIState initialState)
@@ -243,6 +246,15 @@ public class Enemy : MonoBehaviour, ISaveable
     }
     private void Start()
     {
+        //if (GameManager.Instance != null && GameManager.Instance.IsLoadingScene)
+        //{
+        //    // This enemy is a "template" in the scene, and a load is in progress.
+        //    // It must be destroyed to make way for the loaded enemies.
+            
+        //    Destroy(gameObject);
+        //    return;
+        //}
+
         if (_isLoadedDead)
         {
             // We pass 'true' for isLoadedFromSave to prevent unregistering.
@@ -252,46 +264,35 @@ public class Enemy : MonoBehaviour, ISaveable
 
         //Debug.Log($"--- Enemy.Start() called for {gameObject.name} ---");
         //Debug.Log($"[Enemy] Registering enemy: {gameObject.name} with ID: {_uniqueID.ID}");
-        EnemyManager.Instance.RegisterEnemy(this);
+
 
         //_navigator.SetSpeed(config.patrolSpeed);
 
         //Instantiate and set up the status bar
-        if (statusBarPrefab != null)
+        if (statusBarPrefab != null && _statusBarInstance == null)
         {
             _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
             _statusBarInstance.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
+        }
+        SubscribeEvents();
 
-            // Connect the standard events
-            if (_uiController != null)
-            {
-                _health.OnHealthChanged += _uiController.UpdateHealth;
-                Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
-                _uiController.InitializeRevealIcon(config.revealIconPrefab);
-            }
-
-            if (_ai != null)
-            {
-                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
-                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
-                _uiController.HandleAIStateChanged(_ai.CurrentState);
-            }
-
-            // After creating the UI, immediately tell it to update with the initial values.
+        // Immediately update the UI with initial values.
+        if (_uiController != null)
+        {
             _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
-            // The initial sound gauge is 0, which will correctly hide the alert slider.
-            //_uiController.UpdateAlert(0, config.hearingThreshold);
+            _uiController.HandleAIStateChanged(_ai.CurrentState);
         }
 
-
+        // Register with the save system.
         if (SaveableEntityRegistry.Instance != null)
         {
-            SaveableEntityRegistry.Instance.Register(this);
-        }
-        else
-        {
-            Debug.LogError($"Could not register {name}, SaveableEntityRegistry.Instance is null!");
+            _isRegistered = SaveableEntityRegistry.Instance.Register(this);
+            if (!_isRegistered)
+            {
+                Destroy(gameObject); // Self-destruct if registration fails
+                return;
+            }
         }
 
     }
@@ -300,6 +301,9 @@ public class Enemy : MonoBehaviour, ISaveable
     {
         // The 'isLoadedFromSave' flag prevents a restored dead body from trying
         // to unregister itself from managers it was never added to in this session.
+        _health.SetDeadState();
+
+       
 
         if (!isLoadedFromSave)
         {
@@ -329,22 +333,19 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             combatHandler.enabled = false;
         }
+        UnsubscribeEvents();
 
-
-        if (_uiController != null)
-        {
-            _health.OnHealthChanged -= _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
-            if (_ai != null)
-            {
-                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
-            }
-        }
+      
         if (_statusBarInstance != null)
         {
             Destroy(_statusBarInstance);
         }
+
         _ai?.CurrentState?.Exit(_ai);
+        if (_ai != null && _ai.enabled)
+        {
+            _ai.TransitionToState(new DeathState());
+        }
         // 2. Disable all sensory and intelligence components
         if (Detector != null) Detector.enabled = false;
         if (_ai != null) _ai.enabled = false;
@@ -431,32 +432,20 @@ public class Enemy : MonoBehaviour, ISaveable
         _resistances.Initialize(config);
         _revealableEntity.Initialize(config);
 
-        // 3. Register with the EnemyManager
-        EnemyManager.Instance.RegisterEnemy(this);
-
-        // 4. Create the UI (from Start)
-        if (statusBarPrefab != null)
+        if (statusBarPrefab != null && _statusBarInstance == null)
         {
             _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
-            _statusBarInstance.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
         }
 
-        // 5. Subscribe to all events (from OnEnable and Start)
-        // We do this manually to ensure it happens in the correct order.
-        _health.OnDied += (isSilentKill) => HandleDeath(isSilentKill, false);
+        // Now, wire up all the events using the exact same logic as a new enemy.
+        SubscribeEvents();
 
-        if (_uiController != null)
+        // Register with the save system.
+        if (SaveableEntityRegistry.Instance != null)
         {
-            _health.OnHealthChanged += _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
-            _uiController.InitializeRevealIcon(config.revealIconPrefab);
-
-            if (_ai != null)
-            {
-                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
-                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
-            }
+            _isRegistered = SaveableEntityRegistry.Instance.Register(this);
+            // We don't need to self-destruct here because the SaveLoadManager handles the loop.
         }
     }
 
@@ -466,4 +455,40 @@ public class Enemy : MonoBehaviour, ISaveable
         // We pass the saved waypoint index to the AI's Start method.
         _ai.StartAI(saveData.lastWaypointIndex);
     }
+    private void HandleDeathEvent(bool isSilentKill)
+    {
+        HandleDeath(isSilentKill, false);
+    }
+    private void SubscribeEvents()
+    {
+        if (_health != null) _health.OnDied += HandleDeathEvent;
+
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged += _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
+                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
+            }
+        }
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (_health != null) _health.OnDied -= HandleDeathEvent;
+
+        if (_uiController != null)
+        {
+            _health.OnHealthChanged -= _uiController.UpdateHealth;
+            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
+            if (_ai != null)
+            {
+                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
+                _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
+            }
+        }
+    }
+
 }

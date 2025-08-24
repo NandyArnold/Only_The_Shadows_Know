@@ -4,12 +4,16 @@ using System;
 using UnityEngine;
 using System.Collections;
 
+public enum GameLoadType { None, NewGame, LoadFromSave }
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public PlayerController Player { get; private set; }
     public AimTargetController AimTargetController { get; private set; }
     public Transform AimTarget { get; private set; }
+
+    public GameLoadType CurrentLoadType { get; private set; } = GameLoadType.None;
+
     [Header("Manager References for Reset")]
     [SerializeField] private MonoBehaviour[] resettableManagers;
 
@@ -35,7 +39,8 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-    
+        CurrentLoadType = GameLoadType.None;
+
     }
     private IEnumerator Start()
     {
@@ -194,7 +199,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ResetManagersForMainMenu()
+    public void PrepareForNewScene()
     {
         Debug.Log("<color=red>--- RESETTING ALL MANAGERS FOR MAIN MENU ---</color>");
 
@@ -208,8 +213,20 @@ public class GameManager : MonoBehaviour
         {
             if (manager is IResettable resettable)
             {
+                //Debug.Log($"<color=orange>Resetting manager: {manager.name}</color>");
                 resettable.ResetState();
             }
         }
+        Debug.Log("<color=red>--- MANAGER RESETS COMPLETE ---</color>");
+    }
+    public void ResetManagersForMainMenu()
+    {
+        PrepareForNewScene();
+    }
+
+    public void SetLoadType(GameLoadType loadType)
+    {
+        CurrentLoadType = loadType;
+        Debug.Log($"<color=purple>GameManager: Load Type set to {CurrentLoadType}</color>");
     }
 }

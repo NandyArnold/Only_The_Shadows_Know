@@ -14,7 +14,7 @@ public class SaveButton : MonoBehaviour
         {
             if (SaveLoadManager.Instance != null)
             {
-                SaveLoadManager.Instance.SaveGame(saveFileName);
+                StartCoroutine(SaveLoadManager.Instance.SaveGame(saveFileName));
             }
         });
     }
