@@ -60,11 +60,11 @@ public class EnemyAI : MonoBehaviour
             _health.OnDamaged += HandleDamage;
         }
 
-        if (Detector != null)
-        {
-            Detector.OnSoundDetected += HandleSoundDetected;
-            Detector.OnDeadBodySpotted += HandleDeadBodySpotted;
-        }
+        //if (Detector != null)
+        //{
+        //    Detector.OnSoundDetected += HandleSoundDetected;
+        //    Detector.OnDeadBodySpotted += HandleDeadBodySpotted;
+        //}
 
         if (CombatManager.Instance != null)
         {
@@ -81,11 +81,11 @@ public class EnemyAI : MonoBehaviour
             _health.OnDamaged -= HandleDamage;
         }
 
-        if (Detector != null)
-        {
-            Detector.OnSoundDetected -= HandleSoundDetected;
-            Detector.OnDeadBodySpotted -= HandleDeadBodySpotted;
-        }
+        //if (Detector != null)
+        //{
+        //    Detector.OnSoundDetected -= HandleSoundDetected;
+        //    Detector.OnDeadBodySpotted -= HandleDeadBodySpotted;
+        //}
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnEnemyDiedInCombat -= HandleAllyDiedInCombat; 
@@ -170,7 +170,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void HandleSoundDetected(Vector3 soundPosition)
+    public void HandleSoundDetected(Vector3 soundPosition)
     {
         // We only react to sound if we are peacefully patrolling.
         if (_currentState is PatrolState || _currentState is GuardState)
@@ -198,7 +198,7 @@ public class EnemyAI : MonoBehaviour
         _playerTarget = null;
     }
 
-    private void HandleDeadBodySpotted(Transform bodyTransform)
+    public void HandleDeadBodySpotted(Transform bodyTransform)
     {
         // If we are already in combat or raising an alarm, ignore this.
         // This gives the AlarmState precedence and prevents the loop.

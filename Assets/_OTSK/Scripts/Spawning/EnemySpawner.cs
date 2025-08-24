@@ -93,6 +93,7 @@ public class EnemySpawner : MonoBehaviour
                 //Debug.Log($"Spawning enemy '{data.enemyToSpawn.displayName}' at spawn point '{spawnPoint.SpawnTransform.name}'" +
                 //    $" with patrol route '{routeToAssign?.name ?? "None"}'.");
                 enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
+                enemy.PostAwakeInitialize();
             }
         }
         else
@@ -108,6 +109,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 //Debug.LogWarning($"[EnemySPawner] Enemy '{data.enemyToSpawn.displayName}' spawned at world origin due to missing spawn points.");
                 enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
+                enemy.PostAwakeInitialize();
             }
         }
     }
@@ -234,6 +236,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Debug.Log($"Spawning reinforcement '{data.enemyToSpawn.displayName}' with patrol route '{routeToAssign?.name ?? "None"}'.");
             enemy.Initialize(data.enemyToSpawn, routeToAssign, data.initialState);
+            enemy.PostAwakeInitialize();
         }
     }
 
