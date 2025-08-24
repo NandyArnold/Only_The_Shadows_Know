@@ -48,6 +48,10 @@ public class AlertState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
         if (!enemyAI.Detector.enabled) return;
 
         // Always check for a live player or dead body, regardless of sub-state.

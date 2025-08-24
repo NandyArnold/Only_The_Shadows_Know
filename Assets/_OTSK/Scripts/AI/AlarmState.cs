@@ -65,6 +65,11 @@ public class AlarmState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
+
         if (_subState == SubState.RunningToPanel && enemyAI.Navigator.HasReachedDestination)
         {
             enemyAI.Navigator.Stop();

@@ -141,8 +141,13 @@ public class Enemy : MonoBehaviour, ISaveable
         if (_uiController != null)
         {
             _uiController.UpdateHealth(_health.CurrentHealth, config.maxHealth);
-            _uiController.UpdateAlert(0, config.hearingThreshold);
             _uiController.HandleAIStateChanged(_ai.CurrentState); // Set initial AI icon
+
+            // --- THIS IS THE FINAL FIX ---
+            // Explicitly tell the alert bar to initialize its state.
+            // This mirrors the logic in DetectionSystem.Start() and ensures
+            // the UI is correctly set to zero when the enemy is loaded.
+            _uiController.UpdateAlert(0, config.hearingThreshold);
         }
     }
     private void Awake()
@@ -185,16 +190,7 @@ public class Enemy : MonoBehaviour, ISaveable
                 CombatManager.Instance.UnregisterEnemyFromCombat(this);
             }
 
-            if (_uiController != null)
-            {
-                _health.OnHealthChanged -= _uiController.UpdateHealth;
-                Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
-                if (_ai != null)
-                {
-                    _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
-                    _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
-                }
-            }
+         
 
             {
                 if (SaveableEntityRegistry.Instance != null)
@@ -253,6 +249,7 @@ public class Enemy : MonoBehaviour, ISaveable
             HandleDeath(false, true);
             return; // IMPORTANT: Stop the rest of Start() from running.
         }
+   
     }
 
     private void HandleDeath(bool isSilentKill, bool isLoadedFromSave = false)
@@ -291,9 +288,9 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             combatHandler.enabled = false;
         }
-        UnsubscribeEvents();
 
-      
+        //UnsubscribeEvents();
+
         if (_statusBarInstance != null)
         {
             Destroy(_statusBarInstance);
@@ -392,13 +389,16 @@ public class Enemy : MonoBehaviour, ISaveable
         _resistances.Initialize(config);
         _revealableEntity.Initialize(config);
 
+        EnemyManager.Instance.RegisterEnemy(this);
+
         if (statusBarPrefab != null && _statusBarInstance == null)
         {
             _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
+
+            _uiController.Initialize(_ai, Detector, _health, config);
         }
 
-        // Now, wire up all the events using the exact same logic as a new enemy.
         SubscribeEvents();
 
         // Register with the save system.
@@ -419,52 +419,6 @@ public class Enemy : MonoBehaviour, ISaveable
     {
         HandleDeath(isSilentKill, false);
     }
-    private void SubscribeEvents()
-    {
-
-        if (_health != null) _health.OnDied += HandleDeathEvent;
-
-        if (Detector != null && _ai != null)
-        {
-            //Debug.Log($"Subscribing Detector events for {_ai.name}");
-            Debug.Log($"Detector: {Detector.name}, AI: {_ai.name}");
-            Detector.OnSoundDetected += _ai.HandleSoundDetected; // Assuming HandleSoundDetected is public
-            Detector.OnDeadBodySpotted += _ai.HandleDeadBodySpotted; // Assuming HandleDeadBodySpotted is public
-        }
-
-        if (_uiController != null)
-        {
-            _health.OnHealthChanged += _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged += _uiController.UpdateAlert;
-            if (_ai != null)
-            {
-                _ai.OnStateChanged += _uiController.HandleAIStateChanged;
-                _ai.OnCastProgressChanged += _uiController.UpdateCastBar;
-            }
-        }
-    }
-
-    private void UnsubscribeEvents()
-    {
-        if (_health != null) _health.OnDied -= HandleDeathEvent;
-
-        if (Detector != null && _ai != null)
-        {
-            Detector.OnSoundDetected -= _ai.HandleSoundDetected;
-            Detector.OnDeadBodySpotted -= _ai.HandleDeadBodySpotted;
-        }
-
-        if (_uiController != null)
-        {
-            _health.OnHealthChanged -= _uiController.UpdateHealth;
-            Detector.OnSoundGaugeChanged -= _uiController.UpdateAlert;
-            if (_ai != null)
-            {
-                _ai.OnStateChanged -= _uiController.HandleAIStateChanged;
-                _ai.OnCastProgressChanged -= _uiController.UpdateCastBar;
-            }
-        }
-    }
 
     public void PostAwakeInitialize()
     {
@@ -476,10 +430,10 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             _statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, transform);
             _uiController = _statusBarInstance.GetComponent<EnemyUIController>();
+            _uiController.Initialize(_ai, Detector, _health, config);
         }
-
-        // Now, it is safe to wire up all the events.
         SubscribeEvents();
+
 
         if (_uiController != null)
         {
@@ -497,5 +451,30 @@ public class Enemy : MonoBehaviour, ISaveable
             }
         }
     }
+    private void SubscribeEvents()
+    {
+        // 1. The wire that tells this Enemy script to handle death when health runs out.
+        if (_health != null) _health.OnDied += HandleDeathEvent;
+
+        // 2. The wire that tells the AI to listen to the Detection system.
+        if (Detector != null && _ai != null)
+        {
+            Detector.OnSoundDetected += _ai.HandleSoundDetected;
+            Detector.OnDeadBodySpotted += _ai.HandleDeadBodySpotted;
+        }
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (_health != null) _health.OnDied -= HandleDeathEvent;
+
+        if (Detector != null && _ai != null)
+        {
+            Detector.OnSoundDetected -= _ai.HandleSoundDetected;
+            Detector.OnDeadBodySpotted -= _ai.HandleDeadBodySpotted;
+        }
+    }
+
+
 
 }

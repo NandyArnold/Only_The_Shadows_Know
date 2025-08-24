@@ -216,31 +216,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //private void CheckIfGrounded()
-    //{
-    //    bool isGroundedNow = Physics.SphereCast(
-    //        groundCheckPoint.position,
-    //        groundCheckRadius,
-    //        Vector3.down,
-    //        out RaycastHit hitInfo,
-    //        groundCastDistance,
-    //        groundLayer,
-    //        QueryTriggerInteraction.Ignore
-    //    );
-
-    //    if (!_wasGrounded && isGroundedNow && _velocity.y < landingVelocityThreshold)
-    //    {
-    //        // This block now only runs after a significant fall
-    //        OnLand?.Invoke();
-    //        NoiseManager.Instance.GenerateNoise(transform.position, noiseSettings.jumpNoise, this.gameObject);
-    //        _isJumping = false;
-    //    }
-
-    //    _isGrounded = isGroundedNow;
-    //    _wasGrounded = isGroundedNow;
-
-    //}
-    // This is now the entry point for a single-press jump
 
 
     public void Jump()

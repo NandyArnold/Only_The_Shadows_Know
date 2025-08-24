@@ -11,21 +11,30 @@ public class EnemyUIController : MonoBehaviour
     [SerializeField] private GameObject deathZoneMark;
     [SerializeField] private Slider castBarSlider;
     private GameObject _revealIconInstance;
-
+    private EnemyConfigSO _config;
+    private EnemyAI _enemyAI;
+    private DetectionSystem _detector;
+    private EnemyHealth _health;
     [Header("VFX")]
     [Tooltip("Drag the child Alert_VFX GameObject here.")]
     [SerializeField] private GameObject alertVFXObject;
 
-
+    private Enemy _enemy;
     private Transform _cameraToFace;
     private EnemyAIState _currentState;
 
-    private void Awake()
+
+    private void OnDestroy()
     {
-        // Ensure all bars are hidden by default when the UI is first created.
-        if (healthSlider != null) healthSlider.gameObject.SetActive(false);
-        if (alertSlider != null) alertSlider.gameObject.SetActive(false);
-        if (castBarSlider != null) castBarSlider.gameObject.SetActive(false);
+        // When this UI is destroyed, it must clean up its own event subscriptions
+        // to prevent memory leaks and broken connections.
+        if (_detector != null) _detector.OnSoundGaugeChanged -= UpdateAlert;
+        if (_enemyAI != null)
+        {
+            _enemyAI.OnStateChanged -= HandleAIStateChanged;
+            _enemyAI.OnCastProgressChanged -= UpdateCastBar;
+        }
+        if (_health != null) _health.OnHealthChanged -= UpdateHealth;
     }
 
 
@@ -47,6 +56,11 @@ public class EnemyUIController : MonoBehaviour
         transform.LookAt(transform.position + _cameraToFace.rotation * Vector3.forward, _cameraToFace.rotation * Vector3.up);
     }
 
+    private void Start() // Use start instead of awake to ensure parent is ready
+    {
+        _enemy = GetComponentInParent<Enemy>();
+    }
+
     public void UpdateHealth(float current, float max)
     {
         if (current <= 0)
@@ -61,9 +75,28 @@ public class EnemyUIController : MonoBehaviour
     public void UpdateAlert(float current, float max)
     {
 
-        bool shouldBeVisible = current > 0 && !(_currentState is CombatState);
-        alertSlider.gameObject.SetActive(shouldBeVisible);
-        alertSlider.value = current / max;
+        if (_config == null) return;
+
+        // --- THIS IS THE ROBUST LOGIC ---
+        // The alert slider should be visible if:
+        // 1. The alert value is greater than zero.
+        // 2. We are NOT in CombatState.
+        // 3. We are NOT in DeathState.
+        bool inCombat = _currentState is CombatState;
+        bool isDead = _currentState is DeathState;
+        bool hasAlert = current > 0;
+
+        bool shouldBeVisible = hasAlert && !inCombat && !isDead;
+
+        if (alertSlider != null)
+        {
+            alertSlider.gameObject.SetActive(shouldBeVisible);
+
+            if (shouldBeVisible)
+            {
+                alertSlider.value = current / max;
+            }
+        }
     }
     public void UpdateCastBar(float progress)
     {
@@ -90,13 +123,14 @@ public class EnemyUIController : MonoBehaviour
         bool showHealth = (newState is AlertState || newState is CombatState);
         healthSlider.gameObject.SetActive(showHealth);
 
-        // The alert bar should be hidden when in the Combat state.
-        
+        if (alertSlider != null && _detector != null) 
+        {
+            // We need the current gauge value. We can get it from the DetectionSystem.
+            // This requires a small change to DetectionSystem.cs
+            UpdateAlert(GetComponentInParent<Enemy>().Detector.SoundGauge, _config.hearingThreshold);
+        }
 
-        // --- NEW VFX LOGIC ---
-        // The VFX should only be active when the AI is in the AlertState.
-        bool showAlertUI = !(newState is CombatState);
-        alertSlider.gameObject.SetActive(showAlertUI);
+
 
         bool shouldShowAlertVFX = (newState is AlertState);
         if (alertVFXObject != null)
@@ -111,17 +145,32 @@ public class EnemyUIController : MonoBehaviour
             deathZoneMark.SetActive(isActive);
         }
     }
-    public void InitializeRevealIcon(GameObject iconPrefab)
+    public void Initialize(EnemyAI ai, DetectionSystem detector, EnemyHealth health, EnemyConfigSO enemyConfig)
     {
-        if (iconPrefab != null)
+        _enemyAI = ai; // Store the reference to the AI
+        _config = enemyConfig;
+        // Subscribe to all necessary events right here.
+        detector.OnSoundGaugeChanged += UpdateAlert;
+        ai.OnStateChanged += HandleAIStateChanged;
+        health.OnHealthChanged += UpdateHealth; // Get health from the parameter
+        ai.OnCastProgressChanged += UpdateCastBar;
+
+        // Initialize the reveal icon from the AI's config.
+        if (ai.Config.revealIconPrefab != null)
         {
             Transform anchor = transform.Find("RevealIcon_Anchor");
-            if (anchor != null)
+            if (anchor != null && _revealIconInstance == null)
+
             {
-                _revealIconInstance = Instantiate(iconPrefab, anchor);
+                _revealIconInstance = Instantiate(ai.Config.revealIconPrefab, anchor);
                 _revealIconInstance.SetActive(false);
             }
         }
+
+        // Set the initial state of all UI elements to hidden.
+        if (healthSlider != null) healthSlider.gameObject.SetActive(false);
+        if (alertSlider != null) alertSlider.gameObject.SetActive(false);
+        if (castBarSlider != null) castBarSlider.gameObject.SetActive(false);
     }
 
     //  This is the simple show/hide command Balor's Vision will use.
@@ -132,4 +181,6 @@ public class EnemyUIController : MonoBehaviour
             _revealIconInstance.SetActive(isActive);
         }
     }
+
+
 }

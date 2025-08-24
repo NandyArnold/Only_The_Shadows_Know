@@ -26,6 +26,7 @@ public class DetectionSystem : MonoBehaviour
     private EnemyHealth _health;
 
     private float _soundGauge = 0f;
+    public float SoundGauge => _soundGauge;
 
     private void Awake()
     {
@@ -150,12 +151,32 @@ public class DetectionSystem : MonoBehaviour
    // NEW: This method is called by the EnemyManager.
     public void OnSoundHeard(Vector3 soundPosition, float intensity)
     {
+        var navigator = GetComponent<EnemyNavigator>();
+        if (navigator == null || !navigator.IsAgentReady)
+        {
+            // If the navigator isn't ready, we can't trust our position yet.
+            return;
+        }
+        if (config == null)
+        {
+            Debug.LogError($"OnSoundHeard on {gameObject.name}: Config is NULL!", gameObject);
+            return;
+        }
         //Debug.Log($"<color=cyan>{gameObject.name} heard a sound at {soundPosition} with intensity {intensity}</color>", this.gameObject);
         // Don't accumulate sound if we are already fully alerted or in combat
         if (_enemyAI.CurrentState is AlertState || _enemyAI.CurrentState is CombatState) return;
         // Check if the sound is within hearing range and loud enough.
         float distanceToSound = Vector3.Distance(transform.position, soundPosition);
-        if (distanceToSound > config.hearingRange) return;
+        Debug.Log($"<color=cyan>OnSoundHeard on {gameObject.name}:</color> " +
+              $"Sound at {soundPosition} (Intensity: {intensity}). " +
+              $"My position is {transform.position}. " +
+              $"Distance to sound is {distanceToSound}. " +
+              $"My hearing range is {config.hearingRange}.");
+        if (distanceToSound > config.hearingRange)
+        {
+            Debug.LogWarning($"--> REJECTED: Sound is out of range.");
+            return;
+        }
 
         // Add the noise intensity to the gauge
         _soundGauge += intensity;

@@ -8,6 +8,7 @@ public class EnemyNavigator : MonoBehaviour
 {
     private NavMeshAgent _agent;
     public bool HasReachedDestination => !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
+    public bool IsAgentReady => _agent != null && _agent.isOnNavMesh;
 
     private void Awake()
     {

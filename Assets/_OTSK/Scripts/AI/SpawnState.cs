@@ -18,6 +18,11 @@ public class SpawnState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
+
         _timer += Time.deltaTime;
         if (_timer >= _spawnWaitTime)
         {

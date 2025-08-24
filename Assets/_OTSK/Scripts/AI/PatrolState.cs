@@ -28,7 +28,12 @@ public class PatrolState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        if(_patrolRoute == null )
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
+
+        if (_patrolRoute == null )
         {
             Debug.LogWarning("Patrol route is null, cannot execute patrol state.");
         }

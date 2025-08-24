@@ -13,7 +13,10 @@ public class DeathState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
-        // Does nothing.
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
     }
 
     public override void Exit(EnemyAI enemyAI)

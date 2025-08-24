@@ -17,6 +17,11 @@ public class GuardState : EnemyAIState
 
     public override void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.Navigator.IsAgentReady)
+        {
+            return; // Wait until the NavMeshAgent is ready
+        }
+
         if (!enemyAI.Navigator.HasReachedDestination)
         {
             return;
