@@ -12,7 +12,7 @@ public class UIPanelRegistry : MonoBehaviour, IResettable
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
     public void RegisterPanel(PanelID id, GameObject panelObject)

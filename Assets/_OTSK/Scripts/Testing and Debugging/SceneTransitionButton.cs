@@ -40,7 +40,7 @@ public class SceneTransitionButton : MonoBehaviour
                 GameManager.Instance.SetLoadType(GameLoadType.NewGame);
             }
 
-            SaveLoadManager.Instance.DeleteAllSaves();
+            SaveLoadManager.Instance.DeleteAutosaveAndMeta();
             PlayerSpawner.Instance.SetNextSpawnPoint("InitialSpawn");
             SceneLoader.Instance.LoadScene(targetSceneData, targetSpawnPointTag);
         }

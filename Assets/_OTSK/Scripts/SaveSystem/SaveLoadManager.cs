@@ -1,6 +1,7 @@
 // SaveLoadManager.cs - ESave Powered Version
 using Esper.ESave; // Add the ESave namespace
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -40,7 +41,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
-        DontDestroyOnLoad(gameObject);
+      
 
         var metaFileSetupData = new SaveFileSetupData()
         {
@@ -450,28 +451,27 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log("<color=yellow>SaveLoadManager received OnNewSceneReady event.</color>");
     }
 
-    public void DeleteAllSaves()
+    
+    public void DeleteAutosaveAndMeta()
     {
-        Debug.Log("<color=red>--- DELETING ALL SAVE FILES ---</color>");
+        Debug.Log("<color=red>--- DELETING AUTOSAVE AND META FILES ---</color>");
 
-        // Define all known save file names here
-        var saveFilesToDelete = new string[] { "autosave", "manual_save_1", GetLastSaveName() };
+        // This list now ONLY targets the files relevant to a new game start.
+        var filesToDelete = new string[] { "autosave", "meta" };
 
-        foreach (var fileName in saveFilesToDelete)
+        foreach (var fileName in filesToDelete)
         {
             if (string.IsNullOrEmpty(fileName)) continue;
 
+            // Use Path.Combine for robust path construction
             string path = Path.Combine(Application.persistentDataPath, SaveSubfolder, fileName + ".json");
             if (File.Exists(path))
             {
                 File.Delete(path);
-                Debug.Log($"Deleted save file: {path}");
+
+                Debug.Log($"Deleted file: {path}");
             }
         }
-
-        // Also clear the "last save" meta file so the "Load Game" button becomes disabled
-        _metaFile.DeleteFile();
-        _metaFile.Save();
     }
 
     private void ValidateRegistries()
@@ -507,6 +507,22 @@ public class SaveLoadManager : MonoBehaviour
             skillRegistry = Resources.Load<SkillRegistrySO>("SkillRegistry"); // Use the asset's file name
         }
         weaponRegistry.Reset();
+    }
+
+    public List<string> GetAllManualSaveNames()
+    {
+        string saveDirectory = Path.Combine(Application.persistentDataPath, SaveSubfolder);
+        if (!Directory.Exists(saveDirectory))
+        {
+            return new List<string>(); // Return an empty list if the directory doesn't exist
+        }
+
+        // Get all .json files, extract their names without the extension,
+        // and filter out the "autosave" and "meta" files.
+        return Directory.GetFiles(saveDirectory, "*.json")
+                        .Select(Path.GetFileNameWithoutExtension)
+                        .Where(name => name != "autosave" && name != "meta")
+                        .ToList();
     }
 
 }

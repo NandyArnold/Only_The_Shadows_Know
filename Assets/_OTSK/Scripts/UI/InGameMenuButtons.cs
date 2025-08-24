@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class InGameMenuButtons : MonoBehaviour
@@ -8,7 +10,18 @@ public class InGameMenuButtons : MonoBehaviour
     [SerializeField] private Button loadLastCheckpointButton;
     [SerializeField] private Button loadGameButton;
 
+    [Header("Save Game UI")]
+    [SerializeField] private GameObject saveGamePanel; 
+    [SerializeField] private TMP_InputField saveNameInputField; 
+    [SerializeField] private Button confirmSaveButton;
+    [SerializeField] private Button cancelSaveButton;
 
+
+    [Header("Load Game UI")]
+    [SerializeField] private GameObject loadGamePanel;
+    [SerializeField] private Button loadAutosaveButton;
+    [SerializeField] private Transform manualSaveContentArea; // The "Content" object of your Scroll View
+    [SerializeField] private GameObject saveSlotPrefab;
     private void Awake()
     {
         // Subscribe to the buttons' onClick events
@@ -16,6 +29,9 @@ public class InGameMenuButtons : MonoBehaviour
         exitButton.onClick.AddListener(OnExitGameClicked);
         loadLastCheckpointButton.onClick.AddListener(OnLoadLastCheckpointClicked);
         loadGameButton.onClick.AddListener(OnLoadGameClicked);
+        confirmSaveButton.onClick.AddListener(OnConfirmSaveClicked);
+        cancelSaveButton.onClick.AddListener(OnCancelSaveClicked);
+        loadAutosaveButton.onClick.AddListener(OnLoadAutosaveClicked);
 
 
     }
@@ -30,10 +46,23 @@ public class InGameMenuButtons : MonoBehaviour
 
     public void OnSaveGameClicked()
     {
-        if (SaveLoadManager.Instance != null)
-        {
-            StartCoroutine(SaveLoadManager.Instance.SaveGame("manual_save_1")); 
-        }
+        saveGamePanel.SetActive(true);
+        // Pre-fill the input field with a default name.
+        saveNameInputField.text = GetDefaultSaveName();
+        //string saveFileName = saveNameInputField.text;
+
+        //// Check if the player entered a name.
+        //if (string.IsNullOrWhiteSpace(saveFileName))
+        //{
+        //    // If not, generate a default name like "manual_save_1", "manual_save_2", etc.
+        //    saveFileName = GetDefaultSaveName();
+        //}
+
+        //// Now, call the save coroutine with the determined file name.
+        //if (SaveLoadManager.Instance != null)
+        //{
+        //    StartCoroutine(SaveLoadManager.Instance.SaveGame(saveFileName));
+        //}
     }
 
     public void OnLoadLastCheckpointClicked()
@@ -49,14 +78,8 @@ public class InGameMenuButtons : MonoBehaviour
 
     public void OnLoadGameClicked()
     {
-      
-        // Logic to open a "Load Game" screen
-        Debug.Log("Load Game clicked.");
-
-        if (SaveLoadManager.Instance != null)
-        {
-            SaveLoadManager.Instance.LoadGame("manual_save_1"); 
-        }
+        loadGamePanel.SetActive(true);
+        PopulateLoadMenu();
     }
     public void OnOptionsClicked()
     {
@@ -85,5 +108,84 @@ public class InGameMenuButtons : MonoBehaviour
 
 
 
-    // ... (Add methods for Load, Options, and Main Menu)
+    private string GetDefaultSaveName()
+    {
+        int i = 1;
+        // Loop indefinitely until we find a name that doesn't exist.
+        while (true)
+        {
+            string defaultName = $"manual_save_{i}";
+            if (!SaveLoadManager.Instance.DoesSaveExist(defaultName))
+            {
+                return defaultName; // We found an available slot.
+            }
+            i++; // Try the next number.
+        }
+    }
+    private void OnConfirmSaveClicked()
+    {
+        string saveFileName = saveNameInputField.text;
+
+        // Use the exact same logic as before to get the name.
+        if (string.IsNullOrWhiteSpace(saveFileName))
+        {
+            saveFileName = GetDefaultSaveName();
+        }
+
+        if (SaveLoadManager.Instance != null)
+        {
+            StartCoroutine(SaveLoadManager.Instance.SaveGame(saveFileName));
+        }
+
+        // Hide the panel after confirming.
+        saveGamePanel.SetActive(false);
+    }
+
+    // This method is called by the new "Cancel" button.
+    private void OnCancelSaveClicked()
+    {
+        saveGamePanel.SetActive(false);
+    }
+
+    private void OnLoadAutosaveClicked()
+    {
+        if (SaveLoadManager.Instance != null)
+        {
+            loadGamePanel.SetActive(false);
+            SaveLoadManager.Instance.LoadGame("autosave");
+        }
+    }
+
+    private void PopulateLoadMenu()
+    {
+        List<GameObject> slotsToDestroy = new List<GameObject>();
+        foreach (Transform child in manualSaveContentArea)
+        {
+            slotsToDestroy.Add(child.gameObject);
+        }
+
+        // Step 2: Now, loop through the temporary list and destroy the objects.
+        // This is safer because we are not modifying the list we are iterating over.
+        foreach (GameObject slot in slotsToDestroy)
+        {
+            Destroy(slot);
+        }
+        // --- END OF FIX ---
+
+        // Get all manual save file names.
+        List<string> manualSaves = SaveLoadManager.Instance.GetAllManualSaveNames();
+
+        Debug.Log($"<color=cyan>[PopulateLoadMenu]</color> Found {manualSaves.Count} manual save(s) to create buttons for.");
+
+        // Create a new button for each manual save.
+        foreach (string saveName in manualSaves)
+        {
+            Debug.Log($"--> Creating button for: {saveName}");
+            GameObject slotInstance = Instantiate(saveSlotPrefab, manualSaveContentArea);
+            slotInstance.GetComponent<SaveSlotUI>().Initialize(saveName, loadGamePanel);
+        }
+
+        // Disable the autosave button if no autosave exists.
+        loadAutosaveButton.interactable = SaveLoadManager.Instance.DoesSaveExist("autosave");
+    }
 }
