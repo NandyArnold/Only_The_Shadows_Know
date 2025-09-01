@@ -3368,7 +3368,7 @@ Transform:
   m_GameObject: {fileID: 121276202}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.05825775, z: -0, w: 0.9983016}
-  m_LocalPosition: {x: 63.56, y: 122.71, z: 97.18}
+  m_LocalPosition: {x: 61.593, y: 100.542, z: 320.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11033,7 +11033,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 0.60784316, g: 0.7137255, b: 1, a: 1}
-  m_Intensity: 0.91
+  m_Intensity: 6.96
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -25902,6 +25902,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6923375339463583759, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
+      propertyPath: statusBarPrefab
+      value: 
+      objectReference: {fileID: 8542730887588098974, guid: d666a0183c6074c419636acdcd7db41e, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -52655,7 +52659,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1629873926}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: UIAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75446,7 +75450,7 @@ GameObject:
   - component: {fileID: 8679880006885714810}
   - component: {fileID: 8679880006885714812}
   - component: {fileID: 8679880006885714811}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: ChestToDestroy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75537,6 +75541,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6923375339463583759, guid: 50f2ce7952296a842bf49df8288932f1, type: 3}
+      propertyPath: statusBarPrefab
+      value: 
+      objectReference: {fileID: 8542730887588098974, guid: d666a0183c6074c419636acdcd7db41e, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -75582,7 +75590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 43dc9d09d045db240b2432fa4d405397, type: 2}
-  statusBarPrefab: {fileID: 8542730887588098974, guid: 200591ffff209e34fb6f49aeef873453, type: 3}
+  statusBarPrefab: {fileID: 8542730887588098974, guid: d666a0183c6074c419636acdcd7db41e, type: 3}
   statusBarAnchor: {fileID: 1629873926}
   revealIconPrefab: {fileID: 1532475450579200181, guid: 4748f64dbb25d334aa646e5d367f4a60, type: 3}
 --- !u!114 &8679880006885714812
@@ -75597,7 +75605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 573999e140df096418d268faf2c1834e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 13
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

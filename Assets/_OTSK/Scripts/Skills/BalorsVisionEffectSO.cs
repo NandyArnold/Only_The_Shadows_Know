@@ -64,10 +64,21 @@ public class BalorsVisionEffectSO : SkillEffectSO
         }
 
         float duration = CombatManager.Instance.IsPlayerInCombat ? combatDuration : normalDuration;
+
         foreach (var entity in _activeVFX.Keys)
         {
-            entity.GetComponentInChildren<EnemyUIController>()?.SetRevealIconActive(false);
+            // Hide the icon on either UI type
+            var enemyUI = entity.GetComponentInChildren<EnemyUIController>();
+            if (enemyUI != null)
+            {
+                enemyUI.SetRevealIconActive(false);
+            }
+            else
+            {
+                entity.GetComponentInChildren<DestructibleUIController>()?.SetRevealIconActive(false);
+            }
         }
+
         foreach (var vfxList in _activeVFX.Values)
         {
             foreach (var vfx in vfxList)
@@ -99,9 +110,16 @@ public class BalorsVisionEffectSO : SkillEffectSO
                         // Create the mesh outline
                         List<GameObject> vfxInstances = VFXManager.Instance.CreateOutlineEffect(entity);
                         if (vfxInstances != null) _activeVFX.Add(entity, vfxInstances);
-
-                        // NEW: Tell the UI to show its icon
-                        entity.GetComponentInChildren<EnemyUIController>()?.SetRevealIconActive(true);
+                        var enemyUI = entity.GetComponentInChildren<EnemyUIController>();
+                        if (enemyUI != null)
+                        {
+                            enemyUI.SetRevealIconActive(true);
+                        }
+                        else
+                        {
+                            // If it's not an enemy, check if it's a destructible
+                            entity.GetComponentInChildren<DestructibleUIController>()?.SetRevealIconActive(true);
+                        }
                     }
                 }
             }

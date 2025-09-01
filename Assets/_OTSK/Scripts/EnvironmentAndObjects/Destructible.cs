@@ -25,6 +25,7 @@ public class Destructible : MonoBehaviour
         {
             GameObject statusBarInstance = Instantiate(statusBarPrefab, statusBarAnchor.position, statusBarAnchor.rotation, statusBarAnchor);
             _uiController = statusBarInstance.GetComponent<DestructibleUIController>();
+            _uiController.InitializeRevealIcon(revealIconPrefab);
 
             // Subscribe the UI to this object's health changes
             if (_uiController != null)
@@ -32,7 +33,6 @@ public class Destructible : MonoBehaviour
                 this.OnHealthChanged += _uiController.UpdateHealth;
                 // Set the initial state (full health, so it will be hidden)
                 _uiController.UpdateHealth(_currentHealth, data.maxHealth);
-                _uiController.InitializeRevealIcon(revealIconPrefab);
             }
         }
     }
