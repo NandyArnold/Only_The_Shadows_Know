@@ -125,6 +125,6 @@ public class CombatManager : MonoBehaviour, IResettable
         OnCombatEnd = null;
         OnEnemyDiedInCombat = null;
 
-        Debug.Log("<color=orange>CombatManager state has been reset.</color>");
+        //Debug.Log("<color=orange>CombatManager state has been reset.</color>");
     }
 }

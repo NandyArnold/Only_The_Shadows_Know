@@ -48,6 +48,8 @@ public class Enemy : MonoBehaviour, ISaveable
     [SerializeField] private GameObject statusBarPrefab;
     [SerializeField] private Transform statusBarAnchor;
     [SerializeField] private Transform revealIconAnchor;
+
+    [SerializeField] private GameObject detectionTriggerObject;
     public EnemyConfigSO Config => config;
     public DetectionSystem Detector { get; private set; }
 
@@ -288,7 +290,14 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             combatHandler.enabled = false;
         }
-
+        if (_collider != null)
+        {
+            _collider.enabled = false; 
+        }
+        if (detectionTriggerObject != null)
+        {
+            detectionTriggerObject.SetActive(true);
+        }
         //UnsubscribeEvents();
 
         if (_statusBarInstance != null)
@@ -313,6 +322,8 @@ public class Enemy : MonoBehaviour, ISaveable
                 if (agent.isOnNavMesh)
                 {
                     _navigator.Stop();
+                    agent.radius = 0f;
+                    agent.enabled = false;
                 }
             }
         }

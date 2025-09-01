@@ -22,7 +22,7 @@ public class SkillRegistrySO : ScriptableObject
         if (_isInitialized) return;
         _skillDictionary = allSkills.ToDictionary(skill => skill.skillID, skill => skill);
         _isInitialized = true;
-        Debug.Log("Skill Registry Initialized.");
+        //Debug.Log("Skill Registry Initialized.");
     }
 
     public SkillSO GetSkill(SkillIdentifier skillID)

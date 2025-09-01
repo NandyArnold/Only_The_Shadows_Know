@@ -117,12 +117,12 @@ public class EnemySpawner : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.NewGame)
         {
-            Debug.Log($"<color=orange>[EnemySpawner]</color> Skipping initial spawn because Load Type is '{GameManager.Instance.CurrentLoadType}'.");
+            //Debug.Log($"<color=orange>[EnemySpawner]</color> Skipping initial spawn because Load Type is '{GameManager.Instance.CurrentLoadType}'.");
             yield break;
         }
 
         // This code will now ONLY run on a fresh "New Game" start.
-        Debug.Log("<color=green>[EnemySpawner]</color> This is a New Game. Spawning default enemies for the scene.");
+        //Debug.Log("<color=green>[EnemySpawner]</color> This is a New Game. Spawning default enemies for the scene.");
 
         if (_currentSceneData == null || _currentSceneData.enemyInitialSpawns == null) yield break;
 

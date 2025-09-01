@@ -37,7 +37,7 @@ public class GlobalSpawnRegistry : MonoBehaviour, IResettable
         IsReady = isReady;
         if (isReady)
         {
-            Debug.Log("<color=cyan>GlobalSpawnRegistry is now READY.</color>");
+            //Debug.Log("<color=cyan>GlobalSpawnRegistry is now READY.</color>");
         }
     }
 
@@ -70,7 +70,7 @@ public class GlobalSpawnRegistry : MonoBehaviour, IResettable
     {
         ClearRegistry();
         IsReady = false; // Also reset the IsReady flag
-        Debug.Log("<color=orange>GlobalSpawnRegistry state has been reset.</color>");
+        //Debug.Log("<color=orange>GlobalSpawnRegistry state has been reset.</color>");
     }
 
 

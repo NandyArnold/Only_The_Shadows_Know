@@ -166,7 +166,7 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         OnCurrentObjectiveChanged?.Invoke(null);
         OnLevelCompleted?.Invoke(); // You might want to call this to reset any "Level Complete" UI too
 
-        Debug.Log("<color=red>ObjectiveManager state has been reset.</color>");
+        //Debug.Log("<color=red>ObjectiveManager state has been reset.</color>");
     }
 
 }

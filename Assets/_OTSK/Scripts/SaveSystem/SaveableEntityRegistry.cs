@@ -17,7 +17,7 @@ public class SaveableEntityRegistry : MonoBehaviour, IResettable
         }
         Instance = this;
        
-        Debug.Log("<color=lime>--- SaveableEntityRegistry AWAKE ---</color>");
+        //Debug.Log("<color=lime>--- SaveableEntityRegistry AWAKE ---</color>");
     }
 
     public bool Register(ISaveable entity)
@@ -71,7 +71,7 @@ public class SaveableEntityRegistry : MonoBehaviour, IResettable
     {
        
         _registry.Clear();
-        Debug.Log("<color=red>Saveable Entity Registry has been cleared.</color>");
+        //Debug.Log("<color=red>Saveable Entity Registry has been cleared.</color>");
     }
     public void ResetState()
     {

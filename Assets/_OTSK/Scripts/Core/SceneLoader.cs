@@ -77,14 +77,14 @@ public class SceneLoader : MonoBehaviour
 
         // --- PART 2: THE LOADING SCENE ---
         // Load the loading scene by itself. This automatically unloads the old scene.
-        Debug.Log("SCENELOADER: Unloading current scene by loading the LoadingScene...");
+        //Debug.Log("SCENELOADER: Unloading current scene by loading the LoadingScene...");
         yield return SceneManager.LoadSceneAsync(loadingSceneName);
         yield return null; // Wait one frame for the scene to fully initialize.
         if (GameManager.Instance != null)
         {
             GameManager.Instance.PrepareForNewScene();
         }
-        Debug.Log("SCENELOADER: LoadingScene is now active.");
+        //Debug.Log("SCENELOADER: LoadingScene is now active.");
         // Reset the audio manager's state to prevent music leaks.
         if (AudioManager.Instance != null) AudioManager.Instance.ResetAudioState();
 
@@ -123,9 +123,9 @@ public class SceneLoader : MonoBehaviour
         yield return new WaitForSeconds(fadeDuration);
 
         // Activate the new scene. It's now loaded and ready.
-        Debug.Log("SCENELOADER: Activating new scene...");
+        //Debug.Log("SCENELOADER: Activating new scene...");
         operation.allowSceneActivation = true;
-        Debug.Log($"SCENELOADER: New scene '{sceneToLoad.SceneName}' is now active.");
+        //Debug.Log($"SCENELOADER: New scene '{sceneToLoad.SceneName}' is now active.");
         //yield return new WaitUntil(() => SceneManager.GetSceneByName(sceneToLoad.SceneName).isLoaded);
         yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneToLoad.SceneName);
 
@@ -146,7 +146,7 @@ public class SceneLoader : MonoBehaviour
 
         OnSceneLoadCompleted?.Invoke(_currentlyLoadedScene);
         yield return new WaitForEndOfFrame();
-        Debug.Log("<color=yellow>SCENELOADER: Firing OnNewSceneReady event.</color>");
+        //Debug.Log("<color=yellow>SCENELOADER: Firing OnNewSceneReady event.</color>");
         InitializeNewScene();
         OnNewSceneReady?.Invoke();
 
@@ -196,7 +196,7 @@ public class SceneLoader : MonoBehaviour
     }
     private void InitializeNewScene()
     {
-        Debug.Log("<color=cyan>SceneLoader: Initializing new scene content...</color>");
+        //Debug.Log("<color=cyan>SceneLoader: Initializing new scene content...</color>");
 
         // Find and register all patrol routes
         var patrolRoutes = FindObjectsByType<PatrolRoute>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
@@ -215,6 +215,6 @@ public class SceneLoader : MonoBehaviour
         }
         GlobalSpawnRegistry.Instance.SetIsReady(true);
 
-        Debug.Log("<color=cyan>SceneLoader: New scene content initialized.</color>");
+        //Debug.Log("<color=cyan>SceneLoader: New scene content initialized.</color>");
     }
 }

@@ -83,6 +83,6 @@ public class PatrolRouteManager : MonoBehaviour, IResettable
     {
         _patrolRoutes.Clear();
         IsReady = false;
-        Debug.Log("<color=orange>PatrolRouteManager state has been reset.</color>");
+        //Debug.Log("<color=orange>PatrolRouteManager state has been reset.</color>");
     }
 }

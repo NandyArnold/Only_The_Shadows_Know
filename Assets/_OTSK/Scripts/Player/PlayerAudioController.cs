@@ -30,7 +30,7 @@ public class PlayerAudioController : MonoBehaviour
         }
         else
         {
-            Debug.Log("<color=green>DEBUG:</color> SoundEffectManager instance was found successfully.");
+            //Debug.Log("<color=green>DEBUG:</color> SoundEffectManager instance was found successfully.");
         }
     }
 

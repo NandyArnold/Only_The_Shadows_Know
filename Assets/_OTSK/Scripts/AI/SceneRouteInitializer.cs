@@ -11,7 +11,7 @@ public class SceneRouteInitializer : MonoBehaviour
         if (PatrolRouteManager.Instance != null)
         {
             PatrolRouteManager.Instance.SetIsReady(true);
-            Debug.Log("<color=cyan>Scene Routes Initialized: PatrolRouteManager is now ready.</color>");
+            //Debug.Log("<color=cyan>Scene Routes Initialized: PatrolRouteManager is now ready.</color>");
         }
     }
 }

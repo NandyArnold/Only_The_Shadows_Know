@@ -27,7 +27,7 @@ public class ChargeManager : MonoBehaviour, ISaveable
 
     private void Start()
     {
-        Debug.Log($"--- ChargeManager.Start() called for {gameObject.name} ---");
+        //Debug.Log($"--- ChargeManager.Start() called for {gameObject.name} ---");
         if (SaveableEntityRegistry.Instance != null)
         {
             SaveableEntityRegistry.Instance.Register(this);

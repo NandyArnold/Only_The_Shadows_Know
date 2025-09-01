@@ -86,7 +86,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.None)
         {
-            Debug.LogWarning($"<color=red>SAVE REJECTED:</color> A scene load ({GameManager.Instance.CurrentLoadType}) is in progress. Save request for '{saveFileName}' was ignored.");
+            //Debug.LogWarning($"<color=red>SAVE REJECTED:</color> A scene load ({GameManager.Instance.CurrentLoadType}) is in progress. Save request for '{saveFileName}' was ignored.");
             yield break;
         }
         if (_isBusy)
@@ -440,7 +440,7 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log($"Found last save name in meta file: '{lastSave}'");
             return lastSave;
         }
-        Debug.LogWarning("No last save name found in meta file.");
+        //Debug.LogWarning("No last save name found in meta file.");
         return null;
     }
 
@@ -448,13 +448,13 @@ public class SaveLoadManager : MonoBehaviour
     {
         // When the scene is truly ready, set our flag
         _isSceneReadyForRestore = true;
-        Debug.Log("<color=yellow>SaveLoadManager received OnNewSceneReady event.</color>");
+        //Debug.Log("<color=yellow>SaveLoadManager received OnNewSceneReady event.</color>");
     }
 
     
     public void DeleteAutosaveAndMeta()
     {
-        Debug.Log("<color=red>--- DELETING AUTOSAVE AND META FILES ---</color>");
+        //Debug.Log("<color=red>--- DELETING AUTOSAVE AND META FILES ---</color>");
 
         // This list now ONLY targets the files relevant to a new game start.
         var filesToDelete = new string[] { "autosave", "meta" };
@@ -469,7 +469,7 @@ public class SaveLoadManager : MonoBehaviour
             {
                 File.Delete(path);
 
-                Debug.Log($"Deleted file: {path}");
+                //Debug.Log($"Deleted file: {path}");
             }
         }
     }

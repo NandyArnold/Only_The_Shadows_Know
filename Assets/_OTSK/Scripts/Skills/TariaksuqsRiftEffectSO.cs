@@ -152,7 +152,7 @@ public class TariaksuqsRiftEffectSO : SkillEffectSO
         }
         _riftInstance = null;
         _riftPosition = null;
-        Debug.Log("TariaksuqsRift static data has been reset.");
+        //Debug.Log("TariaksuqsRift static data has been reset.");
     }
 
 }

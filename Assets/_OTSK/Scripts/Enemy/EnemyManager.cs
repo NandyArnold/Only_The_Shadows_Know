@@ -182,6 +182,6 @@ public class EnemyManager : MonoBehaviour, IResettable
     public void ResetState()
     {
         _activeEnemies.Clear();
-        Debug.Log("<color=orange>EnemyManager state has been reset.</color>");
+        //Debug.Log("<color=orange>EnemyManager state has been reset.</color>");
     }
 }

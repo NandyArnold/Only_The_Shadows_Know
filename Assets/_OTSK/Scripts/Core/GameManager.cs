@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
 
         CurrentState = newState;
         OnGameStateChanged?.Invoke(newState);
-        Debug.Log($"Game State changed to: {newState}");
+        //Debug.Log($"Game State changed to: {newState}");
       
     }
 
@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
         // Fire the event to notify all listening systems that the player is ready.
         OnPlayerRegistered?.Invoke(player);
 
-        Debug.Log("GameManager: Player reference has been registered and announced.");
+        //Debug.Log("GameManager: Player reference has been registered and announced.");
 
         if (_cameraManager != null)
         {
@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
 
     public void PrepareForNewScene()
     {
-        Debug.Log("<color=red>--- RESETTING ALL MANAGERS FOR MAIN MENU ---</color>");
+        //Debug.Log("<color=red>--- RESETTING ALL MANAGERS FOR MAIN MENU ---</color>");
 
         // Reset every manager that holds runtime data
         if (SaveableEntityRegistry.Instance != null) SaveableEntityRegistry.Instance.ClearRegistry();
@@ -217,7 +217,7 @@ public class GameManager : MonoBehaviour
                 resettable.ResetState();
             }
         }
-        Debug.Log("<color=red>--- MANAGER RESETS COMPLETE ---</color>");
+        //Debug.Log("<color=red>--- MANAGER RESETS COMPLETE ---</color>");
     }
     public void ResetManagersForMainMenu()
     {
@@ -227,6 +227,6 @@ public class GameManager : MonoBehaviour
     public void SetLoadType(GameLoadType loadType)
     {
         CurrentLoadType = loadType;
-        Debug.Log($"<color=purple>GameManager: Load Type set to {CurrentLoadType}</color>");
+        //Debug.Log($"<color=purple>GameManager: Load Type set to {CurrentLoadType}</color>");
     }
 }
