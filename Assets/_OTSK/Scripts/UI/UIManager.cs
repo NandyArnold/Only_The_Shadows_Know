@@ -42,24 +42,26 @@ public class UIManager : MonoBehaviour
                           SceneLoader.Instance.CurrentlyLoadedScene.sceneType == SceneType.Gameplay);
         if (inGameMenuPanel != null)
         {
-            UISoundPlayer.Instance.PlayMenuOpenSound();
+
             inGameMenuPanel.SetActive(showInGameMenu);
-        }
-        else
-        {
-            UISoundPlayer.Instance.PlayMenuCloseSound();
-        }
+            if (showInGameMenu)
+            {
+                UISoundPlayer.Instance.PlayMenuOpenSound();
+                // When the menu becomes active, tell it to update the save button state
+                inGameMenuPanel.GetComponent<InGameMenuButtons>().UpdateSaveButtonState();
+            }
+            else
+            {
+                UISoundPlayer.Instance.PlayMenuCloseSound();
+            }
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(newState == GameState.GameOver);
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.SetActive(newState == GameState.GameOver);
+            }
+
+
+
         }
-
-        //if (inGameMenuPanel != null)
-        //{
-        //    // The in-game menu is our "pause" screen
-        //    inGameMenuPanel.SetActive(newState == GameState.Menu);
-        //}
-
     }
 }

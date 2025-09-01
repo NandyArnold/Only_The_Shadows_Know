@@ -12814,6 +12814,7 @@ MonoBehaviour:
   exitButton: {fileID: 1365019237}
   loadLastCheckpointButton: {fileID: 469681180}
   loadGameButton: {fileID: 1891975903}
+  saveGameButton: {fileID: 863591107}
   saveGamePanel: {fileID: 1680145826}
   saveNameInputField: {fileID: 1405062022}
   confirmSaveButton: {fileID: 1904015861}

@@ -9,6 +9,7 @@ public class InGameMenuButtons : MonoBehaviour
     [SerializeField] private Button exitButton;
     [SerializeField] private Button loadLastCheckpointButton;
     [SerializeField] private Button loadGameButton;
+    [SerializeField] private Button saveGameButton;
 
     [Header("Save Game UI")]
     [SerializeField] private GameObject saveGamePanel; 
@@ -22,6 +23,9 @@ public class InGameMenuButtons : MonoBehaviour
     [SerializeField] private Button loadAutosaveButton;
     [SerializeField] private Transform manualSaveContentArea; // The "Content" object of your Scroll View
     [SerializeField] private GameObject saveSlotPrefab;
+
+    private PlayerInputHandler _playerInputHandler;
+
     private void Awake()
     {
         // Subscribe to the buttons' onClick events
@@ -33,7 +37,8 @@ public class InGameMenuButtons : MonoBehaviour
         cancelSaveButton.onClick.AddListener(OnCancelSaveClicked);
         loadAutosaveButton.onClick.AddListener(OnLoadAutosaveClicked);
 
-
+        saveNameInputField.onSelect.AddListener(OnInputFieldSelected);
+        saveNameInputField.onDeselect.AddListener(OnInputFieldDeselected);
     }
     public void OnResumeClicked()
     {
@@ -44,25 +49,21 @@ public class InGameMenuButtons : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // --- NEW: Get a reference to the PlayerInputHandler ---
+        if (GameManager.Instance != null && GameManager.Instance.Player != null)
+        {
+            _playerInputHandler = GameManager.Instance.Player.GetComponent<PlayerInputHandler>();
+        }
+    }
+
     public void OnSaveGameClicked()
     {
         saveGamePanel.SetActive(true);
-        // Pre-fill the input field with a default name.
+     
         saveNameInputField.text = GetDefaultSaveName();
-        //string saveFileName = saveNameInputField.text;
-
-        //// Check if the player entered a name.
-        //if (string.IsNullOrWhiteSpace(saveFileName))
-        //{
-        //    // If not, generate a default name like "manual_save_1", "manual_save_2", etc.
-        //    saveFileName = GetDefaultSaveName();
-        //}
-
-        //// Now, call the save coroutine with the determined file name.
-        //if (SaveLoadManager.Instance != null)
-        //{
-        //    StartCoroutine(SaveLoadManager.Instance.SaveGame(saveFileName));
-        //}
+     
     }
 
     public void OnLoadLastCheckpointClicked()
@@ -139,12 +140,14 @@ public class InGameMenuButtons : MonoBehaviour
 
         // Hide the panel after confirming.
         saveGamePanel.SetActive(false);
+        OnInputFieldDeselected("");
     }
 
     // This method is called by the new "Cancel" button.
     private void OnCancelSaveClicked()
     {
         saveGamePanel.SetActive(false);
+        OnInputFieldDeselected("");
     }
 
     private void OnLoadAutosaveClicked()
@@ -187,5 +190,32 @@ public class InGameMenuButtons : MonoBehaviour
 
         // Disable the autosave button if no autosave exists.
         loadAutosaveButton.interactable = SaveLoadManager.Instance.DoesSaveExist("autosave");
+    }
+
+    public void UpdateSaveButtonState()
+    {
+        bool canSave = !CombatManager.Instance.IsPlayerInCombat && !EnemyManager.Instance.IsAnyEnemyAlerted();
+        if (saveGameButton != null)
+        {
+            saveGameButton.interactable = canSave;
+        }
+    }
+
+    
+    private void OnInputFieldSelected(string text)
+    {
+        if (_playerInputHandler != null)
+        {
+            _playerInputHandler.SwitchActionMap("Typing");
+        }
+    }
+
+    private void OnInputFieldDeselected(string text)
+    {
+        if (_playerInputHandler != null)
+        {
+            // When we stop typing, we go back to the standard UI map
+            _playerInputHandler.SwitchActionMap("UI");
+        }
     }
 }

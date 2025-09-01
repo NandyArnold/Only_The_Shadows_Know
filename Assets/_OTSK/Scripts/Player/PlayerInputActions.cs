@@ -1896,6 +1896,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Typing"",
+            ""id"": ""604fe49a-6e6d-4591-a962-76321b11e869"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""2ded85e7-817d-4a06-98f3-8be7a2e0da5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9e20764d-4782-436e-a967-a40c6eb9f0ee"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -2027,6 +2055,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // Disabled
         m_Disabled = asset.FindActionMap("Disabled", throwIfNotFound: true);
         m_Disabled_Newaction = m_Disabled.FindAction("New action", throwIfNotFound: true);
+        // Typing
+        m_Typing = asset.FindActionMap("Typing", throwIfNotFound: true);
+        m_Typing_Newaction = m_Typing.FindAction("New action", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -2036,6 +2067,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_EnemyDebug.enabled, "This will cause a leak and performance issues, PlayerInputActions.EnemyDebug.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Targeting.enabled, "This will cause a leak and performance issues, PlayerInputActions.Targeting.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Disabled.enabled, "This will cause a leak and performance issues, PlayerInputActions.Disabled.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Typing.enabled, "This will cause a leak and performance issues, PlayerInputActions.Typing.Disable() has not been called.");
     }
 
     /// <summary>
@@ -3148,6 +3180,102 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="DisabledActions" /> instance referencing this action map.
     /// </summary>
     public DisabledActions @Disabled => new DisabledActions(this);
+
+    // Typing
+    private readonly InputActionMap m_Typing;
+    private List<ITypingActions> m_TypingActionsCallbackInterfaces = new List<ITypingActions>();
+    private readonly InputAction m_Typing_Newaction;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Typing".
+    /// </summary>
+    public struct TypingActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public TypingActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Typing/Newaction".
+        /// </summary>
+        public InputAction @Newaction => m_Wrapper.m_Typing_Newaction;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Typing; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="TypingActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(TypingActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="TypingActions" />
+        public void AddCallbacks(ITypingActions instance)
+        {
+            if (instance == null || m_Wrapper.m_TypingActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TypingActionsCallbackInterfaces.Add(instance);
+            @Newaction.started += instance.OnNewaction;
+            @Newaction.performed += instance.OnNewaction;
+            @Newaction.canceled += instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="TypingActions" />
+        private void UnregisterCallbacks(ITypingActions instance)
+        {
+            @Newaction.started -= instance.OnNewaction;
+            @Newaction.performed -= instance.OnNewaction;
+            @Newaction.canceled -= instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="TypingActions.UnregisterCallbacks(ITypingActions)" />.
+        /// </summary>
+        /// <seealso cref="TypingActions.UnregisterCallbacks(ITypingActions)" />
+        public void RemoveCallbacks(ITypingActions instance)
+        {
+            if (m_Wrapper.m_TypingActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="TypingActions.AddCallbacks(ITypingActions)" />
+        /// <seealso cref="TypingActions.RemoveCallbacks(ITypingActions)" />
+        /// <seealso cref="TypingActions.UnregisterCallbacks(ITypingActions)" />
+        public void SetCallbacks(ITypingActions instance)
+        {
+            foreach (var item in m_Wrapper.m_TypingActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_TypingActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="TypingActions" /> instance referencing this action map.
+    /// </summary>
+    public TypingActions @Typing => new TypingActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -3636,6 +3764,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// <seealso cref="DisabledActions.AddCallbacks(IDisabledActions)" />
     /// <seealso cref="DisabledActions.RemoveCallbacks(IDisabledActions)" />
     public interface IDisabledActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNewaction(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Typing" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="TypingActions.AddCallbacks(ITypingActions)" />
+    /// <seealso cref="TypingActions.RemoveCallbacks(ITypingActions)" />
+    public interface ITypingActions
     {
         /// <summary>
         /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

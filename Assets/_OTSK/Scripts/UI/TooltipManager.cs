@@ -68,6 +68,16 @@ public class TooltipManager : MonoBehaviour
         else Instance = this;
     }
 
+    private void OnEnable()
+    {
+        ThreatMeterController.OnThreatStateChanged += HandleThreatStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        ThreatMeterController.OnThreatStateChanged -= HandleThreatStateChanged;
+    }
+
     private void Start()
     {
         GameManager.Instance.OnPlayerReady += HandlePlayerReady;
@@ -108,24 +118,57 @@ public class TooltipManager : MonoBehaviour
         PopulateMovementPanel();
     }
 
+
+    private void HandleThreatStateChanged(ThreatState newState)
+    {
+        // If the panel is open and the new state is a threat...
+        if (_isPanelOpen && (newState == ThreatState.Alert || newState == ThreatState.Combat))
+        {
+            // ...close the panel.
+            ClosePanel();
+        }
+    }
+
+    //  We'll create a dedicated closing method
+    private void ClosePanel()
+    {
+        // Do nothing if already closed
+        if (!_isPanelOpen) return;
+
+        _isPanelOpen = false;
+        tooltipPanel.SetActive(false);
+        UISoundPlayer.Instance.PlayMenuCloseSound();
+
+        // Only switch back to Gameplay state if we are currently in the Details state
+        if (GameManager.Instance.CurrentState == GameState.Details)
+        {
+            GameManager.Instance.UpdateGameState(GameState.Gameplay);
+        }
+    }
+
+
     private void TogglePanel()
     {
-        // If we are already in the middle of a toggle from this frame, ignore this input.
+       // If we are already in the middle of a toggle from this frame, ignore this input.
         if (_isToggling) return;
-
-        _isPanelOpen = !_isPanelOpen;
-        tooltipPanel.SetActive(_isPanelOpen);
 
         if (_isPanelOpen)
         {
+            ClosePanel();
+        }
+        else 
+        {
+            if (CombatManager.Instance.IsPlayerInCombat || EnemyManager.Instance.IsAnyEnemyAlerted())
+            {
+                // You could optionally play a "denied" sound effect here
+                return; // Exit the method immediately
+            }
+            _isPanelOpen = true;
+            tooltipPanel.SetActive(true);
             UISoundPlayer.Instance.PlayMenuOpenSound();
             GameManager.Instance.UpdateGameState(GameState.Details);
         }
-        else
-        {
-            UISoundPlayer.Instance.PlayMenuCloseSound();
-            GameManager.Instance.UpdateGameState(GameState.Gameplay);
-        }
+       
 
         // Start the cooldown coroutine.
         StartCoroutine(ToggleCooldownRoutine());

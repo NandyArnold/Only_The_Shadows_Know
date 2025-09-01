@@ -94,6 +94,13 @@ public class SaveLoadManager : MonoBehaviour
             Debug.LogWarning($"SaveLoadManager is busy. Save request for '{saveFileName}' was ignored.");
             yield break;
         }
+        if (CombatManager.Instance.IsPlayerInCombat || EnemyManager.Instance.IsAnyEnemyAlerted())
+        {
+            Debug.LogWarning("Cannot save game during combat or alert state.");
+            // Optional: Show a "Cannot Save Now" message on the HUD for the player
+            // HUDManager.Instance.ShowTemporaryMessage("Cannot save now");
+            yield break; // This immediately stops the coroutine.
+        }
 
         _isBusy = true; // Set the flag
         Debug.Log($"<color=yellow>--- SAVE GAME STARTED ---</color> File: '{saveFileName}'");

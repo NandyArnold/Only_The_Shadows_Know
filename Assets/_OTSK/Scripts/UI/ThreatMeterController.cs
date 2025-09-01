@@ -1,10 +1,12 @@
 // ThreatMeterController.cs
-using UnityEngine;
 using DG.Tweening;
+using System;
+using UnityEngine;
 
 public class ThreatMeterController : MonoBehaviour
 {
-  
+
+    public static event Action<ThreatState> OnThreatStateChanged;
 
     [Header("UI References")]
     [SerializeField] private GameObject safeIcon;
@@ -52,6 +54,7 @@ public class ThreatMeterController : MonoBehaviour
 
             // This now only handles visuals
             SetVisualState(_currentState);
+            OnThreatStateChanged?.Invoke(_currentState);
         }
     }
 

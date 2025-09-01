@@ -1810,6 +1810,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Typing",
+            "id": "604fe49a-6e6d-4591-a962-76321b11e869",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "2ded85e7-817d-4a06-98f3-8be7a2e0da5f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9e20764d-4782-436e-a967-a40c6eb9f0ee",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

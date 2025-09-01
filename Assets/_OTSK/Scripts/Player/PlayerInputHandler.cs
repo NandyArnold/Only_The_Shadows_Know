@@ -58,6 +58,7 @@ public class PlayerInputHandler : MonoBehaviour
     private InputActionMap _uiMap;
     private InputActionMap _targetingMap;
     private InputActionMap _disabledMap;
+    private InputActionMap _typingMap;
 
     private bool _isCrouchToggleActive = false;
 
@@ -71,7 +72,8 @@ public class PlayerInputHandler : MonoBehaviour
         _uiMap = _inputActions.asset.FindActionMap("UI");
         _targetingMap = _inputActions.asset.FindActionMap("Targeting");
         _disabledMap = _inputActions.asset.FindActionMap("Disabled");
- 
+        _typingMap = _inputActions.asset.FindActionMap("Typing");
+
 
         SetupInputCallbacks();
     }
@@ -250,6 +252,7 @@ public class PlayerInputHandler : MonoBehaviour
         _uiMap.Disable();
         _targetingMap.Disable();
         _disabledMap.Disable();
+        _typingMap.Disable();
 
         // Enable the requested map
         switch (mapName)
@@ -265,6 +268,9 @@ public class PlayerInputHandler : MonoBehaviour
                 break;
             case "Disabled": 
                 _disabledMap.Enable(); 
+                break;
+            case "Typing":
+                _typingMap.Enable();
                 break;
         }
     }
