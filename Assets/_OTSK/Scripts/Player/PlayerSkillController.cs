@@ -103,7 +103,7 @@ public class PlayerSkillController : MonoBehaviour
             return; // Block the skill activation.
         }
 
-        if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingActive)
+        if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingDeployed)
         {
             SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);
             return;

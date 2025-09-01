@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject inGameMenuPanel;
+    [SerializeField] private GameObject tacticalViewPanel;
     // You can add other panels here later, like an OptionsMenu panel
 
     private void Awake()
@@ -59,9 +60,16 @@ public class UIManager : MonoBehaviour
             {
                 gameOverPanel.SetActive(newState == GameState.GameOver);
             }
-
-
-
         }
     }
+
+    public void ToggleTacticalView()
+    {
+        if (tacticalViewPanel == null) return;
+
+        bool isActive = !tacticalViewPanel.activeSelf;
+        tacticalViewPanel.SetActive(isActive);
+        // You would also manage cursor state and game pause here if needed
+    }
+
 }

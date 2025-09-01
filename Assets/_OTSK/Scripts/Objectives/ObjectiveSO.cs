@@ -12,4 +12,7 @@ public class ObjectiveSO : ScriptableObject
 
     [Tooltip("The ID of the in-world trigger that will complete this objective.")]
     public string completionTriggerID;
+
+    [Tooltip("Location of the objective in the game world (for map markers, etc.).")]
+    public Transform objectiveLocation;
 }

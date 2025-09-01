@@ -12,11 +12,7 @@ public class ScryingEffectSO : SkillEffectSO
     // This is called by the "toggle-off" logic in PlayerSkillController
     public override void Activate(GameObject caster)
     {
-        // If the skill is already active, this call will deactivate it.
-        if (ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingActive)
-        {
-            ScryingSystem.Instance.DeactivateScrying();
-        }
+        
     }
 
     // This is called by the "toggle-on" logic for Targeted skills

@@ -55,6 +55,7 @@ public class HUDManager : MonoBehaviour
     private ChargeManager _chargeManager;
     private PlayerController _playerController;
 
+    
 
     private void Awake()
     {
@@ -221,6 +222,18 @@ public class HUDManager : MonoBehaviour
     private void HandleNewObjective(ObjectiveSO newObjective)
     {
         if (objectiveText == null) return;
+
+        if (newObjective != null)
+        {
+            // A valid objective is active, so we store its location for the arrow.
+            _currentObjectiveTransform = newObjective.objectiveLocation;
+        }
+        else
+        {
+            // No active objective (e.g., in Main Menu or between levels), so we clear the target.
+            // This stops the arrow from pointing to an old objective.
+            _currentObjectiveTransform = null;
+        }
 
         if (gameObject.activeInHierarchy)
         {
@@ -391,7 +404,8 @@ public class HUDManager : MonoBehaviour
 
     private void UpdateObjectiveArrow()
     {
-        if (_currentObjectiveTransform == null || objectiveArrow == null) return; if (_currentObjectiveTransform == null || objectiveArrow == null || _playerController == null)
+        // Fail-safe: If either the arrow, the objective, or the player is missing, hide the arrow and stop.
+        if (objectiveArrow == null || _currentObjectiveTransform == null || _playerController == null)
         {
             if (objectiveArrow != null && objectiveArrow.gameObject.activeSelf)
             {
@@ -399,21 +413,34 @@ public class HUDManager : MonoBehaviour
             }
             return;
         }
+
+        // Convert objective's world position to a screen position relative to the main camera
         Vector3 objectiveScreenPos = Camera.main.WorldToScreenPoint(_currentObjectiveTransform.position);
 
         RectTransform minimapRect = minimapPanel.GetComponent<RectTransform>();
 
-        if (RectTransformUtility.RectangleContainsScreenPoint(minimapRect, objectiveScreenPos))
+        // Check if the objective is visible on the minimap
+        if (RectTransformUtility.RectangleContainsScreenPoint(minimapRect, objectiveScreenPos, Camera.main))
         {
             objectiveArrow.gameObject.SetActive(false);
         }
         else
         {
             objectiveArrow.gameObject.SetActive(true);
-            // Logic to calculate the angle and rotate the arrow to point towards the objective
-            Vector3 direction = (_currentObjectiveTransform.position - _playerController.transform.position).normalized;
-            float angle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
-            objectiveArrow.localEulerAngles = new Vector3(0, 0, angle - 90f); // Adjust offset as needed
+
+            // Calculate the direction from the player to the objective
+            Vector3 direction = (_currentObjectiveTransform.position - _playerController.transform.position);
+
+            // We only care about the direction on the horizontal plane (X and Z axes)
+            direction.y = 0;
+
+            // Calculate the angle. Atan2 gives us the angle in radians.
+            // We convert to degrees. The axes might need to be swapped depending on your project's orientation.
+            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
+            // Apply the rotation. The offset (-90, etc.) depends on the original orientation of your arrow sprite.
+            // If your arrow image points "Up", you need no offset. If it points "Right", you need a -90 degree offset.
+            objectiveArrow.localEulerAngles = new Vector3(0, 0, -angle);
         }
     }
 }

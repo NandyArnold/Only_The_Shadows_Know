@@ -194,7 +194,8 @@ public class PlayerInputHandler : MonoBehaviour
 
 
         _inputActions.Player.Skill1.performed += ctx => OnSkillPerformedInput?.Invoke(0);
-        _inputActions.Player.Skill2.performed += ctx => OnSkillPerformedInput?.Invoke(1);
+        //_inputActions.Player.Skill2.performed += ctx => OnSkillPerformedInput?.Invoke(1);
+        _inputActions.Player.Skill2.performed += HandleSkill2Input;
         _inputActions.Player.Skill3.performed += ctx => OnSkillPerformedInput?.Invoke(2);
         _inputActions.Player.Skill4.started += ctx => OnSkillPerformedInput?.Invoke(3);
         _inputActions.Player.Skill4.canceled += ctx => OnSkillCanceledInput?.Invoke(3);
@@ -275,6 +276,18 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
-   
+    private void HandleSkill2Input(InputAction.CallbackContext context)
+    {
+        if (ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingDeployed)
+        {
+            // If the eye is already deployed, we tell the UIManager to toggle the view.
+            UIManager.Instance.ToggleTacticalView();
+        }
+        else
+        {
+            // If the eye is NOT deployed, we fire the event for the PlayerSkillController to cast the skill.
+            OnSkillPerformedInput?.Invoke(1);
+        }
+    }
 
 }
