@@ -29,6 +29,12 @@ public class HUDManager : MonoBehaviour
 
     [SerializeField] private GameObject crosshairPrefab;
 
+    [Header("Scrying UI")]
+    [SerializeField] private GameObject minimapPanel;
+    [SerializeField] private UnityEngine.UI.RawImage minimapRenderImage;
+    [SerializeField] private RectTransform objectiveArrow;
+    private Transform _currentObjectiveTransform;
+
     [Header("Charge/Ammo UI")]
     [SerializeField] private GameObject chargePanel;
     [SerializeField] private TextMeshProUGUI chargeCountText;
@@ -47,6 +53,7 @@ public class HUDManager : MonoBehaviour
     private PlayerCombat _playerCombatForDebug;
     private Invulnerability _invulnerability;
     private ChargeManager _chargeManager;
+    private PlayerController _playerController;
 
 
     private void Awake()
@@ -100,7 +107,8 @@ public class HUDManager : MonoBehaviour
       
         if (crosshairPanel != null) crosshairPanel.SetActive(false);
 
-        
+        if (minimapPanel != null) minimapPanel.SetActive(false);
+        if (objectiveArrow != null) objectiveArrow.gameObject.SetActive(false);
 
 
     }
@@ -122,6 +130,11 @@ public class HUDManager : MonoBehaviour
         else
         {
             invulnerabilityText.text = "Invulnerable: N/A";
+        }
+
+        if (minimapPanel.activeSelf)
+        {
+            UpdateObjectiveArrow();
         }
 
     }
@@ -150,6 +163,7 @@ public class HUDManager : MonoBehaviour
 
     private void HandlePlayerRegistered(PlayerController player)
     {
+        _playerController = player;
         _invulnerability = player.GetComponent<Invulnerability>();
         // Now that we have a valid player, we can get its components and subscribe to events.
         StartCoroutine(InitializePlayerHUDCoroutine(player));
@@ -362,4 +376,44 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    public void ShowMinimap(RenderTexture texture)
+    {
+        minimapRenderImage.texture = texture;
+        minimapPanel.SetActive(true);
+        objectiveArrow.gameObject.SetActive(true);
+    }
+
+    public void HideMinimap()
+    {
+        minimapPanel.SetActive(false);
+        objectiveArrow.gameObject.SetActive(false);
+    }
+
+    private void UpdateObjectiveArrow()
+    {
+        if (_currentObjectiveTransform == null || objectiveArrow == null) return; if (_currentObjectiveTransform == null || objectiveArrow == null || _playerController == null)
+        {
+            if (objectiveArrow != null && objectiveArrow.gameObject.activeSelf)
+            {
+                objectiveArrow.gameObject.SetActive(false);
+            }
+            return;
+        }
+        Vector3 objectiveScreenPos = Camera.main.WorldToScreenPoint(_currentObjectiveTransform.position);
+
+        RectTransform minimapRect = minimapPanel.GetComponent<RectTransform>();
+
+        if (RectTransformUtility.RectangleContainsScreenPoint(minimapRect, objectiveScreenPos))
+        {
+            objectiveArrow.gameObject.SetActive(false);
+        }
+        else
+        {
+            objectiveArrow.gameObject.SetActive(true);
+            // Logic to calculate the angle and rotate the arrow to point towards the objective
+            Vector3 direction = (_currentObjectiveTransform.position - _playerController.transform.position).normalized;
+            float angle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+            objectiveArrow.localEulerAngles = new Vector3(0, 0, angle - 90f); // Adjust offset as needed
+        }
+    }
 }
