@@ -42,6 +42,12 @@ public class Checkpoint : MonoBehaviour, ISaveable
     private void OnTriggerEnter(Collider other)
     {
         if (!_isActive) return;
+
+        if (CombatManager.Instance.IsPlayerInCombat || EnemyManager.Instance.IsAnyEnemyAlerted())
+        {
+            // If the player is in a threat state, do nothing. The checkpoint remains active.
+            return;
+        }
         // When the player enters the trigger...
         if (other.CompareTag("Player"))
         {
