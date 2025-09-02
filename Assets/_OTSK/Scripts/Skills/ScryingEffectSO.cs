@@ -36,7 +36,7 @@ public class ScryingEffectSO : SkillEffectSO
         yield return new WaitForSeconds(castAnimationDuration);
 
         // *** DEPLOY THE EYE INSTEAD OF ACTIVATING A CAMERA ***
-        ScryingSystem.Instance.DeployScryingEye(caster.transform.position);
+        ScryingSystem.Instance.DeployScryingEye();
 
         // Cleanup and unlock movement
         if (vfxInstance != null && vfxInstance.TryGetComponent<VFXCleanup>(out var cleanup))

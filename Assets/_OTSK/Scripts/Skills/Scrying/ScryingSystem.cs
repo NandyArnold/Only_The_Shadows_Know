@@ -1,97 +1,101 @@
-// In ScryingSystem.cs
+// ScryingSystem.cs - Final Definitive Version
+
 using UnityEngine;
 using System.Collections;
-using Unity.Cinemachine;
+
 public class ScryingSystem : MonoBehaviour
 {
     public static ScryingSystem Instance { get; private set; }
+    public RenderTexture ScryingRenderTexture => scryingRenderTexture;
+    [Header("Configuration")]
+    [SerializeField] private RenderTexture scryingRenderTexture;
 
-    [Header("Component References")]
-    private GameObject scryingCameraObject;
-    private CinemachineBrain mainCameraBrain;
-    [SerializeField] private RenderTexture tacticalViewTexture;
-    [SerializeField] private RenderTexture minimapTexture;
-
+    private GameObject scryingCameraRigObject;
     public bool IsScryingDeployed { get; private set; }
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        if (Camera.main != null)
+        // Subscribe to the SceneLoader event to know when a new scene is ready.
+        if (SceneLoader.Instance != null)
         {
-            mainCameraBrain = Camera.main.GetComponent<CinemachineBrain>();
+            SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
         }
-        // Use a coroutine to wait for the scene's CameraManager to be ready.
-        StartCoroutine(FindSceneCameraRoutine());
     }
 
-    private IEnumerator FindSceneCameraRoutine()
+    private void OnDisable()
     {
-        // Wait until the CameraManager for the current scene has initialized.
-        yield return new WaitUntil(() => CameraManager.Instance != null);
-
-        // Get the CinemachineCamera component from the manager
-        CinemachineCamera vcam = CameraManager.Instance.GetCamera(CameraType.Scrying);
-
-        if (vcam != null)
+        // Always unsubscribe to prevent issues.
+        if (SceneLoader.Instance != null)
         {
-            // As per our setup, the vcam is a child of the main render camera object.
-            // We get its parent to control the whole camera rig.
-            scryingCameraObject = vcam.transform.parent.gameObject;
-            Debug.Log("ScryingSystem successfully linked to scene camera.");
+            SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
+        }
+    }
 
-            // Ensure the eye is off at the start
-            if (scryingCameraObject != null) scryingCameraObject.SetActive(false);
-            IsScryingDeployed = false;
+    /// <summary>
+    /// This is called by the SceneLoader after a new scene has finished loading.
+    /// </summary>
+    private void HandleSceneLoaded(SceneDataSO sceneData)
+    {
+        // We only search for the rig in gameplay scenes.
+        if (sceneData.sceneType == SceneType.Gameplay)
+        {
+            StartCoroutine(FindSceneComponentsRoutine());
         }
         else
         {
-            Debug.LogError("ScryingSystem could not find the Scrying camera in the CameraManager!");
+            scryingCameraRigObject = null;
+            IsScryingDeployed = false;
         }
     }
 
-    public void DeployScryingEye(Vector3 position)
+    /// <summary>
+    /// Finds the ScryingCameraRig in the newly loaded scene.
+    /// </summary>
+    private IEnumerator FindSceneComponentsRoutine()
     {
-        if (IsScryingDeployed || scryingCameraObject == null) return;
-
-        // *** STEP 2: Disable the main brain BEFORE activating the scrying camera ***
-        if (mainCameraBrain != null)
+        // Using FindFirstObjectByType is the modern way to find objects.
+        ScryingCameraRig rig = FindFirstObjectByType<ScryingCameraRig>(FindObjectsInactive.Include);
+        if (rig != null)
         {
-            mainCameraBrain.enabled = false;
+            scryingCameraRigObject = rig.gameObject;
+            scryingCameraRigObject.SetActive(false); // Ensure it starts disabled.
+            Debug.Log("ScryingSystem successfully linked to ScryingCameraRig.");
         }
+        else
+        {
+            Debug.LogError("ScryingSystem could not find the ScryingCameraRig in the scene! Ensure the rig exists and has the ScryingCameraRig component.");
+        }
+        yield return null;
+    }
 
-        scryingCameraObject.transform.position = position + new Vector3(0, 50, 0);
-        scryingCameraObject.SetActive(true);
+    // This is called by ScryingEffectSO after the cast animation.
+    public void DeployScryingEye()
+    {
+        if (IsScryingDeployed || scryingCameraRigObject == null) return;
+
+        // The ONLY action needed: turn the independent rig on. No more interference.
+        scryingCameraRigObject.SetActive(true);
+
         IsScryingDeployed = true;
-
-        HUDManager.Instance.ShowMinimap(minimapTexture);
-        Debug.Log("Scrying Eye deployed, main brain disabled.");
+        HUDManager.Instance.ShowMinimap(scryingRenderTexture);
+        Debug.Log("Independent Scrying Camera Rig has been activated.");
     }
 
     public void DisableScryingEye()
     {
-        if (!IsScryingDeployed || scryingCameraObject == null) return;
+        if (!IsScryingDeployed || scryingCameraRigObject == null) return;
 
-        scryingCameraObject.SetActive(false);
+        // The ONLY action needed: turn the rig off.
+        scryingCameraRigObject.SetActive(false);
+
         IsScryingDeployed = false;
-
-        // *** STEP 3: Re-enable the main brain to return to normal gameplay ***
-        if (mainCameraBrain != null)
-        {
-            mainCameraBrain.enabled = true;
-        }
-
         HUDManager.Instance.HideMinimap();
-        Debug.Log("Scrying Eye disabled, main brain enabled.");
+        Debug.Log("Independent Scrying Camera Rig has been deactivated.");
     }
 }

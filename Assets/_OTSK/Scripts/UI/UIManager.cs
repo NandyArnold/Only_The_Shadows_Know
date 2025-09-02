@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
@@ -7,7 +7,10 @@ public class UIManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject inGameMenuPanel;
-    [SerializeField] private GameObject tacticalViewPanel;
+
+    [Header("Tactical View")]
+    [SerializeField] private GameObject tacticalViewPanel; // Assign your TacticalView_Panel
+    [SerializeField] private RawImage tacticalViewImage;
     // You can add other panels here later, like an OptionsMenu panel
 
     private void Awake()
@@ -65,11 +68,19 @@ public class UIManager : MonoBehaviour
 
     public void ToggleTacticalView()
     {
-        if (tacticalViewPanel == null) return;
+        if (tacticalViewPanel == null || tacticalViewImage == null) return;
 
-        bool isActive = !tacticalViewPanel.activeSelf;
-        tacticalViewPanel.SetActive(isActive);
-        // You would also manage cursor state and game pause here if needed
+        bool shouldBeActive = !tacticalViewPanel.activeSelf;
+        tacticalViewPanel.SetActive(shouldBeActive);
+
+        // If we are activating the panel, we MUST assign the texture
+        if (shouldBeActive)
+        {
+            if (ScryingSystem.Instance != null)
+            {
+                tacticalViewImage.texture = ScryingSystem.Instance.ScryingRenderTexture;
+            }
+        }
     }
 
 }

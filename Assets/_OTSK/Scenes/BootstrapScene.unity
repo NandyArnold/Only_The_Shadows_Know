@@ -13318,7 +13318,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 400}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1620833453
 MonoBehaviour:
@@ -15171,7 +15171,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1200, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1833660466
 MonoBehaviour:
@@ -15487,8 +15487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 140a90275d571dd43bd83db2f4f7e2b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tacticalViewTexture: {fileID: 8400000, guid: 4cefe6bc9ea70f640bfc621a62ec7487, type: 2}
-  minimapTexture: {fileID: 8400000, guid: 97ae0cbdb04d9f94997bb6d061a994b2, type: 2}
+  scryingRenderTexture: {fileID: 8400000, guid: 4cefe6bc9ea70f640bfc621a62ec7487, type: 2}
 --- !u!114 &1837955068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15616,6 +15615,7 @@ MonoBehaviour:
   gameOverPanel: {fileID: 1118849516}
   inGameMenuPanel: {fileID: 1576524865}
   tacticalViewPanel: {fileID: 1031156029}
+  tacticalViewImage: {fileID: 1833660466}
 --- !u!114 &1837955076
 MonoBehaviour:
   m_ObjectHideFlags: 0

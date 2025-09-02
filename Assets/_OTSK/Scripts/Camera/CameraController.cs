@@ -141,7 +141,7 @@ public class CameraController : MonoBehaviour
         // Reset all camera priorities to a low value first
         shoulderCamera.Priority = 10;
         zoomCamera.Priority = 10;
-        scryingCamera.Priority = 10;
+        scryingCamera.Priority = 5;
         targetingCamera.Priority = 10;
         balorsVisionCamera.Priority = 10;
         focusedShotCamera.Priority = 10;
@@ -161,7 +161,7 @@ public class CameraController : MonoBehaviour
             // --- Standard Instant Switch for all other cameras ---
             shoulderCamera.Priority = 10;
             zoomCamera.Priority = 10;
-            scryingCamera.Priority = 10;
+            scryingCamera.Priority = 5;
             targetingCamera.Priority = 10;
             balorsVisionCamera.Priority = 10;
 
@@ -191,7 +191,7 @@ public class CameraController : MonoBehaviour
         shoulderCamera.Priority = 20;
         zoomCamera.Priority = 10;
         targetingCamera.Priority = 10;
-        scryingCamera.Priority = 10;
+        scryingCamera.Priority = 5;
     }
     private void OnDisable()
     {
