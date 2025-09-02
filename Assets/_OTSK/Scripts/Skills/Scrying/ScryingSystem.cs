@@ -1,7 +1,8 @@
 // ScryingSystem.cs - Final Definitive Version
 
-using UnityEngine;
 using System.Collections;
+using Unity.Cinemachine;
+using UnityEngine;
 
 public class ScryingSystem : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class ScryingSystem : MonoBehaviour
     [SerializeField] private RenderTexture scryingRenderTexture;
 
     private GameObject scryingCameraRigObject;
+    //private CinemachineCamera scryingVCam;
+    public CinemachineCamera ScryingVCam { get; private set; }
     public bool IsScryingDeployed { get; private set; }
 
     private void Awake()
@@ -50,6 +53,7 @@ public class ScryingSystem : MonoBehaviour
         else
         {
             scryingCameraRigObject = null;
+            ScryingVCam = null;
             IsScryingDeployed = false;
         }
     }
@@ -64,14 +68,22 @@ public class ScryingSystem : MonoBehaviour
         if (rig != null)
         {
             scryingCameraRigObject = rig.gameObject;
+            ScryingVCam = scryingCameraRigObject.GetComponentInChildren<CinemachineCamera>();
             scryingCameraRigObject.SetActive(false); // Ensure it starts disabled.
             Debug.Log("ScryingSystem successfully linked to ScryingCameraRig.");
+            yield return new WaitUntil(() => GameManager.Instance.Player != null);
+
+            if (ScryingVCam != null)
+            {
+                ScryingVCam.Follow = GameManager.Instance.Player.transform;
+                Debug.Log("ScryingSystem: Player assigned as VCam Follow target.");
+            }
         }
         else
         {
             Debug.LogError("ScryingSystem could not find the ScryingCameraRig in the scene! Ensure the rig exists and has the ScryingCameraRig component.");
         }
-        yield return null;
+      
     }
 
     // This is called by ScryingEffectSO after the cast animation.

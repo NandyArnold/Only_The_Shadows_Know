@@ -434,13 +434,35 @@ public class HUDManager : MonoBehaviour
             // We only care about the direction on the horizontal plane (X and Z axes)
             direction.y = 0;
 
-            // Calculate the angle. Atan2 gives us the angle in radians.
-            // We convert to degrees. The axes might need to be swapped depending on your project's orientation.
-            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            // Calculate the angle from the forward direction of the player
+            float angle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
 
             // Apply the rotation. The offset (-90, etc.) depends on the original orientation of your arrow sprite.
             // If your arrow image points "Up", you need no offset. If it points "Right", you need a -90 degree offset.
             objectiveArrow.localEulerAngles = new Vector3(0, 0, -angle);
+        }
+    }
+
+    public void SetGameplayHUDVisibility(bool isVisible)
+    {
+        // This method will now control both panels.
+        if (playerHudPanel != null)
+        {
+            playerHudPanel.SetActive(isVisible);
+        }
+
+        // Also toggle the minimap panel's visibility.
+        if (minimapPanel != null)
+        {
+            // Exception: Don't show the minimap if the eye isn't deployed yet.
+            if (isVisible && ScryingSystem.Instance != null && !ScryingSystem.Instance.IsScryingDeployed)
+            {
+                minimapPanel.SetActive(false);
+            }
+            else
+            {
+                minimapPanel.SetActive(isVisible);
+            }
         }
     }
 }

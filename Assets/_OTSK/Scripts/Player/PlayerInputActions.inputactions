@@ -1001,6 +1001,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MapZoom",
+                    "type": "Value",
+                    "id": "73f6a193-65e0-4ce5-8ff7-fc9be242030d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MapPan",
+                    "type": "Value",
+                    "id": "7f0b97fa-e8a0-47ee-9664-17468aafc8dd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MapPanModifier",
+                    "type": "Button",
+                    "id": "cd49dc4d-e3da-4e02-bfa8-c4df8fd383d8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CloseMapView",
+                    "type": "Button",
+                    "id": "cb6f6d1b-e4fb-4f5c-b08b-bccd3066b133",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1485,6 +1521,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleDetails",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "28c1154a-8f82-4308-b6ac-f883d6239ddb",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MapZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "57afb73b-949a-419c-905d-f35fa1d8db89",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MapPan",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ddf7476e-b049-4812-9446-ed0927b07bff",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MapPanModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "279beada-a2b0-47fa-81ff-3e3e59f672ed",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseMapView",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

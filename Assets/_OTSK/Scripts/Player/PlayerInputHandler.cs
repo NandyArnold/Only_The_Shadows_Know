@@ -53,7 +53,12 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action<float> OnAdjustPitchInput;
 
-    private PlayerInputActions _inputActions;
+    public event Action<float> OnMapZoomInput;
+    public event Action<Vector2> OnMapPanInput;
+    public event Action<bool> OnMapPanModifierInput;
+    public event Action OnCloseMapViewInput;
+
+    public PlayerInputActions _inputActions;
     private InputActionMap _playerMap;
     private InputActionMap _uiMap;
     private InputActionMap _targetingMap;
@@ -215,7 +220,35 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.UI.Unpause.performed += ctx => OnPauseInput?.Invoke();
 
         _inputActions.Player.Invulnerability.performed += ctx => OnToggleInvulnerabilityInput?.Invoke();
-        _inputActions.Player.ToggleInfiniteCharges.performed += ctx => OnToggleInfiniteChargesInput?.Invoke(); 
+        _inputActions.Player.ToggleInfiniteCharges.performed += ctx => OnToggleInfiniteChargesInput?.Invoke();
+
+        // --- Add these new callbacks for the UI action map ---
+        _inputActions.UI.MapZoom.performed += ctx =>
+        {
+            Debug.Log("--- MAP ZOOM INPUT RECEIVED ---");
+            OnMapZoomInput?.Invoke(ctx.ReadValue<Vector2>().y);
+        };
+
+        _inputActions.UI.MapPan.performed += ctx =>
+        {
+            // This will be very spammy, but it's a good test.
+            // Debug.Log("--- MAP PAN INPUT RECEIVED ---"); 
+            OnMapPanInput?.Invoke(ctx.ReadValue<Vector2>());
+        };
+
+        _inputActions.UI.MapPanModifier.started += ctx =>
+        {
+            Debug.Log("--- MAP PAN MODIFIER PRESSED ---");
+            OnMapPanModifierInput?.Invoke(true);
+        };
+        _inputActions.UI.MapPanModifier.canceled += ctx =>
+        {
+            Debug.Log("--- MAP PAN MODIFIER RELEASED ---");
+            OnMapPanModifierInput?.Invoke(false);
+        };
+        _inputActions.UI.CloseMapView.performed += ctx => OnCloseMapViewInput?.Invoke();
+
+
     }
 
     private void HandleToggleInput(InputAction.CallbackContext context)

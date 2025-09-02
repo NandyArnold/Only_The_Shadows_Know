@@ -1087,6 +1087,42 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MapZoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""73f6a193-65e0-4ce5-8ff7-fc9be242030d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MapPan"",
+                    ""type"": ""Value"",
+                    ""id"": ""7f0b97fa-e8a0-47ee-9664-17468aafc8dd"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MapPanModifier"",
+                    ""type"": ""Button"",
+                    ""id"": ""cd49dc4d-e3da-4e02-bfa8-c4df8fd383d8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseMapView"",
+                    ""type"": ""Button"",
+                    ""id"": ""cb6f6d1b-e4fb-4f5c-b08b-bccd3066b133"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1573,6 +1609,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleDetails"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""28c1154a-8f82-4308-b6ac-f883d6239ddb"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MapZoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57afb73b-949a-419c-905d-f35fa1d8db89"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MapPan"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ddf7476e-b049-4812-9446-ed0927b07bff"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MapPanModifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""279beada-a2b0-47fa-81ff-3e3e59f672ed"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseMapView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -2038,6 +2118,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_ToggleCursorMode = m_UI.FindAction("ToggleCursorMode", throwIfNotFound: true);
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
         m_UI_ToggleDetails = m_UI.FindAction("ToggleDetails", throwIfNotFound: true);
+        m_UI_MapZoom = m_UI.FindAction("MapZoom", throwIfNotFound: true);
+        m_UI_MapPan = m_UI.FindAction("MapPan", throwIfNotFound: true);
+        m_UI_MapPanModifier = m_UI.FindAction("MapPanModifier", throwIfNotFound: true);
+        m_UI_CloseMapView = m_UI.FindAction("CloseMapView", throwIfNotFound: true);
         // EnemyDebug
         m_EnemyDebug = asset.FindActionMap("EnemyDebug", throwIfNotFound: true);
         m_EnemyDebug_Move = m_EnemyDebug.FindAction("Move", throwIfNotFound: true);
@@ -2563,6 +2647,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ToggleCursorMode;
     private readonly InputAction m_UI_Unpause;
     private readonly InputAction m_UI_ToggleDetails;
+    private readonly InputAction m_UI_MapZoom;
+    private readonly InputAction m_UI_MapPan;
+    private readonly InputAction m_UI_MapPanModifier;
+    private readonly InputAction m_UI_CloseMapView;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2639,6 +2727,22 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ToggleDetails => m_Wrapper.m_UI_ToggleDetails;
         /// <summary>
+        /// Provides access to the underlying input action "UI/MapZoom".
+        /// </summary>
+        public InputAction @MapZoom => m_Wrapper.m_UI_MapZoom;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/MapPan".
+        /// </summary>
+        public InputAction @MapPan => m_Wrapper.m_UI_MapPan;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/MapPanModifier".
+        /// </summary>
+        public InputAction @MapPanModifier => m_Wrapper.m_UI_MapPanModifier;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/CloseMapView".
+        /// </summary>
+        public InputAction @CloseMapView => m_Wrapper.m_UI_CloseMapView;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_UI; }
@@ -2712,6 +2816,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleDetails.started += instance.OnToggleDetails;
             @ToggleDetails.performed += instance.OnToggleDetails;
             @ToggleDetails.canceled += instance.OnToggleDetails;
+            @MapZoom.started += instance.OnMapZoom;
+            @MapZoom.performed += instance.OnMapZoom;
+            @MapZoom.canceled += instance.OnMapZoom;
+            @MapPan.started += instance.OnMapPan;
+            @MapPan.performed += instance.OnMapPan;
+            @MapPan.canceled += instance.OnMapPan;
+            @MapPanModifier.started += instance.OnMapPanModifier;
+            @MapPanModifier.performed += instance.OnMapPanModifier;
+            @MapPanModifier.canceled += instance.OnMapPanModifier;
+            @CloseMapView.started += instance.OnCloseMapView;
+            @CloseMapView.performed += instance.OnCloseMapView;
+            @CloseMapView.canceled += instance.OnCloseMapView;
         }
 
         /// <summary>
@@ -2771,6 +2887,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleDetails.started -= instance.OnToggleDetails;
             @ToggleDetails.performed -= instance.OnToggleDetails;
             @ToggleDetails.canceled -= instance.OnToggleDetails;
+            @MapZoom.started -= instance.OnMapZoom;
+            @MapZoom.performed -= instance.OnMapZoom;
+            @MapZoom.canceled -= instance.OnMapZoom;
+            @MapPan.started -= instance.OnMapPan;
+            @MapPan.performed -= instance.OnMapPan;
+            @MapPan.canceled -= instance.OnMapPan;
+            @MapPanModifier.started -= instance.OnMapPanModifier;
+            @MapPanModifier.performed -= instance.OnMapPanModifier;
+            @MapPanModifier.canceled -= instance.OnMapPanModifier;
+            @CloseMapView.started -= instance.OnCloseMapView;
+            @CloseMapView.performed -= instance.OnCloseMapView;
+            @CloseMapView.canceled -= instance.OnCloseMapView;
         }
 
         /// <summary>
@@ -3671,6 +3799,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleDetails(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MapZoom" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMapZoom(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MapPan" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMapPan(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MapPanModifier" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMapPanModifier(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CloseMapView" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCloseMapView(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EnemyDebug" which allows adding and removing callbacks.

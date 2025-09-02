@@ -1202,7 +1202,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
   m_PrefabInstance: {fileID: 2371665023302011339}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2371665023302011341}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
@@ -34830,15 +34830,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.6448042
+      value: 60.96
       objectReference: {fileID: 0}
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 101.06
+      value: 122.19
       objectReference: {fileID: 0}
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 54.80385
+      value: 92.17
       objectReference: {fileID: 0}
     - target: {fileID: 4881043288752694100, guid: 229843bd5ba418b4489eab5f7c110d99, type: 3}
       propertyPath: m_LocalRotation.w
@@ -75069,19 +75069,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: Lens.OrthographicSize
-      value: 181.8
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      propertyPath: Target.TrackingTarget
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2016119641887870020, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.5067387
+      value: 58.26673
       objectReference: {fileID: 0}
     - target: {fileID: 2016119641887870020, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 347.40317
+      value: 39.29319
       objectReference: {fileID: 0}
     - target: {fileID: 2016119641887870020, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 162.80283
+      value: 39.752922
       objectReference: {fileID: 0}
     - target: {fileID: 2016119641887870020, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: m_LocalRotation.w
@@ -75126,13 +75130,58 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2371665023302011342}
+    - targetCorrespondingSourceObject: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2371665023302011343}
   m_SourcePrefab: {fileID: 100100000, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
 --- !u!4 &2371665023302011340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2016119641887870020, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
   m_PrefabInstance: {fileID: 2371665023302011339}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2371665023302011341 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+  m_PrefabInstance: {fileID: 2371665023302011339}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2371665023302011342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2371665023302011341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b617507da6d07e749b7efdb34e1173e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TrackerSettings:
+    BindingMode: 4
+    PositionDamping: {x: 5, y: 0, z: 5}
+    AngularDampingMode: 0
+    RotationDamping: {x: 1, y: 1, z: 1}
+    QuaternionDamping: 1
+  FollowOffset: {x: 0, y: 20, z: 0}
+--- !u!114 &2371665023302011343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2371665023302011341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d70cc20219cd84593f67d248eafe36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Offset: {x: 0, y: 0, z: 0}
+  ApplyAfter: 1
+  PreserveComposition: 0
 --- !u!1001 &2934092206656791909
 PrefabInstance:
   m_ObjectHideFlags: 0
