@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 669053cd8d02d8343a1cb29457eb41fc, type: 3}
+  m_Name: Game_IconAtlas
+  m_EditorClassIdentifier: 
+  enemyIcons:
+  - type: 1
+    icon: {fileID: 21300000, guid: b6878ce3f54d5114292d43b593d6cbaa, type: 3}
+    iconColor: {r: 0, g: 0, b: 0, a: 0}
+  - type: 3
+    icon: {fileID: 21300000, guid: e452162ba28dfbc47951612d389efa08, type: 3}
+    iconColor: {r: 0, g: 0, b: 0, a: 0}
+  objectiveIcons:
+  - type: 0
+    icon: {fileID: 21300000, guid: 02bc24da4bcaa934abba8dc834320621, type: 3}
+    iconColor: {r: 0, g: 0, b: 0, a: 0}
+  distortedIcon: {fileID: 21300000, guid: 0114ed7c70c56194c87ea648eb6577db, type: 3}

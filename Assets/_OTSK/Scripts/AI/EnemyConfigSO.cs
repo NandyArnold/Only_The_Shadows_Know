@@ -26,6 +26,7 @@ public class EnemyConfigSO : ScriptableObject
     public float attackAnimationDuration = 1.2f;
     [Header("Resistances")] 
     public List<ResistanceEntry> resistances;
+    public bool isResistantToScrying = false;
 
     [Header("Movement")]
     public float patrolSpeed = 2f;

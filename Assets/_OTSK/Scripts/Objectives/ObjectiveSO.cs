@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Objective_", menuName = "Only The Shadows Know/Objectives/Single Objective")]
@@ -15,4 +16,6 @@ public class ObjectiveSO : ScriptableObject
 
     [Tooltip("Location of the objective in the game world (for map markers, etc.).")]
     public Transform objectiveLocation;
+
+    public ObjectiveType objectiveType = ObjectiveType.MainObjective;
 }
