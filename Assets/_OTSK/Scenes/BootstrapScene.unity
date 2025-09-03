@@ -7939,10 +7939,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ea34e14091d4f4fbbd1ef5e395ab51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 5
-  zoomSpeed: 5
+  panSpeed: 10
+  zoomSpeed: 50
   minZoom: 5
   maxZoom: 180
+  minimapDefaultZoom: 20
+  tacticalMapDefaultZoom: 50
 --- !u!1 &1033917423
 GameObject:
   m_ObjectHideFlags: 0

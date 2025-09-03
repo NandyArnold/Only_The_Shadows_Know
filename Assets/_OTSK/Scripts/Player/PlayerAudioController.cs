@@ -119,10 +119,10 @@ public class PlayerAudioController : MonoBehaviour
         AudioClip clipToPlay = (playerMovement.CurrentLocomotionState == LocomotionState.Run) ? runningJumpGrunt : jumpGrunt;
         if (clipToPlay == null)
         {
-            Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play jump sound, but the AudioClip is NULL. Check the Inspector.");
+            //Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play jump sound, but the AudioClip is NULL. Check the Inspector.");
             return;
         }
-        Debug.Log($"<color=cyan>DEBUG:</color> PlayJumpSound is calling the manager with clip: {clipToPlay.name}");
+        //Debug.Log($"<color=cyan>DEBUG:</color> PlayJumpSound is calling the manager with clip: {clipToPlay.name}");
         SoundEffectManager.Instance.PlaySoundAtPoint(clipToPlay, transform.position);
     }
 
@@ -131,10 +131,10 @@ public class PlayerAudioController : MonoBehaviour
         // --- DEBUG: Check if the clip is assigned ---
         if (dodgeGrunt == null)
         {
-            Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play dodge sound, but the AudioClip is NULL. Check the Inspector.");
+            //Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play dodge sound, but the AudioClip is NULL. Check the Inspector.");
             return;
         }
-        Debug.Log($"<color=cyan>DEBUG:</color> PlayDodgeSound is calling the manager with clip: {dodgeGrunt.name}");
+        //Debug.Log($"<color=cyan>DEBUG:</color> PlayDodgeSound is calling the manager with clip: {dodgeGrunt.name}");
         SoundEffectManager.Instance.PlaySoundAtPoint(dodgeGrunt, transform.position);
     }
 
@@ -143,10 +143,10 @@ public class PlayerAudioController : MonoBehaviour
         // --- DEBUG: Check if the clip is assigned ---
         if (landSound == null)
         {
-            Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play land sound, but the AudioClip is NULL. Check the Inspector.");
+            //Debug.LogWarning("<color=orange>DEBUG:</color> Attempting to play land sound, but the AudioClip is NULL. Check the Inspector.");
             return;
         }
-        Debug.Log($"<color=cyan>DEBUG:</color> PlayLandSound is calling the manager with clip: {landSound.name}");
+        //Debug.Log($"<color=cyan>DEBUG:</color> PlayLandSound is calling the manager with clip: {landSound.name}");
         SoundEffectManager.Instance.PlaySoundAtPoint(landSound, transform.position);
     }
 }

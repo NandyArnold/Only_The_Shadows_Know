@@ -6,6 +6,10 @@ using UnityEngine.InputSystem.XR;
 
 public class TacticalMapController : MonoBehaviour
 {
+   
+   //"The collider that defines the total map area.
+    private Collider mapBoundary;
+
     [Header("Settings")]
     [SerializeField] private float panSpeed = 1f;
     [SerializeField] private float zoomSpeed = 20f;
@@ -33,6 +37,16 @@ public class TacticalMapController : MonoBehaviour
 
     private void OnEnable()
     {
+        MapBoundary boundary = FindFirstObjectByType<MapBoundary>();
+        if (boundary != null)
+        {
+            mapBoundary = boundary.GetComponent<Collider>();
+        }
+        if (mapBoundary == null)
+        {
+            Debug.LogWarning("TacticalMapController could not find a MapBoundary in the scene. Panning will not be clamped.");
+        }
+
         if (GameManager.Instance != null && GameManager.Instance.Player != null)
         {
             playerInputActions = GameManager.Instance.Player.GetComponent<PlayerInputHandler>()._inputActions;
@@ -110,6 +124,8 @@ public class TacticalMapController : MonoBehaviour
         {
             float newSize = scryingRenderCamera.orthographicSize - scrollDelta * zoomSpeed * Time.deltaTime;
             scryingRenderCamera.orthographicSize = Mathf.Clamp(newSize, minZoom, maxZoom);
+
+            ClampCameraPosition();
         }
     }
 
@@ -123,43 +139,30 @@ public class TacticalMapController : MonoBehaviour
             Vector2 panDelta = playerInputActions.UI.MapPan.ReadValue<Vector2>();
             cameraOffset.Offset.x -= panDelta.x * panSpeed * Time.deltaTime;
             cameraOffset.Offset.y -= panDelta.y * panSpeed * Time.deltaTime;
+
+            ClampCameraPosition();
         }
     }
 
-  
-    //public void TakeControl()
-    //{
-       
-    //    if (scryingVCam == null) return;
-    
-    //    cameraOffset = scryingVCam.GetComponent<CinemachineCameraOffset>();
-    //    if (posControl == null || rotControl == null || cameraOffset == null)
-    //    {
-    //        Debug.LogError("TacticalMapController FAILED: The scryingVCam is missing the 'CinemachineCameraOffset' extension!");
-    //        return;
-    //    }
+    private void ClampCameraPosition()
+    {
+        if (scryingVCam == null || mapBoundary == null) return;
 
-    //    // Store the original target and then disable following so we can pan freely.
-    //    Debug.Log($"[TacticalMapController] Before change, Follow target is: {scryingVCam.Follow?.name ?? "NULL"}");
-    //    originalFollowTarget = scryingVCam.Follow;
-    //    scryingVCam.Follow = null;
+        // 1. Get the VCam's base position (before the pan offset).
+        Vector3 basePosition = scryingVCam.transform.position;
 
-    //    Debug.Log($"[TacticalMapController] After change, Follow target is: {scryingVCam.Follow?.name ?? "NULL"}");
+        // 2. Calculate our desired final position in WORLD space by converting the LOCAL offset to a world direction.
+        Vector3 desiredPosition = basePosition + scryingVCam.transform.TransformDirection(cameraOffset.Offset);
 
-    //    isControlActive = true;
-    
-    //}
+        // 3. Find the closest valid point within the boundary in WORLD space.
+        Vector3 clampedWorldPosition = mapBoundary.ClosestPoint(desiredPosition);
 
-    // Called by UIManager when the map is closed
-    //public void ReleaseControl()
-    //{
-    //    if (scryingVCam == null) return;
+        // 4. Calculate the corrected offset vector in WORLD space.
+        Vector3 correctedWorldOffset = clampedWorldPosition - basePosition;
 
-    //    // Restore the original follow target.
-    //    scryingVCam.Follow = originalFollowTarget;
-    //    //isControlActive = false;
-    //    Debug.Log($"[TacticalMapController] Control released. Follow target restored to: {scryingVCam.Follow?.name ?? "NULL"}");
-    //    originalFollowTarget = null;
-    //    //UnsubscribeFromInput();
-    //}
+        // 5. Convert the corrected WORLD offset back into the VCam's LOCAL space and apply it.
+        cameraOffset.Offset = scryingVCam.transform.InverseTransformDirection(correctedWorldOffset);
+    }
+
+
 }
