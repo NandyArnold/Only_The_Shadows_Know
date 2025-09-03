@@ -11,8 +11,9 @@ public class ScryingSystem : MonoBehaviour
     [Header("Configuration")]
     [SerializeField] private RenderTexture scryingRenderTexture;
 
+    private TacticalMapController tacticalMapController;
     private GameObject scryingCameraRigObject;
-    //private CinemachineCamera scryingVCam;
+    public Camera ScryingRenderCamera { get; private set; }
     public CinemachineCamera ScryingVCam { get; private set; }
     public bool IsScryingDeployed { get; private set; }
 
@@ -40,9 +41,6 @@ public class ScryingSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// This is called by the SceneLoader after a new scene has finished loading.
-    /// </summary>
     private void HandleSceneLoaded(SceneDataSO sceneData)
     {
         // We only search for the rig in gameplay scenes.
@@ -58,9 +56,6 @@ public class ScryingSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Finds the ScryingCameraRig in the newly loaded scene.
-    /// </summary>
     private IEnumerator FindSceneComponentsRoutine()
     {
         // Using FindFirstObjectByType is the modern way to find objects.
@@ -69,13 +64,17 @@ public class ScryingSystem : MonoBehaviour
         {
             scryingCameraRigObject = rig.gameObject;
             ScryingVCam = scryingCameraRigObject.GetComponentInChildren<CinemachineCamera>();
+            ScryingRenderCamera = scryingCameraRigObject.GetComponentInChildren<Camera>();
             scryingCameraRigObject.SetActive(false); // Ensure it starts disabled.
             Debug.Log("ScryingSystem successfully linked to ScryingCameraRig.");
             yield return new WaitUntil(() => GameManager.Instance.Player != null);
 
             if (ScryingVCam != null)
             {
-                ScryingVCam.Follow = GameManager.Instance.Player.transform;
+                var playerTransform = GameManager.Instance.Player.transform;
+                ScryingVCam.Follow = playerTransform;
+                ScryingVCam.LookAt = playerTransform;
+
                 Debug.Log("ScryingSystem: Player assigned as VCam Follow target.");
             }
         }
@@ -83,7 +82,8 @@ public class ScryingSystem : MonoBehaviour
         {
             Debug.LogError("ScryingSystem could not find the ScryingCameraRig in the scene! Ensure the rig exists and has the ScryingCameraRig component.");
         }
-      
+        tacticalMapController = FindFirstObjectByType<TacticalMapController>(FindObjectsInactive.Include);
+
     }
 
     // This is called by ScryingEffectSO after the cast animation.
@@ -94,9 +94,14 @@ public class ScryingSystem : MonoBehaviour
         // The ONLY action needed: turn the independent rig on. No more interference.
         scryingCameraRigObject.SetActive(true);
 
+        if (ScryingRenderCamera != null && tacticalMapController != null)
+        {
+            ScryingRenderCamera.orthographicSize = tacticalMapController.MinimapDefaultZoom;
+        }
+
         IsScryingDeployed = true;
         HUDManager.Instance.ShowMinimap(scryingRenderTexture);
-        Debug.Log("Independent Scrying Camera Rig has been activated.");
+        //Debug.Log("Independent Scrying Camera Rig has been activated.");
     }
 
     public void DisableScryingEye()

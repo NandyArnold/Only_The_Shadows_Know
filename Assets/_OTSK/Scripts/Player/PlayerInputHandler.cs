@@ -225,8 +225,8 @@ public class PlayerInputHandler : MonoBehaviour
         // --- Add these new callbacks for the UI action map ---
         _inputActions.UI.MapZoom.performed += ctx =>
         {
-            Debug.Log("--- MAP ZOOM INPUT RECEIVED ---");
-            OnMapZoomInput?.Invoke(ctx.ReadValue<Vector2>().y);
+            //Debug.Log("--- MAP ZOOM INPUT RECEIVED ---");
+            OnMapZoomInput?.Invoke(ctx.ReadValue<float>());
         };
 
         _inputActions.UI.MapPan.performed += ctx =>
@@ -238,12 +238,12 @@ public class PlayerInputHandler : MonoBehaviour
 
         _inputActions.UI.MapPanModifier.started += ctx =>
         {
-            Debug.Log("--- MAP PAN MODIFIER PRESSED ---");
+            //Debug.Log("--- MAP PAN MODIFIER PRESSED ---");
             OnMapPanModifierInput?.Invoke(true);
         };
         _inputActions.UI.MapPanModifier.canceled += ctx =>
         {
-            Debug.Log("--- MAP PAN MODIFIER RELEASED ---");
+            //Debug.Log("--- MAP PAN MODIFIER RELEASED ---");
             OnMapPanModifierInput?.Invoke(false);
         };
         _inputActions.UI.CloseMapView.performed += ctx => OnCloseMapViewInput?.Invoke();

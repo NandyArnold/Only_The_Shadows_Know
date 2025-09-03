@@ -94,18 +94,18 @@ public class UIManager : MonoBehaviour
         HUDManager.Instance.SetGameplayHUDVisibility(!shouldBeActive);
         if (shouldBeActive)
         {
-            // When showing the panel, assign the texture and take control
+            //// When showing the panel, assign the texture and take control
             if (ScryingSystem.Instance != null && tacticalViewImage != null)
             {
                 tacticalViewImage.texture = ScryingSystem.Instance.ScryingRenderTexture;
             }
-            tacticalMapController.TakeControl();
+            //tacticalMapController.TakeControl();
             CursorManager.Instance.SetState(CursorState.UI);
         }
         else
         {
-            // When hiding the panel, release control
-            tacticalMapController.ReleaseControl();
+            //// When hiding the panel, release control
+            //tacticalMapController.ReleaseControl();
             CursorManager.Instance.SetState(CursorState.Gameplay);
         }
     }

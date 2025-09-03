@@ -33313,7 +33313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -33354,7 +33354,7 @@ Camera:
   m_GameObject: {fileID: 1005907509}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.4745098, g: 0.19215688, b: 0.4370782, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -33379,7 +33379,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: 0
   m_CullingMask:
@@ -75068,8 +75068,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      propertyPath: StandbyUpdate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: Lens.OrthographicSize
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1908687983380650764, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       propertyPath: Target.TrackingTarget
@@ -75137,6 +75141,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2371665023302011343}
+    - targetCorrespondingSourceObject: {fileID: 6436936676118586275, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2371665023302011344}
   m_SourcePrefab: {fileID: 100100000, guid: eb4f815db2f5500448e2caab260eee02, type: 3}
 --- !u!4 &2371665023302011340 stripped
 Transform:
@@ -75162,7 +75169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 5, y: 0, z: 5}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -75182,6 +75189,19 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   ApplyAfter: 1
   PreserveComposition: 0
+--- !u!114 &2371665023302011344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2371665023302011341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LookAtOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &2934092206656791909
 PrefabInstance:
   m_ObjectHideFlags: 0
