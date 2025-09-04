@@ -6,25 +6,56 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "IconAtlas_New", menuName = "Only The Shadows Know/UI/Tactical Icon Atlas")]
 public class TacticalIconAtlasSO : ScriptableObject
 {
-    [Header("Icon Mappings")]
-    [Tooltip("A list that maps a RevealableType to a specific icon sprite and color.")]
-    public List<RevealableIconMapping> revealableIcons;
+    [Header("Specific Mappings")]
+    public List<EnemyIconMapping> enemyIcons;
+    public List<ObjectiveIconMapping> objectiveIcons;
 
-    [Header("Special Icons")]
+    [Header("Generic & Special Icons")]
+    public List<RevealableIconMapping> genericIcons;
     [Tooltip("The icon used for enemies that are resistant to scrying.")]
     public Sprite distortedIcon;
+    [Tooltip("The icon used if no other specific or generic mapping is found.")]
+    public Sprite defaultIcon;
+
 
     // A single, generic GetIcon method
-    public Sprite GetIcon(RevealableType type)
+    public Sprite GetIcon(EnemyType type)
     {
-        var mapping = revealableIcons.FirstOrDefault(m => m.type == type);
-        return mapping?.icon;
+        var mapping = enemyIcons.FirstOrDefault(m => m.type == type);
+        // If no specific enemy icon is found, return the default icon
+        return mapping?.icon ?? defaultIcon;
     }
 
-    // A single, generic GetColor method
+    public Sprite GetIcon(ObjectiveType type)
+    {
+        var mapping = objectiveIcons.FirstOrDefault(m => m.type == type);
+        return mapping?.icon ?? defaultIcon;
+    }
+
+    public Sprite GetIcon(RevealableType type)
+    {
+        var mapping = genericIcons.FirstOrDefault(m => m.type == type);
+        return mapping?.icon ?? defaultIcon;
+    }
+
+   
     public Color GetColor(RevealableType type)
     {
-        var mapping = revealableIcons.FirstOrDefault(m => m.type == type);
+        var mapping = genericIcons.FirstOrDefault(m => m.type == type);
         return mapping != null ? mapping.iconColor : Color.white;
     }
+    public Color GetColor(EnemyType type)
+    {
+        var mapping = enemyIcons.FirstOrDefault(m => m.type == type);
+       
+        return mapping != null ? mapping.iconColor : Color.white;
+    }
+
+    public Color GetColor(ObjectiveType type)
+    {
+        var mapping = objectiveIcons.FirstOrDefault(m => m.type == type);
+        return mapping != null ? mapping.iconColor : Color.white;
+    }
+
+  
 }

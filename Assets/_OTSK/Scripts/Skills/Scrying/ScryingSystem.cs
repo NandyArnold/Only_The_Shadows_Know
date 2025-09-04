@@ -16,8 +16,21 @@ public class ScryingSystem : MonoBehaviour
     [Header("Icon System Prefab")]
     [SerializeField] private GameObject scryingIconCanvasPrefab; // Assign your canvas prefab
     [SerializeField] private TacticalIconAtlasSO iconAtlas;
-    private Dictionary<Enemy, ScryingIcon> activeIcons = new Dictionary<Enemy, ScryingIcon>();
+ 
     private Camera scryingRenderCamera;
+
+    [Header("Icon System Settings")]
+    [Tooltip("A base size for the icons in world space.")]
+    [SerializeField] private float iconBaseSize = 1f;
+    [Tooltip("How much the icon size is multiplied by the camera's zoom level.")]
+    [SerializeField] private float iconSizeScalar = 0.1f;
+
+    [Header("Icon Decluttering")]
+    [SerializeField] private bool enableDecluttering = true;
+    [Tooltip("How many icon-widths apart should icons be? 1.5 means 1.5x the icon's current width.")]
+    [SerializeField] private float minIconDistance = 1.5f;
+    [SerializeField] private float repulsionStrength = 0.5f;
+
     private List<ScryingIconController> activeIconControllers = new List<ScryingIconController>();
 
     private Canvas scryingIconCanvasInstance;
@@ -66,12 +79,7 @@ public class ScryingSystem : MonoBehaviour
         {
             StartCoroutine(FindSceneComponentsRoutine());
         }
-        //else
-        //{
-        //    scryingCameraRigObject = null;
-        //    IsScryingDeployed = false;
-           
-        //}
+     
     }
 
     private IEnumerator FindSceneComponentsRoutine()
@@ -127,7 +135,8 @@ public class ScryingSystem : MonoBehaviour
 
         IsScryingDeployed = true;
         HUDManager.Instance.ShowMinimap(scryingRenderTexture);
-        foreach (var controller in activeIconControllers)
+        var controllers = FindObjectsByType<ScryingIconController>(FindObjectsSortMode.None);
+        foreach (var controller in controllers)
         {
             controller.ShowIcon();
         }
@@ -140,14 +149,14 @@ public class ScryingSystem : MonoBehaviour
        
 
         // The ONLY action needed: turn the rig off.
-        scryingCameraRigObject.SetActive(false);
-
-        IsScryingDeployed = false;
         HUDManager.Instance.HideMinimap();
         foreach (var controller in activeIconControllers)
         {
             if (controller != null) controller.HideIcon();
         }
+        scryingCameraRigObject.SetActive(false);
+
+        IsScryingDeployed = false;
         Debug.Log("Independent Scrying Camera Rig has been deactivated.");
     }
 
@@ -174,14 +183,71 @@ public class ScryingSystem : MonoBehaviour
 
     private void LateUpdate()
     {
-        // If scrying is active, tell all icons to face the camera (billboarding)
-        if (IsScryingDeployed && ScryingRenderCamera != null)
+        if (!IsScryingDeployed || ScryingRenderCamera == null) return;
+
+        var activeControllers = FindObjectsByType<ScryingIconController>(FindObjectsSortMode.None);
+        List<Transform> activeIconTransforms = new List<Transform>();
+        Transform cameraTransform = ScryingRenderCamera.transform;
+
+        float currentZoom = ScryingRenderCamera.orthographicSize;
+        float desiredImageScale = iconBaseSize * currentZoom * iconSizeScalar;
+        Vector3 scaleVector = Vector3.one * desiredImageScale;
+
+        // --- PASS 1: Position, Rotate, Scale, and build list ---
+        foreach (var controller in activeControllers)
         {
-            Quaternion cameraRotation = ScryingRenderCamera.transform.rotation;
-            foreach (var controller in activeIconControllers)
+            if (controller != null && controller.IconInstance != null && controller.IconInstance.activeSelf)
             {
-                if (controller != null) controller.UpdateRotation(cameraRotation);
+                Transform iconTransform = controller.IconInstance.transform;
+
+                // --- THE BILLBOARDING FIX ---
+                // Use the robust LookAt logic to correctly face the camera
+                iconTransform.LookAt(
+                    iconTransform.position + cameraTransform.rotation * Vector3.forward,
+                    cameraTransform.rotation * Vector3.up
+                );
+
+                // --- THE SCALING FIX ---
+                // Scale the child IMAGE, not the parent canvas
+                if (controller.IconImageRectTransform != null)
+                {
+                    controller.IconImageRectTransform.localScale = scaleVector;
+                }
+
+                activeIconTransforms.Add(iconTransform);
+            }
+        }
+
+        if (enableDecluttering)
+        {
+            HandleIconOverlapping(activeIconTransforms);
+        }
+    }
+
+
+    private void HandleIconOverlapping(List<Transform> iconTransforms)
+    {
+        for (int i = 0; i < iconTransforms.Count; i++)
+        {
+            for (int j = i + 1; j < iconTransforms.Count; j++)
+            {
+                Transform iconA = iconTransforms[i];
+                Transform iconB = iconTransforms[j];
+
+                float distance = Vector3.Distance(iconA.position, iconB.position);
+
+                // --- THE REPULSION FIX ---
+                // Use the fixed minIconDistance from the Inspector
+                if (distance < minIconDistance)
+                {
+                    Vector3 repulsionDir = (iconA.position - iconB.position).normalized;
+                    float pushAmount = (minIconDistance - distance) * repulsionStrength;
+
+                    iconA.position += repulsionDir * pushAmount;
+                    iconB.position -= repulsionDir * pushAmount;
+                }
             }
         }
     }
+
 }

@@ -15522,6 +15522,11 @@ MonoBehaviour:
   scryingRenderTexture: {fileID: 8400000, guid: 4cefe6bc9ea70f640bfc621a62ec7487, type: 2}
   scryingIconCanvasPrefab: {fileID: 2404248941178399045, guid: 39c799a6c3e68ad4fb3a01d831a2983a, type: 3}
   iconAtlas: {fileID: 11400000, guid: bc03274136108aa43ae3cfcf1e537b2a, type: 2}
+  iconBaseSize: 1
+  iconSizeScalar: 0.1
+  enableDecluttering: 1
+  minIconDistance: 1.5
+  repulsionStrength: 0.5
 --- !u!114 &1837955068
 MonoBehaviour:
   m_ObjectHideFlags: 0
