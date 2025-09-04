@@ -27,3 +27,6 @@ public class EnemyIconMapping : IconMapping<EnemyType> { }
 
 [Serializable]
 public class ObjectiveIconMapping : IconMapping<ObjectiveType> { }
+
+[Serializable]
+public class RevealableIconMapping : IconMapping<RevealableType> { }

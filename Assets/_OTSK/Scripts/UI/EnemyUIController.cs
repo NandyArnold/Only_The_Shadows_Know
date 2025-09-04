@@ -19,6 +19,7 @@ public class EnemyUIController : MonoBehaviour
     [Tooltip("Drag the child Alert_VFX GameObject here.")]
     [SerializeField] private GameObject alertVFXObject;
 
+
     private Enemy _enemy;
     private Transform _cameraToFace;
     private EnemyAIState _currentState;
@@ -166,6 +167,7 @@ public class EnemyUIController : MonoBehaviour
                 _revealIconInstance.SetActive(false);
             }
         }
+       
 
         // Set the initial state of all UI elements to hidden.
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
@@ -182,5 +184,6 @@ public class EnemyUIController : MonoBehaviour
         }
     }
 
+   
 
 }
