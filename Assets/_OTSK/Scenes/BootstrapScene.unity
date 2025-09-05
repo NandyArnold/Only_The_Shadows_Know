@@ -7943,9 +7943,9 @@ MonoBehaviour:
   panSpeed: 10
   zoomSpeed: 50
   minZoom: 5
-  maxZoom: 180
+  maxZoom: 100
   minimapDefaultZoom: 20
-  tacticalMapDefaultZoom: 50
+  tacticalMapDefaultZoom: 20
 --- !u!225 &1031156034
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -15526,6 +15526,7 @@ MonoBehaviour:
   iconSizeScalar: 0.1
   enableDecluttering: 1
   minIconDistance: 1.5
+  declutterZoomScalar: 0.1
   repulsionStrength: 0.5
 --- !u!114 &1837955068
 MonoBehaviour:

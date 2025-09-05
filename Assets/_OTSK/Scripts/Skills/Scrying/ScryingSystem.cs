@@ -29,6 +29,8 @@ public class ScryingSystem : MonoBehaviour
     [SerializeField] private bool enableDecluttering = true;
     [Tooltip("How many icon-widths apart should icons be? 1.5 means 1.5x the icon's current width.")]
     [SerializeField] private float minIconDistance = 1.5f;
+    [Tooltip("How much camera zoom affects the decluttering distance. Small values (e.g., 0.1) work best.")]
+    [SerializeField] private float declutterZoomScalar = 0.1f;
     [SerializeField] private float repulsionStrength = 0.5f;
 
     private List<ScryingIconController> activeIconControllers = new List<ScryingIconController>();
@@ -55,7 +57,7 @@ public class ScryingSystem : MonoBehaviour
         // Subscribe to the SceneLoader event to know when a new scene is ready.
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
+            SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoadCompleted;
         }
     }
 
@@ -64,22 +66,24 @@ public class ScryingSystem : MonoBehaviour
         // Always unsubscribe to prevent issues.
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
+            SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoadCompleted;
         }
     }
 
-    private void HandleSceneLoaded(SceneDataSO sceneData)
+    private void HandleSceneLoadCompleted(SceneDataSO sceneData)
     {
+        // 1. Perform all the necessary resets.
         activeIconControllers.Clear();
         scryingCameraRigObject = null;
         IsScryingDeployed = false;
-            ScryingVCam = null;
+        ScryingVCam = null;
 
+        // 2. Check the scene type, just like before.
         if (sceneData.sceneType == SceneType.Gameplay)
         {
+            // 3. Start the coroutine to find the camera rig and player.
             StartCoroutine(FindSceneComponentsRoutine());
         }
-     
     }
 
     private IEnumerator FindSceneComponentsRoutine()
@@ -114,10 +118,25 @@ public class ScryingSystem : MonoBehaviour
         {
             Debug.LogError("ScryingSystem could not find the ScryingCameraRig in the scene! Ensure the rig exists and has the ScryingCameraRig component.");
         }
+        RegisterAllIconsInScene();
         tacticalMapController = FindFirstObjectByType<TacticalMapController>(FindObjectsInactive.Include);
         //InitializeIconPool();
 
 
+    }
+
+    private void RegisterAllIconsInScene()
+    {
+        // The list is already cleared in HandleSceneLoadCompleted.
+        var allControllersInScene = FindObjectsByType<ScryingIconController>(FindObjectsSortMode.None);
+        foreach (var controller in allControllersInScene)
+        {
+            if (!activeIconControllers.Contains(controller))
+            {
+                activeIconControllers.Add(controller);
+            }
+        }
+        Debug.Log($"ScryingSystem: Registered {activeIconControllers.Count} icons.");
     }
 
     // This is called by ScryingEffectSO after the cast animation.
@@ -185,47 +204,81 @@ public class ScryingSystem : MonoBehaviour
     {
         if (!IsScryingDeployed || ScryingRenderCamera == null) return;
 
-        var activeControllers = FindObjectsByType<ScryingIconController>(FindObjectsSortMode.None);
-        List<Transform> activeIconTransforms = new List<Transform>();
+        var activeControllers = activeIconControllers;
         Transform cameraTransform = ScryingRenderCamera.transform;
 
         float currentZoom = ScryingRenderCamera.orthographicSize;
         float desiredImageScale = iconBaseSize * currentZoom * iconSizeScalar;
         Vector3 scaleVector = Vector3.one * desiredImageScale;
 
-        // --- PASS 1: Position, Rotate, Scale, and build list ---
+        List<Transform> activeIconTransforms = new List<Transform>();
+
         foreach (var controller in activeControllers)
         {
-            if (controller != null && controller.IconInstance != null && controller.IconInstance.activeSelf)
+            if (controller == null || controller.IconInstance == null) continue;
+
+            // --- REVISED VISIBILITY LOGIC ---
+            bool shouldBeVisible;
+
+            // An icon should be visible if it IS an objective...
+            if (controller.IsObjective)
             {
-                Transform iconTransform = controller.IconInstance.transform;
-
-                // --- THE BILLBOARDING FIX ---
-                // Use the robust LookAt logic to correctly face the camera
-                iconTransform.LookAt(
-                    iconTransform.position + cameraTransform.rotation * Vector3.forward,
-                    cameraTransform.rotation * Vector3.up
-                );
-
-                // --- THE SCALING FIX ---
-                // Scale the child IMAGE, not the parent canvas
-                if (controller.IconImageRectTransform != null)
-                {
-                    controller.IconImageRectTransform.localScale = scaleVector;
-                }
-
-                activeIconTransforms.Add(iconTransform);
+                shouldBeVisible = true;
             }
+            else // ...OR if it is currently in the camera's view.
+            {
+                Vector3 viewportPoint = ScryingRenderCamera.WorldToViewportPoint(controller.TargetTransform.position);
+                shouldBeVisible = viewportPoint.z > 0 && viewportPoint.x >= 0 && viewportPoint.x <= 1 && viewportPoint.y >= 0 && viewportPoint.y <= 1;
+            }
+
+            // Apply the visibility state.
+            controller.IconInstance.SetActive(shouldBeVisible);
+
+            // If the icon is not visible, skip all further processing for it.
+            if (!shouldBeVisible)
+            {
+                continue;
+            }
+
+            // --- ALL VISIBLE ICONS (OBJECTIVES & IN-VIEW) ARE PROCESSED BELOW THIS LINE ---
+            Transform iconTransform = controller.IconInstance.transform;
+            Transform ownerTransform = controller.TargetTransform;
+
+            // 1. Update Position
+            iconTransform.position = new Vector3(ownerTransform.position.x, iconTransform.position.y, ownerTransform.position.z);
+
+         
+            iconTransform.rotation = cameraTransform.rotation;
+            // 2. Set Sort Order
+            if (controller.IsObjective)
+            {
+                controller.SetSortOrder(1); // Objectives on top
+            }
+            else
+            {
+                controller.SetSortOrder(0); // Everything else below
+            }
+
+
+            // 3. Update Scale
+            if (controller.IconImageRectTransform != null)
+            {
+                controller.IconImageRectTransform.localScale = scaleVector;
+            }
+
+            // 4. Add to list for decluttering
+            activeIconTransforms.Add(iconTransform);
         }
 
         if (enableDecluttering)
         {
-            HandleIconOverlapping(activeIconTransforms);
+            float effectiveDeclutterDistance = minIconDistance + (currentZoom * declutterZoomScalar);
+            HandleIconOverlapping(activeIconTransforms, effectiveDeclutterDistance);
         }
     }
 
 
-    private void HandleIconOverlapping(List<Transform> iconTransforms)
+    private void HandleIconOverlapping(List<Transform> iconTransforms, float effectiveMinDistance)
     {
         for (int i = 0; i < iconTransforms.Count; i++)
         {
@@ -236,12 +289,12 @@ public class ScryingSystem : MonoBehaviour
 
                 float distance = Vector3.Distance(iconA.position, iconB.position);
 
-                // --- THE REPULSION FIX ---
-                // Use the fixed minIconDistance from the Inspector
-                if (distance < minIconDistance)
+                // 3. Use the new effectiveMinDistance instead of the fixed variable.
+                if (distance < effectiveMinDistance)
                 {
                     Vector3 repulsionDir = (iconA.position - iconB.position).normalized;
-                    float pushAmount = (minIconDistance - distance) * repulsionStrength;
+                    // Use the effective distance in the push calculation as well.
+                    float pushAmount = (effectiveMinDistance - distance) * repulsionStrength;
 
                     iconA.position += repulsionDir * pushAmount;
                     iconB.position -= repulsionDir * pushAmount;

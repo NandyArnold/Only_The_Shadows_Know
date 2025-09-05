@@ -43798,6 +43798,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surfaceType: 1
+--- !u!1 &1371603459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1371603460}
+  m_Layer: 13
+  m_Name: RevealIconAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1371603460
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1371603459}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8249326221644155593}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1374101043
 GameObject:
   m_ObjectHideFlags: 0
@@ -76904,6 +76935,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1629873926}
+  - {fileID: 1371603460}
   m_Father: {fileID: 1598663267}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8249326221644388073
@@ -76921,6 +76953,7 @@ GameObject:
   - component: {fileID: 8679880006885714812}
   - component: {fileID: 8679880006885714811}
   - component: {fileID: 8679880006885714813}
+  - component: {fileID: 8679880006885714814}
   m_Layer: 13
   m_Name: ChestToDestroy
   m_TagString: Untagged
@@ -77076,7 +77109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 573999e140df096418d268faf2c1834e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 13
+  type: 2
 --- !u!114 &8679880006885714813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77091,6 +77124,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scryingIconPrefab: {fileID: 2404248941178399045, guid: 39c799a6c3e68ad4fb3a01d831a2983a, type: 3}
   iconAtlas: {fileID: 11400000, guid: bc03274136108aa43ae3cfcf1e537b2a, type: 2}
+  iconWorldHeight: 120
+--- !u!114 &8679880006885714814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8249326221644388073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebb9d6d3c21ee734c934eb3cf326f650, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

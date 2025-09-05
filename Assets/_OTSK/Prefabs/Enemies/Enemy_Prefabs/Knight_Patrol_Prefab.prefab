@@ -268,6 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scryingIconPrefab: {fileID: 2404248941178399045, guid: 39c799a6c3e68ad4fb3a01d831a2983a, type: 3}
   iconAtlas: {fileID: 11400000, guid: bc03274136108aa43ae3cfcf1e537b2a, type: 2}
+  iconWorldHeight: 120
 --- !u!1 &2080416359781553335
 GameObject:
   m_ObjectHideFlags: 0
