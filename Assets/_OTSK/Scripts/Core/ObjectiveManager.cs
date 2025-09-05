@@ -1,24 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+// --- NEW SAVE DATA STRUCTURES ---
+[Serializable]
+public class ObjectiveInstanceSaveData
+{
+    public string objectiveID;
+    public ObjectiveState state;
+    public int goalCurrentAmount;
+}
+
+[Serializable]
+public class ObjectiveStateData
+{
+    public string levelChainID;
+    public List<ObjectiveInstanceSaveData> objectiveStates;
+}
+// ------------------------------------
+
+
 
 public class ObjectiveManager : MonoBehaviour, IResettable
 {
     public static ObjectiveManager Instance { get; private set; }
 
-    [Header("Objective Data")]
-    [SerializeField] private LevelObjectiveChainSO _currentLevelObjectiveChain;
-
     [Header("Debug Settings")]
     [SerializeField] private bool objectivesEnabled = true;
 
-    private int _currentObjectiveIndex = 0;
-    private readonly Dictionary<string, IObjectiveTrigger> _activeTriggers = new Dictionary<string, IObjectiveTrigger>();
+    // The live, runtime instances of our objectives for the current level
+    private readonly List<ObjectiveInstance> _activeObjectives = new List<ObjectiveInstance>();
+    private LevelObjectiveChainSO _currentLevelObjectiveChain;
 
-    // Events for the UI to listen to
-    public event Action<ObjectiveSO> OnCurrentObjectiveChanged;
-    public event Action<ObjectiveSO> OnObjectiveCompleted;
-    public event Action OnLevelCompleted;
+    // Events for the UI and other systems to listen to
+    public event Action<ObjectiveSO> OnCurrentObjectiveChanged; // Fired when a new objective becomes the primary one
+    public event Action<ObjectiveSO> OnObjectiveCompleted;     // Fired when any objective is completed
+    public event Action OnLevelCompleted;                       // Fired when all objectives in the chain are done
+
 
     private void Awake()
     {
@@ -28,10 +47,13 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 
     private void OnEnable()
     {
-        // Subscribe to the SceneLoader to know when a new scene is ready.
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoadCompleted += HandleSceneLoaded;
+            // STAGE 1: Subscribe to this event for DISCOVERY
+            SceneLoader.Instance.OnSceneLoadCompleted += PrepareObjectives;
+
+            // STAGE 2: Subscribe to this event for ACTIVATION
+            SceneLoader.Instance.OnNewSceneReady += StartObjectiveChain;
         }
     }
 
@@ -39,134 +61,164 @@ public class ObjectiveManager : MonoBehaviour, IResettable
     {
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnSceneLoadCompleted -= HandleSceneLoaded;
+            SceneLoader.Instance.OnSceneLoadCompleted -= PrepareObjectives;
+            SceneLoader.Instance.OnNewSceneReady -= StartObjectiveChain;
+        }
+        ResetState();
+    }
+
+    /// <summary>
+    /// This is now the DISCOVERY method. It finds and creates objectives but doesn't start them.
+    /// </summary>
+    private void PrepareObjectives(SceneDataSO sceneData)
+    {
+        ResetState();
+
+        if (!objectivesEnabled || sceneData.objectiveChain == null)
+        {
+            OnCurrentObjectiveChanged?.Invoke(null);
+            return;
+        }
+
+        _currentLevelObjectiveChain = sceneData.objectiveChain;
+
+        foreach (var objectiveSO in _currentLevelObjectiveChain.objectives)
+        {
+            _activeObjectives.Add(new ObjectiveInstance(objectiveSO));
+        }
+
+        Debug.Log($"[ObjectiveManager] Prepared {_activeObjectives.Count} objectives for level '{_currentLevelObjectiveChain.levelID}'. Waiting for scene to be ready.");
+    }
+
+    /// <summary>
+    /// This is the new ACTIVATION method. It's called later, when the scene is fully ready.
+    /// </summary>
+    private void StartObjectiveChain()
+    {
+        if (_activeObjectives.Count > 0)
+        {
+            Debug.Log("[ObjectiveManager] Scene is ready. Starting the first objective.");
+            ActivateNextObjective();
         }
     }
-    public void RegisterTrigger(IObjectiveTrigger trigger)
+
+
+
+    /// <summary>
+    /// Called by an ObjectiveInstance when its goal has been met.
+    /// </summary>
+    public void CompleteObjective(ObjectiveInstance completedInstance)
     {
-        if (!objectivesEnabled) return;
-        if (!_activeTriggers.ContainsKey(trigger.TriggerID))
+        if (!objectivesEnabled || completedInstance == null) return;
+
+        Debug.Log($"<color=green>Objective Completed:</color> {completedInstance.SourceSO.objectiveDescription}");
+        OnObjectiveCompleted?.Invoke(completedInstance.SourceSO);
+
+        ActivateNextObjective();
+    }
+
+    private void ActivateNextObjective()
+    {
+        var nextObjective = _activeObjectives.FirstOrDefault(obj => obj.State == ObjectiveState.Inactive);
+
+        if (nextObjective != null)
         {
-            _activeTriggers.Add(trigger.TriggerID, trigger);
-            trigger.OnTriggerActivated += HandleTriggerActivated;
-        }
-    }
-
-    public void UnregisterTrigger(IObjectiveTrigger trigger)
-    {
-        if (!objectivesEnabled) return;
-        if (_activeTriggers.ContainsKey(trigger.TriggerID))
-        {
-            trigger.OnTriggerActivated -= HandleTriggerActivated;
-            _activeTriggers.Remove(trigger.TriggerID);
-        }
-    }
-
-    private void HandleTriggerActivated(string triggerID)
-    {
-        if (!objectivesEnabled) return;
-
-        ObjectiveSO currentObjective = GetCurrentObjective();
-        if (currentObjective != null && currentObjective.completionTriggerID == triggerID)
-        {
-            CompleteCurrentObjective();
-        }
-    }
-
-    public void InitializeObjective(LevelObjectiveChainSO levelObjectives)
-    {
-        if (!objectivesEnabled) return;
-
-        _currentLevelObjectiveChain = levelObjectives;
-        _currentObjectiveIndex = 0;
-
-        OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
-        Debug.Log($"Objective System Initialized for Level: {_currentLevelObjectiveChain.levelID}");
-    }
-
-    public ObjectiveSO GetCurrentObjective()
-    {
-        if (_currentLevelObjectiveChain != null && _currentObjectiveIndex < _currentLevelObjectiveChain.objectives.Count)
-        {
-            return _currentLevelObjectiveChain.objectives[_currentObjectiveIndex];
-        }
-        return null;
-    }
-
-    public void CompleteCurrentObjective()
-    {
-        if (!objectivesEnabled || GetCurrentObjective() == null) return;
-
-        Debug.Log($"Objective Completed: {GetCurrentObjective().objectiveDescription}");
-        AdvanceToNextObjective();
-    }
-
-    // This is now the single method for advancing the objective.
-    private void AdvanceToNextObjective()
-    {
-        _currentObjectiveIndex++;
-        if (_currentLevelObjectiveChain != null && _currentObjectiveIndex < _currentLevelObjectiveChain.objectives.Count)
-        {
-            OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
+            Debug.Log($"<color=cyan>[ObjectiveManager]</color> Activating objective: '{nextObjective.SourceSO.objectiveDescription}'");
+            nextObjective.Start();
+            OnCurrentObjectiveChanged?.Invoke(nextObjective.SourceSO);
         }
         else
         {
-            Debug.Log($"All objectives for level {_currentLevelObjectiveChain.levelID} completed!");
+            Debug.Log($"<color=yellow>All objectives for level {_currentLevelObjectiveChain.levelID} completed!</color>");
             OnLevelCompleted?.Invoke();
             OnCurrentObjectiveChanged?.Invoke(null);
         }
     }
 
-    public ObjectiveStateData CaptureState()
+
+
+    public void ResetState()
     {
-        return new ObjectiveStateData
+        // Tell each active objective to clean itself up (unsubscribe from events)
+        foreach (var objective in _activeObjectives)
         {
-            levelID = _currentLevelObjectiveChain.levelID,
-            currentObjectiveIndex = _currentObjectiveIndex
+            objective.CleanUp();
+        }
+        _activeObjectives.Clear();
+        _currentLevelObjectiveChain = null;
+    }
+
+    #region Save/Load Logic
+    public object CaptureState()
+    {
+        if (_currentLevelObjectiveChain == null) return null;
+
+        var state = new ObjectiveStateData
+        {
+            levelChainID = _currentLevelObjectiveChain.levelID,
+            objectiveStates = new List<ObjectiveInstanceSaveData>()
         };
-    }
 
-    public void RestoreState(ObjectiveStateData state)
-    {
-        _currentObjectiveIndex = state.currentObjectiveIndex;
-        OnCurrentObjectiveChanged?.Invoke(GetCurrentObjective());
-    }
-
-    private void HandleSceneLoaded(SceneDataSO sceneData)
-    {
-        if (sceneData.objectiveChain != null)
+        foreach (var instance in _activeObjectives)
         {
-            _currentLevelObjectiveChain = sceneData.objectiveChain;
-            _currentObjectiveIndex = -1; // Reset for the new chain
-            AdvanceToNextObjective(); // Start the first objective
+            state.objectiveStates.Add(new ObjectiveInstanceSaveData
+            {
+                objectiveID = instance.SourceSO.objectiveID,
+                state = instance.State,
+                goalCurrentAmount = instance.Goal.currentAmount
+            });
+        }
+        return state;
+    }
+
+    public void RestoreState(object state)
+    {
+        var saveData = state as ObjectiveStateData;
+        if (saveData == null) return;
+
+        // We assume the correct scene (and thus correct _currentLevelObjectiveChain) has already been loaded
+        if (_currentLevelObjectiveChain == null || _currentLevelObjectiveChain.levelID != saveData.levelChainID)
+        {
+            Debug.LogError("ObjectiveManager RestoreState failed: Mismatched level chain ID.");
+            return;
+        }
+
+        // Apply the saved state to our newly created instances
+        foreach (var savedInstance in saveData.objectiveStates)
+        {
+            var liveInstance = _activeObjectives.FirstOrDefault(o => o.SourceSO.objectiveID == savedInstance.objectiveID);
+            if (liveInstance != null)
+            {
+                // We don't directly set the state, we reactivate if it was active
+                if (savedInstance.state == ObjectiveState.Active)
+                {
+                    liveInstance.Goal.currentAmount = savedInstance.goalCurrentAmount;
+                    liveInstance.Start(); // This re-subscribes to events and sets the state to Active
+                    OnCurrentObjectiveChanged?.Invoke(liveInstance.SourceSO);
+                }
+                else if (savedInstance.state == ObjectiveState.Completed)
+                {
+                    // Manually set completed objectives
+                    liveInstance.Goal.currentAmount = liveInstance.Goal.requiredAmount;
+                }
+            }
+        }
+    }
+    #endregion
+
+    public void DEBUG_CompleteCurrentObjective()
+    {
+        var activeObjective = _activeObjectives.FirstOrDefault(obj => obj.State == ObjectiveState.Active);
+        if (activeObjective != null)
+        {
+            // Manually force the goal to be complete
+            activeObjective.Goal.currentAmount = activeObjective.Goal.requiredAmount;
+            // Now call the same completion logic as the real system
+            CompleteObjective(activeObjective);
         }
         else
         {
-            // If the scene has no objectives (like the Main Menu), clear the state.
-            _currentLevelObjectiveChain = null;
-            _currentObjectiveIndex = -1;
-            OnCurrentObjectiveChanged?.Invoke(null);
+            Debug.LogWarning("DEBUG: No active objective to complete.");
         }
     }
-    public void ResetState()
-    {
-        // 1. Unsubscribe from any triggers left over from the last scene
-        //    to prevent memory leaks.
-        foreach (var trigger in _activeTriggers.Values)
-        {
-            trigger.OnTriggerActivated -= HandleTriggerActivated;
-        }
-        _activeTriggers.Clear(); // 2. Clear the trigger dictionary
-
-        // 3. Reset the objective progress
-        _currentLevelObjectiveChain = null;
-        _currentObjectiveIndex = 0;
-
-        // 4. Notify the UI that there is no active objective
-        OnCurrentObjectiveChanged?.Invoke(null);
-        OnLevelCompleted?.Invoke(); // You might want to call this to reset any "Level Complete" UI too
-
-        //Debug.Log("<color=red>ObjectiveManager state has been reset.</color>");
-    }
-
 }

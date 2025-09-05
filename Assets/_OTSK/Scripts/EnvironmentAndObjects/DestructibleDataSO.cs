@@ -9,9 +9,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DestructibleData_", menuName = "Only The Shadows Know/Destructible Data")]
 public class DestructibleDataSO : ScriptableObject
 {
+    [Header("Identification")]
+    [Tooltip("A unique ID for this type of destructible object, used by systems like objectives.")]
+    public string destructibleID;
+
+    [Header("Stats")]
     public float maxHealth = 50f;
     public List<ResistanceEntry> resistances;
 
+    [Header("Events")]
+    [Tooltip("The event channel to raise when this object is destroyed. Used for objectives.")]
+    public StringGameEvent onDestroyedEvent;
     // A helper method to get the multiplier for a specific damage type
     public float GetMultiplier(DamageTypeSO type)
     {

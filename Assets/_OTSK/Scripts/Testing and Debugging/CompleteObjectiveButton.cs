@@ -15,6 +15,6 @@ public class CompleteObjectiveButton : MonoBehaviour
 
     private void OnButtonClick()
     {
-        ObjectiveManager.Instance?.CompleteCurrentObjective();
+        ObjectiveManager.Instance?.DEBUG_CompleteCurrentObjective();
     }
 }

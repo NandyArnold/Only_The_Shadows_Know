@@ -38,6 +38,7 @@ public class EnemyHealth : MonoBehaviour
     }
     public void Initialize(EnemyConfigSO config)
     {
+        _config = config;
         _maxHealth = config.maxHealth;
         _currentHealth = _maxHealth;
     }
@@ -74,9 +75,6 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
-        
-       
-
         Debug.Log($"<color=cyan>[EnemyHealth]</color> Die() called. isSilentKill is: {_isSilentKill}");
 
         if (!_isSilentKill && NoiseManager.Instance != null)
@@ -84,9 +82,16 @@ public class EnemyHealth : MonoBehaviour
             NoiseManager.Instance.GenerateNoise(transform.position, _config.deathSoundIntensity, gameObject);
         }
 
+        if (_config.onDeathEvent != null && !string.IsNullOrEmpty(_config.enemyID))
+        {
+            _config.onDeathEvent.Raise(_config.enemyID);
+        }
         Debug.Log($"{gameObject.name} has been defeated.");
         OnDied?.Invoke(_isSilentKill);
     }
+        
+       
+
 
     public void SetHealth(float healthValue)
     {

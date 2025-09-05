@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Solo_AlarmNone
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
+  enemyID: FirstKillTutorial
   enemyType: 1
   revealableType: 1
+  surfaceType: 5
   revealIconPrefab: {fileID: 0}
   displayName: SoloKnight
   maxHealth: 100
@@ -23,6 +25,7 @@ MonoBehaviour:
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
   resistances: []
+  isResistantToScrying: 0
   patrolSpeed: 1
   alertSpeed: 3.5
   walkCombatSpeed: 2.5
@@ -32,11 +35,17 @@ MonoBehaviour:
   alertInvestigateTime: 5
   lookAroundAnimationDuration: 4
   alarmType: 0
-  soundsAlarmOnAllyDeath: 0
-  alarmEventToRaise: {fileID: 0}
   useTimeOutAlarm: 0
   timeInCombatAlarmThreshold: 20
+  soundsAlarmOnAllyDeath: 0
+  summonGameEvent: {fileID: 0}
   maxSummonCount: 1
+  instakillGameEvent: {fileID: 0}
+  limitInstakillAlarm: 0
+  maxInstakillAlarms: 1
+  alarmPanelSearchRadius: 30
+  limitPanelAlarms: 0
+  maxPanelAlarms: 1
   detectionConeAngle: 90
   hearingRange: 10
   hearingThreshold: 50
@@ -46,3 +55,4 @@ MonoBehaviour:
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
   callForHelpRadius: 15
+  onDeathEvent: {fileID: 11400000, guid: cbce0ae4de21d764db2b00ea626d01f5, type: 2}

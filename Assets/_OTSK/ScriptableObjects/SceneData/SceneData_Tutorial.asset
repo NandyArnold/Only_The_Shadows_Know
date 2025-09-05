@@ -18,7 +18,7 @@ MonoBehaviour:
   sceneType: 0
   displayName: TutorialScene
   description: The scene where the player learns to use its abilities
-  objectiveChain: {fileID: 11400000, guid: c9c9e3cbc38ccb3499cbda9924dabe80, type: 2}
+  objectiveChain: {fileID: 11400000, guid: 607f6bfde9f58834ab4ff580265138e7, type: 2}
   defaultSpawnPointTag: InitialSpawn
   enemyInitialSpawns:
   - groupName: Start_Solo

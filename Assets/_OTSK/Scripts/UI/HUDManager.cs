@@ -55,7 +55,9 @@ public class HUDManager : MonoBehaviour
     private ChargeManager _chargeManager;
     private PlayerController _playerController;
 
-    
+    private ObjectiveSO _currentObjectiveSO;
+
+
 
     private void Awake()
     {
@@ -223,6 +225,9 @@ public class HUDManager : MonoBehaviour
     {
         if (objectiveText == null) return;
 
+        _currentObjectiveSO = newObjective;
+
+
         if (newObjective != null)
         {
             // A valid objective is active, so we store its location for the arrow.
@@ -302,13 +307,13 @@ public class HUDManager : MonoBehaviour
     private void HandleShowObjective()
     {
         // Get the current objective from the manager
-        ObjectiveSO currentObjective = ObjectiveManager.Instance.GetCurrentObjective();
-        if (currentObjective != null)
+     
+        if (_currentObjectiveSO != null)
         {
             UISoundPlayer.Instance.PlayToggleSound();
             // Re-run the same fade coroutine we already have
             if (_objectiveCoroutine != null) StopCoroutine(_objectiveCoroutine);
-            _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(currentObjective.objectiveDescription));
+            _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(_currentObjectiveSO.objectiveDescription));
         }
     }
     public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }

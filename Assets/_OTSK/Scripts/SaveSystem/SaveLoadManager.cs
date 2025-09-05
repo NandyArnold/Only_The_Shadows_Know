@@ -224,7 +224,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (ObjectiveManager.Instance != null)
         {
-            gameState.objectiveData = ObjectiveManager.Instance.CaptureState();
+            gameState.objectiveData = (ObjectiveStateData)ObjectiveManager.Instance.CaptureState();
         }
         else
         {

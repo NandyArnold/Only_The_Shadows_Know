@@ -65,6 +65,11 @@ public class Destructible : MonoBehaviour
 
         if (_currentHealth <= 0)
         {
+            if (data.onDestroyedEvent != null && !string.IsNullOrEmpty(data.destructibleID))
+            {
+                data.onDestroyedEvent.Raise(data.destructibleID);
+            }
+
             OnDied?.Invoke();
             gameObject.SetActive(false);
         }

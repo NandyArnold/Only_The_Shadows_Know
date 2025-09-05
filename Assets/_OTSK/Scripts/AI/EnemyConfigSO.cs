@@ -11,6 +11,8 @@ public class EnemyConfigSO : ScriptableObject
     public GameObject enemyPrefab;
 
     [Header("Enemy Info")]
+    [Tooltip("A unique ID for this enemy type, used by systems like objectives.")]
+    public string enemyID;
     public EnemyType enemyType;
     public RevealableType revealableType;
     public SurfaceType surfaceType = SurfaceType.Flesh;
@@ -94,6 +96,10 @@ public class EnemyConfigSO : ScriptableObject
     public float walkCombatRange = 7f;
     [Tooltip("The distance from which the enemy will drag other enemies in combat.")]
     public float callForHelpRadius = 15f;
+
+    [Header("Events")]
+    [Tooltip("The event channel to raise when this enemy dies. Used for objectives.")]
+    public StringGameEvent onDeathEvent;
 
 
 }
