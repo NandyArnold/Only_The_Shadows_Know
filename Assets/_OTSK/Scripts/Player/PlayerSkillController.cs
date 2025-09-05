@@ -103,6 +103,14 @@ public class PlayerSkillController : MonoBehaviour
             return; // Block the skill activation.
         }
 
+        if (!AbilityUnlockManager.Instance.IsAbilityAvailable(skill))
+        {
+            Debug.Log($"{skill.skillName} is locked.");
+            // Optionally play a "locked" sound effect here
+            return;
+        }
+
+
         if (skill.skillID == SkillIdentifier.Scrying && ScryingSystem.Instance != null && ScryingSystem.Instance.IsScryingDeployed)
         {
             SkillExecutor.Instance.ExecuteSkill(skill, this.gameObject);

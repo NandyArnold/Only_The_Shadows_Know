@@ -21,7 +21,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
+    [Header("Ability Definitions")]
+    [SerializeField] private UnlockableAbilitySO jumpAbility;
+    [SerializeField] private UnlockableAbilitySO dodgeAbility;
+    [SerializeField] private UnlockableAbilitySO runAbility;
+    [SerializeField] private UnlockableAbilitySO crouchAbility;
 
     [Header("References")]
     [SerializeField] private CharacterController characterController;
@@ -220,6 +224,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump()
     {
+        if (!AbilityUnlockManager.Instance.IsAbilityAvailable(jumpAbility)) return;
         // All of your original guard clauses are here, making it safe.
         if (_isJumping || _isFocused || _isDodgeRolling || !_isGrounded) return;
         OnJump?.Invoke();
@@ -253,9 +258,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void PerformDodgeRoll()
     {
-    
 
-      
+        if (!AbilityUnlockManager.Instance.IsAbilityAvailable(dodgeAbility)) return;
+
         if (_isDodgeRolling || _isJumping || _isFocused || !_isGrounded) return;
 
         OnDodge?.Invoke();  
@@ -282,12 +287,24 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetRunningState(bool isRunning)
     {
+        if (isRunning && !AbilityUnlockManager.Instance.IsAbilityAvailable(runAbility))
+        {
+            _isRunning = false;
+            UpdateCurrentSpeed();
+            return;
+        }
         _isRunning = isRunning;
         UpdateCurrentSpeed();
     }
 
     public void Crouch(bool isCrouching)
     {
+        if (isCrouching && !AbilityUnlockManager.Instance.IsAbilityAvailable(crouchAbility))
+        {
+            _isCrouching = false;
+            // ... update character controller and speed if necessary
+            return;
+        }
         _isCrouching = isCrouching;
         characterController.height = _isCrouching ? crouchHeight : normalHeight;
         characterController.center = _isCrouching ? new Vector3(0, crouchCenterY, 0) : new Vector3(0, normalCenterY, 0);
