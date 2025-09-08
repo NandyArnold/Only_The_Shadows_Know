@@ -16,7 +16,8 @@ public class TacticalIconAtlasSO : ScriptableObject
     public Sprite distortedIcon;
     [Tooltip("The icon used if no other specific or generic mapping is found.")]
     public Sprite defaultIcon;
-
+    [Tooltip("The icon used to represent a corpse.")]
+    public Sprite corpseIcon;
 
     // A single, generic GetIcon method
     public Sprite GetIcon(EnemyType type)

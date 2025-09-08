@@ -153,6 +153,10 @@ public class ScryingSystem : MonoBehaviour
             {
                 activeIconControllers.Add(controller);
             }
+            if (controller.IsOwnerDead)
+            {
+                ReportDeath(controller);
+            }
         }
         Debug.Log($"ScryingSystem: Registered {activeIconControllers.Count} icons.");
     }
@@ -319,6 +323,22 @@ public class ScryingSystem : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ReportDeath(ScryingIconController deceasedController)
+    {
+        if (deceasedController == null || deceasedController.IconInstance == null || iconAtlas.corpseIcon == null) return;
+
+        Image iconImage = deceasedController.IconInstance.GetComponentInChildren<Image>();
+        if (iconImage != null)
+        {
+            // Use this system's atlas to change the sprite
+            iconImage.sprite = iconAtlas.corpseIcon;
+            //iconImage.color = new Color(0.5f, 0.5f, 0.5f, 0.8f); // A faded gray
+        }
+
+        // Set the sort order to appear underneath living icons
+        deceasedController.SetSortOrder(-1);
     }
 
     public void ResetStateForLoad()

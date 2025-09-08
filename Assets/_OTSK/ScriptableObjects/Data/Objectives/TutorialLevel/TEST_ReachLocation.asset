@@ -20,6 +20,7 @@ MonoBehaviour:
   - rid: 4037877476079173742
   - rid: 4037877476079173743
   - rid: 4037877476079173744
+  - rid: 4037877476079173747
   killGoal:
     currentAmount: 0
     requiredAmount: 1
@@ -57,3 +58,7 @@ MonoBehaviour:
       type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
       data:
         abilityToGrant: {fileID: 11400000, guid: 53ceee81ccffe164b9861679f9fbade5, type: 2}
+    - rid: 4037877476079173747
+      type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
+      data:
+        abilityToGrant: {fileID: 11400000, guid: c29a5d09d9e28664f9509c9af3b61e60, type: 2}

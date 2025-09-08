@@ -8,6 +8,7 @@ public class WorldStateData
     public Dictionary<string, Enemy.EnemySaveData> enemySaveData = new Dictionary<string, Enemy.EnemySaveData>();
     public Dictionary<string, ChargeManager.ChargeSaveData> chargeManagerSaveData = new Dictionary<string, ChargeManager.ChargeSaveData>();
     public Dictionary<string, Checkpoint.CheckpointSaveData> checkpointSaveData = new Dictionary<string, Checkpoint.CheckpointSaveData>();
-
+    public Dictionary<string, Destructible.DestructibleSaveData> destructibleSaveData = new Dictionary<string, Destructible.DestructibleSaveData>();
+    public Dictionary<string, ObjectiveTriggerVolume.TriggerVolumeSaveData> triggerVolumeSaveData = new Dictionary<string, ObjectiveTriggerVolume.TriggerVolumeSaveData>();
 
 }

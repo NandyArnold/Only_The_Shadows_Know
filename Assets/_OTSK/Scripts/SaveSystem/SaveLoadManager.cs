@@ -348,6 +348,14 @@ public class SaveLoadManager : MonoBehaviour
             {
                 gameState.worldData.enemySaveData[enemy.UniqueID] = (Enemy.EnemySaveData)enemy.CaptureState();
             }
+            else if (entity is Destructible destructible)
+            {
+                gameState.worldData.destructibleSaveData[destructible.UniqueID] = (Destructible.DestructibleSaveData)destructible.CaptureState();
+            }
+            else if (entity is ObjectiveTriggerVolume trigger)
+            {
+                gameState.worldData.triggerVolumeSaveData[trigger.UniqueID] = (ObjectiveTriggerVolume.TriggerVolumeSaveData)trigger.CaptureState();
+            }
             else if (entity is ChargeManager chargeManager)
             {
                 gameState.worldData.chargeManagerSaveData[chargeManager.UniqueID] = (ChargeManager.ChargeSaveData)chargeManager.CaptureState();
@@ -403,8 +411,14 @@ public class SaveLoadManager : MonoBehaviour
             // 5. Restore the variable state (health, etc.).
             enemyScript.RestoreState(enemyData);
 
-            // 6. Register with the save system *after* its ID and state have been set.
-            //SaveableEntityRegistry.Instance.Register(enemyScript);
+            // 6. We now check if the enemy was dead in the save file.
+            if (enemyData.isDead)
+            {
+                // If it was dead, we just activate the GameObject to show the corpse
+                // and then skip to the next enemy in the loop, without starting its AI.
+                enemyInstance.SetActive(true);
+                continue;
+            }
 
             // 7. NOW, activate the GameObject. This will safely trigger OnEnable.
             enemyInstance.SetActive(true);
@@ -415,16 +429,21 @@ public class SaveLoadManager : MonoBehaviour
             //Debug.Log($"<color=lime>Restored spawned enemy:</color> {config.displayName} with saved ID: {uniqueId}");
         }
 
-        //foreach (var chargeData in gameState.worldData.chargeManagerSaveData)
-        //{
-        //    // Find the ChargeManager in the registry by its UniqueID
-        //    if (SaveableEntityRegistry.Instance.GetEntity(chargeData.Key) is ChargeManager chargeManager)
-        //    {
-        //        // Call its RestoreState method
-        //        chargeManager.RestoreState(chargeData.Value);
-        //        Debug.Log($"<color=lime>Restored charges for:</color> {chargeManager.name}");
-        //    }
-        //}
+        foreach (var destructibleData in gameState.worldData.destructibleSaveData)
+        {
+            if (SaveableEntityRegistry.Instance.GetEntity(destructibleData.Key) is Destructible destructible)
+            {
+                destructible.RestoreState(destructibleData.Value);
+            }
+        }
+
+        foreach (var triggerData in gameState.worldData.triggerVolumeSaveData)
+        {
+            if (SaveableEntityRegistry.Instance.GetEntity(triggerData.Key) is ObjectiveTriggerVolume trigger)
+            {
+                trigger.RestoreState(triggerData.Value);
+            }
+        }
 
         foreach (var checkpointData in gameState.worldData.checkpointSaveData)
         {

@@ -7944,8 +7944,8 @@ MonoBehaviour:
   zoomSpeed: 50
   minZoom: 5
   maxZoom: 100
-  minimapDefaultZoom: 20
-  tacticalMapDefaultZoom: 20
+  minimapDefaultZoom: 30
+  tacticalMapDefaultZoom: 50
 --- !u!225 &1031156034
 CanvasGroup:
   m_ObjectHideFlags: 0

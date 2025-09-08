@@ -121,6 +121,7 @@ public class Enemy : MonoBehaviour, ISaveable
         if (saveData.isDead)
         {
             _isLoadedDead = true;
+            _health.SetDeadState();
             return;
         }
 

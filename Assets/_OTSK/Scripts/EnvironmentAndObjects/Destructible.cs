@@ -3,8 +3,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Destructible : MonoBehaviour
+public class Destructible : MonoBehaviour, ISaveable
 {
+
+    [Serializable] 
+    public struct DestructibleSaveData
+    {
+        public float currentHealth;
+        public bool wasDestroyed;
+    }
+
     [SerializeField] private DestructibleDataSO data; // Reference to its data
 
     [Header("UI")]
@@ -17,9 +25,11 @@ public class Destructible : MonoBehaviour
 
     private float _currentHealth;
     private DestructibleUIController _uiController;
-
+    private UniqueID _uniqueID;
+    public string UniqueID => _uniqueID.ID;
     private void Awake()
     {
+        _uniqueID = GetComponent<UniqueID>();
         _currentHealth = data.maxHealth;
         if (statusBarPrefab != null && statusBarAnchor != null)
         {
@@ -38,6 +48,33 @@ public class Destructible : MonoBehaviour
     }
 
 
+ 
+
+    public object CaptureState()
+    {
+        return new DestructibleSaveData
+        {
+            currentHealth = _currentHealth,
+            wasDestroyed = !gameObject.activeSelf
+        };
+    }
+
+    public void RestoreState(object state)
+    {
+        var saveData = (DestructibleSaveData)state;
+        _currentHealth = saveData.currentHealth;
+        OnHealthChanged?.Invoke(_currentHealth, data.maxHealth);
+
+        if (saveData.wasDestroyed)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void Start() 
+    {
+        SaveableEntityRegistry.Instance.Register(this);
+    }
     private void OnDestroy()
     {
         // Unsubscribe to prevent errors
@@ -45,9 +82,11 @@ public class Destructible : MonoBehaviour
         {
             this.OnHealthChanged -= _uiController.UpdateHealth;
         }
+        if (SaveableEntityRegistry.Instance != null)
+        {
+            SaveableEntityRegistry.Instance.Unregister(this);
+        }
     }
-
-
     // This method now accepts a full damage profile
     public void TakeDamage(List<DamageInstance> damageInstances, GameObject attacker)
     {

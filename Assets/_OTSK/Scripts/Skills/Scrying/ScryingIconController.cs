@@ -13,13 +13,15 @@ public class ScryingIconController : MonoBehaviour
     [SerializeField] private float iconWorldHeight = 120f;
     public GameObject IconInstance { get; private set; }
     public RectTransform IconImageRectTransform { get; private set; }
-
+    public bool IsOwnerDead => enemyHealth != null && enemyHealth.IsDead;
     public Transform TargetTransform => transform;
 
     private RevealableEntity revealableEntity;
     private Enemy enemy; // Optional, for checking resistance
     private Objective objective;
     private Canvas iconCanvas;
+
+    private EnemyHealth enemyHealth;
     public bool IsObjective => objective != null;
 
     private void Awake()
@@ -27,6 +29,7 @@ public class ScryingIconController : MonoBehaviour
         revealableEntity = GetComponent<RevealableEntity>();
         enemy = GetComponent<Enemy>();
         objective = GetComponent<Objective>();
+        enemyHealth = GetComponent<EnemyHealth>();
         //CreateIcon();
     }
 
@@ -35,6 +38,10 @@ public class ScryingIconController : MonoBehaviour
         // It's good practice to register the icon. Consider uncommenting this
         // and the corresponding code in ScryingSystem for better performance.
         ScryingSystem.Instance?.RegisterIconController(this);
+        if (enemyHealth != null)
+        {
+            enemyHealth.OnDied += HandleOwnerDied;
+        }
     }
 
     private void OnDisable()
@@ -45,8 +52,21 @@ public class ScryingIconController : MonoBehaviour
         {
             Destroy(IconInstance);
         }
+
+        if (enemyHealth != null)
+        {
+            enemyHealth.OnDied -= HandleOwnerDied;
+        }
     }
 
+    private void HandleOwnerDied(bool isSilentKill)
+    {
+        // Report its own death to the central system.
+        if (ScryingSystem.Instance != null)
+        {
+            ScryingSystem.Instance.ReportDeath(this);
+        }
+    }
     public void CreateIcon(GameObject scryingIconPrefab, TacticalIconAtlasSO iconAtlas)
     {
         // If an icon already exists (e.g., from a previous attempt), destroy it first.
