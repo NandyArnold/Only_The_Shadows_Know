@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Start_TiC_SummonAlarm2
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
+  enemyID: TripleKill
   enemyType: 1
   revealableType: 4
+  surfaceType: 5
   revealIconPrefab: {fileID: 1532475450579200181, guid: deb1d533769f27a429a33a280af66a10, type: 3}
   displayName: TiCKnight2
   maxHealth: 200
@@ -23,6 +25,7 @@ MonoBehaviour:
   attackCooldown: 2.5
   attackAnimationDuration: 1.2
   resistances: []
+  isResistantToScrying: 0
   patrolSpeed: 1
   alertSpeed: 3.5
   walkCombatSpeed: 2.5
@@ -52,3 +55,4 @@ MonoBehaviour:
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
   callForHelpRadius: 15
+  onDeathEvent: {fileID: 11400000, guid: cbce0ae4de21d764db2b00ea626d01f5, type: 2}

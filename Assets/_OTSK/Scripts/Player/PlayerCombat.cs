@@ -194,7 +194,20 @@ public class PlayerCombat : MonoBehaviour
     public void SwitchWeaponByIndex(int index)
     {
         if (index < 0 || index >= availableWeapons.Count) return;
-        SwitchWeapon(availableWeapons[index]);
+
+        // --- Start of New Code ---
+        WeaponSO weaponToEquip = availableWeapons[index]; // Store the weapon in a variable first
+
+        if (!AbilityUnlockManager.Instance.IsAbilityAvailable(weaponToEquip))
+        {
+            Debug.Log($"{weaponToEquip.weaponName} is locked.");
+            // You could play a "fail" sound here
+            return; // Stop the method here if the weapon is locked
+        }
+        // --- End of New Code ---
+
+        // This is your original logic, now it only runs if the check passes
+        SwitchWeapon(weaponToEquip);
     }
 
     public void SwitchWeapon(WeaponSO newWeapon)

@@ -15280,6 +15280,7 @@ GameObject:
   - component: {fileID: 1837955083}
   - component: {fileID: 1837955084}
   - component: {fileID: 1837955085}
+  - component: {fileID: 1837955086}
   m_Layer: 0
   m_Name: _GameSystems
   m_TagString: Untagged
@@ -15467,7 +15468,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53917929e78e7214c8d22fa64078ecfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentLevelObjectiveChain: {fileID: 0}
   objectivesEnabled: 1
 --- !u!114 &1837955065
 MonoBehaviour:
@@ -15975,6 +15975,18 @@ MonoBehaviour:
   globalVolume: {fileID: 1948963170}
   endwalkerVolume: {fileID: 1841966960}
   fadeDuration: 1.5
+--- !u!114 &1837955086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1ac126f6265aae44996b469cad8900c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1841966960 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2765903207761671650, guid: 2b16cc870b00a8a4396203119883292e, type: 3}

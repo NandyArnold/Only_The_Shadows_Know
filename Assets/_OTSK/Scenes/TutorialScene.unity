@@ -14118,6 +14118,8 @@ GameObject:
   - component: {fileID: 480828103}
   - component: {fileID: 480828105}
   - component: {fileID: 480828106}
+  - component: {fileID: 480828107}
+  - component: {fileID: 480828108}
   m_Layer: 0
   m_Name: Jump
   m_TagString: Untagged
@@ -14175,6 +14177,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   triggerID: Overlook
   onPlayerEnteredEvent: {fileID: 11400000, guid: bc06c1696101a6d48adf9e2956080f9d, type: 2}
+--- !u!114 &480828107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480828102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11885229bc6a65c49a2104155b74f1ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityToUnlock: {fileID: 11400000, guid: 4acef224733c11d41b1961a89832352e, type: 2}
+  fireOnce: 1
+--- !u!114 &480828108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480828102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11885229bc6a65c49a2104155b74f1ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityToUnlock: {fileID: 11400000, guid: d76972927d7fea9439d698be4c5e935f, type: 2}
+  fireOnce: 1
 --- !u!1 &485467032
 GameObject:
   m_ObjectHideFlags: 0

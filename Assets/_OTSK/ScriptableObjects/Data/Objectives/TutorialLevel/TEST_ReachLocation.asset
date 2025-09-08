@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d5a0e7993bf8d24e9f50bec3924bafa, type: 3}
   m_Name: TEST_ReachLocation
   m_EditorClassIdentifier: 
-  objectiveID: 
+  objectiveID: Test_1
   objectiveDescription: Reach the Overlook Point
   goalType: 1
   killGoal:

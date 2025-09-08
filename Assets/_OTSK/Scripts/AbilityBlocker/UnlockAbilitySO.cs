@@ -1,7 +1,7 @@
 // This is only for stuff that has like no scriptable objects, no weapons, no skills, just general abilities
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Ability_", menuName = "Abilities/Unlockable Ability Definition")]
+[CreateAssetMenu(fileName = "Ability_", menuName = "Only The Shadows Know/Abilities/Unlockable Ability Definition")]
 public class UnlockableAbilitySO : ScriptableObject
 {
     [Tooltip("The unique identifier for this ability. Used for programmatic checks if needed.")]

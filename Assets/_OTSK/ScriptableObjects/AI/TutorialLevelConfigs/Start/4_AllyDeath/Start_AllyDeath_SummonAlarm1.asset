@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Start_AllyDeath_SummonAlarm1
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 576752461769993476, guid: aab22f2631e4b6e4facfc47009956d3d, type: 3}
-  enemyID: TriplleKill
+  enemyID: TripleKill
   enemyType: 1
   revealableType: 4
   surfaceType: 5
@@ -55,4 +55,4 @@ MonoBehaviour:
   instantlyKnowsAttackerLocation: 1
   walkCombatRange: 5
   callForHelpRadius: 15
-  onDeathEvent: {fileID: 0}
+  onDeathEvent: {fileID: 11400000, guid: cbce0ae4de21d764db2b00ea626d01f5, type: 2}

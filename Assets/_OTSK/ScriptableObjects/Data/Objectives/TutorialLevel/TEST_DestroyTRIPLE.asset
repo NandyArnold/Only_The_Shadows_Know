@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d5a0e7993bf8d24e9f50bec3924bafa, type: 3}
   m_Name: TEST_DestroyTRIPLE
   m_EditorClassIdentifier: 
-  objectiveID: 
-  objectiveDescription: 
+  objectiveID: Test_3
+  objectiveDescription: Destroy 3 Objects
   goalType: 2
   killGoal:
     currentAmount: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
     onTriggerEnteredEventChannel: {fileID: 0}
   destroyGoal:
     currentAmount: 0
-    requiredAmount: 1
+    requiredAmount: 3
     requiredDestructibleIDs:
     - TestTriple
     onDestroyedEventChannel: {fileID: 11400000, guid: 1066e2c8111814b45abf0993572c8fb8, type: 2}

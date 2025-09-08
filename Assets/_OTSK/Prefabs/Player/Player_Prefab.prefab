@@ -2650,6 +2650,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83ecbd8eb62d4f943b3b01580bb7b10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpAbility: {fileID: 11400000, guid: d76972927d7fea9439d698be4c5e935f, type: 2}
+  dodgeAbility: {fileID: 11400000, guid: d76972927d7fea9439d698be4c5e935f, type: 2}
+  runAbility: {fileID: 11400000, guid: 53ceee81ccffe164b9861679f9fbade5, type: 2}
+  crouchAbility: {fileID: 11400000, guid: 30f1c1df87568bc44b72c39be1e3be8f, type: 2}
   characterController: {fileID: 6997982617661579710}
   playerAnimationController: {fileID: 7619512642376539503}
   playerInputHandler: {fileID: 2210745878514288481}

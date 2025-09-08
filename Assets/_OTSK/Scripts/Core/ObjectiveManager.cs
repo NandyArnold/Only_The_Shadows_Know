@@ -113,7 +113,10 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 
         Debug.Log($"<color=green>Objective Completed:</color> {completedInstance.SourceSO.objectiveDescription}");
         OnObjectiveCompleted?.Invoke(completedInstance.SourceSO);
-
+        foreach (var reward in completedInstance.SourceSO.rewards)
+        {
+            reward.ExecuteReward();
+        }
         ActivateNextObjective();
     }
 

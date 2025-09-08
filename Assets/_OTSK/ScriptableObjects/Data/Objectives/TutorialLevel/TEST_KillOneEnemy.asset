@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d5a0e7993bf8d24e9f50bec3924bafa, type: 3}
   m_Name: TEST_KillOneEnemy
   m_EditorClassIdentifier: 
-  objectiveID: Test_KillOne
+  objectiveID: Test_2
   objectiveDescription: Eliminate Scout
   goalType: 0
   killGoal:
     currentAmount: 0
     requiredAmount: 1
     requiredEnemyIDs:
-    - FirstKillTutorial
+    - Scout
     onEnemyDiedEventChannel: {fileID: 11400000, guid: cbce0ae4de21d764db2b00ea626d01f5, type: 2}
   reachLocationGoal:
     currentAmount: 0
