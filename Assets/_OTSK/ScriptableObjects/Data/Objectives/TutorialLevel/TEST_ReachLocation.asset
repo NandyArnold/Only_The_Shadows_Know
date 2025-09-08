@@ -15,6 +15,11 @@ MonoBehaviour:
   objectiveID: Test_1
   objectiveDescription: Reach the Overlook Point
   goalType: 1
+  rewards:
+  - rid: 4037877476079173741
+  - rid: 4037877476079173742
+  - rid: 4037877476079173743
+  - rid: 4037877476079173744
   killGoal:
     currentAmount: 0
     requiredAmount: 1
@@ -33,3 +38,22 @@ MonoBehaviour:
   completionTriggerID: 
   objectiveLocation: {fileID: 0}
   objectiveType: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 4037877476079173741
+      type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
+      data:
+        abilityToGrant: {fileID: 11400000, guid: 4acef224733c11d41b1961a89832352e, type: 2}
+    - rid: 4037877476079173742
+      type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
+      data:
+        abilityToGrant: {fileID: 11400000, guid: d76972927d7fea9439d698be4c5e935f, type: 2}
+    - rid: 4037877476079173743
+      type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
+      data:
+        abilityToGrant: {fileID: 11400000, guid: a1d8bdac0a45b2c488746e008540c9ca, type: 2}
+    - rid: 4037877476079173744
+      type: {class: GrantAbilityReward, ns: , asm: Assembly-CSharp}
+      data:
+        abilityToGrant: {fileID: 11400000, guid: 53ceee81ccffe164b9861679f9fbade5, type: 2}

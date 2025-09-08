@@ -17,8 +17,7 @@ public class ObjectiveSO : ScriptableObject
 
     [Header("Rewards")]
     [Tooltip("A list of rewards to be granted when this objective is completed.")]
-    [SerializeReference] // This attribute is crucial for the modular Inspector!
-    public List<RewardAction> rewards = new List<RewardAction>();
+    [SerializeReference] public List<RewardAction> rewards = new List<RewardAction>();
 
     // We add a field for each goal type. The custom editor will only show the relevant one.
     public KillGoal killGoal;
