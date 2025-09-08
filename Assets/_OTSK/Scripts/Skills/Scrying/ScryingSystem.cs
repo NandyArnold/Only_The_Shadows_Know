@@ -88,7 +88,7 @@ public class ScryingSystem : MonoBehaviour
 
     private IEnumerator FindSceneComponentsRoutine()
     {
-        // Using FindFirstObjectByType is the modern way to find objects.
+        // Find the rig and its components as before.
         ScryingCameraRig rig = FindFirstObjectByType<ScryingCameraRig>(FindObjectsInactive.Include);
         if (rig != null)
         {
@@ -96,41 +96,59 @@ public class ScryingSystem : MonoBehaviour
             ScryingVCam = scryingCameraRigObject.GetComponentInChildren<CinemachineCamera>();
             ScryingRenderCamera = scryingCameraRigObject.GetComponentInChildren<Camera>();
             scryingCameraRigObject.SetActive(false);
-            //Debug.Log("ScryingSystem successfully linked to ScryingCameraRig.");
 
+            // Your line for the canvas camera is preserved.
             if (scryingIconCanvasInstance != null)
             {
                 scryingIconCanvasInstance.worldCamera = ScryingRenderCamera;
             }
-
-            yield return new WaitUntil(() => GameManager.Instance.Player != null);
-
-            if (ScryingVCam != null)
-            {
-                var playerTransform = GameManager.Instance.Player.transform;
-                ScryingVCam.Follow = playerTransform;
-                ScryingVCam.LookAt = playerTransform;
-
-                Debug.Log("ScryingSystem: Player assigned as VCam Follow target.");
-            }
         }
         else
         {
-            Debug.LogError("ScryingSystem could not find the ScryingCameraRig in the scene! Ensure the rig exists and has the ScryingCameraRig component.");
+            Debug.LogError("ScryingSystem could not find the ScryingCameraRig!");
         }
+
+        // --- NEW LOGIC TO HANDLE BOTH CASES ---
+        // If a save game is being loaded, we stop this coroutine immediately.
+        // The SaveLoadManager will be responsible for the final setup steps.
+        if (SaveLoadManager.Instance != null && SaveLoadManager.Instance.IsLoading)
+        {
+            yield break; // This exits the coroutine.
+        }
+
+        // --- NORMAL SCENE LOAD PATH ---
+        // If we are NOT loading a save, this coroutine finishes the setup itself.
+        yield return new WaitUntil(() => GameManager.Instance.Player != null);
+
+        ConnectToPlayer();
         RegisterAllIconsInScene();
+
         tacticalMapController = FindFirstObjectByType<TacticalMapController>(FindObjectsInactive.Include);
-        //InitializeIconPool();
-
-
     }
 
-    private void RegisterAllIconsInScene()
+    public void ConnectToPlayer()
     {
-        // The list is already cleared in HandleSceneLoadCompleted.
+        if (ScryingVCam != null && GameManager.Instance.Player != null)
+        {
+            var playerTransform = GameManager.Instance.Player.transform;
+            ScryingVCam.Follow = playerTransform;
+            ScryingVCam.LookAt = playerTransform;
+            Debug.Log("ScryingSystem: Camera connection to player established by external call.");
+        }
+        else
+        {
+            Debug.LogWarning("ScryingSystem: ConnectToPlayer was called, but VCam or Player was null.");
+        }
+    }
+
+    public void RegisterAllIconsInScene()
+    {
+        activeIconControllers.Clear();
+      
         var allControllersInScene = FindObjectsByType<ScryingIconController>(FindObjectsSortMode.None);
         foreach (var controller in allControllersInScene)
         {
+            controller.CreateIcon(scryingIconCanvasPrefab, iconAtlas);
             if (!activeIconControllers.Contains(controller))
             {
                 activeIconControllers.Add(controller);
@@ -301,6 +319,18 @@ public class ScryingSystem : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ResetStateForLoad()
+    {
+        Debug.Log("ScryingSystem: Resetting state for game load.");
+        if (IsScryingDeployed)
+        {
+            // Use your existing method to ensure a clean shutdown
+            DisableScryingEye();
+        }
+        // Also clear the list, as it will be repopulated later.
+        activeIconControllers.Clear();
     }
 
 }

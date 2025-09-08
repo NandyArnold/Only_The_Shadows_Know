@@ -159,6 +159,10 @@ public class SaveLoadManager : MonoBehaviour
         IsLoading = true;
         try
         {
+            if (ScryingSystem.Instance != null)
+            {
+                ScryingSystem.Instance.ResetStateForLoad();
+            }
             Debug.Log("SAVELOAD: LoadGameRoutine has started.");
             // --- All of your existing code goes inside this 'try' block ---
 
@@ -201,12 +205,20 @@ public class SaveLoadManager : MonoBehaviour
             RestoreWorldData(_currentGameState);
             RestorePlayerData(_currentGameState);
 
+            GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
+          
             if (CameraManager.Instance != null)
             {
                 CameraManager.Instance.ConnectToPlayer(GameManager.Instance.Player);
             }
 
-            GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
+
+
+            if (ScryingSystem.Instance != null)
+            {
+                ScryingSystem.Instance.ConnectToPlayer();
+                ScryingSystem.Instance.RegisterAllIconsInScene();
+            }
 
             Debug.Log($"<color=cyan>--- GAME LOADED SUCCESSFULLY ---</color> File: '{saveFileName}'");
         }

@@ -7,8 +7,8 @@ public class ScryingIconController : MonoBehaviour
 {
     public GameObject scryingIconInstance { get; private set; }
     [Header("Configuration")]
-    [SerializeField] private GameObject scryingIconPrefab;
-    [SerializeField] private TacticalIconAtlasSO iconAtlas;
+    //[SerializeField] private GameObject scryingIconPrefab;
+    //[SerializeField] private TacticalIconAtlasSO iconAtlas;
     [Tooltip("The fixed Y-axis height in world space for the icon to appear.")]
     [SerializeField] private float iconWorldHeight = 120f;
     public GameObject IconInstance { get; private set; }
@@ -27,7 +27,7 @@ public class ScryingIconController : MonoBehaviour
         revealableEntity = GetComponent<RevealableEntity>();
         enemy = GetComponent<Enemy>();
         objective = GetComponent<Objective>();
-        CreateIcon();
+        //CreateIcon();
     }
 
     private void OnEnable()
@@ -47,8 +47,12 @@ public class ScryingIconController : MonoBehaviour
         }
     }
 
-    private void CreateIcon()
+    public void CreateIcon(GameObject scryingIconPrefab, TacticalIconAtlasSO iconAtlas)
     {
+        // If an icon already exists (e.g., from a previous attempt), destroy it first.
+        if (IconInstance != null) { Destroy(IconInstance); }
+
+        // Guard clause using the new arguments.
         if (scryingIconPrefab == null || iconAtlas == null) return;
 
         // 1. Calculate the spawn position at our desired height.
