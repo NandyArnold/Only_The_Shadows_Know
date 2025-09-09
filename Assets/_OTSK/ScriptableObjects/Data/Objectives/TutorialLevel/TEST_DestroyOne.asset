@@ -15,22 +15,32 @@ MonoBehaviour:
   objectiveID: Test_4
   objectiveDescription: Destroy Alarm Panel
   goalType: 2
+  rewards: []
   killGoal:
     currentAmount: 0
     requiredAmount: 1
+    counterLabel: 
+    onProgressUpdated: {fileID: 0}
     requiredEnemyIDs: []
     onEnemyDiedEventChannel: {fileID: 0}
   reachLocationGoal:
     currentAmount: 0
     requiredAmount: 1
+    counterLabel: 
+    onProgressUpdated: {fileID: 0}
     requiredTriggerID: 
     onTriggerEnteredEventChannel: {fileID: 0}
   destroyGoal:
     currentAmount: 0
     requiredAmount: 1
+    counterLabel: 'Alarm Panel destroyed:'
+    onProgressUpdated: {fileID: 11400000, guid: 9522bd47d45a2314592aa9e26ef86086, type: 2}
     requiredDestructibleIDs:
     - StartAlarm
     onDestroyedEventChannel: {fileID: 11400000, guid: 1066e2c8111814b45abf0993572c8fb8, type: 2}
   completionTriggerID: 
   objectiveLocation: {fileID: 0}
   objectiveType: 0
+  references:
+    version: 2
+    RefIds: []

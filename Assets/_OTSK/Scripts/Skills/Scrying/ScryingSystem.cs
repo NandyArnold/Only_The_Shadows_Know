@@ -133,7 +133,7 @@ public class ScryingSystem : MonoBehaviour
             var playerTransform = GameManager.Instance.Player.transform;
             ScryingVCam.Follow = playerTransform;
             ScryingVCam.LookAt = playerTransform;
-            Debug.Log("ScryingSystem: Camera connection to player established by external call.");
+            //Debug.Log("ScryingSystem: Camera connection to player established by external call.");
         }
         else
         {
@@ -158,7 +158,7 @@ public class ScryingSystem : MonoBehaviour
                 ReportDeath(controller);
             }
         }
-        Debug.Log($"ScryingSystem: Registered {activeIconControllers.Count} icons.");
+        //Debug.Log($"ScryingSystem: Registered {activeIconControllers.Count} icons.");
     }
 
     // This is called by ScryingEffectSO after the cast animation.

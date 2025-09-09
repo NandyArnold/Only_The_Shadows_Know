@@ -9,6 +9,8 @@ public class ObjectiveProgressEvent : ScriptableObject
 
     public void Raise(ObjectiveProgressData data)
     {
+        Debug.Log($"<color=purple>[EVENT RAISED]</color> ObjectiveProgressEvent raised with label: " +
+            $"'{data.counterLabel}' and progress {data.currentProgress}/{data.requiredAmount}");
         OnEventRaised?.Invoke(data);
     }
 }

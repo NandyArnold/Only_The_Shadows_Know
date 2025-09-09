@@ -7,6 +7,13 @@ using UnityEngine;
 [Serializable]
 public class KillGoal : ObjectiveGoal
 {
+    public KillGoal(KillGoal dataFromSO) : base(dataFromSO) // <-- Call the base constructor
+    {
+        // Only copy the fields unique to this class
+        this.requiredEnemyIDs = new List<string>(dataFromSO.requiredEnemyIDs);
+        this.onEnemyDiedEventChannel = dataFromSO.onEnemyDiedEventChannel;
+    }
+
     [Header("Goal Settings")]
     [Tooltip("The unique IDs of the enemy types that count towards this goal.")]
     public List<string> requiredEnemyIDs;
@@ -43,7 +50,9 @@ public class KillGoal : ObjectiveGoal
         {
             Debug.Log($"[KillGoal] ID '{enemyID}' MATCHED! Updating progress.");
             currentAmount++;
+             UpdateUI();
             Evaluate();
         }
     }
+
 }

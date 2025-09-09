@@ -1,10 +1,11 @@
 // PlayerInputHandler.cs - UPGRADED
 
-using UnityEngine;
-using UnityEngine.InputSystem;
 using System;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnConfirmInput;  // For confirming Targeting Mode
     public event Action OnCancelInput;
 
-    public event Action OnShowObjectiveInput;
+    public static event Action OnShowObjectiveInput;
     public event Action OnToggleDetailsInput;
 
     public event Action<float> OnAdjustPitchInput;
@@ -67,12 +68,16 @@ public class PlayerInputHandler : MonoBehaviour
 
     private bool _isCrouchToggleActive = false;
 
+    public static event Action OnFirstGameplayInput;
+    private static bool _hasFiredFirstInput = false;
 
     private void Awake()
     {
         _inputActions = new PlayerInputActions();
 
         // Get references to the maps
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         _playerMap = _inputActions.asset.FindActionMap("Player");
         _uiMap = _inputActions.asset.FindActionMap("UI");
         _targetingMap = _inputActions.asset.FindActionMap("Targeting");
@@ -107,6 +112,7 @@ public class PlayerInputHandler : MonoBehaviour
             // Set initial state
             HandleGameStateChanged(GameManager.Instance.CurrentState);
         }
+        //SceneManager.sceneLoaded += (scene, mode) => { _hasFiredFirstInput = false; };
     }
 
     private void OnDestroy()
@@ -119,6 +125,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
         }
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     private void HandleGameStateChanged(GameState newState)
     {
@@ -146,28 +153,29 @@ public class PlayerInputHandler : MonoBehaviour
     private void SetupInputCallbacks()
     {
         // --- Player Map Actions ---
-        _inputActions.Player.Move.performed += ctx => OnMoveInput?.Invoke(ctx.ReadValue<Vector2>());
+        _inputActions.Player.Move.performed += ctx => { OnMoveInput?.Invoke(ctx.ReadValue<Vector2>()); FireFirstInputEvent(); };
         _inputActions.Player.Move.canceled += ctx => OnMoveInput?.Invoke(Vector2.zero);
 
         //_inputActions.Player.Jump.started += ctx => OnJumpPressed?.Invoke();
         //_inputActions.Player.Jump.canceled += ctx => OnJumpReleased?.Invoke();
         //_inputActions.Player.Jump.performed += HandleJumpInput;
-        _inputActions.Player.Jump.performed += ctx => OnJumpInput?.Invoke();
+        _inputActions.Player.Jump.performed += ctx => { OnJumpInput?.Invoke(); FireFirstInputEvent(); };
 
         _inputActions.Player.Crouch.performed += ctx => {
             _isCrouchToggleActive = !_isCrouchToggleActive;
             OnCrouchInput?.Invoke(_isCrouchToggleActive);
+            FireFirstInputEvent();
         };
-        _inputActions.Player.Run.performed += ctx => OnRunInput?.Invoke(true);
+        _inputActions.Player.Run.performed += ctx => { OnRunInput?.Invoke(true); FireFirstInputEvent(); };
         _inputActions.Player.Run.canceled += ctx => OnRunInput?.Invoke(false);
 
-        _inputActions.Player.PrimaryAttack.performed += ctx => OnPrimaryAttackInput?.Invoke();
-        _inputActions.Player.SecondaryAttack_Press.performed += ctx => OnSecondaryAttackInput?.Invoke();
+        _inputActions.Player.PrimaryAttack.performed += ctx => { OnPrimaryAttackInput?.Invoke(); FireFirstInputEvent(); };
+        _inputActions.Player.SecondaryAttack_Press.performed += ctx => { OnSecondaryAttackInput?.Invoke(); FireFirstInputEvent(); };
 
-        _inputActions.Player.SecondaryAttack_Hold.performed += ctx => OnSecondaryAttackPressed?.Invoke();
+        _inputActions.Player.SecondaryAttack_Hold.performed += ctx => { OnSecondaryAttackPressed?.Invoke(); FireFirstInputEvent(); };
         _inputActions.Player.SecondaryAttack_Hold.canceled += ctx => OnSecondaryAttackReleased?.Invoke();
 
-        _inputActions.Player.TertiaryAttack.performed += ctx => OnTertiaryAttackInput?.Invoke();
+        _inputActions.Player.TertiaryAttack.performed += ctx => { OnTertiaryAttackInput?.Invoke(); FireFirstInputEvent(); };
 
 
         _inputActions.Player.Weapon1.performed += ctx => OnWeapon1Input?.Invoke();
@@ -210,8 +218,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Targeting.CycleTargetingMode.performed += ctx => OnCycleTargetingModeInput?.Invoke(ctx.ReadValue<float>());
 
         //_inputActions.Player.Dodge.performed += ctx => OnDodgeInput?.Invoke();
-        _inputActions.Player.Dodge.performed += HandleDodgeInput;
-
+        _inputActions.Player.Dodge.performed += ctx => { HandleDodgeInput(ctx); FireFirstInputEvent(); };
 
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
         _inputActions.Player.CancelAction.performed += ctx => EventManager.Instance.CancelActionInput();
@@ -323,4 +330,17 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
+    private void FireFirstInputEvent()
+    {
+        if (!_hasFiredFirstInput)
+        {
+            _hasFiredFirstInput = true;
+            OnFirstGameplayInput?.Invoke();
+            Debug.Log("<color=yellow>First Gameplay Input Detected!</color>");
+        }
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        _hasFiredFirstInput = false;
+    }
 }

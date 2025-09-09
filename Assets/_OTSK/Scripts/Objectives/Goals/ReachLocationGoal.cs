@@ -6,6 +6,13 @@ using UnityEngine;
 [Serializable]
 public class ReachLocationGoal : ObjectiveGoal
 {
+    public ReachLocationGoal(ReachLocationGoal dataFromSO) : base(dataFromSO) // <-- Call the base constructor
+    {
+        // Now we only need to copy fields unique to this class
+        this.requiredTriggerID = dataFromSO.requiredTriggerID;
+        this.onTriggerEnteredEventChannel = dataFromSO.onTriggerEnteredEventChannel;
+    }
+
     [Header("Goal Settings")]
     [Tooltip("The ID of the ObjectiveTriggerVolume in the scene that completes this goal.")]
     public string requiredTriggerID;
@@ -53,7 +60,9 @@ public class ReachLocationGoal : ObjectiveGoal
             Debug.Log("[ReachLocationGoal] IDs MATCH! Completing goal.");
 
             currentAmount++;
+            UpdateUI();
             Evaluate();
         }
     }
+
 }

@@ -1,6 +1,7 @@
 // ObjectiveGoal.cs
 
 using System;
+using UnityEngine;
 
 
 [Serializable]
@@ -13,13 +14,24 @@ public abstract class ObjectiveGoal
     public int currentAmount;
     public int requiredAmount = 1;
 
+    [Header("Progress UI Settings")]
+    [Tooltip("The text to display next to the counter (e.g., 'Enemies Killed').")]
+    [SerializeField]  public string counterLabel;
+    [Tooltip("The event to raise when progress is made.")]
+    [SerializeField]  public ObjectiveProgressEvent onProgressUpdated;
+
     // A flag to check if we've successfully subscribed to game events.
     private bool isSubscribed = false;
 
-    /// <summary>
-    /// Initializes the goal, giving it a reference to its owner.
-    /// This is where we will subscribe to necessary game events.
-    /// </summary>
+    protected ObjectiveGoal(ObjectiveGoal dataFromSO)
+    {
+        this.requiredAmount = dataFromSO.requiredAmount;
+        this.counterLabel = dataFromSO.counterLabel;
+        this.onProgressUpdated = dataFromSO.onProgressUpdated;
+    }
+
+    protected ObjectiveGoal() { }
+
     public virtual void Initialize(ObjectiveInstance owner)
     {
         this.owner = owner;
@@ -30,9 +42,6 @@ public abstract class ObjectiveGoal
         }
     }
 
-    /// <summary>
-    /// Cleans up the goal, unsubscribing from events to prevent memory leaks.
-    /// </summary>
     public virtual void CleanUp()
     {
         if (isSubscribed)
@@ -42,25 +51,32 @@ public abstract class ObjectiveGoal
         }
     }
 
-    /// <summary>
-    /// This is where child classes will subscribe to specific game events
-    /// (e.g., OnEnemyDied, OnItemPickedUp).
-    /// </summary>
+
+    public void UpdateUI()
+    {
+        Debug.Log($"<color=yellow>[ObjectiveGoal]</color> UpdateUI called. Event channel is null:" +
+            $" {onProgressUpdated == null}. Label is: '{counterLabel}'");
+
+        if (onProgressUpdated != null)
+        {
+            var data = new ObjectiveProgressData
+            {
+                counterLabel = this.counterLabel,
+                currentProgress = currentAmount,
+                requiredAmount = requiredAmount
+            };
+            Debug.Log($"<color=yellow>[ObjectiveGoal]</color> Packaged data: Label='{data.counterLabel}'," +
+                $" Progress={data.currentProgress}/{data.requiredAmount}. Raising event...");
+            onProgressUpdated.Raise(data);
+        }
+    }
+
     protected abstract void SubscribeToEvents();
 
-    /// <summary>
-    /// This is where child classes will unsubscribe from the events they subscribed to.
-    /// </summary>
     protected abstract void UnsubscribeFromEvents();
 
-    /// <summary>
-    /// Checks if the goal is complete.
-    /// </summary>
     public bool IsComplete() => (currentAmount >= requiredAmount);
 
-    /// <summary>
-    /// Call this from child classes when progress is made.
-    /// </summary>
     protected void Evaluate()
     {
         if (IsComplete())

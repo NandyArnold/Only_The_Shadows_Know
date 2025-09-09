@@ -20,6 +20,7 @@ public class ObjectiveSOEditor : Editor
     }
     public override void OnInspectorGUI()
     {
+        serializedObject.Update();
         // Get a reference to the script we are editing
         var objectiveSO = (ObjectiveSO)target;
 

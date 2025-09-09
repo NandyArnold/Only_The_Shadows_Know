@@ -13,7 +13,7 @@ public class GrantAbilityReward : RewardAction
         if (abilityToGrant != null && AbilityUnlockManager.Instance != null)
         {
             AbilityUnlockManager.Instance.GrantAbility(abilityToGrant);
-            Debug.Log($"<color=lime>REWARD GRANTED:</color> Unlocked {abilityToGrant.name}");
+            //Debug.Log($"<color=lime>REWARD GRANTED:</color> Unlocked {abilityToGrant.name}");
         }
     }
 }

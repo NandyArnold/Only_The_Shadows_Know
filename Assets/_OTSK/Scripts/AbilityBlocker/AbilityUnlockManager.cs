@@ -23,7 +23,7 @@ public class AbilityUnlockManager : MonoBehaviour // Add your ISaveable implemen
         if (!_unlockedAbilities.Contains(ability))
         {
             _unlockedAbilities.Add(ability);
-            Debug.Log($"<color=cyan>ABILITY UNLOCKED:</color> {ability.name}");
+            //Debug.Log($"<color=cyan>ABILITY UNLOCKED:</color> {ability.name}");
         }
     }
 

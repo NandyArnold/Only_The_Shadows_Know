@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject inGameMenuPanel;
+    [SerializeField] private GameObject objectivePanel;
 
     [Header("Tactical View")]
     [SerializeField] private GameObject tacticalViewPanel; // Assign your TacticalView_Panel
@@ -47,6 +48,7 @@ public class UIManager : MonoBehaviour
         // Ensure all panels are hidden at the start
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (inGameMenuPanel != null) inGameMenuPanel.SetActive(false);
+        if (objectivePanel != null) objectivePanel.SetActive(false);
     }
 
     private void OnDestroy()
@@ -59,6 +61,12 @@ public class UIManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState newState)
     {
+
+        if (objectivePanel != null)
+        {
+            // The objective panel should only be active during gameplay.
+            objectivePanel.SetActive(newState == GameState.Gameplay);
+        }
 
         bool showInGameMenu = (newState == GameState.Menu &&
                           SceneLoader.Instance.CurrentlyLoadedScene != null &&

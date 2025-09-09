@@ -24,6 +24,8 @@ public class ObjectiveStateData
 
 public class ObjectiveManager : MonoBehaviour, IResettable
 {
+    public ObjectiveSO CurrentObjective { get; private set; }
+
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Debug Settings")]
@@ -128,12 +130,14 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         {
             Debug.Log($"<color=cyan>[ObjectiveManager]</color> Activating objective: '{nextObjective.SourceSO.objectiveDescription}'");
             nextObjective.Start();
+            CurrentObjective = nextObjective.SourceSO;
             OnCurrentObjectiveChanged?.Invoke(nextObjective.SourceSO);
         }
         else
         {
             Debug.Log($"<color=yellow>All objectives for level {_currentLevelObjectiveChain.levelID} completed!</color>");
             OnLevelCompleted?.Invoke();
+            CurrentObjective = null;
             OnCurrentObjectiveChanged?.Invoke(null);
         }
     }
@@ -224,4 +228,21 @@ public class ObjectiveManager : MonoBehaviour, IResettable
             Debug.LogWarning("DEBUG: No active objective to complete.");
         }
     }
+
+    public ObjectiveProgressData? GetCurrentProgressData()
+    {
+        var activeInstance = _activeObjectives.FirstOrDefault(obj => obj.State == ObjectiveState.Active);
+        if (activeInstance != null && activeInstance.Goal != null)
+        {
+            return new ObjectiveProgressData
+            {
+                counterLabel = activeInstance.Goal.counterLabel,
+                currentProgress = activeInstance.Goal.currentAmount,
+                requiredAmount = activeInstance.Goal.requiredAmount
+            };
+        }
+        // Return a nullable struct if no active objective is found
+        return null;
+    }
+
 }
