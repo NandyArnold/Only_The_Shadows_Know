@@ -157,6 +157,10 @@ public class SaveLoadManager : MonoBehaviour
 
         _isBusy = true;
         IsLoading = true;
+        if (ObjectiveManager.Instance != null) ObjectiveManager.Instance.SetIsRestoring(true);
+
+        Debug.Log("<color=red>--- SAVELOAD: LOAD ROUTINE STARTED ---</color>");
+
         try
         {
             if (ScryingSystem.Instance != null)
@@ -201,7 +205,11 @@ public class SaveLoadManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
             Debug.Log("<color=green>SAVELOAD: Restoring all game data now.</color>");
+            Debug.Log($"<color=red>--- SAVELOAD: ABOUT TO RESTORE OBJECTIVES. Current objective in manager is:" +
+                $" '{ObjectiveManager.Instance.CurrentObjective?.objectiveDescription ?? "None"}'</color>");
             RestoreObjectiveData(_currentGameState);
+            Debug.Log($"<color=red>--- SAVELOAD: FINISHED RESTORING OBJECTIVES. Current objective in manager is NOW:" +
+                $" '{ObjectiveManager.Instance.CurrentObjective?.objectiveDescription ?? "None"}'</color>");
             RestoreWorldData(_currentGameState);
             RestorePlayerData(_currentGameState);
 
@@ -227,7 +235,8 @@ public class SaveLoadManager : MonoBehaviour
             // --- This code is GUARANTEED to run ---
             IsLoading = false;
             _isBusy = false;
-      
+            if (ObjectiveManager.Instance != null) ObjectiveManager.Instance.SetIsRestoring(false);
+
             Debug.Log("<color=yellow>--- LOAD ROUTINE FINISHED ---</color> SaveLoadManager is no longer busy.");
         }
     }

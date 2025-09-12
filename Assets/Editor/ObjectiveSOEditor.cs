@@ -26,9 +26,11 @@ public class ObjectiveSOEditor : Editor
 
         // Draw the default fields we always want to see
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveID"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveTitle"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveDescription"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveLocation"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("isPersistent"));
 
         EditorGUILayout.Space();
 

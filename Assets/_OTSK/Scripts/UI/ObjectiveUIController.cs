@@ -8,7 +8,7 @@ public class ObjectiveUIController : MonoBehaviour
 {
     [Header("UI Elements")]
     [SerializeField] private CanvasGroup panelCanvasGroup;
-    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI counterText;
     [SerializeField] private TextMeshProUGUI progressText;
     [SerializeField] private GameObject objectiveHintObject;
@@ -40,22 +40,43 @@ public class ObjectiveUIController : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("<color=lime>--- UI CONTROLLER: OnEnable CALLED ---</color>");
+
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleNewObjective;
+            Debug.Log($"<color=lime>--- UI CONTROLLER: Checking IsRestoring flag. Value is: {ObjectiveManager.Instance.IsRestoring}</color>");
+            if (!ObjectiveManager.Instance.IsRestoring)
+                ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleNewObjective;
             ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
-            HandleNewObjective(ObjectiveManager.Instance.CurrentObjective);
-            
-           
+
+            //HandleNewObjective(ObjectiveManager.Instance.CurrentObjective);
+
+            if (!ObjectiveManager.Instance.IsRestoring)
+            {
+                Debug.Log($"<color=lime>--- UI CONTROLLER: NOT restoring. Syncing with manager. Current objective is:" +
+                    $" '{ObjectiveManager.Instance.CurrentObjective?.objectiveDescription ?? "None"}'</color>");
+                HandleNewObjective(ObjectiveManager.Instance.CurrentObjective);
+                var initialProgress = ObjectiveManager.Instance.GetCurrentProgressData();
+                if (initialProgress.HasValue)
+                {
+                    HandleObjectiveProgress(initialProgress.Value);
+                }
+            }
+            else
+            {
+                Debug.Log("<color=lime>--- UI CONTROLLER: Manager IS restoring. Skipping initial sync.</color>");
+            }
+
+
         }
         if (onObjectiveProgressUpdated != null)
         {
             onObjectiveProgressUpdated.OnEventRaised += HandleObjectiveProgress;
-            var initialProgress = ObjectiveManager.Instance.GetCurrentProgressData();
-            if (initialProgress.HasValue)
-            {
-                HandleObjectiveProgress(initialProgress.Value);
-            }
+            //var initialProgress = ObjectiveManager.Instance.GetCurrentProgressData();
+            //if (initialProgress.HasValue)
+            //{
+            //    HandleObjectiveProgress(initialProgress.Value);
+            //}
         }
 
         PlayerInputHandler.OnFirstGameplayInput += HandleFirstGameplayInput;
@@ -85,6 +106,14 @@ public class ObjectiveUIController : MonoBehaviour
 
     private void HandleNewObjective(ObjectiveSO newObjective)
     {
+        if (newObjective != null && newObjective.isHidden)
+        {
+            _isObjectiveActive = true;
+            return; // Exit without showing the UI
+        }
+
+        Debug.Log($"<color=green>--- UI CONTROLLER: HandleNewObjective EVENT RECEIVED. Objective is:" +
+            $" '{newObjective?.objectiveDescription ?? "None"}' ---</color>");
         _isObjectiveActive = newObjective != null;
         if (!_isObjectiveActive)
         {
@@ -121,12 +150,7 @@ public class ObjectiveUIController : MonoBehaviour
     {
         Debug.Log($"<color=green>[ObjectiveUIController]</color> RECEIVED progress event. Updating UI. Label:" +
             $" '{data.counterLabel}', Progress: {data.currentProgress}/{data.requiredAmount}.");
-        // Update the UI with the data received from the event
-        //if (counterText == null || progressText == null)
-        //{
-        //    Debug.LogError("[ObjectiveUIController] The Counter Text or Progress Text reference is NULL in the Inspector!", this.gameObject);
-        //    return;
-        //}
+ 
         counterText.text = data.counterLabel;
         progressText.text = $"{data.currentProgress} / {data.requiredAmount}";
 
@@ -135,10 +159,7 @@ public class ObjectiveUIController : MonoBehaviour
             ShowObjective(ObjectiveManager.Instance.CurrentObjective, false);
         }
 
-        // Re-trigger the fade-in/out animation to give the player feedback.
-        //if (_displayCoroutine != null) StopCoroutine(_displayCoroutine);
-        //// We use the main description text since that's what the coroutine expects.
-        //_displayCoroutine = StartCoroutine(ShowObjectiveCoroutine(descriptionText.text));
+    
 
     }
 
@@ -156,19 +177,19 @@ public class ObjectiveUIController : MonoBehaviour
             panelCanvasGroup.DOFade(0, fadeTime);
             return;
         }
-        string textToShow = overrideText ?? objective.objectiveDescription;
+        string textToShow = overrideText ?? objective.objectiveTitle;
         if (_displayCoroutine != null) StopCoroutine(_displayCoroutine);
         _displayCoroutine = StartCoroutine(ShowObjectiveCoroutine(textToShow, shouldFadeOut));
     }
 
-    private IEnumerator ShowObjectiveCoroutine(string description, bool shouldFadeOut)
+    private IEnumerator ShowObjectiveCoroutine(string title, bool shouldFadeOut)
     {
         // Fade hint out
         if (hintCanvasGroup != null) hintCanvasGroup.DOFade(0, fadeTime);
 
         // Play sound and set text
         if (UISoundPlayer.Instance != null) UISoundPlayer.Instance.PlayNewObjectiveSound();
-        descriptionText.text = description;
+        titleText.text = title;
 
         // Fade main panel in
         panelCanvasGroup.DOFade(1, fadeTime);

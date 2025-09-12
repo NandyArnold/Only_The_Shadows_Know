@@ -70,6 +70,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     public static event Action OnFirstGameplayInput;
     private static bool _hasFiredFirstInput = false;
+    public static event Action OnShowQuestLogInput;
 
     private void Awake()
     {
@@ -221,6 +222,9 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.Dodge.performed += ctx => { HandleDodgeInput(ctx); FireFirstInputEvent(); };
 
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
+
+        _inputActions.Player.ShowQuestLog.performed += ctx => OnShowQuestLogInput?.Invoke();
+
         _inputActions.Player.CancelAction.performed += ctx => EventManager.Instance.CancelActionInput();
 
         _inputActions.Player.Pause.performed += ctx => OnPauseInput?.Invoke();

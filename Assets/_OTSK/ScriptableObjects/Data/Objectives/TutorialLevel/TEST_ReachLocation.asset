@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: TEST_ReachLocation
   m_EditorClassIdentifier: 
   objectiveID: Test_1
+  objectiveTitle: First Steps
   objectiveDescription: Reach the Overlook
+  isHidden: 0
+  isPersistent: 0
   goalType: 1
   rewards:
   - rid: 4037877498831700106

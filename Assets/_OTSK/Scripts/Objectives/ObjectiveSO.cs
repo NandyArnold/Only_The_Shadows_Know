@@ -8,9 +8,19 @@ public class ObjectiveSO : ScriptableObject
     [Tooltip("Unique ID for this objective within its chain.")]
     public string objectiveID;
 
+    [Tooltip("The display name of the quest. (For UI)")] 
+    public string objectiveTitle;
+
     [TextArea]
     [Tooltip("Text displayed to the player in the HUD (e.g., 'Find the Hidden Artifact').")]
     public string objectiveDescription;
+
+    [Header("Discovery")]
+    [Tooltip("If true, this objective will not be shown in the UI until it is completed.")]
+    public bool isHidden = false;
+
+    [Tooltip("If true, this objective will persist between level changes.")] 
+    public bool isPersistent = false;
 
     [Header("Goal")]
     public ObjectiveGoalType goalType;

@@ -26,6 +26,7 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 {
     public ObjectiveSO CurrentObjective { get; private set; }
 
+    public bool IsRestoring { get; private set; } = false;
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Debug Settings")]
@@ -69,16 +70,16 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         ResetState();
     }
 
-    /// <summary>
-    /// This is now the DISCOVERY method. It finds and creates objectives but doesn't start them.
-    /// </summary>
+  
     private void PrepareObjectives(SceneDataSO sceneData)
     {
+       
+
         ResetState();
 
         if (!objectivesEnabled || sceneData.objectiveChain == null)
         {
-            OnCurrentObjectiveChanged?.Invoke(null);
+            //OnCurrentObjectiveChanged?.Invoke(null);
             return;
         }
 
@@ -92,23 +93,24 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         Debug.Log($"[ObjectiveManager] Prepared {_activeObjectives.Count} objectives for level '{_currentLevelObjectiveChain.levelID}'. Waiting for scene to be ready.");
     }
 
-    /// <summary>
-    /// This is the new ACTIVATION method. It's called later, when the scene is fully ready.
-    /// </summary>
+
     private void StartObjectiveChain()
     {
-        if (_activeObjectives.Count > 0)
+        // This method is called after PrepareObjectives.
+        // If we are starting a new game, we kick off the first objective.
+        // If we are loading from a save, we do NOTHING. We wait for RestoreState to be called.
+        if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.LoadFromSave)
         {
-            Debug.Log("[ObjectiveManager] Scene is ready. Starting the first objective.");
+            Debug.Log("[ObjectiveManager] New game detected. Starting the first objective.");
             ActivateNextObjective();
+        }
+        else
+        {
+            Debug.Log("[ObjectiveManager] Load from save detected. Waiting for RestoreState.");
         }
     }
 
 
-
-    /// <summary>
-    /// Called by an ObjectiveInstance when its goal has been met.
-    /// </summary>
     public void CompleteObjective(ObjectiveInstance completedInstance)
     {
         if (!objectivesEnabled || completedInstance == null) return;
@@ -135,7 +137,10 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         }
         else
         {
-            Debug.Log($"<color=yellow>All objectives for level {_currentLevelObjectiveChain.levelID} completed!</color>");
+            if (_currentLevelObjectiveChain != null)
+            {
+                Debug.Log($"<color=yellow>All objectives for level {_currentLevelObjectiveChain.levelID} completed!</color>");
+            }
             OnLevelCompleted?.Invoke();
             CurrentObjective = null;
             OnCurrentObjectiveChanged?.Invoke(null);
@@ -180,13 +185,21 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 
     public void RestoreState(object state)
     {
+
+        Debug.Log("<color=orange>--- OBJECTIVE MANAGER: RestoreState CALLED ---</color>");
+
         var saveData = state as ObjectiveStateData;
-        if (saveData == null) return;
+        if (saveData == null)
+        {
+           
+            return;
+        }
 
         // We assume the correct scene (and thus correct _currentLevelObjectiveChain) has already been loaded
         if (_currentLevelObjectiveChain == null || _currentLevelObjectiveChain.levelID != saveData.levelChainID)
         {
             Debug.LogError("ObjectiveManager RestoreState failed: Mismatched level chain ID.");
+            
             return;
         }
 
@@ -199,16 +212,41 @@ public class ObjectiveManager : MonoBehaviour, IResettable
                 // We don't directly set the state, we reactivate if it was active
                 if (savedInstance.state == ObjectiveState.Active)
                 {
+                    Debug.Log($"<color=orange>--- OBJECTIVE MANAGER: Restoring state for '{liveInstance.SourceSO.objectiveID}'. " +
+                        $"Saved state was '{savedInstance.state}'.</color>");
                     liveInstance.Goal.currentAmount = savedInstance.goalCurrentAmount;
                     liveInstance.Start(); // This re-subscribes to events and sets the state to Active
-                    OnCurrentObjectiveChanged?.Invoke(liveInstance.SourceSO);
+                    //OnCurrentObjectiveChanged?.Invoke(liveInstance.SourceSO);
                 }
                 else if (savedInstance.state == ObjectiveState.Completed)
                 {
                     // Manually set completed objectives
-                    liveInstance.Goal.currentAmount = liveInstance.Goal.requiredAmount;
+                    liveInstance.MarkCompletedFromLoad();
+                    //liveInstance.Goal.currentAmount = liveInstance.Goal.requiredAmount;
                 }
             }
+        }
+        // --- ADD THIS BLOCK: Now we find the correct active objective and force a UI update ---
+        var activeObjective = _activeObjectives.FirstOrDefault(o => o.State == ObjectiveState.Active);
+        if (activeObjective != null)
+        {
+            CurrentObjective = activeObjective.SourceSO;
+            Debug.Log($"<color=orange>--- OBJECTIVE MANAGER: Restore complete. Broadcasting final active objective:" +
+                $" '{CurrentObjective?.objectiveDescription ?? "None"}'</color>");
+            OnCurrentObjectiveChanged?.Invoke(CurrentObjective); // Tell the UI about the new objective description
+
+            // Also send the progress update for the counter
+            var progressData = GetCurrentProgressData();
+            if (progressData.HasValue)
+            {
+                activeObjective.Goal.onProgressUpdated?.Raise(progressData.Value);
+            }
+        }
+        else
+        {
+            // If no objective was active (e.g., end of chain), clear the UI
+            CurrentObjective = null;
+            OnCurrentObjectiveChanged?.Invoke(null);
         }
     }
     #endregion
@@ -243,6 +281,29 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         }
         // Return a nullable struct if no active objective is found
         return null;
+    }
+
+    public void SetIsRestoring(bool value)
+    {
+        IsRestoring = value;
+    }
+
+    public void AddObjectives(List<ObjectiveSO> newObjectives)
+    {
+        foreach (var objectiveSO in newObjectives)
+        {
+            // Avoid adding duplicates
+            if (_activeObjectives.Any(inst => inst.SourceSO == objectiveSO)) continue;
+
+            var newInstance = new ObjectiveInstance(objectiveSO);
+            _activeObjectives.Add(newInstance);
+
+            // Start the new objective so it begins listening for its goal.
+            newInstance.Start();
+
+            // Announce it to the UI.
+            OnCurrentObjectiveChanged?.Invoke(objectiveSO);
+        }
     }
 
 }

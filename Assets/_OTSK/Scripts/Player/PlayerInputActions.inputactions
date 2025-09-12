@@ -266,6 +266,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ShowQuestLog",
+                    "type": "Button",
+                    "id": "7f36a346-d876-46a2-abd4-97a016d69ee6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -723,7 +732,7 @@
                 {
                     "name": "",
                     "id": "47d291d4-e65f-40e8-ba37-f7ff9fabe57a",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/m",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -851,6 +860,39 @@
                     "action": "ToggleDetails",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "14a662af-3669-4c32-9b69-f3fb2086c1d0",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowQuestLog",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "505bef26-70e7-4bcf-a19a-04b2293ea1c2",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowQuestLog",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "51247595-e02b-4045-8eb4-fd8621b05fd6",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowQuestLog",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
@@ -1560,7 +1602,7 @@
                 {
                     "name": "",
                     "id": "279beada-a2b0-47fa-81ff-3e3e59f672ed",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/m",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

@@ -352,6 +352,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ShowQuestLog"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f36a346-d876-46a2-abd4-97a016d69ee6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -809,7 +818,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""47d291d4-e65f-40e8-ba37-f7ff9fabe57a"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/m"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -937,6 +946,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleDetails"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""14a662af-3669-4c32-9b69-f3fb2086c1d0"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""505bef26-70e7-4bcf-a19a-04b2293ea1c2"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""51247595-e02b-4045-8eb4-fd8621b05fd6"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -1646,7 +1688,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""279beada-a2b0-47fa-81ff-3e3e59f672ed"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/m"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -2100,6 +2142,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_ToggleInfiniteCharges = m_Player.FindAction("ToggleInfiniteCharges", throwIfNotFound: true);
         m_Player_ToggleDetails = m_Player.FindAction("ToggleDetails", throwIfNotFound: true);
+        m_Player_ShowQuestLog = m_Player.FindAction("ShowQuestLog", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -2256,6 +2299,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_ToggleInfiniteCharges;
     private readonly InputAction m_Player_ToggleDetails;
+    private readonly InputAction m_Player_ShowQuestLog;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2384,6 +2428,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ToggleDetails => m_Wrapper.m_Player_ToggleDetails;
         /// <summary>
+        /// Provides access to the underlying input action "Player/ShowQuestLog".
+        /// </summary>
+        public InputAction @ShowQuestLog => m_Wrapper.m_Player_ShowQuestLog;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -2496,6 +2544,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleDetails.started += instance.OnToggleDetails;
             @ToggleDetails.performed += instance.OnToggleDetails;
             @ToggleDetails.canceled += instance.OnToggleDetails;
+            @ShowQuestLog.started += instance.OnShowQuestLog;
+            @ShowQuestLog.performed += instance.OnShowQuestLog;
+            @ShowQuestLog.canceled += instance.OnShowQuestLog;
         }
 
         /// <summary>
@@ -2594,6 +2645,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleDetails.started -= instance.OnToggleDetails;
             @ToggleDetails.performed -= instance.OnToggleDetails;
             @ToggleDetails.canceled -= instance.OnToggleDetails;
+            @ShowQuestLog.started -= instance.OnShowQuestLog;
+            @ShowQuestLog.performed -= instance.OnShowQuestLog;
+            @ShowQuestLog.canceled -= instance.OnShowQuestLog;
         }
 
         /// <summary>
@@ -3679,6 +3733,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleDetails(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ShowQuestLog" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShowQuestLog(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

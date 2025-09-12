@@ -26,9 +26,7 @@ public class ObjectiveInstance
         ObjectiveManager.Instance?.CompleteObjective(this);
     }
 
-    /// <summary>
-    /// Factory method to create a new runtime instance of a goal.
-    /// </summary>
+   
     private ObjectiveGoal CreateGoalInstance(ObjectiveSO so)
     {
         switch (so.goalType)
@@ -53,9 +51,7 @@ public class ObjectiveInstance
         return null;
     }
 
-    /// <summary>
-    /// Called to activate the objective and its goal.
-    /// </summary>
+   
     public void Start()
     {
         Debug.Log($"<color=lime>[ObjectiveInstance]</color> Starting objective '{SourceSO.objectiveDescription}'. Initializing its goal.");
@@ -67,9 +63,11 @@ public class ObjectiveInstance
         Debug.Log($"<color=cyan>[ObjectiveInstance]</color> Broadcast complete.");
     }
 
-    /// <summary>
-    /// Called to clean up the objective, unsubscribing from events.
-    /// </summary>
+    public void MarkCompletedFromLoad()
+    {
+        State = ObjectiveState.Completed;
+    }
+
     public void CleanUp()
     {
         Goal?.CleanUp();
