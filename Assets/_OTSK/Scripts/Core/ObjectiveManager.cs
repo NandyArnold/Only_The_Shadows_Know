@@ -24,10 +24,15 @@ public class ObjectiveStateData
 
 public class ObjectiveManager : MonoBehaviour, IResettable
 {
+
+
     public ObjectiveSO CurrentObjective { get; private set; }
 
     public bool IsRestoring { get; private set; } = false;
     public static ObjectiveManager Instance { get; private set; }
+
+    [Header("Data")] 
+    [SerializeField] private ObjectiveRegistrySO objectiveRegistry;
 
     [Header("Debug Settings")]
     [SerializeField] private bool objectivesEnabled = true;
@@ -46,6 +51,7 @@ public class ObjectiveManager : MonoBehaviour, IResettable
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
+        objectiveRegistry.Initialize();
     }
 
     private void OnEnable()
@@ -185,66 +191,56 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 
     public void RestoreState(object state)
     {
-
-        Debug.Log("<color=orange>--- OBJECTIVE MANAGER: RestoreState CALLED ---</color>");
-
         var saveData = state as ObjectiveStateData;
-        if (saveData == null)
-        {
-           
-            return;
-        }
+        if (saveData == null) return;
 
-        // We assume the correct scene (and thus correct _currentLevelObjectiveChain) has already been loaded
-        if (_currentLevelObjectiveChain == null || _currentLevelObjectiveChain.levelID != saveData.levelChainID)
-        {
-            Debug.LogError("ObjectiveManager RestoreState failed: Mismatched level chain ID.");
-            
-            return;
-        }
+        // In this new version, we don't need to check the level chain ID.
+        // We will build the objective list directly from the save data.
+        ResetState(); // Start with a completely clean slate.
 
-        // Apply the saved state to our newly created instances
         foreach (var savedInstance in saveData.objectiveStates)
         {
-            var liveInstance = _activeObjectives.FirstOrDefault(o => o.SourceSO.objectiveID == savedInstance.objectiveID);
-            if (liveInstance != null)
+            // Use the registry to find the original ObjectiveSO asset from its ID.
+            ObjectiveSO so = objectiveRegistry.GetObjectiveByID(savedInstance.objectiveID);
+            if (so == null)
             {
-                // We don't directly set the state, we reactivate if it was active
-                if (savedInstance.state == ObjectiveState.Active)
-                {
-                    Debug.Log($"<color=orange>--- OBJECTIVE MANAGER: Restoring state for '{liveInstance.SourceSO.objectiveID}'. " +
-                        $"Saved state was '{savedInstance.state}'.</color>");
-                    liveInstance.Goal.currentAmount = savedInstance.goalCurrentAmount;
-                    liveInstance.Start(); // This re-subscribes to events and sets the state to Active
-                    //OnCurrentObjectiveChanged?.Invoke(liveInstance.SourceSO);
-                }
-                else if (savedInstance.state == ObjectiveState.Completed)
-                {
-                    // Manually set completed objectives
-                    liveInstance.MarkCompletedFromLoad();
-                    //liveInstance.Goal.currentAmount = liveInstance.Goal.requiredAmount;
-                }
+                Debug.LogWarning($"Could not find objective with ID '{savedInstance.objectiveID}' in the registry. Skipping.");
+                continue;
+            }
+
+            // Create a new instance for this objective and add it to our list.
+            var liveInstance = new ObjectiveInstance(so);
+            _activeObjectives.Add(liveInstance);
+
+            // Now, apply the saved state to this newly created instance.
+            if (savedInstance.state == ObjectiveState.Active || savedInstance.state == ObjectiveState.Completed)
+            {
+                liveInstance.Goal.currentAmount = savedInstance.goalCurrentAmount;
+            }
+            if (savedInstance.state == ObjectiveState.Active)
+            {
+                liveInstance.Start();
+            }
+            else if (savedInstance.state == ObjectiveState.Completed)
+            {
+                liveInstance.MarkCompletedFromLoad();
             }
         }
-        // --- ADD THIS BLOCK: Now we find the correct active objective and force a UI update ---
-        var activeObjective = _activeObjectives.FirstOrDefault(o => o.State == ObjectiveState.Active);
+
+        var activeObjective = _activeObjectives.FirstOrDefault(o => o.State == ObjectiveState.Active && o.SourceSO.objectiveType == ObjectiveType.MainObjective);
+        if (activeObjective == null)
+        {
+            // If no main quest is active, find any active side quest to display.
+            activeObjective = _activeObjectives.FirstOrDefault(o => o.State == ObjectiveState.Active);
+        }
+
         if (activeObjective != null)
         {
             CurrentObjective = activeObjective.SourceSO;
-            Debug.Log($"<color=orange>--- OBJECTIVE MANAGER: Restore complete. Broadcasting final active objective:" +
-                $" '{CurrentObjective?.objectiveDescription ?? "None"}'</color>");
-            OnCurrentObjectiveChanged?.Invoke(CurrentObjective); // Tell the UI about the new objective description
-
-            // Also send the progress update for the counter
-            var progressData = GetCurrentProgressData();
-            if (progressData.HasValue)
-            {
-                activeObjective.Goal.onProgressUpdated?.Raise(progressData.Value);
-            }
+            OnCurrentObjectiveChanged?.Invoke(CurrentObjective);
         }
         else
         {
-            // If no objective was active (e.g., end of chain), clear the UI
             CurrentObjective = null;
             OnCurrentObjectiveChanged?.Invoke(null);
         }
@@ -304,6 +300,12 @@ public class ObjectiveManager : MonoBehaviour, IResettable
             // Announce it to the UI.
             OnCurrentObjectiveChanged?.Invoke(objectiveSO);
         }
+    }
+
+    public IEnumerable<ObjectiveInstance> GetActiveObjectives()
+    {
+        // We only return objectives that aren't completed yet
+        return _activeObjectives.Where(inst => inst.State != ObjectiveState.Completed);
     }
 
 }

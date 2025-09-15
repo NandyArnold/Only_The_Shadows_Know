@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ce90625c7d8f3d49a5f5df8043db55e, type: 3}
+  m_Name: ObjectiveRegistry
+  m_EditorClassIdentifier: 
+  levelEntries:
+  - levelID: 0_Tutorial
+    mainObjectives:
+    - {fileID: 11400000, guid: 688cd1de2dace4f448a96bb99f6bfba2, type: 2}
+    - {fileID: 11400000, guid: b2614998366672046954286ab32cfc9e, type: 2}
+    - {fileID: 11400000, guid: 111cb6f548c4dca4caab1f09bcd4f14b, type: 2}
+    - {fileID: 11400000, guid: 719bf346666305f429636f50837aedf7, type: 2}
+    - {fileID: 11400000, guid: 2b71ccbc30e95024582134549e601d1f, type: 2}
+    sideObjectives:
+    - {fileID: 11400000, guid: d9f97a6045fb7c44a9c56c5ed936a38d, type: 2}
+    hiddenObjectives: []

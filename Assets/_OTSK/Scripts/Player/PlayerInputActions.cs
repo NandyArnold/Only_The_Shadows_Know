@@ -1165,6 +1165,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ShowQuestLog"",
+                    ""type"": ""Button"",
+                    ""id"": ""877dada5-4762-49d9-9812-44e5a93154d4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1695,6 +1704,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""CloseMapView"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""0e86b4d2-760c-4449-b549-fd1ec270a667"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""a5fd29db-7d08-48fc-b0de-2de0104a7498"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""afd629b0-f6dc-4bcf-a5a4-0d34ac085eb6"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowQuestLog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -2165,6 +2207,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_MapPan = m_UI.FindAction("MapPan", throwIfNotFound: true);
         m_UI_MapPanModifier = m_UI.FindAction("MapPanModifier", throwIfNotFound: true);
         m_UI_CloseMapView = m_UI.FindAction("CloseMapView", throwIfNotFound: true);
+        m_UI_ShowQuestLog = m_UI.FindAction("ShowQuestLog", throwIfNotFound: true);
         // EnemyDebug
         m_EnemyDebug = asset.FindActionMap("EnemyDebug", throwIfNotFound: true);
         m_EnemyDebug_Move = m_EnemyDebug.FindAction("Move", throwIfNotFound: true);
@@ -2705,6 +2748,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_MapPan;
     private readonly InputAction m_UI_MapPanModifier;
     private readonly InputAction m_UI_CloseMapView;
+    private readonly InputAction m_UI_ShowQuestLog;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -2797,6 +2841,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @CloseMapView => m_Wrapper.m_UI_CloseMapView;
         /// <summary>
+        /// Provides access to the underlying input action "UI/ShowQuestLog".
+        /// </summary>
+        public InputAction @ShowQuestLog => m_Wrapper.m_UI_ShowQuestLog;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_UI; }
@@ -2882,6 +2930,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CloseMapView.started += instance.OnCloseMapView;
             @CloseMapView.performed += instance.OnCloseMapView;
             @CloseMapView.canceled += instance.OnCloseMapView;
+            @ShowQuestLog.started += instance.OnShowQuestLog;
+            @ShowQuestLog.performed += instance.OnShowQuestLog;
+            @ShowQuestLog.canceled += instance.OnShowQuestLog;
         }
 
         /// <summary>
@@ -2953,6 +3004,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CloseMapView.started -= instance.OnCloseMapView;
             @CloseMapView.performed -= instance.OnCloseMapView;
             @CloseMapView.canceled -= instance.OnCloseMapView;
+            @ShowQuestLog.started -= instance.OnShowQuestLog;
+            @ShowQuestLog.performed -= instance.OnShowQuestLog;
+            @ShowQuestLog.canceled -= instance.OnShowQuestLog;
         }
 
         /// <summary>
@@ -3888,6 +3942,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCloseMapView(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ShowQuestLog" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShowQuestLog(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EnemyDebug" which allows adding and removing callbacks.

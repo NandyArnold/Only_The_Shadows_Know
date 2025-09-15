@@ -8,6 +8,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject inGameMenuPanel;
     [SerializeField] private GameObject objectivePanel;
+    [SerializeField] private GameObject objectiveLogPanel;
+
+    [Header("Component References")]
+    [SerializeField] private ObjectiveLogUI objectiveLogUI;
 
     [Header("Tactical View")]
     [SerializeField] private GameObject tacticalViewPanel; // Assign your TacticalView_Panel
@@ -28,6 +32,7 @@ public class UIManager : MonoBehaviour
     {
         // We need to get a reference to the input handler when the player is ready
         GameManager.Instance.OnPlayerRegistered += RegisterInputHandler;
+        PlayerInputHandler.OnShowQuestLogInput += ToggleObjectiveLog;
     }
 
     private void OnDisable()
@@ -37,6 +42,7 @@ public class UIManager : MonoBehaviour
         {
             _playerInputHandler.OnCloseMapViewInput -= HandleCloseMapView;
         }
+        PlayerInputHandler.OnShowQuestLogInput -= ToggleObjectiveLog;
     }
 
     private void Start()
@@ -49,6 +55,7 @@ public class UIManager : MonoBehaviour
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (inGameMenuPanel != null) inGameMenuPanel.SetActive(false);
         if (objectivePanel != null) objectivePanel.SetActive(false);
+        if (objectiveLogPanel != null) objectiveLogPanel.SetActive(false);
     }
 
     private void OnDestroy()
@@ -134,6 +141,25 @@ public class UIManager : MonoBehaviour
         if (tacticalViewPanel != null && tacticalViewPanel.activeSelf)
         {
             ToggleTacticalView();
+        }
+    }
+
+    public void ToggleObjectiveLog()
+    {
+        if (objectiveLogPanel == null || objectiveLogUI == null) return;
+
+        bool isActive = !objectiveLogPanel.activeSelf;
+        objectiveLogPanel.SetActive(isActive);
+
+        if (isActive)
+        {
+            // When the panel is activated, tell the controller to build the list.
+            objectiveLogUI.RebuildObjectiveList();
+            CursorManager.Instance.SetState(CursorState.UI);
+        }
+        else
+        {
+            CursorManager.Instance.SetState(CursorState.Gameplay);
         }
     }
 

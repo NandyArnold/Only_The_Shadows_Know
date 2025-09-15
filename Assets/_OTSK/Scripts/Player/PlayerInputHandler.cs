@@ -224,6 +224,7 @@ public class PlayerInputHandler : MonoBehaviour
         _inputActions.Player.ShowObjective.performed += ctx => OnShowObjectiveInput?.Invoke();
 
         _inputActions.Player.ShowQuestLog.performed += ctx => OnShowQuestLogInput?.Invoke();
+        _inputActions.UI.ShowQuestLog.performed += ctx => OnShowQuestLogInput?.Invoke();
 
         _inputActions.Player.CancelAction.performed += ctx => EventManager.Instance.CancelActionInput();
 

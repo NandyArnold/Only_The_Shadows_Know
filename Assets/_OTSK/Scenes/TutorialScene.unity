@@ -6795,6 +6795,7 @@ GameObject:
   - component: {fileID: 278363717}
   - component: {fileID: 278363716}
   - component: {fileID: 278363715}
+  - component: {fileID: 278363718}
   m_Layer: 0
   m_Name: Move
   m_TagString: Untagged
@@ -6811,7 +6812,7 @@ Transform:
   m_GameObject: {fileID: 278363712}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.2286275, z: -0, w: 0.973514}
-  m_LocalPosition: {x: 33.69, y: 22.33, z: 66.38}
+  m_LocalPosition: {x: 42.99, y: 22.33, z: 75.45}
   m_LocalScale: {x: 12.15121, y: 2.3776, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6891,6 +6892,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 278363712}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &278363718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278363712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9789f3e01d094e543bd1f64566c02a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  condition: 0
+  objectivesToGrant:
+  - {fileID: 11400000, guid: d9f97a6045fb7c44a9c56c5ed936a38d, type: 2}
+  deactivateAfterGranting: 1
 --- !u!1 &278879613
 GameObject:
   m_ObjectHideFlags: 0
@@ -8724,8 +8741,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
-  orthographic size: 10
+  orthographic: 0
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -8749,8 +8766,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70710695, y: 0.0000000037252903, z: 6.9849193e-10, w: 0.70710665}
-  m_LocalPosition: {x: 60.96, y: 142.19, z: 92.17}
+  m_LocalRotation: {x: 0.047059763, y: -0.041443806, z: 0.001954185, w: 0.99803007}
+  m_LocalPosition: {x: 2.6932685, y: 102.89681, z: 52.417076}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
