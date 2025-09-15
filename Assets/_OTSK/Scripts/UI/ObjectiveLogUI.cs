@@ -1,5 +1,6 @@
 // QuestLogUI.cs
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ObjectiveLogUI : MonoBehaviour
@@ -8,11 +9,11 @@ public class ObjectiveLogUI : MonoBehaviour
     [SerializeField] private GameObject objectiveLogPanelObject;
     [SerializeField] private Transform mainObjectivesContainer;
     [SerializeField] private Transform sideObjectivesContainer;
-    [SerializeField] private GameObject objectiveLogEntryPrefab; // Assign your prefab here
+    [SerializeField] private GameObject objectiveLogEntryPrefab; 
 
-  
 
-   
+
+
 
     public void RebuildObjectiveList()
     {
@@ -22,30 +23,46 @@ public class ObjectiveLogUI : MonoBehaviour
 
         if (ObjectiveManager.Instance == null) return;
 
-        var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+        // Get ALL objectives from the manager
+        var allObjectives = ObjectiveManager.Instance.GetAllCurrentObjectives();
 
-        foreach (var objectiveInstance in activeObjectives)
+        // --- NEW SORTING LOGIC ---
+        // Find the one active main quest
+        var activeMainQuest = allObjectives.FirstOrDefault(obj =>
+            obj.SourceSO.objectiveType == ObjectiveType.MainObjective &&
+            obj.State == ObjectiveState.Active);
+
+        // Find all completed main quests
+        var completedMainQuests = allObjectives.Where(obj =>
+            obj.SourceSO.objectiveType == ObjectiveType.MainObjective &&
+            obj.State == ObjectiveState.Completed);
+
+        // Find all active side quests
+        var activeSideQuests = allObjectives.Where(obj =>
+            obj.SourceSO.objectiveType == ObjectiveType.SideObjective &&
+            obj.State == ObjectiveState.Active);
+        // -------------------------
+
+        // 1. Display the current active main quest at the top.
+        if (activeMainQuest != null)
         {
-            if (objectiveInstance.SourceSO.isHidden) continue;
+            var entryObject = Instantiate(objectiveLogEntryPrefab, mainObjectivesContainer);
+            // We now pass the entire instance to Populate
+            entryObject.GetComponent<ObjectiveLogEntryUI>().Populate(activeMainQuest);
+        }
 
-            Transform parentContainer = null;
+        // 2. Display all completed main quests below it.
+        foreach (var objectiveInstance in completedMainQuests)
+        {
+            var entryObject = Instantiate(objectiveLogEntryPrefab, mainObjectivesContainer);
+            entryObject.GetComponent<ObjectiveLogEntryUI>().Populate(objectiveInstance);
+        }
 
-            // NOTE: I've renamed your enum cases to match your files, e.g., 'MainObjective'.
-            // Please ensure these names match your ObjectiveType enum EXACTLY.
-            if (objectiveInstance.SourceSO.objectiveType == ObjectiveType.MainObjective)
-            {
-                parentContainer = mainObjectivesContainer;
-            }
-            else if (objectiveInstance.SourceSO.objectiveType == ObjectiveType.SideObjective)
-            {
-                parentContainer = sideObjectivesContainer;
-            }
-
-            if (parentContainer != null)
-            {
-                var entryObject = Instantiate(objectiveLogEntryPrefab, parentContainer);
-                entryObject.GetComponent<ObjectiveLogEntryUI>().Populate(objectiveInstance.SourceSO);
-            }
+        // 3. Display all active side quests in their own section.
+        foreach (var objectiveInstance in activeSideQuests)
+        {
+            var entryObject = Instantiate(objectiveLogEntryPrefab, sideObjectivesContainer);
+            entryObject.GetComponent<ObjectiveLogEntryUI>().Populate(objectiveInstance);
         }
     }
 }

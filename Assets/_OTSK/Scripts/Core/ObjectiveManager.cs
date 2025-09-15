@@ -308,4 +308,9 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         return _activeObjectives.Where(inst => inst.State != ObjectiveState.Completed);
     }
 
+    public IEnumerable<ObjectiveInstance> GetAllCurrentObjectives()
+    {
+        return _activeObjectives;
+    }
+
 }
