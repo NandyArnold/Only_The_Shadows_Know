@@ -14,5 +14,6 @@ public enum RevealableType
     Caster,
     Elite,
     MainObjective,
-    Boss
+    Boss,
+    Player
 }
