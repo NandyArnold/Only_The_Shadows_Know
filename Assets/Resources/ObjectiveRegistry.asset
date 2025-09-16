@@ -16,6 +16,7 @@ MonoBehaviour:
   - levelID: 0_Tutorial
     mainObjectives:
     - {fileID: 11400000, guid: 688cd1de2dace4f448a96bb99f6bfba2, type: 2}
+    - {fileID: 11400000, guid: d30928c9eea00254cbcf13a6a6733398, type: 2}
     - {fileID: 11400000, guid: b2614998366672046954286ab32cfc9e, type: 2}
     - {fileID: 11400000, guid: 111cb6f548c4dca4caab1f09bcd4f14b, type: 2}
     - {fileID: 11400000, guid: 719bf346666305f429636f50837aedf7, type: 2}

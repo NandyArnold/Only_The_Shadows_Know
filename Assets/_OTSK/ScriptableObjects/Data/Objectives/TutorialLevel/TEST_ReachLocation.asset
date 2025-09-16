@@ -47,7 +47,7 @@ MonoBehaviour:
     requiredDestructibleIDs: []
     onDestroyedEventChannel: {fileID: 0}
   completionTriggerID: 
-  objectiveLocation: {fileID: 0}
+  targetLocationID: Overlook
   objectiveType: 0
   references:
     version: 2

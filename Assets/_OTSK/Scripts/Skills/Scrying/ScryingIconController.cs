@@ -12,16 +12,26 @@ public class ScryingIconController : MonoBehaviour
     // --- Public Properties for the Scrying System ---
     public GameObject IconInstance { get; private set; }
     public RectTransform IconImageRectTransform { get; private set; }
+    public RectTransform FacingIndicatorTransform { get; private set; }
+
     public Transform TargetTransform => transform;
     public bool IsObjective => objective != null;
     public bool IsOwnerDead => enemyHealth != null && enemyHealth.IsDead;
 
     // --- Private Component References ---
-    private RevealableEntity revealableEntity;
-    private Enemy enemy;
+    //private RevealableEntity revealableEntity;
+    //private Enemy enemy;
     private Objective objective;
     private EnemyHealth enemyHealth;
     private Canvas iconCanvas;
+
+    public Enemy enemy { get; private set; }
+    public RevealableEntity revealableEntity { get; private set; }
+
+    // --- Add this new property to easily identify the player ---
+    public bool IsPlayer => revealableEntity != null && revealableEntity.Type == RevealableType.Player;
+
+
 
     private void Awake()
     {
@@ -77,6 +87,14 @@ public class ScryingIconController : MonoBehaviour
         if (iconImage != null)
         {
             IconImageRectTransform = iconImage.rectTransform;
+        }
+
+        // Find the FacingIndicator child and store its transform.
+        Transform indicator = IconInstance.transform.Find("FacingIndicator");
+        
+        if (indicator != null)
+        {
+            FacingIndicatorTransform = indicator.GetComponent<RectTransform>();
         }
 
         // --- THIS IS THE FULLY RESTORED AND CORRECTED SPRITE LOGIC ---

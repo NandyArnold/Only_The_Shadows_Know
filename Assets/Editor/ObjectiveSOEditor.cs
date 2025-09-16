@@ -28,7 +28,7 @@ public class ObjectiveSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveID"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveTitle"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveDescription"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveLocation"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("targetLocationID"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveType"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("isPersistent"));
 

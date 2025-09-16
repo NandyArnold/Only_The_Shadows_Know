@@ -280,15 +280,34 @@ public class ScryingSystem : MonoBehaviour
             {
                 controller.SetSortOrder(0); // Everything else below
             }
+            // 3. Update Facing Indicator Rotation
+            if (controller.enemy != null || controller.IsPlayer)
+            {
+                if (controller.FacingIndicatorTransform != null)
+                {
+                    // Get the owner's forward direction and flatten it.
+                    Vector3 ownerForward = ownerTransform.forward;
+                    ownerForward.y = 0;
 
+                    // Calculate and apply the angle.
+                    float angle = Vector3.SignedAngle(Vector3.forward, ownerForward, Vector3.up);
+                    controller.FacingIndicatorTransform.localEulerAngles = new Vector3(0, 0, -angle);
+                    controller.FacingIndicatorTransform.localScale = scaleVector;
+                }
+            }
+            else if (controller.FacingIndicatorTransform != null)
+            {
+                // Important: If it's not a player or enemy, ensure the indicator is hidden.
+                controller.FacingIndicatorTransform.gameObject.SetActive(false);
+            }
 
-            // 3. Update Scale
+            // 4. Update Scale
             if (controller.IconImageRectTransform != null)
             {
                 controller.IconImageRectTransform.localScale = scaleVector;
             }
 
-            // 4. Add to list for decluttering
+            // 5. Add to list for decluttering
             activeIconTransforms.Add(iconTransform);
         }
 

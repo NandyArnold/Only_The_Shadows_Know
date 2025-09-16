@@ -33,3 +33,7 @@ MonoBehaviour:
   distortedIcon: {fileID: 21300000, guid: 0114ed7c70c56194c87ea648eb6577db, type: 3}
   defaultIcon: {fileID: 21300000, guid: 098eca53dfcb7b14989fd25bda5a8314, type: 3}
   corpseIcon: {fileID: 21300000, guid: d85b085f390d08944804b4189e6a0fca, type: 3}
+  mainObjectiveArrow: {fileID: 21300000, guid: a511e1c15ac524c40bcbf5cc40a98ca6, type: 3}
+  sideObjectiveArrow: {fileID: 21300000, guid: 552888dd639c6294287bcec7db05c5cd, type: 3}
+  exitPointArrow: {fileID: 21300000, guid: 9f1c9988bc94deb4aaedccdf00f535cc, type: 3}
+  defaultObjectiveArrow: {fileID: 21300000, guid: c15947b9dd9fd484ebb1e0c6fff0acd6, type: 3}

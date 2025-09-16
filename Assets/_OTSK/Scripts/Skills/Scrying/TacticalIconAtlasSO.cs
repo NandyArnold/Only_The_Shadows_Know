@@ -19,6 +19,12 @@ public class TacticalIconAtlasSO : ScriptableObject
     [Tooltip("The icon used to represent a corpse.")]
     public Sprite corpseIcon;
 
+    [Header("Map Edge Indicators")] 
+    public Sprite mainObjectiveArrow;
+    public Sprite sideObjectiveArrow;
+    public Sprite exitPointArrow;
+    public Sprite defaultObjectiveArrow;
+
     // A single, generic GetIcon method
     public Sprite GetIcon(EnemyType type)
     {

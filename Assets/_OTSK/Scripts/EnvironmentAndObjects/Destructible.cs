@@ -74,6 +74,10 @@ public class Destructible : MonoBehaviour, ISaveable
     private void Start() 
     {
         SaveableEntityRegistry.Instance.Register(this);
+        if (ObjectiveTargetRegistry.Instance != null && !string.IsNullOrEmpty(data.destructibleID))
+        {
+            ObjectiveTargetRegistry.Instance.RegisterTarget(data.destructibleID, this.transform);
+        }
     }
     private void OnDestroy()
     {
@@ -85,6 +89,10 @@ public class Destructible : MonoBehaviour, ISaveable
         if (SaveableEntityRegistry.Instance != null)
         {
             SaveableEntityRegistry.Instance.Unregister(this);
+        }
+        if (ObjectiveTargetRegistry.Instance != null && data != null && !string.IsNullOrEmpty(data.destructibleID))
+        {
+            ObjectiveTargetRegistry.Instance.UnregisterTarget(data.destructibleID, this.transform);
         }
     }
     // This method now accepts a full damage profile

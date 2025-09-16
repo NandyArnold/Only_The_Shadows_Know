@@ -27,6 +27,23 @@ public class ObjectiveTriggerVolume : MonoBehaviour, ISaveable
         _uniqueID = GetComponent<UniqueID>();
     }
 
+    private void OnEnable()
+    {
+        // Announce this object's existence and location to the target registry.
+        if (ObjectiveTargetRegistry.Instance != null)
+        {
+            ObjectiveTargetRegistry.Instance.RegisterTarget(triggerID, this.transform);
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Remove this object from the registry when it's disabled or destroyed.
+        if (ObjectiveTargetRegistry.Instance != null)
+        {
+            ObjectiveTargetRegistry.Instance.UnregisterTarget(triggerID, this.transform);
+        }
+    }
 
     // --- ISaveable Implementation ---
     public string UniqueID => _uniqueID.ID;

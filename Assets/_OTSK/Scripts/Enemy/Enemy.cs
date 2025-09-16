@@ -173,6 +173,10 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             Debug.LogError("StatusBarAnchor child object not found on Enemy!", this.gameObject);
         }
+        if (ObjectiveTargetRegistry.Instance != null && !string.IsNullOrEmpty(config.enemyID))
+        {
+            ObjectiveTargetRegistry.Instance.RegisterTarget(config.enemyID, this.transform);
+        }
 
     }
 
@@ -202,6 +206,11 @@ public class Enemy : MonoBehaviour, ISaveable
                 }
                 // ... other manager unregistrations
             }
+
+        if (ObjectiveTargetRegistry.Instance != null && config != null && !string.IsNullOrEmpty(config.enemyID))
+        {
+            ObjectiveTargetRegistry.Instance.UnregisterTarget(config.enemyID, this.transform);
+        }
         //Debug.Log($"<color=white>OnDestroy completed for {name}</color>");
     }
 

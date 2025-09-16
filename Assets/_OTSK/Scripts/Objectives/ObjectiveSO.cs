@@ -37,14 +37,12 @@ public class ObjectiveSO : ScriptableObject
     [Tooltip("The ID of the in-world trigger that will complete this objective.")]
     public string completionTriggerID;
 
-    [Tooltip("Location of the objective in the game world (for map markers, etc.).")]
-    public Transform objectiveLocation;
+    [Tooltip("The ID of the GameObject in the scene that serves as the target location for this objective.")]
+    public string targetLocationID;
 
     public ObjectiveType objectiveType = ObjectiveType.MainObjective;
 
-    /// <summary>
-    /// A helper method to get the active goal based on the selected goalType.
-    /// </summary>
+   
     public ObjectiveGoal GetGoal()
     {
         switch (goalType)
