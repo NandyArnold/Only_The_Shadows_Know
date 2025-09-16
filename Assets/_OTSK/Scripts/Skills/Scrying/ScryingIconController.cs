@@ -1,28 +1,27 @@
-// ScryingIconController.cs - Generic Version
+// ScryingIconController.cs - Corrected Definitive Version
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RevealableEntity))]
 public class ScryingIconController : MonoBehaviour
 {
-    public GameObject scryingIconInstance { get; private set; }
     [Header("Configuration")]
-    //[SerializeField] private GameObject scryingIconPrefab;
-    //[SerializeField] private TacticalIconAtlasSO iconAtlas;
     [Tooltip("The fixed Y-axis height in world space for the icon to appear.")]
     [SerializeField] private float iconWorldHeight = 120f;
+
+    // --- Public Properties for the Scrying System ---
     public GameObject IconInstance { get; private set; }
     public RectTransform IconImageRectTransform { get; private set; }
-    public bool IsOwnerDead => enemyHealth != null && enemyHealth.IsDead;
     public Transform TargetTransform => transform;
-
-    private RevealableEntity revealableEntity;
-    private Enemy enemy; // Optional, for checking resistance
-    private Objective objective;
-    private Canvas iconCanvas;
-
-    private EnemyHealth enemyHealth;
     public bool IsObjective => objective != null;
+    public bool IsOwnerDead => enemyHealth != null && enemyHealth.IsDead;
+
+    // --- Private Component References ---
+    private RevealableEntity revealableEntity;
+    private Enemy enemy;
+    private Objective objective;
+    private EnemyHealth enemyHealth;
+    private Canvas iconCanvas;
 
     private void Awake()
     {
@@ -30,14 +29,10 @@ public class ScryingIconController : MonoBehaviour
         enemy = GetComponent<Enemy>();
         objective = GetComponent<Objective>();
         enemyHealth = GetComponent<EnemyHealth>();
-        //CreateIcon();
     }
 
     private void OnEnable()
     {
-        // It's good practice to register the icon. Consider uncommenting this
-        // and the corresponding code in ScryingSystem for better performance.
-        ScryingSystem.Instance?.RegisterIconController(this);
         if (enemyHealth != null)
         {
             enemyHealth.OnDied += HandleOwnerDied;
@@ -46,81 +41,70 @@ public class ScryingIconController : MonoBehaviour
 
     private void OnDisable()
     {
-        // Always unregister when disabled or destroyed.
-        ScryingSystem.Instance?.UnregisterIconController(this);
-        if (IconInstance != null)
-        {
-            Destroy(IconInstance);
-        }
-
         if (enemyHealth != null)
         {
             enemyHealth.OnDied -= HandleOwnerDied;
         }
     }
 
+    private void OnDestroy()
+    {
+        if (IconInstance != null)
+        {
+            Destroy(IconInstance);
+        }
+    }
+
     private void HandleOwnerDied(bool isSilentKill)
     {
-        // Report its own death to the central system.
         if (ScryingSystem.Instance != null)
         {
             ScryingSystem.Instance.ReportDeath(this);
         }
     }
-    public void CreateIcon(GameObject scryingIconPrefab, TacticalIconAtlasSO iconAtlas)
+
+    public void CreateIcon(GameObject iconPrefab, TacticalIconAtlasSO atlas)
     {
-        // If an icon already exists (e.g., from a previous attempt), destroy it first.
         if (IconInstance != null) { Destroy(IconInstance); }
+        if (iconPrefab == null || atlas == null) return;
 
-        // Guard clause using the new arguments.
-        if (scryingIconPrefab == null || iconAtlas == null) return;
-
-        // 1. Calculate the spawn position at our desired height.
         Vector3 ownerPosition = transform.position;
         Vector3 spawnPosition = new Vector3(ownerPosition.x, iconWorldHeight, ownerPosition.z);
-
-        // 2. Instantiate the icon at the new position with NO parent.
-        IconInstance = Instantiate(scryingIconPrefab, spawnPosition, Quaternion.identity, null);
+        IconInstance = Instantiate(iconPrefab, spawnPosition, Quaternion.identity, null);
 
         iconCanvas = IconInstance.GetComponent<Canvas>();
-        // The rest of the setup logic remains the same.
         Image iconImage = IconInstance.GetComponentInChildren<Image>();
         if (iconImage != null)
         {
             IconImageRectTransform = iconImage.rectTransform;
         }
 
+        // --- THIS IS THE FULLY RESTORED AND CORRECTED SPRITE LOGIC ---
         bool isResistant = (enemy != null && enemy.Config.isResistantToScrying);
         if (isResistant)
         {
-            iconImage.sprite = iconAtlas.distortedIcon;
+            iconImage.sprite = atlas.distortedIcon;
         }
         else if (enemy != null)
         {
-            iconImage.sprite = iconAtlas.GetIcon(enemy.Config.enemyType);
-            iconImage.color = iconAtlas.GetColor(enemy.Config.enemyType);
+            iconImage.sprite = atlas.GetIcon(enemy.Config.enemyType);
+            iconImage.color = atlas.GetColor(enemy.Config.enemyType);
         }
         else if (revealableEntity != null)
         {
-            iconImage.sprite = iconAtlas.GetIcon(revealableEntity.Type);
-            iconImage.color = iconAtlas.GetColor(revealableEntity.Type);
+            iconImage.sprite = atlas.GetIcon(revealableEntity.Type);
+            iconImage.color = atlas.GetColor(revealableEntity.Type);
         }
         else
         {
-            iconImage.sprite = iconAtlas.defaultIcon;
+            iconImage.sprite = atlas.defaultIcon;
         }
+        // -----------------------------------------------------------------
 
         IconInstance.SetActive(false);
     }
 
-    public void SetSortOrder(int order)
-    {
-        if (iconCanvas != null)
-        {
-            iconCanvas.sortingOrder = order;
-        }
-    }
     public void ShowIcon() { if (IconInstance != null) IconInstance.SetActive(true); }
     public void HideIcon() { if (IconInstance != null) IconInstance.SetActive(false); }
-
+    public void SetSortOrder(int order) { if (iconCanvas != null) iconCanvas.sortingOrder = order; }
 }
