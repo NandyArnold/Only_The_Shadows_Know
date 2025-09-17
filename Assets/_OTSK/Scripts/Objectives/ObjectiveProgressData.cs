@@ -3,6 +3,7 @@
 [System.Serializable]
 public struct ObjectiveProgressData
 {
+    public string objectiveID;   // e.g., "kill_scouts"
     public string counterLabel; // e.g., "Scouts Killed"
     public int currentProgress; // e.g., 1
     public int requiredAmount;  // e.g., 3

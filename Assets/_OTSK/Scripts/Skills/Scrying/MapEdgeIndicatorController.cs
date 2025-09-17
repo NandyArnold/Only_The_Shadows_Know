@@ -1,5 +1,6 @@
 // MapEdgeIndicatorController.cs - Final Version
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,11 @@ public class MapEdgeIndicatorController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int poolSize = 5;
-    [SerializeField] private float borderWidth = 30f;
+    //[SerializeField] private float borderWidth = 30f;
+
+    [Header("Appearance")]
+    [Tooltip("How far inside the minimap's edge the arrow should be. Increase to pull it in.")]
+    [SerializeField] private float radiusOffset = 30f;
 
     private List<Image> arrowPool = new List<Image>();
     private Camera scryingRenderCamera;
@@ -75,14 +80,18 @@ public class MapEdgeIndicatorController : MonoBehaviour
         }
 
         int activeArrowIndex = 0;
-        ObjectiveSO mainObjective = ObjectiveManager.Instance.CurrentObjective;
+        var activeObjectives = ObjectiveManager.Instance.GetActiveObjectives();
+        if (activeObjectives == null) return;
 
-        // --- ADD THIS LOG ---
-        Debug.Log($"[IndicatorController] LateUpdate running. Current active objective is: '{mainObjective?.objectiveTitle ?? "None"}'");
+        //Debug.Log($"[PAUSING EXECUTION] Found {activeObjectives.Count()} objective(s). Now inspect the ObjectiveManager.", ObjectiveManager.Instance);
+        //Debug.Break();
 
-        if (mainObjective != null)
+        //Debug.Log($"[IndicatorController] LateUpdate running. Found {activeObjectives.Count()} active objective(s).");
+
+        foreach (var objectiveInstance in activeObjectives)
         {
-            ProcessObjective(mainObjective, ref activeArrowIndex);
+            if (activeArrowIndex >= poolSize) break; // Stop if we run out of arrows in our pool
+            ProcessObjective(objectiveInstance.SourceSO, ref activeArrowIndex);
         }
 
         // You could add a loop here later to process side objectives as well
@@ -118,7 +127,7 @@ public class MapEdgeIndicatorController : MonoBehaviour
 
         bool isOffScreen = isBehind || (viewportPos.x < 0.02f || viewportPos.x > 0.98f || viewportPos.y < 0.02f || viewportPos.y > 0.98f);
 
-        Debug.Log($"[IndicatorController] Processing '{objective.objectiveTitle}'. Is target off-screen? {isOffScreen}");
+        //Debug.Log($"[IndicatorController] Processing '{objective.objectiveTitle}'. Is target off-screen? {isOffScreen}");
 
         if (isOffScreen)
         {
@@ -135,12 +144,15 @@ public class MapEdgeIndicatorController : MonoBehaviour
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             arrow.rectTransform.localEulerAngles = new Vector3(0, 0, angle);
 
-            Vector3[] corners = new Vector3[4];
-            mapPanelRect.GetWorldCorners(corners);
-            float panelWidth = corners[2].x - corners[0].x;
-            float panelHeight = corners[2].y - corners[0].y;
+            // Get the radius of the map panel directly from its rectangle properties.
+            // We divide by 2 for the radius and account for canvas scaling.
+            float radius = (mapPanelRect.rect.width / 2f) * mapPanelRect.lossyScale.x;
 
-            arrow.rectTransform.position = mapCenter + direction.normalized * (Mathf.Min(panelWidth, panelHeight) / 2f - borderWidth);
+            // Subtract the border width to bring the arrow slightly inside the edge.
+            radius -= radiusOffset;
+
+            // The final position is the center of the map panel plus the direction vector clamped to the new radius.
+            arrow.rectTransform.position = mapPanelRect.position + (Vector3)direction.normalized * radius;
         }
     }
 
@@ -157,7 +169,7 @@ public class MapEdgeIndicatorController : MonoBehaviour
 
     private Transform GetTargetTransformForObjective(ObjectiveSO objective)
     {
-        Debug.Log($"[IndicatorController] Searching for transform for objective: '{objective.objectiveTitle}'");
+        //Debug.Log($"[IndicatorController] Searching for transform for objective: '{objective.objectiveTitle}'");
         Transform foundTransform = null;
 
         // Case 1: The objective has a specific, static location ID.
@@ -189,11 +201,11 @@ public class MapEdgeIndicatorController : MonoBehaviour
         // --- ADDED LOGGING ---
         if (foundTransform != null)
         {
-            Debug.Log($"<color=green>[IndicatorController] SUCCESS! Found transform: '{foundTransform.name}' for objective '{objective.objectiveTitle}'</color>", foundTransform.gameObject);
+            //Debug.Log($"<color=green>[IndicatorController] SUCCESS! Found transform: '{foundTransform.name}' for objective '{objective.objectiveTitle}'</color>", foundTransform.gameObject);
         }
         else
         {
-            Debug.LogWarning($"<color=orange>[IndicatorController] FAILED to find any transform for objective '{objective.objectiveTitle}'.</color>");
+            //Debug.LogWarning($"<color=orange>[IndicatorController] FAILED to find any transform for objective '{objective.objectiveTitle}'.</color>");
         }
         return foundTransform;
     }

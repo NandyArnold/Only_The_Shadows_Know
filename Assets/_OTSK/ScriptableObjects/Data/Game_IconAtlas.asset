@@ -36,4 +36,4 @@ MonoBehaviour:
   mainObjectiveArrow: {fileID: 21300000, guid: a511e1c15ac524c40bcbf5cc40a98ca6, type: 3}
   sideObjectiveArrow: {fileID: 21300000, guid: 552888dd639c6294287bcec7db05c5cd, type: 3}
   exitPointArrow: {fileID: 21300000, guid: 9f1c9988bc94deb4aaedccdf00f535cc, type: 3}
-  defaultObjectiveArrow: {fileID: 21300000, guid: c15947b9dd9fd484ebb1e0c6fff0acd6, type: 3}
+  defaultObjectiveArrow: {fileID: 21300000, guid: 29dc3bfd34363d242bcb6e475f4cfd7b, type: 3}

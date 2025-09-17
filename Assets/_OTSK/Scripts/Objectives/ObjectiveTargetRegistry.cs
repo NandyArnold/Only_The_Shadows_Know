@@ -39,4 +39,20 @@ public class ObjectiveTargetRegistry : MonoBehaviour
         _targets.TryGetValue(id, out var foundTargets);
         return foundTargets ?? new List<Transform>(); // Return the list or an empty list
     }
+
+    [ContextMenu("Print Registry Contents")] // This lets you right-click the component to run it!
+    public void DEBUG_PrintRegistryContents()
+    {
+        Debug.Log("--- Objective Target Registry Contents ---");
+        if (_targets.Count == 0)
+        {
+            Debug.Log("Registry is EMPTY.");
+            return;
+        }
+        foreach (var entry in _targets)
+        {
+            Debug.Log($"ID: '{entry.Key}' --- Count: {entry.Value.Count}");
+        }
+        Debug.Log("------------------------------------");
+    }
 }

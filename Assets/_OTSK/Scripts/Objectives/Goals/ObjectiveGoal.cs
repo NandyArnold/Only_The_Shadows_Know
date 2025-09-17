@@ -54,19 +54,20 @@ public abstract class ObjectiveGoal
 
     public void UpdateUI()
     {
-        Debug.Log($"<color=yellow>[ObjectiveGoal]</color> UpdateUI called. Event channel is null:" +
-            $" {onProgressUpdated == null}. Label is: '{counterLabel}'");
+        //Debug.Log($"<color=yellow>[ObjectiveGoal]</color> UpdateUI called. Event channel is null:" +
+        //    $" {onProgressUpdated == null}. Label is: '{counterLabel}'");
 
         if (onProgressUpdated != null)
         {
             var data = new ObjectiveProgressData
             {
+                objectiveID = owner.SourceSO.objectiveID,
                 counterLabel = this.counterLabel,
                 currentProgress = currentAmount,
                 requiredAmount = requiredAmount
             };
-            Debug.Log($"<color=yellow>[ObjectiveGoal]</color> Packaged data: Label='{data.counterLabel}'," +
-                $" Progress={data.currentProgress}/{data.requiredAmount}. Raising event...");
+            //Debug.Log($"<color=yellow>[ObjectiveGoal]</color> Packaged data: Label='{data.counterLabel}'," +
+            //    $" Progress={data.currentProgress}/{data.requiredAmount}. Raising event...");
             onProgressUpdated.Raise(data);
         }
     }

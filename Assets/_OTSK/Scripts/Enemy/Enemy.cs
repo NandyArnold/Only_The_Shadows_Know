@@ -173,10 +173,7 @@ public class Enemy : MonoBehaviour, ISaveable
         {
             Debug.LogError("StatusBarAnchor child object not found on Enemy!", this.gameObject);
         }
-        if (ObjectiveTargetRegistry.Instance != null && !string.IsNullOrEmpty(config.enemyID))
-        {
-            ObjectiveTargetRegistry.Instance.RegisterTarget(config.enemyID, this.transform);
-        }
+       
 
     }
 
@@ -261,7 +258,12 @@ public class Enemy : MonoBehaviour, ISaveable
             HandleDeath(false, true);
             return; // IMPORTANT: Stop the rest of Start() from running.
         }
-   
+
+        if (ObjectiveTargetRegistry.Instance != null && !string.IsNullOrEmpty(config.enemyID))
+        {
+            ObjectiveTargetRegistry.Instance.RegisterTarget(config.enemyID, this.transform);
+        }
+
     }
 
     private void HandleDeath(bool isSilentKill, bool isLoadedFromSave = false)

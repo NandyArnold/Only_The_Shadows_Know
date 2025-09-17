@@ -397,7 +397,7 @@ public class HUDManager : MonoBehaviour
     {
         minimapRenderImage.texture = texture;
         minimapPanel.SetActive(true);
-        objectiveArrow.gameObject.SetActive(true);
+        //objectiveArrow.gameObject.SetActive(true);
     }
 
     public void HideMinimap()

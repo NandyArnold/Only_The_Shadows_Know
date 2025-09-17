@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: TEST_DestroyOne
   m_EditorClassIdentifier: 
   objectiveID: Test_4
-  objectiveDescription: Destroy Alarm Panel
+  objectiveTitle: Destroy Alarm Panel
+  objectiveDescription: Destroy the Alarm Panel in order to deny enemies their reinforcements
+  isHidden: 0
+  isPersistent: 0
   goalType: 2
   rewards: []
   killGoal:
@@ -39,7 +42,7 @@ MonoBehaviour:
     - StartAlarm
     onDestroyedEventChannel: {fileID: 11400000, guid: 1066e2c8111814b45abf0993572c8fb8, type: 2}
   completionTriggerID: 
-  objectiveLocation: {fileID: 0}
+  targetLocationID: 
   objectiveType: 0
   references:
     version: 2

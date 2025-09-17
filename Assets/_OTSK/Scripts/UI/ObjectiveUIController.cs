@@ -36,13 +36,9 @@ public class ObjectiveUIController : MonoBehaviour
 
     private void Awake()
     {
-        // Ensure the panel is invisible at the start.
-        if (mainPanelCanvasGroup != null)
-        {
-            mainPanelCanvasGroup.alpha = 0;
-        }
-        if (hintCanvasGroup != null) hintCanvasGroup.alpha = 0;
+        if (mainPanelCanvasGroup != null) mainPanelCanvasGroup.alpha = 0;
         if (notificationCanvasGroup != null) notificationCanvasGroup.alpha = 0;
+        if (hintCanvasGroup != null) hintCanvasGroup.alpha = 0;
         if (objectiveHintObject != null) objectiveHintObject.SetActive(false);
     }
 
@@ -50,28 +46,26 @@ public class ObjectiveUIController : MonoBehaviour
     {
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleNewObjective;
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleMainObjectiveChanged;
+            ObjectiveManager.Instance.OnSideObjectiveAdded += HandleSideObjectiveAdded; // --- NEW ---
             ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
+
             if (!ObjectiveManager.Instance.IsRestoring)
             {
-                HandleNewObjective(ObjectiveManager.Instance.CurrentObjective);
-                var initialProgress = ObjectiveManager.Instance.GetCurrentProgressData();
-                if (initialProgress.HasValue) { HandleObjectiveProgress(initialProgress.Value); }
+                HandleMainObjectiveChanged(ObjectiveManager.Instance.CurrentObjective);
             }
         }
         if (onObjectiveProgressUpdated != null) { onObjectiveProgressUpdated.OnEventRaised += HandleObjectiveProgress; }
         PlayerInputHandler.OnFirstGameplayInput += HandleFirstGameplayInput;
-        PlayerInputHandler.OnShowObjectiveInput += HandleShowObjectiveInput; 
+        PlayerInputHandler.OnShowObjectiveInput += HandleShowObjectiveInput;
     }
-
-
-
 
     private void OnDisable()
     {
         if (ObjectiveManager.Instance != null)
         {
-            ObjectiveManager.Instance.OnCurrentObjectiveChanged -= HandleNewObjective;
+            ObjectiveManager.Instance.OnCurrentObjectiveChanged -= HandleMainObjectiveChanged;
+            ObjectiveManager.Instance.OnSideObjectiveAdded -= HandleSideObjectiveAdded; // --- NEW ---
             ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
         }
         if (onObjectiveProgressUpdated != null) { onObjectiveProgressUpdated.OnEventRaised -= HandleObjectiveProgress; }
@@ -80,76 +74,46 @@ public class ObjectiveUIController : MonoBehaviour
     }
 
 
-    private void HandleNewObjective(ObjectiveSO newObjective)
+    private void HandleMainObjectiveChanged(ObjectiveSO newMainObjective)
     {
-        if (newObjective != null && newObjective.isHidden)
+        if (!_hasShownFirstObjective)
         {
-            // Silently track hidden objectives, don't show any UI for them yet.
-            _isObjectiveActive = true;
-            return;
+            _pendingFirstObjective = newMainObjective;
         }
-
-        _isObjectiveActive = newObjective != null;
-        if (!_isObjectiveActive)
+        else
         {
-            if (objectiveHintObject != null) objectiveHintObject.SetActive(false);
-            ShowObjective(null, true);
-            return;
+            UpdateMainObjectiveDisplay(newMainObjective, true, true);
         }
+    }
 
-        // Check the objective type to decide what to do
-        if (newObjective.objectiveType == ObjectiveType.MainObjective)
-        {
-            // It's a main quest, use the main panel logic
-            if (!_hasShownFirstObjective)
-            {
-                _pendingFirstObjective = newObjective;
-                mainCounterText.text = "";
-                mainProgressText.text = "";
-            }
-            else
-            {
-                ShowObjective(newObjective, true);
-            }
-        }
-        else // It's a SideObjective, HiddenItem, etc.
-        {
-            string notificationPrefix = "New Objective:"; // Default text
-
-            // Customize the prefix based on the type
-            switch (newObjective.objectiveType)
-            {
-                case ObjectiveType.SideObjective:
-                    notificationPrefix = "New Side Objective:";
-                    break;
-                case ObjectiveType.HiddenItem:
-                    notificationPrefix = "Hidden Objective Discovered!:";
-                    break;
-            }
-
-            // Show the customized notification
-            ShowNotification($"{notificationPrefix} {newObjective.objectiveTitle}");
-        }
-    
+    // --- NEW METHOD --- This method is ONLY for SIDE objectives.
+    private void HandleSideObjectiveAdded(ObjectiveSO newSideObjective)
+    {
+        if (newSideObjective == null) return;
+        ShowNotification($"New Side Quest: {newSideObjective.objectiveTitle}");
     }
 
     private void HandleObjectiveProgress(ObjectiveProgressData data)
     {
+        var currentMainObjective = ObjectiveManager.Instance.CurrentObjective;
+        if (currentMainObjective == null || data.objectiveID != currentMainObjective.objectiveID) return;
+
         mainCounterText.text = data.counterLabel;
         mainProgressText.text = $"{data.currentProgress} / {data.requiredAmount}";
 
         if (_hasShownFirstObjective)
         {
-            ShowObjective(ObjectiveManager.Instance.CurrentObjective, false);
+            UpdateMainObjectiveDisplay(currentMainObjective, true, false);
         }
     }
     private void HandleLevelCompleted()
     {
-        _isObjectiveActive = false;
-        if (objectiveHintObject != null) objectiveHintObject.SetActive(false);
-        ShowObjective(null, true, "All Objectives Complete!");
+        UpdateMainObjectiveDisplay(null, true, true, "All Objectives Complete!");
+        //_isObjectiveActive = false;
+        //if (objectiveHintObject != null) objectiveHintObject.SetActive(false);
+        //ShowObjective(null, true, "All Objectives Complete!");
     }
-      
+
     private void ShowObjective(ObjectiveSO objective, bool shouldFadeOut, string overrideText = null)
     {
         if (objective == null && string.IsNullOrEmpty(overrideText))
@@ -157,13 +121,18 @@ public class ObjectiveUIController : MonoBehaviour
             mainPanelCanvasGroup.DOFade(0, fadeTime);
             return;
         }
+
+        // This line correctly gets the title.
         string textToShow = overrideText ?? objective.objectiveTitle;
+
         if (_mainDisplayCoroutine != null) StopCoroutine(_mainDisplayCoroutine);
+
+        // This line correctly calls the coroutine with the string and the bool.
         _mainDisplayCoroutine = StartCoroutine(ShowMainObjectiveCoroutine(textToShow, shouldFadeOut));
     }
 
 
-    
+
 
 
 
@@ -172,7 +141,10 @@ public class ObjectiveUIController : MonoBehaviour
     {
         if (hintCanvasGroup != null) hintCanvasGroup.DOFade(0, fadeTime);
         if (UISoundPlayer.Instance != null) UISoundPlayer.Instance.PlayNewObjectiveSound();
+
+        // This line correctly uses the 'title' parameter.
         mainTitleText.text = title;
+
         mainPanelCanvasGroup.DOFade(1, fadeTime);
 
         if (shouldFadeOut)
@@ -210,16 +182,48 @@ public class ObjectiveUIController : MonoBehaviour
 
     private void HandleFirstGameplayInput()
     {
-
-        if (_pendingFirstObjective == null) _pendingFirstObjective = ObjectiveManager.Instance.CurrentObjective;
-
         if (!_hasShownFirstObjective && _pendingFirstObjective != null)
         {
             _hasShownFirstObjective = true;
-            ShowObjective(_pendingFirstObjective, true);
-            _pendingFirstObjective = null; // Clear it so it doesn't show again
+            UpdateMainObjectiveDisplay(_pendingFirstObjective, true, true);
+            _pendingFirstObjective = null;
         }
     }
+
+    private void UpdateMainObjectiveDisplay(ObjectiveSO objective, bool animate, bool shouldFadeOut, string overrideText = null)
+    {
+        if (_mainDisplayCoroutine != null) StopCoroutine(_mainDisplayCoroutine);
+
+        if (objective == null && string.IsNullOrEmpty(overrideText))
+        {
+            mainPanelCanvasGroup.alpha = 0;
+            if (objectiveHintObject != null) objectiveHintObject.SetActive(false);
+            return;
+        }
+
+        string title = overrideText ?? objective.objectiveTitle;
+        var progressData = ObjectiveManager.Instance.GetCurrentProgressData();
+        string label = "";
+        string progress = "";
+
+        if (progressData.HasValue && objective != null && progressData.Value.objectiveID == objective.objectiveID)
+        {
+            label = progressData.Value.counterLabel;
+            progress = $"{progressData.Value.currentProgress} / {progressData.Value.requiredAmount}";
+        }
+
+        mainTitleText.text = title;
+        mainCounterText.text = label;
+        mainProgressText.text = progress;
+
+        if (animate)
+        {
+            // --- THIS IS THE FIX ---
+            // We now correctly pass BOTH the title and the shouldFadeOut flag to the coroutine.
+            _mainDisplayCoroutine = StartCoroutine(ShowMainObjectiveCoroutine(title, shouldFadeOut));
+        }
+    }
+
 
     private void HandleShowObjectiveInput()
     {
@@ -238,4 +242,6 @@ public class ObjectiveUIController : MonoBehaviour
             //_displayCoroutine = StartCoroutine(ShowObjectiveCoroutine(currentObjective.objectiveDescription));
         }
     }
+
+   
 }

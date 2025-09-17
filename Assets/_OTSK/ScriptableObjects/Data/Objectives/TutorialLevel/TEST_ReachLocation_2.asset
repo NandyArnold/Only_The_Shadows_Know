@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: TEST_ReachLocation_2
   m_EditorClassIdentifier: 
   objectiveID: Test_1.5
-  objectiveTitle: First Steps
-  objectiveDescription: Reach the Overlook
+  objectiveTitle: Second Steps
+  objectiveDescription: Get close to the Scout
   isHidden: 0
   isPersistent: 0
   goalType: 1
@@ -30,7 +30,7 @@ MonoBehaviour:
   reachLocationGoal:
     currentAmount: 0
     requiredAmount: 1
-    counterLabel: Location Reached
+    counterLabel: Near Scout Reached
     onProgressUpdated: {fileID: 11400000, guid: 9522bd47d45a2314592aa9e26ef86086, type: 2}
     requiredTriggerID: Overlook2
     onTriggerEnteredEventChannel: {fileID: 11400000, guid: bc06c1696101a6d48adf9e2956080f9d, type: 2}

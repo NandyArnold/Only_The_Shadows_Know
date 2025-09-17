@@ -45,6 +45,7 @@ public class ObjectiveManager : MonoBehaviour, IResettable
     public event Action<ObjectiveSO> OnCurrentObjectiveChanged; // Fired when a new objective becomes the primary one
     public event Action<ObjectiveSO> OnObjectiveCompleted;     // Fired when any objective is completed
     public event Action OnLevelCompleted;                       // Fired when all objectives in the chain are done
+    public event Action<ObjectiveSO> OnSideObjectiveAdded;
 
 
     private void Awake()
@@ -298,14 +299,15 @@ public class ObjectiveManager : MonoBehaviour, IResettable
             newInstance.Start();
 
             // Announce it to the UI.
-            OnCurrentObjectiveChanged?.Invoke(objectiveSO);
+            //OnCurrentObjectiveChanged?.Invoke(objectiveSO);
+            OnSideObjectiveAdded?.Invoke(objectiveSO);
         }
     }
 
     public IEnumerable<ObjectiveInstance> GetActiveObjectives()
     {
         // We only return objectives that aren't completed yet
-        return _activeObjectives.Where(inst => inst.State != ObjectiveState.Completed);
+        return _activeObjectives.Where(inst => inst.State == ObjectiveState.Active);
     }
 
     public IEnumerable<ObjectiveInstance> GetAllCurrentObjectives()
