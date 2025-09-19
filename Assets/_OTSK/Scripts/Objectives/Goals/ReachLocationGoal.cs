@@ -65,4 +65,10 @@ public class ReachLocationGoal : ObjectiveGoal
         }
     }
 
+    public override bool IsAlreadyCompleted()
+    {
+        // Ask the tracker if we've already been to this location.
+        return AccomplishmentTracker.Instance.HasVisitedLocation(requiredTriggerID);
+    }
+
 }

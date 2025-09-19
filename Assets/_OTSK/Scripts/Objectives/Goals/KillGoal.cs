@@ -55,4 +55,16 @@ public class KillGoal : ObjectiveGoal
         }
     }
 
+    public override bool IsAlreadyCompleted()
+    {
+        // If there are no specific enemies required, the goal can't be pre-completed.
+        if (requiredEnemyIDs == null || requiredEnemyIDs.Count == 0) return false;
+
+        // Check the tracker for the count of the first enemy type required.
+        // NOTE: This assumes simple goals like "Kill 5 Goblins". For complex goals
+        // like "Kill 5 Goblins AND 2 Trolls", this logic would need to be expanded.
+        int alreadyKilledCount = AccomplishmentTracker.Instance.GetKillCount(requiredEnemyIDs[0]);
+        return alreadyKilledCount >= requiredAmount;
+    }
+
 }

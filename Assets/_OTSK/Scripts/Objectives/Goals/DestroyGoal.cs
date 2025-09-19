@@ -47,5 +47,14 @@ public class DestroyGoal : ObjectiveGoal
             Evaluate();
         }
     }
- 
+
+    public override bool IsAlreadyCompleted()
+    {
+        if (requiredDestructibleIDs == null || requiredDestructibleIDs.Count == 0) return false;
+
+        int alreadyDestroyedCount = AccomplishmentTracker.Instance.GetDestroyCount(requiredDestructibleIDs[0]);
+        return alreadyDestroyedCount >= requiredAmount;
+
+
+    }
 }

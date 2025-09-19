@@ -4,21 +4,29 @@ using System.Linq;
 using UnityEngine;
 
 // --- NEW SAVE DATA STRUCTURES ---
-[Serializable]
-public class ObjectiveInstanceSaveData
-{
-    public string objectiveID;
-    public ObjectiveState state;
-    public int goalCurrentAmount;
-}
+//[Serializable]
+//public class ObjectiveInstanceSaveData
+//{
+//    public string objectiveID;
+//    public ObjectiveState state;
+//    public int goalCurrentAmount;
+//}
 
-[Serializable]
-public class ObjectiveStateData
-{
-    public string levelChainID;
-    public List<ObjectiveInstanceSaveData> objectiveStates;
-}
-// ------------------------------------
+//[Serializable]
+//public class ObjectiveStateData
+//{
+//    public string levelChainID;
+//    public List<ObjectiveInstanceSaveData> objectiveStates;
+//}
+//// ------------------------------------
+//// Add this to your save data structures, likely near the top of ObjectiveManager.cs
+//[System.Serializable]
+//public class AccomplishmentData
+//{
+//    public Dictionary<string, int> killCounts = new Dictionary<string, int>();
+//    public Dictionary<string, int> destroyCounts = new Dictionary<string, int>();
+//    public HashSet<string> visitedLocationIDs = new HashSet<string>();
+//}
 
 
 
@@ -122,12 +130,21 @@ public class ObjectiveManager : MonoBehaviour, IResettable
     {
         if (!objectivesEnabled || completedInstance == null) return;
 
+        if (completedInstance.State == ObjectiveState.Completed)
+        {
+            return;
+        }
+        completedInstance.MarkCompletedFromLoad();
+
+
         Debug.Log($"<color=green>Objective Completed:</color> {completedInstance.SourceSO.objectiveDescription}");
         OnObjectiveCompleted?.Invoke(completedInstance.SourceSO);
+
         foreach (var reward in completedInstance.SourceSO.rewards)
         {
             reward.ExecuteReward();
         }
+
         ActivateNextObjective();
     }
 
@@ -137,17 +154,24 @@ public class ObjectiveManager : MonoBehaviour, IResettable
 
         if (nextObjective != null)
         {
-            Debug.Log($"<color=cyan>[ObjectiveManager]</color> Activating objective: '{nextObjective.SourceSO.objectiveDescription}'");
-
-            // Step 1: Set the objective to Active and initialize its goal.
-            nextObjective.Start();
-
-            // Step 2: Inform all systems that this is now the current objective.
-            CurrentObjective = nextObjective.SourceSO;
-            OnCurrentObjectiveChanged?.Invoke(nextObjective.SourceSO);
-
-            // Step 3: NOW that everyone knows about the new objective, tell it to send its initial progress data.
-            nextObjective.NotifyUIOfInitialState();
+            // First, check if the objective's conditions have already been met.
+            if (nextObjective.Goal.IsAlreadyCompleted())
+            {
+                Debug.Log($"<color=#87CEEB>[ObjectiveManager]</color> Objective '{nextObjective.SourceSO.objectiveTitle}' was already completed. Completing retroactively.");
+                // This immediately completes it and will trigger this method again,
+                // effectively skipping to the next available objective.
+                CompleteObjective(nextObjective);
+                return; // Stop here to let the recursive call handle the next step.
+            }
+            else
+            {
+                // If not already completed, proceed with normal activation.
+                Debug.Log($"<color=cyan>[ObjectiveManager]</color> Activating objective: '{nextObjective.SourceSO.objectiveDescription}'");
+                nextObjective.Start();
+                CurrentObjective = nextObjective.SourceSO;
+                OnCurrentObjectiveChanged?.Invoke(nextObjective.SourceSO);
+                nextObjective.NotifyUIOfInitialState(); // (Assuming you kept this from our previous fix)
+            }
         }
         else
         {

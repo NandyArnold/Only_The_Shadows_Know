@@ -21,7 +21,7 @@ public class ObjectiveInstance
     public void OnGoalCompleted(ObjectiveGoal completedGoal)
     {
         Debug.Log($"Goal completed for objective: {SourceSO.objectiveDescription}");
-        State = ObjectiveState.Completed;
+        //State = ObjectiveState.Completed;
         // This will notify the ObjectiveManager.
         ObjectiveManager.Instance?.CompleteObjective(this);
     }

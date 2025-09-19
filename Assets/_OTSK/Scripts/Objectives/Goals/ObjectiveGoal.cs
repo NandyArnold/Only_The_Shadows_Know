@@ -75,6 +75,7 @@ public abstract class ObjectiveGoal
     protected abstract void SubscribeToEvents();
 
     protected abstract void UnsubscribeFromEvents();
+    public abstract bool IsAlreadyCompleted();
 
     public bool IsComplete() => (currentAmount >= requiredAmount);
 

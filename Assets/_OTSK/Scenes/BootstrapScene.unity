@@ -16326,6 +16326,7 @@ GameObject:
   - component: {fileID: 1837955063}
   - component: {fileID: 1837955064}
   - component: {fileID: 1837955087}
+  - component: {fileID: 1837955088}
   - component: {fileID: 1837955070}
   - component: {fileID: 1837955069}
   - component: {fileID: 1837955068}
@@ -17066,6 +17067,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39f621636341daa42adf051f0fad583f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1837955088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837955053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79da4458f660343be56b50368ccb80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnemyDiedEventChannel: {fileID: 11400000, guid: cbce0ae4de21d764db2b00ea626d01f5, type: 2}
+  onDestroyedEventChannel: {fileID: 11400000, guid: 1066e2c8111814b45abf0993572c8fb8, type: 2}
+  onTriggerEnteredEventChannel: {fileID: 11400000, guid: bc06c1696101a6d48adf9e2956080f9d, type: 2}
 --- !u!114 &1841966960 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2765903207761671650, guid: 2b16cc870b00a8a4396203119883292e, type: 3}
