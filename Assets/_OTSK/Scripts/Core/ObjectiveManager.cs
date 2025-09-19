@@ -138,9 +138,16 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         if (nextObjective != null)
         {
             Debug.Log($"<color=cyan>[ObjectiveManager]</color> Activating objective: '{nextObjective.SourceSO.objectiveDescription}'");
+
+            // Step 1: Set the objective to Active and initialize its goal.
             nextObjective.Start();
+
+            // Step 2: Inform all systems that this is now the current objective.
             CurrentObjective = nextObjective.SourceSO;
             OnCurrentObjectiveChanged?.Invoke(nextObjective.SourceSO);
+
+            // Step 3: NOW that everyone knows about the new objective, tell it to send its initial progress data.
+            nextObjective.NotifyUIOfInitialState();
         }
         else
         {
@@ -271,6 +278,9 @@ public class ObjectiveManager : MonoBehaviour, IResettable
         {
             return new ObjectiveProgressData
             {
+                
+                objectiveID = activeInstance.SourceSO.objectiveID,
+
                 counterLabel = activeInstance.Goal.counterLabel,
                 currentProgress = activeInstance.Goal.currentAmount,
                 requiredAmount = activeInstance.Goal.requiredAmount

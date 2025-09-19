@@ -58,15 +58,23 @@ public class ObjectiveInstance
         State = ObjectiveState.Active;
         Goal?.Initialize(this); // The ?. ensures this only runs if Goal is not null.
 
-        Debug.Log($"<color=cyan>[ObjectiveInstance]</color> About to broadcast initial UI state for '{SourceSO.objectiveDescription}'.");
-        Goal?.UpdateUI();
-        Debug.Log($"<color=cyan>[ObjectiveInstance]</color> Broadcast complete.");
+        //Debug.Log($"<color=cyan>[ObjectiveInstance]</color> About to broadcast initial UI state for '{SourceSO.objectiveDescription}'.");
+        //Goal?.UpdateUI();
+        //Debug.Log($"<color=cyan>[ObjectiveInstance]</color> Broadcast complete.");
     }
 
     public void MarkCompletedFromLoad()
     {
         State = ObjectiveState.Completed;
     }
+
+    public void NotifyUIOfInitialState()
+    {
+        Debug.Log($"<color=cyan>[ObjectiveInstance]</color> About to broadcast initial UI state for '{SourceSO.objectiveDescription}'.");
+        Goal?.UpdateUI();
+        Debug.Log($"<color=cyan>[ObjectiveInstance]</color> Broadcast complete.");
+    }
+
 
     public void CleanUp()
     {
