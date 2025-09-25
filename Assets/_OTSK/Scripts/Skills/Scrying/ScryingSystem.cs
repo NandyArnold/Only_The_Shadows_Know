@@ -10,6 +10,7 @@ public class ScryingSystem : MonoBehaviour
 {
     public static ScryingSystem Instance { get; private set; }
     public RenderTexture ScryingRenderTexture => scryingRenderTexture;
+    public TacticalIconAtlasSO IconAtlas => iconAtlas;
     [Header("Configuration")]
     [SerializeField] private RenderTexture scryingRenderTexture;
 

@@ -15,5 +15,7 @@ public enum RevealableType
     Elite,
     MainObjective,
     Boss,
-    Player
+    Player,
+    CheckpointActive,
+    CheckpointCurrent
 }

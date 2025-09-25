@@ -19,7 +19,7 @@ MonoBehaviour:
     isHeader: 1
   - sceneName: BootstrapScene
     scenePath: Assets/_OTSK/Scenes/BootstrapScene.unity
-    savedColor: {r: 0, g: 0, b: 0, a: 0}
+    savedColor: {r: 1, g: 1, b: 1, a: 1}
     isHeader: 0
   - sceneName: LoadingScene
     scenePath: Assets/_OTSK/Scenes/LoadingScene.unity

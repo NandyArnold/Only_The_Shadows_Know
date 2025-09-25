@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class CheckpointManager : MonoBehaviour, IResettable
 {
@@ -7,6 +8,8 @@ public class CheckpointManager : MonoBehaviour, IResettable
     // This will store the position & rotation of the last checkpoint.
     public Vector3 LastCheckpointPosition { get; private set; }
     public Quaternion LastCheckpointRotation { get; private set; }
+
+    public event Action<Transform> OnNewCheckpointSet;
 
     private void Awake()
     {
@@ -25,7 +28,7 @@ public class CheckpointManager : MonoBehaviour, IResettable
         LastCheckpointPosition = checkpointTransform.position;
         LastCheckpointRotation = checkpointTransform.rotation;
         Debug.Log($"<color=green>New Checkpoint Set:</color> {checkpointTransform.name}");
-
+        OnNewCheckpointSet?.Invoke(checkpointTransform);
         if (GameManager.Instance != null && GameManager.Instance.CurrentLoadType != GameLoadType.None)
         {
             Debug.Log($"Checkpoint: Suppressing autosave because a load ({GameManager.Instance.CurrentLoadType}) is in progress.");

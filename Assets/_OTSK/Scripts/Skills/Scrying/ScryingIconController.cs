@@ -122,6 +122,19 @@ public class ScryingIconController : MonoBehaviour
         IconInstance.SetActive(false);
     }
 
+    public void ChangeIcon(Sprite newSprite, Color newColor)
+    {
+        if (IconImageRectTransform != null)
+        {
+            Image iconImage = IconImageRectTransform.GetComponent<Image>();
+            if (iconImage != null)
+            {
+                iconImage.sprite = newSprite;
+                iconImage.color = newColor;
+            }
+        }
+    }
+
     public void ShowIcon() { if (IconInstance != null) IconInstance.SetActive(true); }
     public void HideIcon() { if (IconInstance != null) IconInstance.SetActive(false); }
     public void SetSortOrder(int order) { if (iconCanvas != null) iconCanvas.sortingOrder = order; }

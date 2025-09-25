@@ -369,10 +369,10 @@ public class SaveLoadManager : MonoBehaviour
             {
                 gameState.worldData.chargeManagerSaveData[chargeManager.UniqueID] = (ChargeManager.ChargeSaveData)chargeManager.CaptureState();
             }
-            else if (entity is Checkpoint checkpoint)
-            {
-                gameState.worldData.checkpointSaveData[checkpoint.UniqueID] = (Checkpoint.CheckpointSaveData)checkpoint.CaptureState();
-            }
+            //else if (entity is Checkpoint checkpoint)
+            //{
+            //    gameState.worldData.checkpointSaveData[checkpoint.UniqueID] = (Checkpoint.CheckpointSaveData)checkpoint.CaptureState();
+            //}
         }
     }
 
@@ -454,14 +454,14 @@ public class SaveLoadManager : MonoBehaviour
             }
         }
 
-        foreach (var checkpointData in gameState.worldData.checkpointSaveData)
-        {
-            Debug.Log($"Restoring checkpoint: {checkpointData.Key}");
-            if (SaveableEntityRegistry.Instance.GetEntity(checkpointData.Key) is Checkpoint checkpoint)
-            {
-                checkpoint.RestoreState(checkpointData.Value);
-            }
-        }
+        //foreach (var checkpointData in gameState.worldData.checkpointSaveData)
+        //{
+        //    Debug.Log($"Restoring checkpoint: {checkpointData.Key}");
+        //    if (SaveableEntityRegistry.Instance.GetEntity(checkpointData.Key) is Checkpoint checkpoint)
+        //    {
+        //        checkpoint.RestoreState(checkpointData.Value);
+        //    }
+        //}
     }
 
 

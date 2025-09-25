@@ -30,6 +30,12 @@ MonoBehaviour:
   - type: 15
     icon: {fileID: 21300000, guid: 98428cda8c7b68c418e703d22c9d2d72, type: 3}
     iconColor: {r: 1, g: 1, b: 1, a: 1}
+  - type: 16
+    icon: {fileID: 21300000, guid: 1d99a9e743a77e04eae879061697c4ba, type: 3}
+    iconColor: {r: 1, g: 1, b: 1, a: 1}
+  - type: 17
+    icon: {fileID: 21300000, guid: a36d06d6dcc13ce4c955dae100b1fafb, type: 3}
+    iconColor: {r: 1, g: 1, b: 1, a: 1}
   distortedIcon: {fileID: 21300000, guid: 0114ed7c70c56194c87ea648eb6577db, type: 3}
   defaultIcon: {fileID: 21300000, guid: 098eca53dfcb7b14989fd25bda5a8314, type: 3}
   corpseIcon: {fileID: 21300000, guid: d85b085f390d08944804b4189e6a0fca, type: 3}
