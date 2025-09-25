@@ -356,6 +356,12 @@ public class ScryingSystem : MonoBehaviour
             //iconImage.color = new Color(0.5f, 0.5f, 0.5f, 0.8f); // A faded gray
         }
 
+        // Find the facing indicator on the deceased controller's icon and deactivate it.
+        if (deceasedController.FacingIndicatorTransform != null)
+        {
+            deceasedController.FacingIndicatorTransform.gameObject.SetActive(false);
+        }
+
         // Set the sort order to appear underneath living icons
         deceasedController.SetSortOrder(-1);
     }

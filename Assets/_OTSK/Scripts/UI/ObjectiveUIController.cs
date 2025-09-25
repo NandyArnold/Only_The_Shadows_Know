@@ -104,7 +104,7 @@ public class ObjectiveUIController : MonoBehaviour
         mainCounterText.text = data.counterLabel;
         mainProgressText.text = $"{data.currentProgress} / {data.requiredAmount}";
 
-
+        UpdateMainObjectiveDisplay(currentMainObjective, true, true);
     }
     private void HandleLevelCompleted()
     {

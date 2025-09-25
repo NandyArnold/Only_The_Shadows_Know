@@ -3,30 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// --- NEW SAVE DATA STRUCTURES ---
-//[Serializable]
-//public class ObjectiveInstanceSaveData
-//{
-//    public string objectiveID;
-//    public ObjectiveState state;
-//    public int goalCurrentAmount;
-//}
 
-//[Serializable]
-//public class ObjectiveStateData
-//{
-//    public string levelChainID;
-//    public List<ObjectiveInstanceSaveData> objectiveStates;
-//}
-//// ------------------------------------
-//// Add this to your save data structures, likely near the top of ObjectiveManager.cs
-//[System.Serializable]
-//public class AccomplishmentData
-//{
-//    public Dictionary<string, int> killCounts = new Dictionary<string, int>();
-//    public Dictionary<string, int> destroyCounts = new Dictionary<string, int>();
-//    public HashSet<string> visitedLocationIDs = new HashSet<string>();
-//}
 
 
 

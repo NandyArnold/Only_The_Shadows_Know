@@ -20,18 +20,13 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private Slider manaSlider;
   
 
-    //[Header("Objective UI")]
-    //[SerializeField] private GameObject objectivePanel;
-    //[SerializeField] private TextMeshProUGUI objectiveText;
-    //[SerializeField] private float objectiveDisplayTime = 4f;
-    //[SerializeField] private float objectiveFadeTime = 0.5f;
 
     [SerializeField] private GameObject crosshairPrefab;
 
     [Header("Scrying UI")]
     [SerializeField] private GameObject minimapPanel;
     [SerializeField] private UnityEngine.UI.RawImage minimapRenderImage;
-    [SerializeField] private RectTransform objectiveArrow;
+   
     private Transform _currentObjectiveTransform;
 
     [Header("Charge/Ammo UI")]
@@ -46,9 +41,7 @@ public class HUDManager : MonoBehaviour
     private CursorState _currentCursorState;
     private GameObject _crosshairInstance;
 
-    //private CanvasGroup _objectivePanelCG;
-    //private Coroutine _objectiveCoroutine;
-    //private ObjectiveSO _currentObjectiveSO;
+
 
     private PlayerCombat _playerCombatForDebug;
     private Invulnerability _invulnerability;
@@ -66,8 +59,6 @@ public class HUDManager : MonoBehaviour
         
     }
 
-    
-
     private void Start()
     {
         if (GameManager.Instance != null)
@@ -80,11 +71,6 @@ public class HUDManager : MonoBehaviour
             GameManager.Instance.OnPlayerRegistered += HandlePlayerRegistered;
         }
 
-        //if (ObjectiveManager.Instance != null)
-        //{
-        //    ObjectiveManager.Instance.OnCurrentObjectiveChanged += HandleNewObjective;
-        //    ObjectiveManager.Instance.OnLevelCompleted += HandleLevelCompleted;
-        //}
 
         if (CursorManager.Instance != null)
         {
@@ -95,23 +81,13 @@ public class HUDManager : MonoBehaviour
         {
             playerHudPanel.SetActive(false); // Initially hide the player HUD
         }
-
-        //if (objectivePanel != null)
-        //{
-        //    _objectivePanelCG = objectivePanel.GetComponent<CanvasGroup>();
-        //    if (_objectivePanelCG != null) _objectivePanelCG.alpha = 0;
-        //}
-
-
-        
+   
         if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         if (manaSlider != null) manaSlider.gameObject.SetActive(false);
       
         if (crosshairPanel != null) crosshairPanel.SetActive(false);
 
         if (minimapPanel != null) minimapPanel.SetActive(false);
-        if (objectiveArrow != null) objectiveArrow.gameObject.SetActive(false);
-
 
     }
 
@@ -134,11 +110,6 @@ public class HUDManager : MonoBehaviour
             invulnerabilityText.text = "Invulnerable: N/A";
         }
 
-        if (minimapPanel.activeSelf)
-        {
-            UpdateObjectiveArrow();
-        }
-
     }
 
     private void OnDestroy()
@@ -147,15 +118,11 @@ public class HUDManager : MonoBehaviour
         {
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
         }
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnPlayerRegistered -= HandlePlayerRegistered;
         }
-        //if (ObjectiveManager.Instance != null)
-        //{
-        //    ObjectiveManager.Instance.OnCurrentObjectiveChanged -= HandleNewObjective;
-        //    ObjectiveManager.Instance.OnLevelCompleted -= HandleLevelCompleted;
-        //}
 
         if (CursorManager.Instance != null)
         {
@@ -170,17 +137,13 @@ public class HUDManager : MonoBehaviour
         // Now that we have a valid player, we can get its components and subscribe to events.
         StartCoroutine(InitializePlayerHUDCoroutine(player));
     }
+
     private IEnumerator InitializePlayerHUDCoroutine(PlayerController player)
     {
         // Wait for the end of the frame to ensure all Awake() and Start() on the player have run.
         yield return new WaitForEndOfFrame();
 
         RegisterPlayerForDebugging(player.GetComponent<PlayerCombat>());
-
-        //if (player.TryGetComponent<PlayerInputHandler>(out var inputHandler))
-        //{
-        //    inputHandler.OnShowObjectiveInput += HandleShowObjective;
-        //}
 
         if (player.TryGetComponent<PlayerStats>(out var stats))
         {
@@ -220,110 +183,12 @@ public class HUDManager : MonoBehaviour
     }
 
 
-    //private void HandleNewObjective(ObjectiveSO newObjective)
-    //{
-    //    if (objectiveText == null) return;
-
-    //    _currentObjectiveSO = newObjective;
-
-
-    //    if (newObjective != null)
-    //    {
-    //        // A valid objective is active, so we store its location for the arrow.
-    //        _currentObjectiveTransform = newObjective.objectiveLocation;
-    //    }
-    //    else
-    //    {
-    //        // No active objective (e.g., in Main Menu or between levels), so we clear the target.
-    //        // This stops the arrow from pointing to an old objective.
-    //        _currentObjectiveTransform = null;
-    //    }
-
-    //    if (gameObject.activeInHierarchy)
-    //    {
-    //        if (_objectiveCoroutine != null)
-    //        {
-    //            StopCoroutine(_objectiveCoroutine);
-    //        }
-
-    //        if (newObjective != null)
-    //        {
-    //            _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(newObjective.objectiveDescription));
-    //        }
-    //    }
-    //}
-
-    //private IEnumerator ShowObjectiveCoroutine(string text)
-    //{
-    //    UISoundPlayer.Instance.PlayNewObjectiveSound();
-    //    // Fade Out (if it was already visible)
-    //    float startAlpha = _objectivePanelCG.alpha;
-    //    float elapsedTime = 0f;
-    //    while (elapsedTime < objectiveFadeTime)
-    //    {
-    //        _objectivePanelCG.alpha = Mathf.Lerp(startAlpha, 0, elapsedTime / objectiveFadeTime);
-    //        elapsedTime += Time.deltaTime;
-    //        yield return null;
-    //    }
-
-    //    // Set text and Fade In
-    //    objectiveText.text = text;
-    //    elapsedTime = 0f;
-    //    while (elapsedTime < objectiveFadeTime)
-    //    {
-    //        _objectivePanelCG.alpha = Mathf.Lerp(0, 1, elapsedTime / objectiveFadeTime);
-    //        elapsedTime += Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    _objectivePanelCG.alpha = 1;
-
-    //    // Wait for the display time
-    //    yield return new WaitForSecondsRealtime(objectiveDisplayTime);
-
-    //    // Fade Out again
-    //    elapsedTime = 0f;
-    //    while (elapsedTime < objectiveFadeTime)
-    //    {
-    //        _objectivePanelCG.alpha = Mathf.Lerp(1, 0, elapsedTime / objectiveFadeTime);
-    //        elapsedTime += Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    _objectivePanelCG.alpha = 0;
-    //}
     
-
-    //private void HandleLevelCompleted()
-    //{
-    //    if (_objectiveCoroutine != null)
-    //    {
-    //        StopCoroutine(_objectiveCoroutine);
-    //    }
-    //    _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine("All Objectives Complete!"));
-    //}
-
-    //// --- (The rest of your HUDManager script is unchanged) ---
-
-    //private void HandleShowObjective()
-    //{
-    //    // Get the current objective from the manager
-     
-    //    if (_currentObjectiveSO != null)
-    //    {
-    //        UISoundPlayer.Instance.PlayToggleSound();
-    //        // Re-run the same fade coroutine we already have
-    //        if (_objectiveCoroutine != null) StopCoroutine(_objectiveCoroutine);
-    //        _objectiveCoroutine = StartCoroutine(ShowObjectiveCoroutine(_currentObjectiveSO.objectiveDescription));
-    //    }
-    //}
     public void RegisterPlayerForDebugging(PlayerCombat playerCombat) { _playerCombatForDebug = playerCombat; }
 
     private void HandleGameStateChanged(GameState newState)
     {
-        //if(objectivePanel != null)
-        //{
-        //    // Show the objective panel only during Gameplay state
-        //    objectivePanel.SetActive(newState == GameState.Gameplay);
-        //}
+        
         bool shouldBeActive = (newState == GameState.Gameplay ||  newState == GameState.Details);
 
         if (playerHudPanel != null)
@@ -397,55 +262,16 @@ public class HUDManager : MonoBehaviour
     {
         minimapRenderImage.texture = texture;
         minimapPanel.SetActive(true);
-        //objectiveArrow.gameObject.SetActive(true);
+        
     }
 
     public void HideMinimap()
     {
         minimapPanel.SetActive(false);
-        objectiveArrow.gameObject.SetActive(false);
+     
     }
 
-    private void UpdateObjectiveArrow()
-    {
-        // Fail-safe: If either the arrow, the objective, or the player is missing, hide the arrow and stop.
-        if (objectiveArrow == null || _currentObjectiveTransform == null || _playerController == null)
-        {
-            if (objectiveArrow != null && objectiveArrow.gameObject.activeSelf)
-            {
-                objectiveArrow.gameObject.SetActive(false);
-            }
-            return;
-        }
-
-        // Convert objective's world position to a screen position relative to the main camera
-        Vector3 objectiveScreenPos = Camera.main.WorldToScreenPoint(_currentObjectiveTransform.position);
-
-        RectTransform minimapRect = minimapPanel.GetComponent<RectTransform>();
-
-        // Check if the objective is visible on the minimap
-        if (RectTransformUtility.RectangleContainsScreenPoint(minimapRect, objectiveScreenPos, Camera.main))
-        {
-            objectiveArrow.gameObject.SetActive(false);
-        }
-        else
-        {
-            objectiveArrow.gameObject.SetActive(true);
-
-            // Calculate the direction from the player to the objective
-            Vector3 direction = (_currentObjectiveTransform.position - _playerController.transform.position);
-
-            // We only care about the direction on the horizontal plane (X and Z axes)
-            direction.y = 0;
-
-            // Calculate the angle from the forward direction of the player
-            float angle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
-
-            // Apply the rotation. The offset (-90, etc.) depends on the original orientation of your arrow sprite.
-            // If your arrow image points "Up", you need no offset. If it points "Right", you need a -90 degree offset.
-            objectiveArrow.localEulerAngles = new Vector3(0, 0, -angle);
-        }
-    }
+    
 
     public void SetGameplayHUDVisibility(bool isVisible)
     {
