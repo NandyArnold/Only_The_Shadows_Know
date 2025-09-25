@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public class AccomplishmentTracker : MonoBehaviour
+public class AccomplishmentTracker : MonoBehaviour, IResettable
 {
     public static AccomplishmentTracker Instance { get; private set; }
 
@@ -104,5 +104,12 @@ public class AccomplishmentTracker : MonoBehaviour
             // If there's no save data, create a fresh instance
             _accomplishments = new AccomplishmentData();
         }
+    }
+
+    public void ResetState()
+    {
+        // To reset, we just create a new, empty data object.
+        _accomplishments = new AccomplishmentData();
+        Debug.Log("[AccomplishmentTracker] State has been reset.");
     }
 }

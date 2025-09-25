@@ -21,6 +21,32 @@ public class CheckpointManager : MonoBehaviour, IResettable
         Instance = this;
        
     }
+    #region Save/Load Logic
+    public object CaptureState()
+    {
+        // Create a new data object and populate it with the individual float values.
+        return new CheckpointManagerSaveData
+        {
+            lastCheckpointPosX = LastCheckpointPosition.x,
+            lastCheckpointPosY = LastCheckpointPosition.y,
+            lastCheckpointPosZ = LastCheckpointPosition.z,
+            lastCheckpointRotX = LastCheckpointRotation.x,
+            lastCheckpointRotY = LastCheckpointRotation.y,
+            lastCheckpointRotZ = LastCheckpointRotation.z,
+            lastCheckpointRotW = LastCheckpointRotation.w
+        };
+    }
+
+    public void RestoreState(object state)
+    {
+        var saveData = state as CheckpointManagerSaveData;
+        if (saveData == null) return;
+
+        // Reconstruct the Vector3 and Quaternion from the saved float values.
+        LastCheckpointPosition = new Vector3(saveData.lastCheckpointPosX, saveData.lastCheckpointPosY, saveData.lastCheckpointPosZ);
+        LastCheckpointRotation = new Quaternion(saveData.lastCheckpointRotX, saveData.lastCheckpointRotY, saveData.lastCheckpointRotZ, saveData.lastCheckpointRotW);
+    }
+    #endregion
 
     // This is the public method that our Checkpoint triggers will call.
     public void SetNewCheckpoint(Transform checkpointTransform)

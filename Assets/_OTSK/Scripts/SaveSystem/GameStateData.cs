@@ -5,6 +5,8 @@ public class GameStateData
     public ObjectiveStateData objectiveData;
     public WorldStateData worldData;
     public string sceneID;
+    public CheckpointManagerSaveData checkpointData;
+    public AccomplishmentData accomplishmentData;
 
     public GameStateData()
     {

@@ -121,6 +121,8 @@ public class SaveLoadManager : MonoBehaviour
         GatherPlayerData(currentGameState);
         GatherObjectiveData(currentGameState);
         GatherWorldData(currentGameState);
+        GatherCheckpointData(currentGameState);
+        GatherAccomplishmentData(currentGameState);
 
         saveFile.AddOrUpdateData(GameStateKey, currentGameState);
         saveFile.Save();
@@ -211,6 +213,8 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log($"<color=red>--- SAVELOAD: FINISHED RESTORING OBJECTIVES. Current objective in manager is NOW:" +
                 $" '{ObjectiveManager.Instance.CurrentObjective?.objectiveDescription ?? "None"}'</color>");
             RestoreWorldData(_currentGameState);
+            RestoreCheckpointData(_currentGameState);
+            RestoreAccomplishmentData(_currentGameState);
             RestorePlayerData(_currentGameState);
 
             GameManager.Instance.Player.GetComponent<PlayerStats>().ReviveOnLoad();
@@ -463,9 +467,37 @@ public class SaveLoadManager : MonoBehaviour
         //    }
         //}
     }
+    private void GatherCheckpointData(GameStateData gameState)
+    {
+        if (CheckpointManager.Instance != null)
+        {
+            gameState.checkpointData = (CheckpointManagerSaveData)CheckpointManager.Instance.CaptureState();
+        }
+    }
 
+    private void GatherAccomplishmentData(GameStateData gameState)
+    {
+        if (AccomplishmentTracker.Instance != null)
+        {
+            gameState.accomplishmentData = (AccomplishmentData)AccomplishmentTracker.Instance.CaptureState();
+        }
+    }
 
+    private void RestoreCheckpointData(GameStateData gameState)
+    {
+        if (CheckpointManager.Instance != null && gameState.checkpointData != null)
+        {
+            CheckpointManager.Instance.RestoreState(gameState.checkpointData);
+        }
+    }
 
+    private void RestoreAccomplishmentData(GameStateData gameState)
+    {
+        if (AccomplishmentTracker.Instance != null && gameState.accomplishmentData != null)
+        {
+            AccomplishmentTracker.Instance.RestoreState(gameState.accomplishmentData);
+        }
+    }
 
     // NEW: A public method to check if a save file exists
     public bool DoesSaveExist(string saveName)
